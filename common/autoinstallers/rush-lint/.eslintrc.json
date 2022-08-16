@@ -1,0 +1,18 @@
+{
+  "extends": "@goodboydigital/eslint-config",
+  "parserOptions": {
+    "project": ["./tsconfig.eslint.json"]
+  },
+  "rules": {
+    "no-console": [0, { "allow": ["warn", "error"] }],
+    "@typescript-eslint/no-var-requires": 0
+  },
+  "overrides": [
+    {
+      "files": ["*/**/**.ts", "**.test**"],
+      "rules": {
+        "dot-notation": 0
+      }
+    }
+  ]
+}

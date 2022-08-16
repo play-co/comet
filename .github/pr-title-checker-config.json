@@ -1,0 +1,32 @@
+{
+  "LABEL": {
+    "name": "invalid pr title",
+    "color": "ff3333"
+  },
+  "CHECKS": {
+    "prefixes": [
+      "feat: ",
+      "fix: ",
+      "docs: ",
+      "style: ",
+      "refactor: ",
+      "perf: ",
+      "test: ",
+      "build: ",
+      "ci: ",
+      "chore: ",
+      "revert: ",
+      "chore(main): release"
+    ],
+    "regexp": "docs\\(v[0-9]\\): ",
+    "regexpFlags": "i",
+    "ignoreLabels": [
+      "allow pr title"
+    ]
+  },
+  "MESSAGES": {
+    "success": "All OK",
+    "failure": "PRs must use conventional commit messages (eg. 'feat: xyz' ), please change PR title.",
+    "notice": ""
+  }
+}

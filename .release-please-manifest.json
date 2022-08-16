@@ -1,0 +1,5 @@
+{
+  "packages/core": "1.2.0",
+  "packages/editor": "1.0.0",
+  "packages/player": "1.0.0"
+}

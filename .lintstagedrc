@@ -1,0 +1,5 @@
+{
+  "*.{js,ts}": [
+    "eslint --cache --fix -c common/autoinstallers/rush-lint/.eslintrc.json --ignore-path common/autoinstallers/rush-lint/.eslintignore"
+  ]
+}
