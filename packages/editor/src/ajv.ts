@@ -7,7 +7,7 @@ const validate = getSchemaValidator('A');
 const root: A = {
     x: 1,
     y: 2,
-    b: {
+    _b: {
         name: 'abc',
         d: {
             foo: 'a',

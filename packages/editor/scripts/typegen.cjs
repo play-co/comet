@@ -8,13 +8,14 @@ const config = {
     tsconfig: './tsconfig.json',
     minify: true,
     type: '*',
+    jsDoc: 'basic',
 };
 
 const output_path = path.resolve(__dirname, '../src/schema');
 const output_file = `${output_path}/index.ts`;
 
 const schema = tsj.createGenerator(config).createSchema(config.type);
-const schemaString = JSON.stringify(schema, null, 2);
+const schemaString = JSON.stringify(schema, null, 4);
 
 const warning = `/**\n WARNING! This file is auto-generated, do not edit by hand.\n Run the "rushx typegen" command to generate this file from the current contents of "./types/*.ts"\n*/`;
 

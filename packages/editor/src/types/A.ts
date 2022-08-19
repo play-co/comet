@@ -4,5 +4,5 @@ export interface A
 {
     x: number;
     y: number;
-    b: B;
+    _b?: B;
 }

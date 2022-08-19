@@ -47,14 +47,13 @@ export default {
                 y: {
                     type: 'number',
                 },
-                b: {
+                _b: {
                     $ref: '#/definitions/B',
                 },
             },
             required: [
                 'x',
                 'y',
-                'b',
             ],
             additionalProperties: false,
         },
