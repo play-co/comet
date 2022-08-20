@@ -1,6 +1,7 @@
 import EventEmitter from 'eventemitter3';
-import type schema from 'src/schema';
-import { getVisibleProperties } from 'src/typeUtil';
+
+import type schema from '../schema';
+import { getVisibleProperties } from '../typeUtil';
 
 type NodeCtor = {
     new (): BaseNode;

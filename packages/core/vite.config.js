@@ -1,15 +1,15 @@
 import { defineConfig } from 'vite';
-// import path from "path";
 import typescript from '@rollup/plugin-typescript';
 
 export default defineConfig(({ command, mode, ssrBuild }) => ({
     build: {
         sourcemap: true,
         declaration: true,
+        declarationDir: './dist',
         lib: {
             entry: './src/index.ts',
             name: 'comet',
-            formats: ['es', 'cjs', 'umd'],
+            formats: ['es'],
             fileName: 'index',
         },
         watch: mode === 'dev' ? {} : undefined,

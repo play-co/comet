@@ -1,4 +1,4 @@
-import { BaseNode } from 'src/nodes/base';
+import { BaseNode } from './base';
 
 export class Sub1 extends BaseNode
 {

@@ -1,5 +1,6 @@
 import Ajv from 'ajv';
-import schema from 'src/schema';
+
+import schema from './schema';
 
 interface Schema
 {

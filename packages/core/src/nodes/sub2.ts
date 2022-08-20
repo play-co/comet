@@ -1,4 +1,4 @@
-import { Sub1 } from 'src/nodes/sub1';
+import { Sub1 } from './sub1';
 
 export class Sub2 extends Sub1
 {

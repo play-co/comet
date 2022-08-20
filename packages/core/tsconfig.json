@@ -2,6 +2,9 @@
     "extends": "../../tsconfig.base",
     "compilerOptions": {
         "baseUrl": ".",
+        "declaration": true,
+        "declarationDir": "dist",
+        "isolatedModules": true,
         "paths": { "src/*": ["src/*"] }
     },
     "include": ["src", "__test__"]
