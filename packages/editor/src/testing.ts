@@ -1,12 +1,12 @@
 // import schema from './schema';
 // import { getProperties, getSchemaValidator } from './typeUtil';
-import { Sub2 } from './core/nodes/sub2';
+import { Sub2 } from 'core';
 
 const node = new Sub2();
 const inst = node.create<Sub2>();
 
-inst.on('get', (key, value) => console.log('GET', key, value));
-inst.on('set', (key, value) => console.log('SET', key, value));
+inst.on('get', (key: string, value: any) => console.log('GET', key, value));
+inst.on('set', (key: string, value: any) => console.log('SET', key, value));
 
 console.log('log', inst.baseProp);
 console.log('log', inst._basePrivate);

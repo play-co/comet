@@ -1,5 +1,8 @@
 {
-  "extends": "../../tsconfig.base",
-  "compilerOptions": {},
-  "include": ["src", "__test__"]
+    "extends": "../../tsconfig.base",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": { "src/*": ["src/*"] }
+    },
+    "include": ["src", "__test__"]
 }

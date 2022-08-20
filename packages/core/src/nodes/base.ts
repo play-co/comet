@@ -1,31 +1,33 @@
 import EventEmitter from 'eventemitter3';
-import type schema from 'src/core/schema';
-import { getPublicProperties } from 'src/core/typeUtil';
+import type schema from 'src/schema';
+import { getVisibleProperties } from 'src/typeUtil';
 
 type NodeCtor = {
     new (): BaseNode;
-    name: string;
+    nodeName: string;
 };
 
 export class BaseNode extends EventEmitter<'get' | 'set'>
 {
+    public $baseVisibleProp: string;
     public baseProp: string;
-    public _basePrivate: string;
+
+    public static nodeName = 'BaseNode';
 
     constructor()
     {
         super();
 
-        this.baseProp = 'baseDefault';
-        this._basePrivate = 'basePrivateDefault';
+        this.$baseVisibleProp = 'baseVisiblePropDefault';
+        this.baseProp = 'basePropDefault';
     }
 
     public create<T extends BaseNode>(/** todo: props */): T
     {
         const Ctor = Object.getPrototypeOf(this).constructor as NodeCtor;
         const instance = new Ctor();
-        const name = Ctor.name as keyof typeof schema.definitions;
-        const publicProperties = getPublicProperties(name);
+        const name = Ctor.nodeName as keyof typeof schema.definitions;
+        const publicProperties = getVisibleProperties(name);
 
         const handler = {
             get<T>(target: BaseNode, key: string): T

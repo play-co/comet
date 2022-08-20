@@ -1,5 +1,5 @@
 import Ajv from 'ajv';
-import schema from 'src/core/schema';
+import schema from 'src/schema';
 
 interface Schema
 {
@@ -65,11 +65,11 @@ export function getProperties(definitionKey: keyof typeof schema.definitions)
     return _(schema.definitions[definitionKey] as Schema);
 }
 
-export function getPublicProperties(
+export function getVisibleProperties(
     definitionKey: keyof typeof schema.definitions,
 )
 {
     return Object.keys(
         (schema.definitions[definitionKey] as Schema).properties,
-    ).filter((key) => key.charAt(0) !== '_');
+    ).filter((key) => key.charAt(0) === '$');
 }

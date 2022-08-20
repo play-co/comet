@@ -39,8 +39,8 @@
             "name": "core",
             "summary": "Start the core package in dev mode",
             "description": "Run this command to start the core package in dev mode",
-
-            "shellCommand": "cd packages/core && npm run core"
+            "safeForSimultaneousRushProcesses": true,
+            "shellCommand": "cd packages/core && npm run dev"
         },
         {
             "commandKind": "global",
@@ -48,12 +48,12 @@
             "name": "editor",
             "summary": "Start the editor package in dev mode",
             "description": "Run this command to start the editor package in dev mode",
-
+            "safeForSimultaneousRushProcesses": true,
             "shellCommand": "cd packages/editor && npm run dev"
         },
         {
             "commandKind": "global",
-
+            "safeForSimultaneousRushProcesses": true,
             "name": "player",
             "summary": "Start the player package in dev mode",
             "description": "Run this command to start the player package in dev mode",
@@ -62,7 +62,7 @@
         },
         {
             "commandKind": "global",
-
+            "safeForSimultaneousRushProcesses": true,
             "name": "test",
             "summary": "Start the test package in dev mode",
             "description": "Run this command to start the test package in dev mode",
@@ -75,8 +75,8 @@
             "name": "typegen",
             "summary": "Generate the schema types",
             "description": "Run this command to generate the schema types",
-
-            "shellCommand": "cd packages/editor && npm run typegen"
+            "safeForSimultaneousRushProcesses": true,
+            "shellCommand": "cd packages/core && npm run typegen"
         }
         // {
         //   /**

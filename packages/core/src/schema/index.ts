@@ -1,6 +1,6 @@
 /**
  WARNING! This file is auto-generated, do not edit by hand.
- Run the "rushx typegen" command to generate this file from the current contents of "./types/*.ts"
+Run the "rushx typegen" command to generate this file from the current contents of "./types/*.ts"
 */
 
 export default {
@@ -9,60 +9,60 @@ export default {
         BaseNode: {
             type: 'object',
             properties: {
-                baseProp: {
+                $baseVisibleProp: {
                     type: 'string',
                 },
-                _basePrivate: {
+                baseProp: {
                     type: 'string',
                 },
             },
             required: [
+                '$baseVisibleProp',
                 'baseProp',
-                '_basePrivate',
             ],
             additionalProperties: false,
         },
         Sub1: {
             type: 'object',
             properties: {
+                $baseVisibleProp: {
+                    type: 'string',
+                },
                 baseProp: {
                     type: 'string',
                 },
-                _basePrivate: {
-                    type: 'string',
-                },
-                sub1Prop: {
+                $sub1VisibleProp: {
                     type: 'string',
                 },
             },
             required: [
-                '_basePrivate',
+                '$baseVisibleProp',
+                '$sub1VisibleProp',
                 'baseProp',
-                'sub1Prop',
             ],
             additionalProperties: false,
         },
         Sub2: {
             type: 'object',
             properties: {
+                $baseVisibleProp: {
+                    type: 'string',
+                },
                 baseProp: {
                     type: 'string',
                 },
-                _basePrivate: {
+                $sub1VisibleProp: {
                     type: 'string',
                 },
-                sub1Prop: {
-                    type: 'string',
-                },
-                sub2Prop: {
+                $sub2VisibleProp: {
                     type: 'string',
                 },
             },
             required: [
-                '_basePrivate',
+                '$baseVisibleProp',
+                '$sub1VisibleProp',
+                '$sub2VisibleProp',
                 'baseProp',
-                'sub1Prop',
-                'sub2Prop',
             ],
             additionalProperties: false,
         },

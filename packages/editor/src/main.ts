@@ -6,4 +6,4 @@ import './app.css';
 //     target,
 // });
 // export default app;
-import './ajv';
+import './testing';
