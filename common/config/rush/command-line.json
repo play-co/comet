@@ -72,11 +72,11 @@
         {
             "commandKind": "global",
 
-            "name": "typegen",
+            "name": "schema",
             "summary": "Generate the schema types",
             "description": "Run this command to generate the schema types",
             "safeForSimultaneousRushProcesses": true,
-            "shellCommand": "cd packages/core && npm run typegen"
+            "shellCommand": "cd packages/core && npm run schema"
         }
         // {
         //   /**

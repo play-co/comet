@@ -13,8 +13,6 @@ export class BaseNode extends EventEmitter<'get' | 'set'>
     public $baseVisibleProp: string;
     public baseProp: string;
 
-    public static nodeName = 'BaseNode';
-
     constructor()
     {
         super();
@@ -27,7 +25,7 @@ export class BaseNode extends EventEmitter<'get' | 'set'>
     {
         const Ctor = Object.getPrototypeOf(this).constructor as NodeCtor;
         const instance = new Ctor();
-        const name = Ctor.nodeName as keyof typeof schema.definitions;
+        const name = Ctor.name as keyof typeof schema.definitions;
         const publicProperties = getVisibleProperties(name);
 
         const handler = {
@@ -56,5 +54,10 @@ export class BaseNode extends EventEmitter<'get' | 'set'>
         const proxy: T = new Proxy(instance, handler) as T;
 
         return proxy;
+    }
+
+    public foo()
+    {
+        return 'foo';
     }
 }

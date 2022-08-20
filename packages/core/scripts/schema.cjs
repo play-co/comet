@@ -23,7 +23,7 @@ const schemaString = JSON.stringify(schema, null, 4);
 
 const warning =
     '/**\n WARNING! This file is auto-generated, do not edit by hand.\n' +
-    'Run the "rushx typegen" command to generate this file from the current contents of "./types/*.ts"\n*/';
+    'Run the "rush schema" command to generate this file from the current contents of "./nodes/*.ts"\n*/';
 
 fs.mkdirSync(outputPath, { recursive: true });
 
@@ -36,5 +36,5 @@ fs.writeFile(
 );
 
 console.log(
-    `✅ Successfully created ${outputFile} schema from existing types.`,
+    `✅ Successfully created ${outputFile} schema from existing node types.`,
 );

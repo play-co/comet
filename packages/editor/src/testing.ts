@@ -15,3 +15,4 @@ inst.$baseVisibleProp = 'overrideBaseVisibleProp';
 inst.baseProp = 'overrideBaseProp';
 inst.$sub1VisibleProp = 'overrideSub1VisibleProp';
 inst.$sub2VisibleProp = 'overrideSub2VisibleProp';
+inst.foo();

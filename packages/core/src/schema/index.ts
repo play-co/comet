@@ -1,6 +1,6 @@
 /**
  WARNING! This file is auto-generated, do not edit by hand.
-Run the "rushx typegen" command to generate this file from the current contents of "./types/*.ts"
+Run the "rush schema" command to generate this file from the current contents of "./nodes/*.ts"
 */
 
 export default {

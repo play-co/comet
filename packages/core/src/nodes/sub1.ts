@@ -4,8 +4,6 @@ export class Sub1 extends BaseNode
 {
     public $sub1VisibleProp: string;
 
-    public static nodeName = 'Sub1';
-
     constructor()
     {
         super();

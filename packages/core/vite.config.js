@@ -3,6 +3,7 @@ import typescript from '@rollup/plugin-typescript';
 
 export default defineConfig(({ command, mode, ssrBuild }) => ({
     build: {
+        minify: false,
         sourcemap: true,
         declaration: true,
         declarationDir: './dist',
