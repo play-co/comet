@@ -8,14 +8,15 @@
         "dev": "vite --port=3000",
         "preview": "vite preview",
         "test": "jest",
-        "typegen": "node scripts/typegen.cjs"
+        "typegen": "ts-node-esm scripts/typegen.ts"
     },
     "dependencies": {
         "core": "workspace:*",
         "pixi.js": "~6.5.1",
         "yjs": "~13.5.41",
         "y-websocket": "~1.4.3",
-        "ajv": "~8.11.0"
+        "ajv": "~8.11.0",
+        "eventemitter3": "~4.0.7"
     },
     "devDependencies": {
         "@sveltejs/vite-plugin-svelte": "^1.0.1",

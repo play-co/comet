@@ -1,27 +1,18 @@
-import schema from './schema';
-import type { A } from './types/A';
-import { getProperties, getSchemaValidator } from './typeUtil';
+// import schema from './schema';
+// import { getProperties, getSchemaValidator } from './typeUtil';
+import { Sub2 } from './core/nodes/sub2';
 
-const validate = getSchemaValidator('A');
+const node = new Sub2();
+const inst = node.create<Sub2>();
 
-const root: A = {
-    x: 1,
-    y: 2,
-    _b: {
-        name: 'abc',
-        d: {
-            foo: 'a',
-        },
-    },
-};
+inst.on('get', (key, value) => console.log('GET', key, value));
+inst.on('set', (key, value) => console.log('SET', key, value));
 
-if (validate(root))
-{
-    console.log('IS GOOD', root);
-    console.log('RAW PROPERTIES', schema.definitions.A.properties);
-    console.log('RECURSIVE PROPERTIES', getProperties('A'));
-}
-else
-{
-    console.error('BOOM!', validate.errors);
-}
+console.log('log', inst.baseProp);
+console.log('log', inst._basePrivate);
+console.log('log', inst.sub1Prop);
+console.log('log', inst.sub2Prop);
+
+inst.baseProp = 'overrideBaseProp';
+inst.sub1Prop = 'overrideSub1Prop';
+inst.sub2Prop = 'overrideSub2Prop';

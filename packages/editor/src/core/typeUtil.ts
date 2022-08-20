@@ -1,6 +1,5 @@
 import Ajv from 'ajv';
-
-import schema from './schema';
+import schema from 'src/core/schema';
 
 interface Schema
 {
@@ -22,7 +21,7 @@ export function getSchemaValidator(
     const ajv = new Ajv();
 
     ajv.addSchema(schema);
-    const validate = ajv.getSchema(`#/definitions/${definitionKey}`);
+    const validate = ajv.getSchema(`#/definitions/${definitionKey as string}`);
 
     if (!validate)
     {
@@ -64,4 +63,13 @@ export function getProperties(definitionKey: keyof typeof schema.definitions)
     }
 
     return _(schema.definitions[definitionKey] as Schema);
+}
+
+export function getPublicProperties(
+    definitionKey: keyof typeof schema.definitions,
+)
+{
+    return Object.keys(
+        (schema.definitions[definitionKey] as Schema).properties,
+    ).filter((key) => key.charAt(0) !== '_');
 }

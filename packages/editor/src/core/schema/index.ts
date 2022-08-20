@@ -6,64 +6,64 @@
 export default {
     $schema: 'http://json-schema.org/draft-07/schema#',
     definitions: {
-        D: {
+        BaseNode: {
             type: 'object',
             properties: {
-                foo: {
-                    type: 'string',
-                    enum: [
-                        'a',
-                        'b',
-                    ],
-                },
-            },
-            required: [
-                'foo',
-            ],
-            additionalProperties: false,
-        },
-        B: {
-            type: 'object',
-            properties: {
-                name: {
+                baseProp: {
                     type: 'string',
                 },
-                d: {
-                    $ref: '#/definitions/D',
+                _basePrivate: {
+                    type: 'string',
                 },
             },
             required: [
-                'name',
-                'd',
+                'baseProp',
+                '_basePrivate',
             ],
             additionalProperties: false,
         },
-        A: {
+        Sub1: {
             type: 'object',
             properties: {
-                x: {
-                    type: 'number',
+                baseProp: {
+                    type: 'string',
                 },
-                y: {
-                    type: 'number',
+                _basePrivate: {
+                    type: 'string',
                 },
-                _b: {
-                    $ref: '#/definitions/B',
+                sub1Prop: {
+                    type: 'string',
                 },
             },
             required: [
-                'x',
-                'y',
+                '_basePrivate',
+                'baseProp',
+                'sub1Prop',
             ],
             additionalProperties: false,
         },
-        C: {
+        Sub2: {
             type: 'object',
             properties: {
-                bar: {
-                    type: 'boolean',
+                baseProp: {
+                    type: 'string',
+                },
+                _basePrivate: {
+                    type: 'string',
+                },
+                sub1Prop: {
+                    type: 'string',
+                },
+                sub2Prop: {
+                    type: 'string',
                 },
             },
+            required: [
+                '_basePrivate',
+                'baseProp',
+                'sub1Prop',
+                'sub2Prop',
+            ],
             additionalProperties: false,
         },
     },
