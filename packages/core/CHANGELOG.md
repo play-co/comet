@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1](https://github.com/play-co/comet/compare/core-v1.2.0...core-v1.2.1) (2022-08-23)
+
+
+### Bug Fixes
+
+* core declaration types ([0a22d64](https://github.com/play-co/comet/commit/0a22d6414f192c30985bf4407642ab33875f203c))
+* disable minify and mangle ([fc9abdd](https://github.com/play-co/comet/commit/fc9abddf5664febd2bb38057e97845a30b77f3d9))
+
 ## [1.2.0](https://github.com/achamas-playco/monorepo-test/compare/core-v1.1.0...core-v1.2.0) (2022-08-15)
 
 
