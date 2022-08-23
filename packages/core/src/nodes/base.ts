@@ -7,7 +7,7 @@ type NodeCtor = {
     new (): BaseNode;
     nodeName: string;
 };
-
+/** an instance of a Node is an asset. You create instances of assets to compose layouts and prefabs */
 export class BaseNode extends EventEmitter<'get' | 'set'>
 {
     public $baseVisibleProp: string;
@@ -21,7 +21,7 @@ export class BaseNode extends EventEmitter<'get' | 'set'>
         this.baseProp = 'basePropDefault';
     }
 
-    public create<T extends BaseNode>(/** todo: props */): T
+    public createInstance<T extends BaseNode>(/** todo: props */): T
     {
         const Ctor = Object.getPrototypeOf(this).constructor as NodeCtor;
         const instance = new Ctor();

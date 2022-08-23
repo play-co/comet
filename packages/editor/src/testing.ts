@@ -1,7 +1,7 @@
 import { Sub2 } from 'core';
 
 const node = new Sub2();
-const inst = node.create<Sub2>();
+const inst = node.createInstance<Sub2>();
 
 inst.on('get', (key: string, value: any) => console.log('GET', key, value));
 inst.on('set', (key: string, value: any) => console.log('SET', key, value));
