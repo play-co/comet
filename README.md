@@ -29,6 +29,6 @@ Here's a quick summary of how to use `pnpm`, it's very similar to `npm`:
 
 This repo uses [Commitizen](https://www.npmjs.com/package/commitizen) with [commitlint](https://www.npmjs.com/package/commitlint) to ensure [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) as well as [Husky](https://typicode.github.io/husky/#/) to manage Git hooks.
 
-When you are ready to commit, use the convenience command `pnpm commit` to trigger Commitizen. This command triggers an empty commit message, otherwise the standard Git commit editor will appear after commitizen.
+When you are ready to commit, use the convenience command `./commit` (from repo root) to trigger Commitizen. This command triggers an empty commit message, otherwise the standard Git commit editor will appear after commitizen.
 
 You'll then see the commitizen commit wizard appear, complete the commit info as required.

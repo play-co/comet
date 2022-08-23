@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Convenience script for shorthand git commit
+# Commitizen will open, the empty commit will prevent the standard git editor from opening
+git commit -m ""
