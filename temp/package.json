@@ -1,0 +1,8 @@
+{
+    "name": "test-player-consumer",
+    "type": "module",
+    "version": "0.0.1",
+    "dependencies": {
+        "player": "*"
+    }
+}

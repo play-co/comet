@@ -1,35 +1,34 @@
-# Comet
+# Comet (Official Pixi Editor)
 
-todo....more high level description
+> NOTE: This readme will be expanded soon
 
 # Local Development
 
-## Setup
+## Install Dependencies with pnpm
 
-Install dependencies using rushjs.
+This repo uses [pnpm](https://pnpm.io/) to manage and install dependencies.
 
-```
-rush install
-```
+You'll need to install `pnpm` globally with:
 
-## Building & Running Editor while working on Core
-
--   Open two terminals
--   In the first build core in watch mode with `rush core`
--   In the second terminal build the editor in watch mode with `rush editor`
--   Open `localhost:3000` - changes in `core` will rebuild and refresh the editor
-
-## Schema Generation
-
-When adding new node types to the `packages/core/src/nodes` folder you must update the schema file in `packages/core/src/schema` folder. This is done via a script, please don't edit the file manually.
-
-```
-rush schema
+```bash
+curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm
 ```
 
--   If you need to delete the schema file for some reason to regenerate, just create a dummy file for `packages/core/src/schema/index.ts` with `export default {} as any` as content so any other referencing files won't break compilation. The file will be overridden.
--   In VSCode you may need to restart the TypeScript language server if you extend existing types, or intellisense and type checking may break. `Command+Shift+P` then select `TypeScript: Restart Typescript server` _(make sure you are focussed on a TypeScript file or the command won't be visible)_
+> NOTE: If you're using __nvm__ this will install against your current version, and not all versions.
 
-# References
+Here's a quick summary of how to use `pnpm`, it's very similar to `npm`:
 
--   [release-please](https://github.com/semantic-release/semantic-release/blob/master/docs/usage/getting-started.md#getting-started)
+|npm command|pnpm equivalent|
+|----|----|
+|`npm install`|`pnpm install`|
+|`npm i <pkg>`|`pnpm add <pkg>`|
+|`npm run <cmd>`|`pnpm <pkg>`|
+|`npx <pkg>`|`pnpm dlx <pkg>`|
+
+## Git workflow
+
+This repo uses [Commitizen](https://www.npmjs.com/package/commitizen) with [commitlint](https://www.npmjs.com/package/commitlint) to ensure [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) as well as [Husky](https://typicode.github.io/husky/#/) to manage Git hooks.
+
+When you are ready to commit, use the convenience command `pnpm commit` to trigger Commitizen. This command triggers an empty commit message, otherwise the standard Git commit editor will appear after commitizen.
+
+You'll then see the commitizen commit wizard appear, complete the commit info as required.

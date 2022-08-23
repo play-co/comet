@@ -1,0 +1,10 @@
+{
+  "ts": {
+    "compilerOptions": {
+      "allowJs": true,
+      "module": "ESNext"
+    }
+  },
+  "logLimit": 200,
+  "delay": 1500
+}

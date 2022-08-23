@@ -1,0 +1,10 @@
+{
+    "name": "play-co/comet-player",
+    "version": "*",
+    "main": "dist/player/index.js",
+    "types": "dist/player",
+    "license": "MIT",
+    "peerDependencies": {
+        "pixi.js": "^6.5.1"
+    }
+}
