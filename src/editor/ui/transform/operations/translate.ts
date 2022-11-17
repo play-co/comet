@@ -22,8 +22,8 @@ export class TranslateOperation extends TransformOperation<'x' | 'y' | 'globalX'
 
         if (dragInfo.isShiftDown)
         {
-            x = snapToIncrement(x, gridXUnit);
-            y = snapToIncrement(y, gridYUnit);
+            x = Math.round(snapToIncrement(x, gridXUnit));
+            y = Math.round(snapToIncrement(y, gridYUnit));
         }
 
         this.gizmo.x = x;
