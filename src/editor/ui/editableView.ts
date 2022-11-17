@@ -27,6 +27,7 @@ export class EditableView
     constructor(rootNode: ContainerNode)
     {
         this.rootNode = rootNode;
+        this.lastClick = -1;
 
         // create canvas and pixi context
         const canvas = this.canvas = document.createElement('canvas');
@@ -52,25 +53,23 @@ export class EditableView
         viewport.scale.x = 2;
         viewport.scale.y = 2;
 
-        this.transformGizmo = new TransformGizmo({
-            rootContainer: viewport,
-        });
-        this.lastClick = -1;
+        const gizmo = this.transformGizmo = new TransformGizmo();
 
         // create layers
         const gridLayer = this.gridLayer = new Container();
         const nodeLayer = this.nodeLayer = new Container();
         const editLayer = this.editLayer = new Container();
 
-        (window as any).stage = pixi.stage;
-
         viewport.addChild(gridLayer);
         viewport.addChild(nodeLayer);
+        viewport.addChild(gizmo);
         pixi.stage.addChild(editLayer);
 
         gridLayer.addChild(Grid.createTilingSprite(screen.availWidth, screen.availHeight));
         nodeLayer.addChild(rootNode.view);
-        editLayer.addChild(this.transformGizmo.frame.container);
+        editLayer.addChild(gizmo.frame.container);
+
+        gizmo.on('mouseup', this.onMouseUp);
 
         // set selection
         viewport
@@ -154,6 +153,7 @@ export class EditableView
 
     protected onViewportChanged = () =>
     {
+        this.viewport.updateTransform();
         this.transformGizmo.onRootContainerChanged();
     };
 

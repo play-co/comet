@@ -1,5 +1,5 @@
-import type { Container, InteractionEvent } from 'pixi.js';
-import { Matrix, Rectangle, Transform } from 'pixi.js';
+import type { InteractionEvent } from 'pixi.js';
+import { Container, Matrix, Rectangle, Transform } from 'pixi.js';
 
 import { getGlobalEmitter } from '../../../core/events';
 import type { DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
@@ -31,15 +31,13 @@ import {
 
 const globalEmitter = getGlobalEmitter<DatastoreEvent & CommandEvent & SelectionEvent>();
 
-export class TransformGizmo
+export class TransformGizmo extends Container
 {
     public config: TransformGizmoConfig;
 
     public visualPivot?: Point;
 
-    public rootContainer: Container;
     public initialTransform: InitialGizmoTransform;
-    public transform: Transform;
     public frame: TransformGizmoFrame;
     public matrixCache: Map<DisplayObjectNode, Matrix>;
 
@@ -49,14 +47,14 @@ export class TransformGizmo
 
     constructor(config: Partial<TransformGizmoConfig> = {})
     {
+        super();
+
         this.config = {
             ...defaultTransformGizmoConfig,
             ...config,
         };
 
-        this.rootContainer = this.config.rootContainer;
         this.initialTransform = defaultInitialGizmoTransform;
-        this.transform = new Transform();
         this.frame = new TransformGizmoFrame(this);
         this.vertex = { h: 'none', v: 'none' };
         this.matrixCache = new Map();
@@ -191,11 +189,11 @@ export class TransformGizmo
 
     get visualPivotGlobalPos()
     {
-        const { matrix, visualPivot } = this;
+        const { worldTransform, visualPivot } = this;
 
         if (visualPivot)
         {
-            return matrix.apply({ x: visualPivot.x, y: visualPivot.y });
+            return worldTransform.apply({ x: visualPivot.x, y: visualPivot.y });
         }
 
         return this.transformPivotGlobalPos;
@@ -203,9 +201,9 @@ export class TransformGizmo
 
     get transformPivotGlobalPos()
     {
-        const { matrix, transform } = this;
+        const { worldTransform, transform } = this;
 
-        return matrix.apply({ x: transform.pivot.x, y: transform.pivot.y });
+        return worldTransform.apply({ x: transform.pivot.x, y: transform.pivot.y });
     }
 
     get pivotGlobalPos()
@@ -245,12 +243,14 @@ export class TransformGizmo
 
     get gridXUnit()
     {
-        return 10 * this.rootContainer.scale.x;
+        // return 10 * this.rootContainer.scale.x;
+        return 10;
     }
 
     get gridYUnit()
     {
-        return 10 * this.rootContainer.scale.y;
+        // return 10 * this.rootContainer.scale.y;
+        return 10;
     }
 
     public get isVisible()
@@ -323,16 +323,6 @@ export class TransformGizmo
         this.vertex = vertex;
     }
 
-    public getLocalPoint(globalX: number, globalY: number)
-    {
-        return this.matrix.applyInverse({ x: globalX, y: globalY });
-    }
-
-    public getGlobalPoint(localX: number, localY: number)
-    {
-        return this.matrix.apply({ x: localX, y: localY });
-    }
-
     public constrainLocalPoint(localPoint: {x: number; y: number})
     {
         const { initialTransform: { width, height } } = this;
@@ -345,14 +335,14 @@ export class TransformGizmo
     {
         this.updateTransform();
 
-        const p1 = this.getGlobalPoint(localX, localY);
+        const p1 = this.localTransform.apply({ x: localX, y: localY });
 
         this.transform.pivot.x = localX;
         this.transform.pivot.y = localY;
 
         this.updateTransform();
 
-        const p2 = this.getGlobalPoint(localX, localY);
+        const p2 = this.localTransform.apply({ x: localX, y: localY });
 
         const deltaX = p1.x - p2.x;
         const deltaY = p1.y - p2.y;
@@ -367,9 +357,12 @@ export class TransformGizmo
 
         if (dragInfo)
         {
-            const globalX = event.data.global.x;
-            const globalY = event.data.global.y;
-            const { x: localX, y: localY } = this.getLocalPoint(globalX, globalY);
+            const parentMatrix = this.parent.worldTransform;
+            const eventGlobalX = event.data.global.x;
+            const eventGlobalY = event.data.global.y;
+            const globalPoint = { x: eventGlobalX, y: eventGlobalY };
+            const { x: globalX, y: globalY } = parentMatrix.applyInverse(globalPoint);
+            const { x: localX, y: localY } = this.worldTransform.applyInverse(globalPoint);
 
             dragInfo.globalX = globalX;
             dragInfo.globalY = globalY;
@@ -480,7 +473,7 @@ export class TransformGizmo
         this.clearOperation();
         this.updateSelectedModels();
 
-        (this.rootContainer as any).pause = false;
+        this.emit('mouseup');
     };
 
     public clearOperation()
@@ -496,23 +489,6 @@ export class TransformGizmo
         return getTotalGlobalBounds(this.selection.nodes);
     }
 
-    get superMatrix()
-    {
-        const { matrix, rootContainer } = this;
-
-        const m = new Matrix();
-
-        m.append(rootContainer.localTransform);
-        m.append(matrix);
-
-        return m;
-    }
-
-    get matrix()
-    {
-        return this.transform.localTransform.clone();
-    }
-
     public update()
     {
         if (this.selection.isEmpty)
@@ -520,6 +496,7 @@ export class TransformGizmo
             return;
         }
 
+        this.transform.updateLocalTransform();
         this.updateTransform();
         this.updateSelectedTransforms();
         this.frame.update();
@@ -530,11 +507,22 @@ export class TransformGizmo
         }
     }
 
+    get matrix()
+    {
+        const m = this.worldTransform.clone();
+        // const parentMatrix = this.parent.worldTransform.clone();
+
+        // parentMatrix.invert();
+        // m.prepend(parentMatrix);
+
+        return m;
+    }
+
     public onRootContainerChanged()
     {
         if (this.selection.isSingle)
         {
-            this.selectSingleNode(this.selection.nodes[0]);
+            // this.selectSingleNode(this.selection.nodes[0]);
         }
         else if (this.selection.isMulti)
         {
@@ -544,15 +532,14 @@ export class TransformGizmo
         this.update();
     }
 
-    public updateTransform()
-    {
-        this.rootContainer.updateTransform();
-        this.transform.updateLocalTransform();
-    }
+    // public updateTransform()
+    // {
+    //     this.transform.updateLocalTransform();
+    // }
 
     public selectSingleNode<T extends DisplayObjectNode>(node: T)
     {
-        this.initTransform(getGizmoInitialTransformFromView(node));
+        this.initTransform(getGizmoInitialTransformFromView(node, this.parent.worldTransform));
 
         this.initNode(node);
 
@@ -598,7 +585,6 @@ export class TransformGizmo
     {
         this.initialTransform = transform;
 
-        this.transform = new Transform();
         this.transform.pivot.x = transform.pivotX;
         this.transform.pivot.y = transform.pivotY;
         this.transform.position.x = transform.x;
@@ -632,7 +618,9 @@ export class TransformGizmo
 
     protected updateSelectedTransforms()
     {
-        const { matrix: thisMatrix, selection } = this;
+        const { worldTransform, selection } = this;
+        const thisMatrix = worldTransform.clone();
+        const parentMatrix = this.parent.worldTransform;
 
         if (selection.length === 1)
         {
@@ -640,6 +628,7 @@ export class TransformGizmo
             const view = node.getView();
             const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
 
+            thisMatrix.prepend(parentMatrix.clone().invert());
             thisMatrix.prepend(this.initialTransform.matrix.clone().invert());
             cachedMatrix.append(thisMatrix);
 

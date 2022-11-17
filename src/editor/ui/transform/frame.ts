@@ -108,14 +108,14 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
 
     public getGlobalBounds()
     {
-        const { gizmo: { selection }, gizmo } = this;
+        const { gizmo: { selection }, gizmo, matrix } = this;
 
         if (selection.length === 0)
         {
             return Rectangle.EMPTY;
         }
 
-        const { matrix, initialTransform: { width, height } } = gizmo;
+        const { initialTransform: { width, height } } = gizmo;
         const p1 = matrix.apply({ x: 0, y: 0 });
         const p2 = matrix.apply({ x: width, y: 0 });
         const p3 = matrix.apply({ x: width, y: height });
@@ -192,7 +192,8 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
     protected drawHandles()
     {
         const {
-            gizmo, matrix,
+            gizmo,
+            matrix,
             topLeftHandle, topRightHandle, bottomRightHandle, bottomLeftHandle,
             topCenterHandle, rightCenterHandle, bottomCenterHandle, leftCenterHandle,
             primaryHandles, secondaryHandles,

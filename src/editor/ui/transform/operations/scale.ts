@@ -92,7 +92,6 @@ export abstract class ScaleOperation extends TransformOperation<
         const localY = (height * yFrac) + top;
 
         this.gizmo.updateTransform();
-
         gizmo.setPivot(localX, localY);
     }
 

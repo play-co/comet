@@ -51,7 +51,7 @@ export function updateTransforms(view: DisplayObject)
     }
 }
 
-export function getGizmoInitialTransformFromView(node: DisplayObjectNode): InitialGizmoTransform
+export function getGizmoInitialTransformFromView(node: DisplayObjectNode, parentMatrix: Matrix): InitialGizmoTransform
 {
     const view = node.view;
     const { worldTransform } = view;
@@ -59,6 +59,8 @@ export function getGizmoInitialTransformFromView(node: DisplayObjectNode): Initi
     updateTransforms(view);
 
     const matrix = worldTransform.clone();
+
+    matrix.prepend(parentMatrix.clone().invert());
 
     const transform = new Transform();
 

@@ -1,6 +1,7 @@
 import { Cache } from '../core/cache';
 import { getGlobalEmitter } from '../core/events';
 import type { ClonableNode } from '../core/nodes/abstract/clonableNode';
+import type { DisplayObjectNode } from '../core/nodes/abstract/displayObject';
 import type { ContainerNode } from '../core/nodes/concrete/container';
 import { ProjectNode } from '../core/nodes/concrete/project';
 import { clearInstances, getInstance } from '../core/nodes/instances';
@@ -100,6 +101,18 @@ export class Application
         {
             await this.createProject('Test', 'test');
         }
+
+        const nodes: DisplayObjectNode[] = [];
+
+        this.project.walk<DisplayObjectNode>((node) =>
+        {
+            if (!node.isMetaNode)
+            {
+                nodes.push(node);
+            }
+        });
+
+        // this.selection.add(nodes[0].cast<DisplayObjectNode>());
     }
 
     public async createProject(name: string, id: string)

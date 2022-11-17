@@ -7,7 +7,9 @@ export class RotateOperation extends TransformOperation<'rotation' | 'dragAngle'
     public init(dragInfo: DragInfo): void
     {
         const p = this.gizmo.pivotGlobalPos;
-        const dragAngle = angleBetween(p.x, p.y, dragInfo.globalX, dragInfo.globalY);
+        const globalX = dragInfo.event.data.global.x;
+        const globalY = dragInfo.event.data.global.y;
+        const dragAngle = angleBetween(p.x, p.y, globalX, globalY);
 
         this.writeCache('rotation', this.gizmo.rotation);
         this.writeCache('dragAngle', dragAngle);
@@ -16,7 +18,9 @@ export class RotateOperation extends TransformOperation<'rotation' | 'dragAngle'
     public drag(dragInfo: DragInfo): void
     {
         const p = this.gizmo.pivotGlobalPos;
-        const dragAngle = angleBetween(p.x, p.y, dragInfo.globalX, dragInfo.globalY);
+        const globalX = dragInfo.event.data.global.x;
+        const globalY = dragInfo.event.data.global.y;
+        const dragAngle = angleBetween(p.x, p.y, globalX, globalY);
         const delta = dragAngle - this.readCache('dragAngle');
 
         let rotation = this.readCache('rotation') + delta;
