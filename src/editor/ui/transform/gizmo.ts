@@ -510,32 +510,14 @@ export class TransformGizmo extends Container
     get matrix()
     {
         const m = this.worldTransform.clone();
-        // const parentMatrix = this.parent.worldTransform.clone();
-
-        // parentMatrix.invert();
-        // m.prepend(parentMatrix);
 
         return m;
     }
 
     public onRootContainerChanged()
     {
-        if (this.selection.isSingle)
-        {
-            // this.selectSingleNode(this.selection.nodes[0]);
-        }
-        else if (this.selection.isMulti)
-        {
-            // this.selectMultipleNodes(this.selection.nodes, true);
-
-        }
         this.update();
     }
-
-    // public updateTransform()
-    // {
-    //     this.transform.updateLocalTransform();
-    // }
 
     public selectSingleNode<T extends DisplayObjectNode>(node: T)
     {
@@ -552,12 +534,18 @@ export class TransformGizmo extends Container
 
     public selectMultipleNodes<T extends DisplayObjectNode>(nodes: T[])
     {
-        const rect = getTotalGlobalBounds(nodes);
+        let rect = getTotalGlobalBounds(nodes);
+
+        const p1 = this.parent.worldTransform.applyInverse({ x: rect.left, y: rect.top });
+        const p2 = this.parent.worldTransform.applyInverse({ x: rect.right, y: rect.bottom });
+
+        rect = new Rectangle(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
         const centerX = rect.width * 0.5;
         const centerY = rect.height * 0.5;
 
         const matrix = new Matrix();
 
+        // matrix.prepend(this.parent.worldTransform.clone().invert());
         matrix.translate(rect.left, rect.top);
 
         this.initTransform({
@@ -619,11 +607,12 @@ export class TransformGizmo extends Container
     protected updateSelectedTransforms()
     {
         const { worldTransform, selection } = this;
-        const thisMatrix = worldTransform.clone();
+
         const parentMatrix = this.parent.worldTransform;
 
         if (selection.length === 1)
         {
+            const thisMatrix = worldTransform.clone();
             const node = selection.nodes[0];
             const view = node.getView();
             const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
@@ -638,10 +627,12 @@ export class TransformGizmo extends Container
         {
             selection.forEach((node) =>
             {
+                const thisMatrix = worldTransform.clone();
                 const view = node.getView();
                 const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
 
                 cachedMatrix.prepend(this.initialTransform.matrix.clone().invert());
+                // cachedMatrix.prepend(parentMatrix.clone().invert());
                 cachedMatrix.prepend(thisMatrix);
 
                 if (view.parent)
