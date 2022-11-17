@@ -532,6 +532,15 @@ export class TransformGizmo
 
     public onRootContainerChanged()
     {
+        if (this.selection.isSingle)
+        {
+            this.selectSingleNode(this.selection.nodes[0]);
+        }
+        else if (this.selection.isMulti)
+        {
+            // this.selectMultipleNodes(this.selection.nodes, true);
+
+        }
         this.update();
     }
 

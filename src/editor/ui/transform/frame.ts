@@ -63,6 +63,11 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
         this.initEvents();
     }
 
+    protected get matrix()
+    {
+        return this.gizmo.matrix;
+    }
+
     protected createHandle(size: number, h: HandleVertexHorizontal, v: HandleVertexVertical, isPrimary = true)
     {
         const vertex = { h, v };
@@ -99,11 +104,6 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
             .on('mousemove', this.gizmo.onMouseMove);
 
         window.addEventListener('mouseup', this.gizmo.onMouseUp);
-    }
-
-    protected get matrix()
-    {
-        return this.gizmo.matrix;
     }
 
     public getGlobalBounds()
