@@ -60,7 +60,7 @@ export class EditableView
 
         viewport.addChild(gridLayer);
         viewport.addChild(nodeLayer);
-        viewport.addChild(editLayer);
+        pixi.stage.addChild(editLayer);
 
         gridLayer.addChild(Grid.createTilingSprite(screen.availWidth, screen.availHeight));
         nodeLayer.addChild(rootNode.view);
@@ -69,12 +69,18 @@ export class EditableView
         // set selection
         viewport
             .on('mousedown', this.onMouseDown)
-            .on('mouseup', this.onMouseUp);
+            .on('mouseup', this.onMouseUp)
+            .on('moved', this.onViewportChanged);
 
         viewport
             .drag()
             .pinch()
             .wheel();
+
+        viewport.x = 100;
+        viewport.y = 100;
+        viewport.scale.x = 2;
+        viewport.scale.y = 2;
     }
 
     protected wasDoubleClick()
@@ -143,6 +149,11 @@ export class EditableView
     protected onMouseUp = () =>
     {
         this.viewport.pause = false;
+    };
+
+    protected onViewportChanged = () =>
+    {
+        this.transformGizmo.onRootContainerChanged();
     };
 
     protected selectWithDrag(selectedNode: DisplayObjectNode, e: InteractionEvent)

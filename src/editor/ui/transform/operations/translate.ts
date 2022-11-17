@@ -13,6 +13,7 @@ export class TranslateOperation extends TransformOperation<'x' | 'y' | 'globalX'
 
     public drag(dragInfo: DragInfo): void
     {
+        const { gizmo: { gridXUnit, gridYUnit } } = this;
         const deltaX = dragInfo.globalX - this.readCache('globalX');
         const deltaY = dragInfo.globalY - this.readCache('globalY');
 
@@ -21,8 +22,8 @@ export class TranslateOperation extends TransformOperation<'x' | 'y' | 'globalX'
 
         if (dragInfo.isShiftDown)
         {
-            x = snapToIncrement(x, 10);
-            y = snapToIncrement(y, 10);
+            x = snapToIncrement(x, gridXUnit);
+            y = snapToIncrement(y, gridYUnit);
         }
 
         this.gizmo.x = x;

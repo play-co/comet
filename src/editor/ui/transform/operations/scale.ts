@@ -100,7 +100,7 @@ export abstract class ScaleOperation extends TransformOperation<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected setScale(dragInfo: DragInfo, delta: Point)
     {
-        const { gizmo, gizmo: { vertex: v, initialTransform } } = this;
+        const { gizmo, gizmo: { vertex: v, initialTransform, gridXUnit, gridYUnit } } = this;
         const vertex = `${v.h}-${v.v}`;
         const width = this.readCache('width');
         const height = this.readCache('height');
@@ -154,8 +154,8 @@ export abstract class ScaleOperation extends TransformOperation<
         {
             const w = initialTransform.naturalWidth * scaleX;
             const h = initialTransform.naturalHeight * scaleY;
-            const snappedW = snapToIncrement(w, 10);
-            const snappedH = snapToIncrement(h, 10);
+            const snappedW = snapToIncrement(w, gridXUnit);
+            const snappedH = snapToIncrement(h, gridYUnit);
             const deltaH = snappedW / w;
             const deltaV = snappedH / h;
 
