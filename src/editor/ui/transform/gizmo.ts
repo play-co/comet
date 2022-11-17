@@ -243,13 +243,11 @@ export class TransformGizmo extends Container
 
     get gridXUnit()
     {
-        // return 10 * this.rootContainer.scale.x;
         return 10;
     }
 
     get gridYUnit()
     {
-        // return 10 * this.rootContainer.scale.y;
         return 10;
     }
 
@@ -545,7 +543,6 @@ export class TransformGizmo extends Container
 
         const matrix = new Matrix();
 
-        // matrix.append(this.parent.worldTransform.clone());
         matrix.translate(rect.left, rect.top);
 
         this.initTransform({
@@ -593,7 +590,7 @@ export class TransformGizmo extends Container
 
         const cachedMatrix = view.worldTransform.clone();
 
-        if (view.parent && this.selection.length === 1)
+        if (this.selection.length === 1)
         {
             const parentMatrix = view.parent.worldTransform.clone();
 
@@ -608,11 +605,11 @@ export class TransformGizmo extends Container
     {
         const { worldTransform, selection } = this;
 
+        const thisMatrix = worldTransform.clone();
         const parentMatrix = this.parent.worldTransform;
 
         if (selection.length === 1)
         {
-            const thisMatrix = worldTransform.clone();
             const node = selection.nodes[0];
             const view = node.getView();
             const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
@@ -628,13 +625,12 @@ export class TransformGizmo extends Container
         {
             selection.forEach((node) =>
             {
-                const thisMatrix = this.worldTransform.clone();
                 const view = node.getView();
                 const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
 
+                cachedMatrix.prepend(this.parent.worldTransform.clone().invert());
                 cachedMatrix.prepend(this.initialTransform.matrix.clone().invert());
                 cachedMatrix.prepend(thisMatrix);
-                cachedMatrix.prepend(parentMatrix.clone().invert());
                 cachedMatrix.prepend(view.parent.worldTransform.clone().invert());
 
                 view.transform.setFromMatrix(cachedMatrix);
