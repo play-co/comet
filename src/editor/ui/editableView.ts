@@ -26,6 +26,8 @@ export class EditableView
 
     constructor(rootNode: ContainerNode)
     {
+        this.rootNode = rootNode;
+
         // create canvas and pixi context
         const canvas = this.canvas = document.createElement('canvas');
 
@@ -43,7 +45,13 @@ export class EditableView
             interaction: pixi.renderer.plugins.interaction,
         });
 
-        this.rootNode = rootNode;
+        pixi.stage.addChild(viewport);
+
+        viewport.x = 100;
+        viewport.y = 100;
+        viewport.scale.x = 2;
+        viewport.scale.y = 2;
+
         this.transformGizmo = new TransformGizmo({
             rootContainer: viewport,
         });
@@ -55,8 +63,6 @@ export class EditableView
         const editLayer = this.editLayer = new Container();
 
         (window as any).stage = pixi.stage;
-
-        pixi.stage.addChild(viewport);
 
         viewport.addChild(gridLayer);
         viewport.addChild(nodeLayer);
@@ -76,11 +82,6 @@ export class EditableView
             .drag()
             .pinch()
             .wheel();
-
-        viewport.x = 100;
-        viewport.y = 100;
-        viewport.scale.x = 2;
-        viewport.scale.y = 2;
     }
 
     protected wasDoubleClick()

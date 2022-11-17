@@ -243,6 +243,16 @@ export class TransformGizmo
         this.transform.scale.y = y;
     }
 
+    get gridXUnit()
+    {
+        return 10 * this.rootContainer.scale.x;
+    }
+
+    get gridYUnit()
+    {
+        return 10 * this.rootContainer.scale.y;
+    }
+
     public get isVisible()
     {
         return this.frame.container.visible;
@@ -486,6 +496,23 @@ export class TransformGizmo
         return getTotalGlobalBounds(this.selection.nodes);
     }
 
+    get superMatrix()
+    {
+        const { matrix, rootContainer } = this;
+
+        const m = new Matrix();
+
+        m.append(rootContainer.localTransform);
+        m.append(matrix);
+
+        return m;
+    }
+
+    get matrix()
+    {
+        return this.transform.localTransform.clone();
+    }
+
     public update()
     {
         if (this.selection.isEmpty)
@@ -592,23 +619,6 @@ export class TransformGizmo
         }
 
         this.matrixCache.set(node, cachedMatrix);
-    }
-
-    get gridXUnit()
-    {
-        return 10 * this.rootContainer.scale.x;
-    }
-
-    get gridYUnit()
-    {
-        return 10 * this.rootContainer.scale.y;
-    }
-
-    get matrix()
-    {
-        const matrix = this.transform.localTransform.clone();
-
-        return matrix;
     }
 
     protected updateSelectedTransforms()
