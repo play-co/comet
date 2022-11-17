@@ -469,6 +469,8 @@ export class TransformGizmo
 
         this.clearOperation();
         this.updateSelectedModels();
+
+        (this.rootContainer as any).pause = false;
     };
 
     public clearOperation()
@@ -486,6 +488,11 @@ export class TransformGizmo
 
     public update()
     {
+        if (this.selection.isEmpty)
+        {
+            return;
+        }
+
         this.updateTransform();
         this.updateSelectedTransforms();
         this.frame.update();
@@ -496,8 +503,14 @@ export class TransformGizmo
         }
     }
 
+    public onRootContainerChanged()
+    {
+        this.update();
+    }
+
     public updateTransform()
     {
+        this.rootContainer.updateTransform();
         this.transform.updateLocalTransform();
     }
 
@@ -581,20 +594,26 @@ export class TransformGizmo
         this.matrixCache.set(node, cachedMatrix);
     }
 
+    get gridXUnit()
+    {
+        return 10 * this.rootContainer.scale.x;
+    }
+
+    get gridYUnit()
+    {
+        return 10 * this.rootContainer.scale.y;
+    }
+
     get matrix()
     {
-        const rootMatrix = this.rootContainer.worldTransform;
         const matrix = this.transform.localTransform.clone();
-
-        matrix.prepend(rootMatrix.clone().invert());
 
         return matrix;
     }
 
     protected updateSelectedTransforms()
     {
-        const { matrix: thisMatrix, selection, rootContainer } = this;
-        const rootMatrix = rootContainer.localTransform;
+        const { matrix: thisMatrix, selection } = this;
 
         if (selection.length === 1)
         {
@@ -603,7 +622,6 @@ export class TransformGizmo
             const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
 
             thisMatrix.prepend(this.initialTransform.matrix.clone().invert());
-            // thisMatrix.prepend(rootMatrix.clone().invert());
             cachedMatrix.append(thisMatrix);
 
             view.transform.setFromMatrix(cachedMatrix);
@@ -620,10 +638,7 @@ export class TransformGizmo
 
                 if (view.parent)
                 {
-                    const parentMatrix = view.parent.worldTransform.clone();
-
-                    parentMatrix.invert();
-                    cachedMatrix.prepend(parentMatrix);
+                    cachedMatrix.prepend(view.parent.worldTransform.clone().invert());
                 }
 
                 view.transform.setFromMatrix(cachedMatrix);
