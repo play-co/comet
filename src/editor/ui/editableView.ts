@@ -117,7 +117,8 @@ export class EditableView
             }
             else
             {
-                const selectedNode = topNode.getCloneRoot().cast<DisplayObjectNode>();
+                // const selectedNode = topNode.getCloneRoot().cast<DisplayObjectNode>();
+                const selectedNode = topNode;
 
                 if (e.data.originalEvent.shiftKey || e.data.originalEvent.metaKey)
                 {

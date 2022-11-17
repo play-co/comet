@@ -593,8 +593,7 @@ export class TransformGizmo extends Container
 
         const cachedMatrix = view.worldTransform.clone();
 
-        // if (view.parent && this.selection.length === 1)
-        if (view.parent && this.selection.length > 0)
+        if (view.parent && this.selection.length === 1)
         {
             const parentMatrix = view.parent.worldTransform.clone();
 
@@ -618,8 +617,6 @@ export class TransformGizmo extends Container
             const view = node.getView();
             const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
 
-            // cachedMatrix.prepend(view.parent.worldTransform.clone().invert());
-
             thisMatrix.prepend(parentMatrix.clone().invert());
             thisMatrix.prepend(this.initialTransform.matrix.clone().invert());
 
@@ -638,6 +635,7 @@ export class TransformGizmo extends Container
                 cachedMatrix.prepend(this.initialTransform.matrix.clone().invert());
                 cachedMatrix.prepend(thisMatrix);
                 cachedMatrix.prepend(parentMatrix.clone().invert());
+                cachedMatrix.prepend(view.parent.worldTransform.clone().invert());
 
                 view.transform.setFromMatrix(cachedMatrix);
             });
