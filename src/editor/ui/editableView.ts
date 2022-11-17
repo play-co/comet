@@ -119,7 +119,7 @@ export class EditableView
             {
                 const selectedNode = topNode.getCloneRoot().cast<DisplayObjectNode>();
 
-                if (e.data.originalEvent.shiftKey)
+                if (e.data.originalEvent.shiftKey || e.data.originalEvent.metaKey)
                 {
                     // add to selection
                     selection.add(topNode);

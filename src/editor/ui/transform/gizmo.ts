@@ -545,7 +545,7 @@ export class TransformGizmo extends Container
 
         const matrix = new Matrix();
 
-        // matrix.prepend(this.parent.worldTransform.clone().invert());
+        // matrix.append(this.parent.worldTransform.clone());
         matrix.translate(rect.left, rect.top);
 
         this.initTransform({
@@ -593,7 +593,8 @@ export class TransformGizmo extends Container
 
         const cachedMatrix = view.worldTransform.clone();
 
-        if (view.parent && this.selection.length === 1)
+        // if (view.parent && this.selection.length === 1)
+        if (view.parent && this.selection.length > 0)
         {
             const parentMatrix = view.parent.worldTransform.clone();
 
@@ -617,8 +618,11 @@ export class TransformGizmo extends Container
             const view = node.getView();
             const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
 
+            // cachedMatrix.prepend(view.parent.worldTransform.clone().invert());
+
             thisMatrix.prepend(parentMatrix.clone().invert());
             thisMatrix.prepend(this.initialTransform.matrix.clone().invert());
+
             cachedMatrix.append(thisMatrix);
 
             view.transform.setFromMatrix(cachedMatrix);
@@ -627,18 +631,13 @@ export class TransformGizmo extends Container
         {
             selection.forEach((node) =>
             {
-                const thisMatrix = worldTransform.clone();
+                const thisMatrix = this.worldTransform.clone();
                 const view = node.getView();
                 const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
 
                 cachedMatrix.prepend(this.initialTransform.matrix.clone().invert());
-                // cachedMatrix.prepend(parentMatrix.clone().invert());
                 cachedMatrix.prepend(thisMatrix);
-
-                if (view.parent)
-                {
-                    cachedMatrix.prepend(view.parent.worldTransform.clone().invert());
-                }
+                cachedMatrix.prepend(parentMatrix.clone().invert());
 
                 view.transform.setFromMatrix(cachedMatrix);
             });
