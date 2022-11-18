@@ -19,7 +19,7 @@ export interface TransformGizmoConfig
     handleSecondarySize: number;
 }
 
-export const defaultTransformGizmoConfig: TransformGizmoConfig = {
+export const defaultTransformGizmoConfig: Omit<TransformGizmoConfig, 'container'> = {
     showEncompassingBorder: true,
     showTransformBorder: true,
     showPrimaryHandles: true,

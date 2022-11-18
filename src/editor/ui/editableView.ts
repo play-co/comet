@@ -53,12 +53,12 @@ export class EditableView
         viewport.scale.x = 2;
         viewport.scale.y = 2;
 
-        const gizmo = this.transformGizmo = new TransformGizmo();
-
         // create layers
         const gridLayer = this.gridLayer = new Container();
         const nodeLayer = this.nodeLayer = new Container();
         const editLayer = this.editLayer = new Container();
+
+        const gizmo = this.transformGizmo = new TransformGizmo(pixi.stage);
 
         viewport.addChild(gridLayer);
         viewport.addChild(nodeLayer);

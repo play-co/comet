@@ -1,5 +1,5 @@
 import type { InteractionEvent } from 'pixi.js';
-import { Container, Matrix, Rectangle, Transform } from 'pixi.js';
+import { Container, Graphics, Matrix, Rectangle, Transform } from 'pixi.js';
 
 import { getGlobalEmitter } from '../../../core/events';
 import type { DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
@@ -33,6 +33,7 @@ const globalEmitter = getGlobalEmitter<DatastoreEvent & CommandEvent & Selection
 
 export class TransformGizmo extends Container
 {
+    public stage: Container;
     public config: TransformGizmoConfig;
 
     public visualPivot?: Point;
@@ -45,9 +46,11 @@ export class TransformGizmo extends Container
     public operation?: TransformOperation;
     public dragInfo?: DragInfo;
 
-    constructor(config: Partial<TransformGizmoConfig> = {})
+    constructor(stage: Container, config: Partial<TransformGizmoConfig> = {})
     {
         super();
+
+        this.stage = stage;
 
         this.config = {
             ...defaultTransformGizmoConfig,
@@ -87,7 +90,8 @@ export class TransformGizmo extends Container
         }
         else if (isMulti)
         {
-            this.selectMultipleNodes(nodes);
+            // this.selectMultipleNodes(nodes);
+            this.selectNodes(nodes);
         }
         else if (isEmpty)
         {
@@ -110,7 +114,7 @@ export class TransformGizmo extends Container
     {
         const { selection: { nodes } } = Application.instance;
 
-        this.selectSingleNode(nodes[0]);
+        this.selectNode(nodes[0]);
     }
 
     get isVertexDrag()
@@ -517,15 +521,46 @@ export class TransformGizmo extends Container
         this.update();
     }
 
-    public selectSingleNode<T extends DisplayObjectNode>(node: T)
+    public selectNode<T extends DisplayObjectNode>(node: T)
     {
-        this.initTransform(getGizmoInitialTransformFromView(node, this.parent.worldTransform));
+        const transformInfo = getGizmoInitialTransformFromView(node.view, node.naturalWidth, node.naturalWidth, this.parent.worldTransform);
 
+        this.initTransform(transformInfo);
         this.initNode(node);
 
-        this.setConfig({
-            pivotView: bluePivot,
-        });
+        this.setConfig({ pivotView: bluePivot });
+
+        this.update();
+    }
+
+    public selectNodes<T extends DisplayObjectNode>(nodes: T[])
+    {
+        const rect = getTotalGlobalBounds(nodes);
+
+        const container = new Container();
+        const graphics = new Graphics();
+
+        graphics.beginFill(0xffffff, 0.5);
+        graphics.drawRect(0, 0, rect.width, rect.height);
+        graphics.endFill();
+
+        container.pivot.x = rect.width * 0.5;
+        container.pivot.y = rect.height * 0.5;
+        container.x = rect.left + container.pivot.x;
+        container.y = rect.top + container.pivot.y;
+
+        container.addChild(graphics);
+        this.stage.addChild(container);
+
+        const transformInfo = getGizmoInitialTransformFromView(container, rect.width, rect.height, this.parent.worldTransform);
+
+        this.stage.removeChild(container);
+
+        this.initTransform(transformInfo);
+
+        nodes.forEach((node) => this.initNode(node));
+
+        this.setConfig({ pivotView: yellowPivot });
 
         this.update();
     }
@@ -590,7 +625,8 @@ export class TransformGizmo extends Container
 
         const cachedMatrix = view.worldTransform.clone();
 
-        if (this.selection.length === 1)
+        // if (this.selection.length === 1)
+        if (this.selection.length > 0)
         {
             const parentMatrix = view.parent.worldTransform.clone();
 
@@ -603,40 +639,30 @@ export class TransformGizmo extends Container
 
     protected updateSelectedTransforms()
     {
-        const { worldTransform, selection } = this;
+        const { selection } = this;
 
-        const thisMatrix = worldTransform.clone();
+        selection.forEach((node) =>
+        {
+            this.updateNodeTransform(node);
+        });
+    }
+
+    protected updateNodeTransform(node: DisplayObjectNode)
+    {
+        const { worldTransform } = this;
+
+        const matrix = worldTransform.clone();
         const parentMatrix = this.parent.worldTransform;
 
-        if (selection.length === 1)
-        {
-            const node = selection.nodes[0];
-            const view = node.getView();
-            const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
+        const view = node.getView();
+        const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
 
-            thisMatrix.prepend(parentMatrix.clone().invert());
-            thisMatrix.prepend(this.initialTransform.matrix.clone().invert());
+        matrix.prepend(parentMatrix.clone().invert());
+        matrix.prepend(this.initialTransform.matrix.clone().invert());
 
-            cachedMatrix.append(thisMatrix);
+        cachedMatrix.append(matrix);
 
-            view.transform.setFromMatrix(cachedMatrix);
-        }
-        else
-        {
-            selection.forEach((node) =>
-            {
-                // todo: can we use single mode, and for multi just setup a single transform from global bounding box?
-                const view = node.getView();
-                const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
-
-                cachedMatrix.prepend(this.parent.worldTransform.clone().invert());
-                cachedMatrix.prepend(this.initialTransform.matrix.clone().invert());
-                cachedMatrix.prepend(thisMatrix);
-                cachedMatrix.prepend(view.parent.worldTransform.clone().invert());
-
-                view.transform.setFromMatrix(cachedMatrix);
-            });
-        }
+        view.transform.setFromMatrix(cachedMatrix);
     }
 
     protected updateSelectedModels()

@@ -51,9 +51,13 @@ export function updateTransforms(view: DisplayObject)
     }
 }
 
-export function getGizmoInitialTransformFromView(node: DisplayObjectNode, parentMatrix: Matrix): InitialGizmoTransform
+export function getGizmoInitialTransformFromView(
+    view: DisplayObject,
+    naturalWidth: number,
+    naturalHeight: number,
+    parentMatrix: Matrix,
+): InitialGizmoTransform
 {
-    const view = node.view;
     const { worldTransform } = view;
 
     updateTransforms(view);
@@ -65,9 +69,6 @@ export function getGizmoInitialTransformFromView(node: DisplayObjectNode, parent
     const transform = new Transform();
 
     decomposeTransform(transform, matrix, undefined, view.pivot);
-
-    const naturalWidth = node.naturalWidth;
-    const naturalHeight = node.naturalHeight;
 
     const localBounds = view.getLocalBounds();
 
