@@ -633,10 +633,11 @@ export class TransformGizmo extends Container
 
                 const matrix = new Matrix();
 
-                matrix.append(this.localTransform);
-                matrix.append(this.initialTransform.localMatrix.clone().invert());
+                matrix.append(view.parent.worldTransform.clone().invert());
+                matrix.append(this.worldTransform);
+                matrix.append(this.initialTransform.worldMatrix.clone().invert());
 
-                matrix.append(cachedMatrix.local);
+                matrix.append(cachedMatrix.world);
 
                 view.transform.setFromMatrix(matrix);
             });
@@ -647,7 +648,6 @@ export class TransformGizmo extends Container
     {
         const { selection } = this;
 
-        return;
         selection.forEach((node) =>
         {
             const view = node.view;
