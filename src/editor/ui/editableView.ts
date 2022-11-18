@@ -2,12 +2,16 @@ import type { InteractionEvent } from 'pixi.js';
 import { Application as PixiApplication, Container } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 
+import { getGlobalEmitter } from '../../core/events';
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObject';
 import type { ContainerNode } from '../../core/nodes/concrete/container';
 import { Application } from '../application';
+import type { GlobalKeyboardEvent } from '../events/keyboardEvents';
 import Grid from './grid';
 import { isKeyPressed } from './keyboard';
 import { TransformGizmo } from './transform/gizmo';
+
+const globalEmitter = getGlobalEmitter<GlobalKeyboardEvent>();
 
 export class EditableView
 {
@@ -63,6 +67,20 @@ export class EditableView
             .drag()
             .pinch()
             .wheel();
+
+        globalEmitter.on('key.down', (e) =>
+        {
+            if (e.key === ' ')
+            {
+                viewport.cursor = 'grab';
+            }
+        }).on('key.up', (e) =>
+        {
+            if (e.key === ' ')
+            {
+                viewport.cursor = 'default';
+            }
+        });
     }
 
     protected onDblClick = (e: InteractionEvent) =>
@@ -134,12 +152,14 @@ export class EditableView
     protected onMouseUp = () =>
     {
         this.viewport.pause = false;
+        this.viewport.cursor = 'default';
     };
 
     protected onViewportChanged = () =>
     {
         this.viewport.updateTransform();
         this.transformGizmo.onRootContainerChanged();
+        this.viewport.cursor = 'grabbing';
     };
 
     protected selectWithDrag(selectedNode: DisplayObjectNode, e: InteractionEvent)

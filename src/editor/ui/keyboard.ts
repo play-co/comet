@@ -9,9 +9,12 @@ window.addEventListener('keydown', (e: KeyboardEvent) =>
 {
     const { key } = e;
 
-    keyMap.set(key, true);
+    if (!keyMap.has(key))
+    {
+        keyMap.set(key, true);
 
-    globalEmitter.emit('key.down', { key });
+        globalEmitter.emit('key.down', { key });
+    }
 });
 
 window.addEventListener('keyup', (e: KeyboardEvent) =>
