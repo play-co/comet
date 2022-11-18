@@ -3,7 +3,7 @@ import { Container, Graphics, Matrix, Transform } from 'pixi.js';
 
 import { getGlobalEmitter } from '../../../core/events';
 import type { DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
-import { type Point, degToRad, radToDeg } from '../../../core/util/geom';
+import { type Point, degToRad, distanceBetween, radToDeg } from '../../../core/util/geom';
 import { Application } from '../../application';
 import { ModifyModelCommand } from '../../commands/modifyModel';
 import type { CommandEvent } from '../../events/commandEvents';
@@ -578,6 +578,8 @@ export class TransformGizmo extends Container
         this.transform.scale.y = initialTransform.scaleY;
         this.transform.skew.x = initialTransform.skewX;
         this.transform.skew.y = initialTransform.skewY;
+
+        console.log(initialTransform);
     }
 
     protected initNode(node: DisplayObjectNode)
@@ -595,16 +597,28 @@ export class TransformGizmo extends Container
     {
         const { selection } = this;
 
+        // if (selection.length === 1)
+        // {
+        //     return;
+        // }
+
         selection.forEach((node) =>
         {
             const view = node.getView();
             const matrix = new Matrix();
             const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
 
-            matrix.append(view.parent.worldTransform.clone().invert());
-            matrix.append(cachedMatrix);
-            matrix.append(this.initialTransform.matrix.clone().invert());
-            matrix.append(this.worldTransform.clone());
+            const localViewMatrix = new Matrix();
+            const deltaTransformMatrix = new Matrix();
+
+            localViewMatrix.append(view.parent.worldTransform.clone().invert());
+            localViewMatrix.append(cachedMatrix);
+
+            deltaTransformMatrix.append(this.initialTransform.matrix.clone().invert());
+            deltaTransformMatrix.append(this.worldTransform.clone());
+
+            matrix.append(localViewMatrix);
+            matrix.append(deltaTransformMatrix);
 
             view.transform.setFromMatrix(matrix);
         });
@@ -614,6 +628,7 @@ export class TransformGizmo extends Container
     {
         const { selection } = this;
 
+        return;
         selection.forEach((node) =>
         {
             const view = node.view;
