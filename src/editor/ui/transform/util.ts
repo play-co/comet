@@ -20,7 +20,8 @@ export interface InitialGizmoTransform
     scaleY: number;
     skewX: number;
     skewY: number;
-    matrix: Matrix;
+    worldMatrix: Matrix;
+    localMatrix: Matrix;
 }
 
 export function round(num: number, places: number)
@@ -101,7 +102,8 @@ export function getGizmoInitialTransformFromView(
 
     return {
         localBounds,
-        matrix: view.worldTransform.clone(),
+        worldMatrix: view.worldTransform.clone(),
+        localMatrix: view.localTransform.clone(),
         naturalWidth,
         naturalHeight,
         width,
@@ -246,5 +248,6 @@ export const defaultInitialGizmoTransform: InitialGizmoTransform = {
     scaleY: 1,
     skewX: 0,
     skewY: 0,
-    matrix: Matrix.IDENTITY,
+    worldMatrix: Matrix.IDENTITY,
+    localMatrix: Matrix.IDENTITY,
 };

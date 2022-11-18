@@ -122,14 +122,9 @@ export class TransformGizmo extends Container
         this.selectNode(nodes[0]);
     }
 
-    protected getCachedLocalMatrix(node: DisplayObjectNode): Matrix
+    protected getCachedMatrix(node: DisplayObjectNode): MatrixCache
     {
-        return (this.matrixCache.get(node) as MatrixCache).local;
-    }
-
-    protected getCachedWorldMatrix(node: DisplayObjectNode): Matrix
-    {
-        return (this.matrixCache.get(node) as MatrixCache).world;
+        return this.matrixCache.get(node) as MatrixCache;
     }
 
     get isVertexDrag()
@@ -583,6 +578,11 @@ export class TransformGizmo extends Container
         this.transform.skew.x = initialTransform.skewX;
         this.transform.skew.y = initialTransform.skewY;
 
+        // initialTransform.worldMatrix.translate(
+        //     initialTransform.x - (initialTransform.width * 0.5),
+        //     initialTransform.y - (initialTransform.height * 0.5),
+        // );
+
         console.log(initialTransform);
 
         nodes.forEach((node) =>
@@ -612,15 +612,15 @@ export class TransformGizmo extends Container
         {
             const node = selection.nodes[0];
             const view = node.getView();
-            const cachedViewWorldMatrix = this.getCachedWorldMatrix(node);
+            const cachedMatrix = this.getCachedMatrix(node);
 
             const matrix = new Matrix();
 
             matrix.append(view.parent.worldTransform.clone().invert());
-            matrix.append(cachedViewWorldMatrix);
+            matrix.append(cachedMatrix.world);
 
-            matrix.append(this.initialTransform.matrix.clone().invert());
-            matrix.append(this.worldTransform.clone());
+            matrix.append(this.initialTransform.worldMatrix.clone().invert());
+            matrix.append(this.worldTransform);
 
             view.transform.setFromMatrix(matrix);
         }
@@ -629,15 +629,14 @@ export class TransformGizmo extends Container
             selection.forEach((node) =>
             {
                 const view = node.getView();
-                const cachedViewWorldMatrix = this.getCachedWorldMatrix(node);
+                const cachedMatrix = this.getCachedMatrix(node);
 
                 const matrix = new Matrix();
 
-                matrix.append(view.parent.worldTransform.clone().invert());
-                matrix.append(cachedViewWorldMatrix);
+                matrix.append(this.localTransform);
+                matrix.append(this.initialTransform.localMatrix.clone().invert());
 
-                matrix.append(this.initialTransform.matrix.clone().invert());
-                matrix.append(this.worldTransform.clone());
+                matrix.append(cachedMatrix.local);
 
                 view.transform.setFromMatrix(matrix);
             });

@@ -48,10 +48,10 @@ export class EditableView
 
         pixi.stage.addChild(viewport);
 
-        viewport.x = 100;
-        viewport.y = 100;
-        viewport.scale.x = 2;
-        viewport.scale.y = 2;
+        // viewport.x = 100;
+        // viewport.y = 100;
+        // viewport.scale.x = 2;
+        // viewport.scale.y = 2;
 
         // create layers
         const gridLayer = this.gridLayer = new Container();
