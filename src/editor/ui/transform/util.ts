@@ -58,11 +58,9 @@ export function getGizmoInitialTransformFromView(
     parentMatrix: Matrix,
 ): InitialGizmoTransform
 {
-    const { worldTransform } = view;
-
     updateTransforms(view);
 
-    const matrix = worldTransform.clone();
+    const matrix = view.worldTransform.clone();
 
     matrix.prepend(parentMatrix.clone().invert());
 
@@ -103,7 +101,7 @@ export function getGizmoInitialTransformFromView(
 
     return {
         localBounds,
-        matrix: transform.localTransform,
+        matrix: view.worldTransform.clone(),
         naturalWidth,
         naturalHeight,
         width,
