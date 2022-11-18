@@ -21,7 +21,7 @@ window.addEventListener('keyup', (e: KeyboardEvent) =>
 {
     const { key } = e;
 
-    keyMap.set(key, false);
+    keyMap.delete(key);
 
     globalEmitter.emit('key.up', { key });
 });

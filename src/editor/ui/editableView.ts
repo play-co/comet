@@ -79,6 +79,7 @@ export class EditableView
             if (e.key === ' ')
             {
                 viewport.cursor = 'default';
+                viewport.pause = false;
             }
         });
     }

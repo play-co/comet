@@ -2,7 +2,7 @@ import type { DisplayObject } from 'pixi.js';
 import { Graphics, Matrix, Rectangle, Transform } from 'pixi.js';
 
 import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
-import { angleBetween, degToRad } from '../../../core/util/geom';
+import { angleBetween } from '../../../core/util/geom';
 
 export interface InitialGizmoTransform
 {
@@ -31,27 +31,6 @@ export function round(num: number, places: number)
     return Math.round((num + Number.EPSILON) * factor) / factor;
 }
 
-(window as any).round = round;
-
-export function updateTransforms(view: DisplayObject)
-{
-    const views: DisplayObject[] = [view];
-    let ref = view;
-
-    while (ref.parent)
-    {
-        views.push(ref);
-        ref = ref.parent;
-    }
-
-    views.reverse();
-
-    for (const obj of views)
-    {
-        obj.updateTransform();
-    }
-}
-
 export function getGizmoInitialTransformFromView(
     view: DisplayObject,
     naturalWidth: number,
@@ -59,7 +38,7 @@ export function getGizmoInitialTransformFromView(
     parentMatrix: Matrix,
 ): InitialGizmoTransform
 {
-    updateTransforms(view);
+    view.updateTransform();
 
     const matrix = view.worldTransform.clone();
 
@@ -87,18 +66,6 @@ export function getGizmoInitialTransformFromView(
     const scaleY = transform.scale.y;
     const skewX = transform.skew.x;
     const skewY = transform.skew.y;
-
-    transform.scale.x = scaleX;
-    transform.scale.y = scaleY;
-    transform.rotation = degToRad(rotation);
-    transform.pivot.x = pivotX;
-    transform.pivot.y = pivotY;
-    transform.position.x = x;
-    transform.position.y = y;
-    transform.skew.x = skewX;
-    transform.skew.y = skewY;
-
-    transform.updateLocalTransform();
 
     return {
         localBounds,

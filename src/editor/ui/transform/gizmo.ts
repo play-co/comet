@@ -9,6 +9,7 @@ import { ModifyModelCommand } from '../../commands/modifyModel';
 import type { CommandEvent } from '../../events/commandEvents';
 import type { DatastoreEvent } from '../../events/datastoreEvents';
 import type { SelectionEvent } from '../../events/selectionEvents';
+import { isKeyPressed } from '../keyboard';
 import { TransformGizmoFrame } from './frame';
 import type { HandleVertex } from './handle';
 import { type DragInfo, type TransformOperation, defaultDragInfo } from './operation';
@@ -25,7 +26,6 @@ import {
     defaultInitialGizmoTransform,
     getGizmoInitialTransformFromView,
     getTotalGlobalBounds,
-    updateTransforms,
     yellowPivot,
 } from './util';
 
@@ -53,6 +53,9 @@ export class TransformGizmo extends Container
     public operation?: TransformOperation;
     public dragInfo?: DragInfo;
 
+    protected groupSizeContainer: Container;
+    protected groupSizeGraphic: Graphics;
+
     protected lastClick: number;
 
     constructor(stage: Container, config: Partial<TransformGizmoConfig> = {})
@@ -71,6 +74,12 @@ export class TransformGizmo extends Container
         this.frame = new TransformGizmoFrame(this);
         this.vertex = { h: 'none', v: 'none' };
         this.matrixCache = new Map();
+
+        this.groupSizeContainer = new Container();
+        this.groupSizeGraphic = new Graphics();
+        this.groupSizeContainer.addChild(this.groupSizeGraphic);
+        this.groupSizeContainer.visible = false;
+        this.stage.addChild(this.groupSizeContainer);
 
         this.hide();
 
@@ -407,10 +416,14 @@ export class TransformGizmo extends Container
 
     public onMouseDown = (event: InteractionEvent) =>
     {
-        event.stopPropagation();
-
         const isShiftKeyPressed = event.data.originalEvent.shiftKey;
+        const isSpacePressed = isKeyPressed(' ');
         const wasDoubleClick = this.wasDoubleClick() || isShiftKeyPressed;
+
+        if (isSpacePressed)
+        {
+            return;
+        }
 
         if (wasDoubleClick)
         {
@@ -567,24 +580,23 @@ export class TransformGizmo extends Container
     {
         const rect = getTotalGlobalBounds(nodes);
 
-        const container = new Container();
-        const graphics = new Graphics();
+        const { groupSizeContainer, groupSizeGraphic } = this;
 
-        graphics.beginFill(0xffffff, 0.5);
-        graphics.drawRect(0, 0, rect.width, rect.height);
-        graphics.endFill();
+        groupSizeGraphic.clear();
+        groupSizeGraphic.beginFill();
+        groupSizeGraphic.drawRect(0, 0, rect.width, rect.height);
+        groupSizeGraphic.endFill();
 
-        container.pivot.x = rect.width * 0.5;
-        container.pivot.y = rect.height * 0.5;
-        container.x = rect.left + container.pivot.x;
-        container.y = rect.top + container.pivot.y;
-        container.addChild(graphics);
+        groupSizeContainer.pivot.x = rect.width * 0.5;
+        groupSizeContainer.pivot.y = rect.height * 0.5;
+        groupSizeContainer.x = rect.left + groupSizeContainer.pivot.x;
+        groupSizeContainer.y = rect.top + groupSizeContainer.pivot.y;
 
-        this.stage.addChild(container);
+        groupSizeContainer.visible = true;
 
-        const initialTransform = getGizmoInitialTransformFromView(container, rect.width, rect.height, this.parent.worldTransform);
+        const initialTransform = getGizmoInitialTransformFromView(groupSizeContainer, rect.width, rect.height, this.parent.worldTransform);
 
-        this.stage.removeChild(container);
+        groupSizeContainer.visible = false;
 
         this.initNodes(nodes, initialTransform, yellowPivot);
     }
@@ -607,7 +619,7 @@ export class TransformGizmo extends Container
         {
             const view = node.view;
 
-            updateTransforms(view);
+            view.updateTransform();
 
             view.interactive = true;
 
@@ -669,7 +681,7 @@ export class TransformGizmo extends Container
         {
             const view = node.view;
 
-            updateTransforms(view);
+            view.updateTransform();
 
             const pivotX = this.pivotX;
             const pivotY = this.pivotY;
