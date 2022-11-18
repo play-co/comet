@@ -1,5 +1,5 @@
-import type { InteractionEvent } from 'pixi.js';
-import { Container, Graphics, Matrix, Rectangle, Transform } from 'pixi.js';
+import type { InteractionEvent, Matrix } from 'pixi.js';
+import { Container, Graphics, Transform } from 'pixi.js';
 
 import { getGlobalEmitter } from '../../../core/events';
 import type { DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
@@ -565,42 +565,6 @@ export class TransformGizmo extends Container
         this.update();
     }
 
-    public selectMultipleNodes<T extends DisplayObjectNode>(nodes: T[])
-    {
-        let rect = getTotalGlobalBounds(nodes);
-
-        const p1 = this.parent.worldTransform.applyInverse({ x: rect.left, y: rect.top });
-        const p2 = this.parent.worldTransform.applyInverse({ x: rect.right, y: rect.bottom });
-
-        rect = new Rectangle(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
-        const centerX = rect.width * 0.5;
-        const centerY = rect.height * 0.5;
-
-        const matrix = new Matrix();
-
-        matrix.translate(rect.left, rect.top);
-
-        this.initTransform({
-            ...defaultInitialGizmoTransform,
-            localBounds: new Rectangle(0, 0, rect.width, rect.height),
-            matrix,
-            width: rect.width,
-            height: rect.height,
-            naturalWidth: rect.width,
-            naturalHeight: rect.height,
-            x: rect.left + centerX,
-            y: rect.top + centerY,
-            pivotX: centerX,
-            pivotY: centerY,
-        });
-
-        this.selection.forEach((node) => this.initNode(node));
-
-        this.setConfig({ pivotView: yellowPivot });
-
-        this.update();
-    }
-
     protected initTransform(transform: InitialGizmoTransform)
     {
         this.initialTransform = transform;
@@ -621,18 +585,12 @@ export class TransformGizmo extends Container
         const view = node.view;
 
         updateTransforms(view);
+
         view.interactive = true;
 
         const cachedMatrix = view.worldTransform.clone();
 
-        // if (this.selection.length === 1)
-        if (this.selection.length > 0)
-        {
-            const parentMatrix = view.parent.worldTransform.clone();
-
-            parentMatrix.invert();
-            cachedMatrix.prepend(parentMatrix);
-        }
+        cachedMatrix.prepend(view.parent.worldTransform.clone().invert());
 
         this.matrixCache.set(node, cachedMatrix);
     }
@@ -643,26 +601,19 @@ export class TransformGizmo extends Container
 
         selection.forEach((node) =>
         {
-            this.updateNodeTransform(node);
+            const view = node.getView();
+
+            const matrix = this.worldTransform.clone();
+            const parentMatrix = this.parent.worldTransform;
+            const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
+
+            matrix.prepend(parentMatrix.clone().invert());
+            matrix.prepend(this.initialTransform.matrix.clone().invert());
+
+            cachedMatrix.append(matrix);
+
+            view.transform.setFromMatrix(cachedMatrix);
         });
-    }
-
-    protected updateNodeTransform(node: DisplayObjectNode)
-    {
-        const { worldTransform } = this;
-
-        const matrix = worldTransform.clone();
-        const parentMatrix = this.parent.worldTransform;
-
-        const view = node.getView();
-        const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
-
-        matrix.prepend(parentMatrix.clone().invert());
-        matrix.prepend(this.initialTransform.matrix.clone().invert());
-
-        cachedMatrix.append(matrix);
-
-        view.transform.setFromMatrix(cachedMatrix);
     }
 
     protected updateSelectedModels()
