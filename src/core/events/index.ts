@@ -27,17 +27,23 @@ function formatStack(error: Error)
         try
         {
             const lines = stack.split('\n');
-            const line = lines[2].trim();
+            let line = lines[2].trim().replace(/^at /, '');
             const method = (/at [^ ]+/).exec(line);
             const file = (/\([^)]+\)/).exec(line);
             const stackFile = file ? file[0] : '?';
+            const host = `${window.location.protocol}//${window.location.host}`;
+
+            if (line.indexOf(host) === 0)
+            {
+                line = line.replace(host, '');
+            }
 
             if (showStackFile)
             {
-                return `${method}:${stackFile}`;
+                return `${method ?? line}:${stackFile}`;
             }
 
-            return method;
+            return method ?? line;
         }
         catch (e)
         {
@@ -51,9 +57,9 @@ function formatStack(error: Error)
 // debug logging
 (emitter as any).emit = function emit(event: string, ...args: any[])
 {
-    const error = new Error();
+    // const error = new Error();
 
-    console.log(`%c${logId}:%c🔆"${event}" %c${formatStack(error)}`, userColor, logStyle1, logStyle2);
+    // console.log(`%c${logId}:%c🔆"${event}" %c${formatStack(error)}`, userColor, logStyle1, logStyle2);
     EventEmitter.prototype.emit.apply(emitter, [event, ...args]);
 };
 

@@ -407,7 +407,10 @@ export class TransformGizmo extends Container
 
     public onMouseDown = (event: InteractionEvent) =>
     {
-        const wasDoubleClick = this.wasDoubleClick();
+        event.stopPropagation();
+
+        const isShiftKeyPressed = event.data.originalEvent.shiftKey;
+        const wasDoubleClick = this.wasDoubleClick() || isShiftKeyPressed;
 
         if (wasDoubleClick)
         {

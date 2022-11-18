@@ -75,7 +75,7 @@ export class EditableView
 
         if (underCursor.length > 0)
         {
-            this.selectWithDrag(topNode, e);
+            Application.instance.selection.set(topNode);
         }
     };
 
@@ -87,7 +87,9 @@ export class EditableView
         const underCursor = this.getUnderCursor(globalX, globalY).filter((node) => !selection.has(node));
         const topNode = underCursor[0];
         const isSpacePressed = isKeyPressed(' ');
-        const isAddKey = e.data.originalEvent.shiftKey || e.data.originalEvent.metaKey;
+        const isShiftKeyPressed = e.data.originalEvent.shiftKey;
+        const isMetaKeyPressed = e.data.originalEvent.shiftKey;
+        const isAddKey = isShiftKeyPressed || isMetaKeyPressed;
 
         if (!this.transformGizmo.frame.getGlobalBounds().contains(globalX, globalY))
         {
