@@ -29,6 +29,8 @@ import {
     yellowPivot,
 } from './util';
 
+export const dblClickMsThreshold = 250;
+
 const globalEmitter = getGlobalEmitter<DatastoreEvent & CommandEvent & SelectionEvent>();
 
 type MatrixCache = {
@@ -51,11 +53,14 @@ export class TransformGizmo extends Container
     public operation?: TransformOperation;
     public dragInfo?: DragInfo;
 
+    protected lastClick: number;
+
     constructor(stage: Container, config: Partial<TransformGizmoConfig> = {})
     {
         super();
 
         this.stage = stage;
+        this.lastClick = -1;
 
         this.config = {
             ...defaultTransformGizmoConfig,
@@ -125,6 +130,12 @@ export class TransformGizmo extends Container
     protected getCachedMatrix(node: DisplayObjectNode): MatrixCache
     {
         return this.matrixCache.get(node) as MatrixCache;
+    }
+
+    protected wasDoubleClick()
+    {
+        return this.lastClick > -1
+            && Date.now() - this.lastClick < dblClickMsThreshold;
     }
 
     get isVertexDrag()
@@ -396,6 +407,15 @@ export class TransformGizmo extends Container
 
     public onMouseDown = (event: InteractionEvent) =>
     {
+        const wasDoubleClick = this.wasDoubleClick();
+
+        if (wasDoubleClick)
+        {
+            this.emit('dblclick', event);
+
+            return;
+        }
+
         this.dragInfo = {
             ...defaultDragInfo,
             event,
@@ -446,6 +466,8 @@ export class TransformGizmo extends Container
         this.update();
 
         this.frame.startOperation(this.dragInfo);
+
+        this.lastClick = Date.now();
     };
 
     public onMouseMove = (event: InteractionEvent) =>
@@ -578,13 +600,6 @@ export class TransformGizmo extends Container
         this.transform.skew.x = initialTransform.skewX;
         this.transform.skew.y = initialTransform.skewY;
 
-        // initialTransform.worldMatrix.translate(
-        //     initialTransform.x - (initialTransform.width * 0.5),
-        //     initialTransform.y - (initialTransform.height * 0.5),
-        // );
-
-        console.log(initialTransform);
-
         nodes.forEach((node) =>
         {
             const view = node.view;
@@ -644,6 +659,7 @@ export class TransformGizmo extends Container
 
     protected updateSelectedModels()
     {
+        return;
         const { selection } = this;
 
         selection.forEach((node) =>
