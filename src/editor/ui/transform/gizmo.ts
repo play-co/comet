@@ -588,13 +588,7 @@ export class TransformGizmo extends Container
 
         view.interactive = true;
 
-        // take world transform of view
-        const cachedMatrix = view.worldTransform.clone();
-
-        // invert parent transform to create a local transform
-        cachedMatrix.prepend(view.parent.worldTransform.clone().invert());
-
-        this.matrixCache.set(node, cachedMatrix);
+        this.matrixCache.set(node, view.worldTransform.clone());
     }
 
     protected updateSelectedTransforms()
@@ -607,6 +601,7 @@ export class TransformGizmo extends Container
             const matrix = new Matrix();
             const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
 
+            matrix.append(view.parent.worldTransform.clone().invert());
             matrix.append(cachedMatrix);
             matrix.append(this.initialTransform.matrix.clone().invert());
             matrix.append(this.worldTransform.clone());
