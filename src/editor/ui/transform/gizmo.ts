@@ -31,6 +31,11 @@ import {
 
 const globalEmitter = getGlobalEmitter<DatastoreEvent & CommandEvent & SelectionEvent>();
 
+type MatrixCache = {
+    local: Matrix;
+    world: Matrix;
+};
+
 export class TransformGizmo extends Container
 {
     public stage: Container;
@@ -40,7 +45,7 @@ export class TransformGizmo extends Container
 
     public initialTransform: InitialGizmoTransform;
     public frame: TransformGizmoFrame;
-    public matrixCache: Map<DisplayObjectNode, Matrix>;
+    public matrixCache: Map<DisplayObjectNode, MatrixCache>;
 
     public vertex: HandleVertex;
     public operation?: TransformOperation;
@@ -115,6 +120,16 @@ export class TransformGizmo extends Container
         const { selection: { nodes } } = Application.instance;
 
         this.selectNode(nodes[0]);
+    }
+
+    protected getCachedLocalMatrix(node: DisplayObjectNode): Matrix
+    {
+        return (this.matrixCache.get(node) as MatrixCache).local;
+    }
+
+    protected getCachedWorldMatrix(node: DisplayObjectNode): Matrix
+    {
+        return (this.matrixCache.get(node) as MatrixCache).world;
     }
 
     get isVertexDrag()
@@ -525,7 +540,7 @@ export class TransformGizmo extends Container
     {
         const initialTransform = getGizmoInitialTransformFromView(node.view, node.naturalWidth, node.naturalWidth, this.parent.worldTransform);
 
-        this.select([node], initialTransform, bluePivot);
+        this.initNodes([node], initialTransform, bluePivot);
     }
 
     public selectNodes<T extends DisplayObjectNode>(nodes: T[])
@@ -551,21 +566,10 @@ export class TransformGizmo extends Container
 
         this.stage.removeChild(container);
 
-        this.select(nodes, initialTransform, yellowPivot);
+        this.initNodes(nodes, initialTransform, yellowPivot);
     }
 
-    protected select<T extends DisplayObjectNode>(nodes: T[], initialTransform: InitialGizmoTransform, pivotView: Graphics)
-    {
-        this.initTransform(initialTransform);
-
-        nodes.forEach((node) => this.initNode(node));
-
-        this.setConfig({ pivotView });
-
-        this.update();
-    }
-
-    protected initTransform(initialTransform: InitialGizmoTransform)
+    protected initNodes<T extends DisplayObjectNode>(nodes: T[], initialTransform: InitialGizmoTransform, pivotView: Graphics)
     {
         this.initialTransform = initialTransform;
 
@@ -580,17 +584,24 @@ export class TransformGizmo extends Container
         this.transform.skew.y = initialTransform.skewY;
 
         console.log(initialTransform);
-    }
 
-    protected initNode(node: DisplayObjectNode)
-    {
-        const view = node.view;
+        nodes.forEach((node) =>
+        {
+            const view = node.view;
 
-        updateTransforms(view);
+            updateTransforms(view);
 
-        view.interactive = true;
+            view.interactive = true;
 
-        this.matrixCache.set(node, view.worldTransform.clone());
+            this.matrixCache.set(node, {
+                local: view.localTransform.clone(),
+                world: view.worldTransform.clone(),
+            });
+        });
+
+        this.setConfig({ pivotView });
+
+        this.update();
     }
 
     protected updateSelectedTransforms()
@@ -601,20 +612,15 @@ export class TransformGizmo extends Container
         {
             const node = selection.nodes[0];
             const view = node.getView();
+            const cachedViewWorldMatrix = this.getCachedWorldMatrix(node);
+
             const matrix = new Matrix();
-            const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
 
-            const localViewMatrix = new Matrix();
-            const deltaTransformMatrix = new Matrix();
+            matrix.append(view.parent.worldTransform.clone().invert());
+            matrix.append(cachedViewWorldMatrix);
 
-            localViewMatrix.append(view.parent.worldTransform.clone().invert());
-            localViewMatrix.append(cachedMatrix);
-
-            deltaTransformMatrix.append(this.initialTransform.matrix.clone().invert());
-            deltaTransformMatrix.append(this.worldTransform.clone());
-
-            matrix.append(localViewMatrix);
-            matrix.append(deltaTransformMatrix);
+            matrix.append(this.initialTransform.matrix.clone().invert());
+            matrix.append(this.worldTransform.clone());
 
             view.transform.setFromMatrix(matrix);
         }
@@ -623,20 +629,15 @@ export class TransformGizmo extends Container
             selection.forEach((node) =>
             {
                 const view = node.getView();
+                const cachedViewWorldMatrix = this.getCachedWorldMatrix(node);
+
                 const matrix = new Matrix();
-                const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
 
-                const localViewMatrix = new Matrix();
-                const deltaTransformMatrix = new Matrix();
+                matrix.append(view.parent.worldTransform.clone().invert());
+                matrix.append(cachedViewWorldMatrix);
 
-                localViewMatrix.append(view.parent.worldTransform.clone().invert());
-                localViewMatrix.append(cachedMatrix);
-
-                deltaTransformMatrix.append(this.initialTransform.matrix.clone().invert());
-                deltaTransformMatrix.append(this.worldTransform.clone());
-
-                matrix.append(deltaTransformMatrix);
-                matrix.append(localViewMatrix);
+                matrix.append(this.initialTransform.matrix.clone().invert());
+                matrix.append(this.worldTransform.clone());
 
                 view.transform.setFromMatrix(matrix);
             });
