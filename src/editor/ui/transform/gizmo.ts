@@ -618,7 +618,6 @@ export class TransformGizmo extends Container
 
             matrix.append(view.parent.worldTransform.clone().invert());
             matrix.append(cachedMatrix.world);
-
             matrix.append(this.initialTransform.worldMatrix.clone().invert());
             matrix.append(this.worldTransform);
 
@@ -636,7 +635,6 @@ export class TransformGizmo extends Container
                 matrix.append(view.parent.worldTransform.clone().invert());
                 matrix.append(this.worldTransform);
                 matrix.append(this.initialTransform.worldMatrix.clone().invert());
-
                 matrix.append(cachedMatrix.world);
 
                 view.transform.setFromMatrix(matrix);
