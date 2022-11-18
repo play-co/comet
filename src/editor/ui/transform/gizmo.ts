@@ -625,6 +625,7 @@ export class TransformGizmo extends Container
         {
             selection.forEach((node) =>
             {
+                // todo: can we use single mode, and for multi just setup a single transform from global bounding box?
                 const view = node.getView();
                 const cachedMatrix = (this.matrixCache.get(node) as Matrix).clone();
 

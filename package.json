@@ -31,6 +31,7 @@
     },
     "dependencies": {
         "@convergence/convergence": "1.0.0-rc.12",
+        "@pixi/graphics-smooth": "^0.0.30",
         "color": "^4.2.3",
         "dropzone": "6.0.0-beta.2",
         "eventemitter3": "~4.0.7",

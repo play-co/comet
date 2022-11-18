@@ -1,6 +1,7 @@
+import { SmoothGraphics as Graphics } from '@pixi/graphics-smooth';
 import { EventEmitter } from 'eventemitter3';
 import type { DisplayObject, InteractionEvent } from 'pixi.js';
-import { Container, Graphics, Rectangle } from 'pixi.js';
+import { Container, Rectangle } from 'pixi.js';
 
 import type { TransformGizmo } from './gizmo';
 import { type HandleVertexHorizontal, type HandleVertexVertical, TransformGizmoHandle } from './handle';

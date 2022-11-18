@@ -4,6 +4,7 @@ specifiers:
   '@commitlint/config-conventional': ^17.0.3
   '@convergence/convergence': 1.0.0-rc.12
   '@goodboydigital/eslint-config': ^2.1.0
+  '@pixi/graphics-smooth': ^0.0.30
   '@rollup/plugin-typescript': ~8.3.4
   '@sveltejs/vite-plugin-svelte': ~1.0.1
   '@types/color': ^3.0.3
@@ -48,6 +49,7 @@ specifiers:
 
 dependencies:
   '@convergence/convergence': 1.0.0-rc.12
+  '@pixi/graphics-smooth': 0.0.30
   color: 4.2.3
   dropzone: 6.0.0-beta.2
   eventemitter3: 4.0.7
@@ -1313,6 +1315,18 @@ packages:
       '@pixi/core': 6.5.2
     dependencies:
       '@pixi/core': 6.5.2_hlswmgq4znmi3w3unfrxeddfce
+    dev: false
+
+  /@pixi/graphics-smooth/0.0.30:
+    resolution: {integrity: sha512-9W/MBrjL5crqA7fEQHynvwXA15CiU9/SqWokr+SGMqsij1NepNLADDFXErScC2uBtt3ud407goBFA9PNXGmDkg==}
+    engines: {node: '>=14', npm: '>=7'}
+    peerDependencies:
+      '@pixi/constants': ^6.0.4
+      '@pixi/core': ^6.0.4
+      '@pixi/display': ^6.0.4
+      '@pixi/graphics': ^6.0.4
+      '@pixi/math': ^6.0.4
+      '@pixi/utils': ^6.0.4
     dev: false
 
   /@pixi/graphics/6.5.2_buk4tbasmodvb2snokrefm2zpe:
