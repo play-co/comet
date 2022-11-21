@@ -7,6 +7,7 @@ import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObject'
 import type { ContainerNode } from '../../core/nodes/concrete/container';
 import { Application } from '../application';
 import type { GlobalKeyboardEvent } from '../events/keyboardEvents';
+import { BoxSelection } from './boxSelection';
 import { Grid } from './grid';
 import { isKeyPressed } from './keyboard';
 import { TransformGizmo } from './transform/gizmo';
@@ -23,6 +24,7 @@ export class EditableView
     public editLayer: Container;
     public viewport: Viewport;
     public grid: Grid;
+    public boxSelection: BoxSelection;
 
     constructor(rootNode: ContainerNode)
     {
@@ -55,6 +57,10 @@ export class EditableView
         nodeLayer.addChild(rootNode.view);
         editLayer.addChild(gizmo.frame.container);
 
+        const boxSelection = this.boxSelection = new BoxSelection();
+
+        editLayer.addChild(boxSelection);
+
         gizmo
             .on('mouseup', this.onMouseUp)
             .on('dblclick', this.onDblClick);
@@ -62,6 +68,7 @@ export class EditableView
         viewport
             .on('mousedown', this.onMouseDown)
             .on('mouseup', this.onMouseUp)
+            .on('mousemove', this.onMouseMove)
             .on('moved', this.onViewportChanged)
             .on('moved-end', this.onViewportChanged)
             .on('zoomed-end', this.onViewportChanged)
@@ -179,6 +186,8 @@ export class EditableView
         {
             // nothing selected, deselect
             selection.deselect();
+
+            this.boxSelection.onMouseDown(e);
         }
         else
         {
@@ -197,10 +206,26 @@ export class EditableView
         }
     };
 
+    protected onMouseMove = (e: InteractionEvent) =>
+    {
+        this.boxSelection.onMouseMove(e);
+    };
+
     protected onMouseUp = () =>
     {
-        this.viewport.pause = false;
-        this.viewport.cursor = this.isSpaceKeyDown ? 'grab' : 'default';
+        const { viewport, boxSelection, isSpaceKeyDown } = this;
+
+        viewport.pause = false;
+        viewport.cursor = isSpaceKeyDown ? 'grab' : 'default';
+        if (boxSelection.isSelecting)
+        {
+            const { selection } = Application.instance;
+            const nodes = boxSelection.select(this.rootNode);
+
+            selection.deselect();
+            nodes.forEach((node) => selection.add(node));
+        }
+        this.boxSelection.onMouseUp();
     };
 
     protected onViewportChanged = () =>
