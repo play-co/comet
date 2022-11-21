@@ -39,7 +39,7 @@ export class RemoveNodeCommand
 
         node.cloak();
 
-        if (node instanceof DisplayObjectNode && app.selection.has(node.cast<DisplayObjectNode>()))
+        if (node instanceof DisplayObjectNode && app.selection.contains(node.cast<DisplayObjectNode>()))
         {
             cache.wasSelected = true;
             app.selection.remove(node);

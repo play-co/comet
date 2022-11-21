@@ -1,5 +1,7 @@
 import Color from 'color';
-import { Graphics } from 'pixi.js';
+import { Container, Graphics, Rectangle } from 'pixi.js';
+
+import { snapToIncrement } from './transform/util';
 
 export interface GridConfig
 {
@@ -17,33 +19,30 @@ export const defaultGridConfig: GridConfig = {
     y: 0,
     bigUnit: 100,
     mediumUnit: 50,
-    smallUnit: 50,
+    smallUnit: 10,
 };
 
-const large = 1;
-const medium = 1;
-const small = 0.5;
-
-const light = 0.2;
+const light = 0.1;
 const inBetween = 0.4;
-const dark = 0.6;
-
-const px = (num: number) => num + 0.5;
+const dark = 0.7;
 
 export class Grid extends Graphics
 {
+    public canvas: HTMLCanvasElement;
     public config: GridConfig;
+    public container: Container;
 
-    constructor(config: Partial<GridConfig> = {})
+    constructor(canvas: HTMLCanvasElement, config: Partial<GridConfig> = {})
     {
         super();
 
+        this.canvas = canvas;
         this.config = {
             ...defaultGridConfig,
             ...config,
         };
-
-        this.draw();
+        this.container = new Container();
+        this.addChild(this.container);
     }
 
     public setConfig(config: Partial<GridConfig>)
@@ -56,47 +55,153 @@ export class Grid extends Graphics
         this.draw();
     }
 
+    protected get screenWidth()
+    {
+        return this.canvas.offsetWidth;
+    }
+
+    protected get screenHeight()
+    {
+        return this.canvas.offsetHeight;
+    }
+
+    protected get globalOrigin()
+    {
+        return this.container.worldTransform.apply({ x: 0, y: 0 });
+    }
+
+    protected get localScreenRect()
+    {
+        const { screenWidth, screenHeight, container: { worldTransform }, config: { smallUnit } } = this;
+        const p1 = worldTransform.applyInverse({ x: 0, y: 0 });
+        const p2 = worldTransform.applyInverse({ x: screenWidth, y: screenHeight });
+
+        const x = snapToIncrement(p1.x, smallUnit);
+        const y = snapToIncrement(p1.y, smallUnit);
+        const width = snapToIncrement(p2.x - p1.x, smallUnit);
+        const height = snapToIncrement(p2.y - p1.y, smallUnit);
+
+        return new Rectangle(x, y, width, height);
+    }
+
+    protected getGlobalUnitSize(localUnit: number)
+    {
+        const { container: { worldTransform } } = this;
+        const p1 = worldTransform.apply({ x: 0, y: 0 });
+        const p2 = worldTransform.apply({ x: localUnit, y: 0 });
+
+        return p2.x - p1.x;
+    }
+
+    protected localToGlobal(p: {x: number; y: number})
+    {
+        return this.container.worldTransform.apply(p);
+    }
+
     public draw()
     {
-        const { bigUnit, smallUnit, scale, x, y } = this.config;
-        const size = bigUnit * scale;
+        const { x, y, scale } = this.config;
 
-        this.x = x;
-        this.y = y;
-
-        console.log(this.worldTransform.apply({ x: 0, y: 0 }));
+        this.container.x = x;
+        this.container.y = y;
+        this.container.scale.set(scale);
 
         this.clear();
 
-        for (let y = 0; y <= size; y += smallUnit * scale)
+        this.drawHorizontal();
+        this.drawVertical();
+        this.drawOrigin();
+    }
+
+    protected drawHorizontal()
+    {
+        const { globalOrigin, localScreenRect, config: { smallUnit }, screenWidth } = this;
+        const green = Color('green');
+        const unit = smallUnit;
+
+        if (globalOrigin.x > 0)
         {
-            this.lineStyle(this.lineWidth(y), this.lineColor(y), 1);
-
-            this.moveTo(px(0), px(y));
-            this.lineTo(px(size), px(y));
-
-            for (let x = 0; x <= size; x += smallUnit * scale)
+            // draw from min to origin
+            for (let i = localScreenRect.left; i <= 0; i += unit)
             {
-                this.lineStyle(this.lineWidth(x), this.lineColor(x), 1);
+                const p1 = this.localToGlobal({ x: i, y: localScreenRect.top });
+                const p2 = this.localToGlobal({ x: i, y: localScreenRect.bottom });
 
-                this.moveTo(px(x), px(0));
-                this.lineTo(px(x), px(size));
+                this.lineStyle(1, this.lineColor(green, i), 1);
+                this.moveTo(p1.x, p1.y);
+                this.lineTo(p2.x, p2.y);
+            }
+        }
+
+        if (globalOrigin.x < screenWidth)
+        {
+            // draw from origin to max
+            for (let i = localScreenRect.right; i > 0; i -= unit)
+            {
+                const p1 = this.localToGlobal({ x: i, y: localScreenRect.top });
+                const p2 = this.localToGlobal({ x: i, y: localScreenRect.bottom });
+
+                this.lineStyle(1, this.lineColor(green, i), 1);
+                this.moveTo(p1.x, p1.y);
+                this.lineTo(p2.x, p2.y);
             }
         }
     }
 
-    private lineWidth(num: number)
+    protected drawVertical()
     {
-        // eslint-disable-next-line no-nested-ternary
-        return num % 100 === 0 ? large : num % 50 === 0 ? medium : small;
+        const { globalOrigin, localScreenRect, config: { smallUnit }, screenHeight } = this;
+        const green = Color('green');
+        const unit = smallUnit;
+
+        if (globalOrigin.y > 0)
+        {
+            // draw from min to origin
+            for (let i = localScreenRect.top; i <= 0; i += unit)
+            {
+                const p1 = this.localToGlobal({ x: localScreenRect.left, y: i });
+                const p2 = this.localToGlobal({ x: localScreenRect.right, y: i });
+
+                this.lineStyle(1, this.lineColor(green, i), 1);
+                this.moveTo(p1.x, p1.y);
+                this.lineTo(p2.x, p2.y);
+            }
+        }
+
+        if (globalOrigin.y < screenHeight)
+        {
+            // draw from origin to max
+            for (let i = localScreenRect.bottom; i > 0; i -= unit)
+            {
+                const p1 = this.localToGlobal({ x: localScreenRect.left, y: i });
+                const p2 = this.localToGlobal({ x: localScreenRect.right, y: i });
+
+                this.lineStyle(1, this.lineColor(green, i), 1);
+                this.moveTo(p1.x, p1.y);
+                this.lineTo(p2.x, p2.y);
+            }
+        }
     }
 
-    private lineColor(num: number)
+    protected drawOrigin()
     {
-        const green = Color('green');
+        const { localScreenRect, globalOrigin } = this;
+        const p1 = this.localToGlobal({ x: localScreenRect.left, y: localScreenRect.top });
+        const p2 = this.localToGlobal({ x: localScreenRect.right, y: localScreenRect.bottom });
+        const yellow = Color('lime');
+
+        this.lineStyle(1, yellow.rgbNumber(), 1);
+        this.moveTo(globalOrigin.x, p1.y);
+        this.lineTo(globalOrigin.x, p2.y);
+        this.moveTo(p1.x, globalOrigin.y);
+        this.lineTo(p2.x, globalOrigin.y);
+    }
+
+    private lineColor(color: Color, num: number)
+    {
         // eslint-disable-next-line no-nested-ternary
         const alpha = num % 100 === 0 ? light : num % 50 === 0 ? inBetween : dark;
 
-        return green.darken(alpha).rgbNumber();
+        return color.darken(alpha).rgbNumber();
     }
 }

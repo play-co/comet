@@ -8,7 +8,6 @@ import type { ContainerNode } from '../../core/nodes/concrete/container';
 import { Application } from '../application';
 import type { GlobalKeyboardEvent } from '../events/keyboardEvents';
 import { Grid } from './grid';
-import GridRenderer from './gridRenderer';
 import { isKeyPressed } from './keyboard';
 import { TransformGizmo } from './transform/gizmo';
 
@@ -20,7 +19,6 @@ export class EditableView
     public canvas: HTMLCanvasElement;
     public pixi: PixiApplication;
     public transformGizmo: TransformGizmo;
-    public gridLayer: Container;
     public nodeLayer: Container;
     public editLayer: Container;
     public viewport: Viewport;
@@ -37,7 +35,7 @@ export class EditableView
             backgroundColor: 0x111111,
         });
 
-        const grid = this.grid = new Grid();
+        const grid = this.grid = new Grid(canvas);
 
         pixi.stage.addChild(grid);
 
@@ -45,18 +43,15 @@ export class EditableView
 
         pixi.stage.addChild(viewport);
 
-        const gridLayer = this.gridLayer = new Container();
         const nodeLayer = this.nodeLayer = new Container();
         const editLayer = this.editLayer = new Container();
 
         const gizmo = this.transformGizmo = new TransformGizmo(pixi.stage);
 
-        viewport.addChild(gridLayer);
         viewport.addChild(nodeLayer);
         viewport.addChild(gizmo);
         pixi.stage.addChild(editLayer);
 
-        // gridLayer.addChild(GridRenderer.createTilingSprite(screen.availWidth, screen.availHeight));
         nodeLayer.addChild(rootNode.view);
         editLayer.addChild(gizmo.frame.container);
 
@@ -67,7 +62,10 @@ export class EditableView
         viewport
             .on('mousedown', this.onMouseDown)
             .on('mouseup', this.onMouseUp)
-            .on('moved', this.onViewportChanged);
+            .on('moved', this.onViewportChanged)
+            .on('moved-end', this.onViewportChanged)
+            .on('zoomed-end', this.onViewportChanged)
+            .on('drag-start', this.onViewportDragStart);
 
         viewport
             .drag()
@@ -82,6 +80,13 @@ export class EditableView
     get isSpaceKeyDown()
     {
         return isKeyPressed(' ');
+    }
+
+    public init(container: HTMLDivElement)
+    {
+        this.pixi.resizeTo = container;
+        container.appendChild(this.canvas);
+        this.grid.draw();
     }
 
     protected onKeyDown = (e: KeyboardEvent) =>
@@ -105,15 +110,34 @@ export class EditableView
 
     protected onDblClick = (e: InteractionEvent) =>
     {
+        const isShiftKeyPressed = e.data.originalEvent.shiftKey;
+        const isMetaKeyPressed = e.data.originalEvent.shiftKey;
+        const isAddKey = isShiftKeyPressed || isMetaKeyPressed;
         const globalX = e.data.global.x;
         const globalY = e.data.global.y;
         const { selection } = Application.instance;
-        const underCursor = this.findNodesAtPoint(globalX, globalY).filter((node) => !selection.has(node));
+        const underCursor = this.findNodesAtPoint(globalX, globalY);
         const topNode = underCursor[0];
 
         if (underCursor.length > 0)
         {
-            Application.instance.selection.set(topNode);
+            if (isAddKey)
+            {
+                if (selection.contains(topNode))
+                {
+                    // add new node to selection
+                    selection.remove(topNode);
+                }
+                else
+                {
+                    // add new node to selection
+                    selection.add(topNode);
+                }
+            }
+            else
+            {
+                Application.instance.selection.set(topNode);
+            }
         }
     };
 
@@ -122,12 +146,14 @@ export class EditableView
         const globalX = e.data.global.x;
         const globalY = e.data.global.y;
         const { selection } = Application.instance;
-        const underCursor = this.findNodesAtPoint(globalX, globalY).filter((node) => !selection.has(node));
+        const underCursor = this.findNodesAtPoint(globalX, globalY).filter((node) => !selection.contains(node));
         const topNode = underCursor[0];
         const isSpacePressed = this.isSpaceKeyDown;
         const isShiftKeyPressed = e.data.originalEvent.shiftKey;
         const isMetaKeyPressed = e.data.originalEvent.shiftKey;
         const isAddKey = isShiftKeyPressed || isMetaKeyPressed;
+
+        this.viewport.pause = !isSpacePressed;
 
         if (isSpacePressed)
         {
@@ -140,7 +166,7 @@ export class EditableView
         if (this.transformGizmo.frame.getGlobalBounds().contains(globalX, globalY) && isAddKey)
         {
             // click inside transform gizmo area remove from selection if shift down
-            const underCursor = this.findNodesAtPoint(globalX, globalY).filter((node) => selection.has(node));
+            const underCursor = this.findNodesAtPoint(globalX, globalY).filter((node) => selection.contains(node));
             const topNode = underCursor[0];
 
             selection.remove(topNode);
@@ -155,11 +181,10 @@ export class EditableView
         else
         {
             const selectedNode = topNode.getCloneRoot().cast<DisplayObjectNode>();
-            // const selectedNode = topNode;
 
             if (isAddKey)
             {
-                // add to selection
+                // add new node to selection
                 selection.add(topNode);
             }
             else
@@ -172,6 +197,7 @@ export class EditableView
 
     protected onMouseUp = () =>
     {
+        this.viewport.pause = false;
         this.viewport.cursor = this.isSpaceKeyDown ? 'grab' : 'default';
     };
 
@@ -184,6 +210,11 @@ export class EditableView
             y: this.viewport.y,
             scale: this.viewport.scale.x,
         });
+    };
+
+    protected onViewportDragStart = () =>
+    {
+        //
     };
 
     protected selectWithDrag(selectedNode: DisplayObjectNode, e: InteractionEvent)
@@ -222,11 +253,5 @@ export class EditableView
         nodeLayer.removeChild(this.rootNode.view);
         this.rootNode = rootNode;
         nodeLayer.addChild(rootNode.view);
-    }
-
-    public setContainer(container: HTMLDivElement)
-    {
-        this.pixi.resizeTo = container;
-        container.appendChild(this.canvas);
     }
 }

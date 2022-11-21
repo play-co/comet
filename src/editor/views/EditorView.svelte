@@ -7,7 +7,7 @@
   let container: HTMLDivElement;
 
   onMount(() => {
-    view.setContainer(container);
+    view.init(container);
   });
 </script>
 

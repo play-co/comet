@@ -55,9 +55,14 @@ export class NodeSelection
         this.nodes.length = 0;
     }
 
-    public has(node: DisplayObjectNode)
+    public contains(node: DisplayObjectNode)
     {
         return this.nodes.indexOf(node) > -1;
+    }
+
+    public onlyContains(node: DisplayObjectNode)
+    {
+        return this.nodes.length === 1 && this.nodes[0] === node;
     }
 
     public forEach(fn: (node: DisplayObjectNode, i: number) => void)

@@ -103,6 +103,7 @@ export class TransformGizmo extends Container
     {
         const { selection: { isSingle, isMulti, isEmpty, nodes } } = Application.instance;
 
+        console.log('!');
         if (isSingle)
         {
             this.updateSingleSelectionNode();
@@ -680,7 +681,7 @@ export class TransformGizmo extends Container
 
     protected updateSelectedModels()
     {
-        return;
+        // return;
         const { selection } = this;
 
         selection.forEach((node) =>

@@ -357,7 +357,9 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
             {
                 for (const [k, v] of entries)
                 {
-                    modelElement.set(k, this.assertValue(v));
+                    const value = this.assertValue(v);
+
+                    modelElement.set(k, value);
                 }
             });
         }
