@@ -1,5 +1,24 @@
 import Color from 'color';
-import { Texture, TilingSprite } from 'pixi.js';
+import { Graphics } from 'pixi.js';
+
+export interface GridConfig
+{
+    scale: number;
+    x: number;
+    y: number;
+    bigUnit: number;
+    mediumUnit: number;
+    smallUnit: number;
+}
+
+export const defaultGridConfig: GridConfig = {
+    scale: 1,
+    x: 0,
+    y: 0,
+    bigUnit: 100,
+    mediumUnit: 50,
+    smallUnit: 50,
+};
 
 const large = 1;
 const medium = 1;
@@ -11,58 +30,57 @@ const dark = 0.6;
 
 const px = (num: number) => num + 0.5;
 
-export default class Grid
+export class Grid extends Graphics
 {
-    public canvas: HTMLCanvasElement;
-    public width: number;
-    public height: number;
+    public config: GridConfig;
 
-    constructor(width = 100, height = 100)
+    constructor(config: Partial<GridConfig> = {})
     {
-        const canvas = document.createElement('canvas');
+        super();
 
-        this.canvas = canvas;
-        this.width = canvas.width = width;
-        this.height = canvas.height = height;
-        this.render();
+        this.config = {
+            ...defaultGridConfig,
+            ...config,
+        };
+
+        this.draw();
     }
 
-    public static createTilingSprite(width: number, height: number)
+    public setConfig(config: Partial<GridConfig>)
     {
-        const grid = new Grid();
+        this.config = {
+            ...this.config,
+            ...config,
+        };
 
-        return new TilingSprite(Texture.from(grid.canvas), width, height);
+        this.draw();
     }
 
-    private render()
+    public draw()
     {
-        const { canvas, width, height } = this;
-        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+        const { bigUnit, smallUnit, scale, x, y } = this.config;
+        const size = bigUnit * scale;
 
-        ctx.fillStyle = 'transparent';
-        ctx.fillRect(0, 0, width, height);
+        this.x = x;
+        this.y = y;
 
-        for (let y = 0; y <= height; y += 10)
+        console.log(this.worldTransform.apply({ x: 0, y: 0 }));
+
+        this.clear();
+
+        for (let y = 0; y <= size; y += smallUnit * scale)
         {
-            ctx.strokeStyle = this.lineColor(y);
-            ctx.lineWidth = this.lineWidth(y);
+            this.lineStyle(this.lineWidth(y), this.lineColor(y), 1);
 
-            ctx.beginPath();
-            ctx.moveTo(px(0), px(y));
-            ctx.lineTo(px(width), px(y));
-            ctx.stroke();
-            ctx.closePath();
+            this.moveTo(px(0), px(y));
+            this.lineTo(px(size), px(y));
 
-            for (let x = 0; x <= width; x += 10)
+            for (let x = 0; x <= size; x += smallUnit * scale)
             {
-                ctx.strokeStyle = this.lineColor(x);
-                ctx.lineWidth = this.lineWidth(x);
+                this.lineStyle(this.lineWidth(x), this.lineColor(x), 1);
 
-                ctx.beginPath();
-                ctx.moveTo(px(x), px(0));
-                ctx.lineTo(px(x), px(height));
-                ctx.stroke();
-                ctx.closePath();
+                this.moveTo(px(x), px(0));
+                this.lineTo(px(x), px(size));
             }
         }
     }
@@ -79,6 +97,6 @@ export default class Grid
         // eslint-disable-next-line no-nested-ternary
         const alpha = num % 100 === 0 ? light : num % 50 === 0 ? inBetween : dark;
 
-        return green.darken(alpha).hex();
+        return green.darken(alpha).rgbNumber();
     }
 }

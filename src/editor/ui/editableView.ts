@@ -7,7 +7,8 @@ import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObject'
 import type { ContainerNode } from '../../core/nodes/concrete/container';
 import { Application } from '../application';
 import type { GlobalKeyboardEvent } from '../events/keyboardEvents';
-import Grid from './grid';
+import { Grid } from './grid';
+import GridRenderer from './gridRenderer';
 import { isKeyPressed } from './keyboard';
 import { TransformGizmo } from './transform/gizmo';
 
@@ -23,6 +24,7 @@ export class EditableView
     public nodeLayer: Container;
     public editLayer: Container;
     public viewport: Viewport;
+    public grid: Grid;
 
     constructor(rootNode: ContainerNode)
     {
@@ -34,6 +36,10 @@ export class EditableView
             view: canvas,
             backgroundColor: 0x111111,
         });
+
+        const grid = this.grid = new Grid();
+
+        pixi.stage.addChild(grid);
 
         const viewport = this.viewport = new Viewport();
 
@@ -50,7 +56,7 @@ export class EditableView
         viewport.addChild(gizmo);
         pixi.stage.addChild(editLayer);
 
-        gridLayer.addChild(Grid.createTilingSprite(screen.availWidth, screen.availHeight));
+        // gridLayer.addChild(GridRenderer.createTilingSprite(screen.availWidth, screen.availHeight));
         nodeLayer.addChild(rootNode.view);
         editLayer.addChild(gizmo.frame.container);
 
@@ -173,6 +179,11 @@ export class EditableView
     {
         this.viewport.updateTransform();
         this.transformGizmo.onRootContainerChanged();
+        this.grid.setConfig({
+            x: this.viewport.x,
+            y: this.viewport.y,
+            scale: this.viewport.scale.x,
+        });
     };
 
     protected selectWithDrag(selectedNode: DisplayObjectNode, e: InteractionEvent)
