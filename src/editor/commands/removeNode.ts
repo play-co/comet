@@ -42,7 +42,10 @@ export class RemoveNodeCommand
         if (node instanceof DisplayObjectNode && app.selection.deepContains(node.cast<DisplayObjectNode>()))
         {
             cache.wasSelected = true;
-            app.selection.remove(node);
+            if (app.selection.shallowContains(node))
+            {
+                app.selection.remove(node);
+            }
         }
 
         return { node: node.cast<ClonableNode>() };
