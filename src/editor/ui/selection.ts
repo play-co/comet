@@ -55,9 +55,24 @@ export class NodeSelection
         this.nodes.length = 0;
     }
 
-    public contains(node: DisplayObjectNode)
+    public shallowContains(node: DisplayObjectNode)
     {
         return this.nodes.indexOf(node) > -1;
+    }
+
+    public deepContains(node: DisplayObjectNode)
+    {
+        const allNodes: Map<DisplayObjectNode, true> = new Map();
+
+        this.nodes.forEach((selectedNode) =>
+        {
+            selectedNode.walk<DisplayObjectNode>((node) =>
+            {
+                allNodes.set(node, true);
+            });
+        });
+
+        return allNodes.has(node);
     }
 
     public onlyContains(node: DisplayObjectNode)

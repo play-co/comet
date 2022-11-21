@@ -5,7 +5,8 @@ import { getGlobalEmitter } from '../../../core/events';
 import type { DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
 import { type Point, degToRad, radToDeg } from '../../../core/util/geom';
 import { Application } from '../../application';
-import { ModifyModelCommand } from '../../commands/modifyModel';
+import type { ModifyModelCommandParams } from '../../commands/modifyModel';
+import { ModifyModelsCommand } from '../../commands/modifyModels';
 import type { CommandEvent } from '../../events/commandEvents';
 import type { DatastoreEvent } from '../../events/datastoreEvents';
 import type { SelectionEvent } from '../../events/selectionEvents';
@@ -57,6 +58,7 @@ export class TransformGizmo extends Container
     protected groupSizeGraphic: Graphics;
 
     protected lastClick: number;
+    protected isDirty: boolean;
 
     constructor(stage: Container, config: Partial<TransformGizmoConfig> = {})
     {
@@ -64,6 +66,7 @@ export class TransformGizmo extends Container
 
         this.stage = stage;
         this.lastClick = -1;
+        this.isDirty = false;
 
         this.config = {
             ...defaultTransformGizmoConfig,
@@ -89,9 +92,11 @@ export class TransformGizmo extends Container
             .on('selection.add', this.updateSelection)
             .on('selection.remove', this.updateSelection)
             .on('selection.deselect', this.onSelectionDeselect)
-            .on('datastore.node.model.modified', this.updateSelection)
-            .on('datastore.node.removed', this.updateSelection)
-            .on('datastore.node.created', this.updateSelection);
+            .on('datastore.remote.node.model.modified', this.updateSelection)
+            .on('command.undo', this.updateSelection)
+            .on('command.redo', this.updateSelection)
+            .on('datastore.remote.node.removed', this.updateSelection)
+            .on('datastore.remote.node.created', this.updateSelection);
     }
 
     get selection()
@@ -103,7 +108,6 @@ export class TransformGizmo extends Container
     {
         const { selection: { isSingle, isMulti, isEmpty, nodes } } = Application.instance;
 
-        console.log('!');
         if (isSingle)
         {
             this.updateSingleSelectionNode();
@@ -501,6 +505,7 @@ export class TransformGizmo extends Container
     {
         if (this.operation && this.dragInfo)
         {
+            this.isDirty = true;
             this.updateDragInfoFromEvent(event);
             this.operation.drag(this.dragInfo);
 
@@ -525,10 +530,13 @@ export class TransformGizmo extends Container
             this.operation.end(this.dragInfo);
             this.update();
             this.frame.endOperation(this.dragInfo);
+            this.clearOperation();
+            if (this.isDirty)
+            {
+                this.updateSelectedModels();
+                this.isDirty = false;
+            }
         }
-
-        this.clearOperation();
-        this.updateSelectedModels();
 
         this.emit('mouseup');
     };
@@ -681,8 +689,8 @@ export class TransformGizmo extends Container
 
     protected updateSelectedModels()
     {
-        // return;
         const { selection } = this;
+        const modifications: ModifyModelCommandParams<any>[] = [];
 
         selection.forEach((node) =>
         {
@@ -732,12 +740,14 @@ export class TransformGizmo extends Container
                 values.pivotY = pivotY;
             }
 
-            Application.instance.undoStack.exec(new ModifyModelCommand({
+            modifications.push({
                 nodeId: node.id,
                 values,
-            }));
+            });
 
             view.transform.setFromMatrix(matrix);
         });
+
+        Application.instance.undoStack.exec(new ModifyModelsCommand({ modifications }));
     }
 }

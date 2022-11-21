@@ -70,7 +70,7 @@ export class Application
         Cache.textures.fetchProvider = (storageKey: string) =>
             this.storageProvider.download(storageKey);
 
-        datastoreGlobalEmitter.on('datastore.node.removed', () =>
+        datastoreGlobalEmitter.on('datastore.remote.node.removed', () =>
         {
             writeUndoStack();
         });

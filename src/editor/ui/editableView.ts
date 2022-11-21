@@ -123,10 +123,12 @@ export class EditableView
         {
             if (isAddKey)
             {
-                if (selection.contains(topNode))
+                if (selection.deepContains(topNode))
                 {
                     // add new node to selection
-                    selection.remove(topNode);
+                    const selectedNode = topNode.getCloneRoot().cast<DisplayObjectNode>();
+
+                    selection.remove(selectedNode);
                 }
                 else
                 {
@@ -146,7 +148,7 @@ export class EditableView
         const globalX = e.data.global.x;
         const globalY = e.data.global.y;
         const { selection } = Application.instance;
-        const underCursor = this.findNodesAtPoint(globalX, globalY).filter((node) => !selection.contains(node));
+        const underCursor = this.findNodesAtPoint(globalX, globalY).filter((node) => !selection.deepContains(node));
         const topNode = underCursor[0];
         const isSpacePressed = this.isSpaceKeyDown;
         const isShiftKeyPressed = e.data.originalEvent.shiftKey;
@@ -166,7 +168,7 @@ export class EditableView
         if (this.transformGizmo.frame.getGlobalBounds().contains(globalX, globalY) && isAddKey)
         {
             // click inside transform gizmo area remove from selection if shift down
-            const underCursor = this.findNodesAtPoint(globalX, globalY).filter((node) => selection.contains(node));
+            const underCursor = this.findNodesAtPoint(globalX, globalY).filter((node) => selection.deepContains(node));
             const topNode = underCursor[0];
 
             selection.remove(topNode);
