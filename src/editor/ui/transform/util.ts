@@ -1,4 +1,4 @@
-import type { DisplayObject } from 'pixi.js';
+import type { Container, DisplayObject } from 'pixi.js';
 import { Graphics, Matrix, Rectangle, Transform } from 'pixi.js';
 
 import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
@@ -108,6 +108,42 @@ export function getTotalGlobalBounds<T extends DisplayObjectNode>(nodes: T[])
     });
 
     return rect;
+}
+
+export function getViewChildrenLocalBounds<T extends Container>(view: T, excludeChild: DisplayObject)
+{
+    let rect = Rectangle.EMPTY;
+
+    view.updateTransform();
+
+    view.children.forEach((view: DisplayObject) =>
+    {
+        if (view === excludeChild)
+        {
+            return;
+        }
+
+        const bounds = view.getBounds();
+
+        if (rect.width === 0 && rect.height === 0 && rect.x === 0 && rect.y === 0)
+        {
+            rect = bounds.clone();
+        }
+        else
+        {
+            rect.enlarge(bounds);
+        }
+    });
+
+    const p1 = view.worldTransform.applyInverse({ x: rect.left, y: rect.top });
+    const p2 = view.worldTransform.applyInverse({ x: rect.right, y: rect.bottom });
+
+    return {
+        minX: p1.x,
+        minY: p1.y,
+        maxX: p2.x,
+        maxY: p2.y,
+    };
 }
 
 export function decomposeTransform(

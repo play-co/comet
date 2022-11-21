@@ -53,7 +53,21 @@ export class EmptyNode extends ContainerNode<ContainerModel, Container>
 
         const pivot = (yellowPivot as any);
 
-        pivot._calculateBounds = () => ({});
+        // const t = pivot._calculateBounds;
+
+        // const thisView = container;
+
+        pivot._calculateBounds = function _calculateBounds()
+        {
+            // const bounds = getViewChildrenLocalBounds(thisView, pivot);
+
+            // t.call(pivot);
+
+            // this._bounds.minX = bounds.minX;
+            // this._bounds.minY = bounds.minY;
+            // this._bounds.maxX = bounds.maxX;
+            // this._bounds.maxY = bounds.maxY;
+        };
 
         pivot.transform.updateTransform = function updateTransform(parentTransform: Transform)
         {
@@ -61,7 +75,7 @@ export class EmptyNode extends ContainerNode<ContainerModel, Container>
 
             if (this._localID !== this._currentLocalID)
             {
-            // get the matrix values of the displayobject based on its transform properties..
+                // get the matrix values of the displayobject based on its transform properties..
                 lt.a = this._cx * this.scale.x;
                 lt.b = this._sx * this.scale.x;
                 lt.c = this._cy * this.scale.y;
@@ -77,7 +91,7 @@ export class EmptyNode extends ContainerNode<ContainerModel, Container>
 
             if (this._parentID !== parentTransform._worldID)
             {
-            // concat the parent matrix with the objects transform.
+                // concat the parent matrix with the objects transform.
                 const pt = parentTransform.worldTransform;
                 const wt = this.worldTransform;
 
