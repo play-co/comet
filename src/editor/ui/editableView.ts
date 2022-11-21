@@ -68,28 +68,41 @@ export class EditableView
             .pinch()
             .wheel();
 
-        globalEmitter.on('key.down', (e) =>
-        {
-            if (e.key === ' ')
-            {
-                viewport.cursor = 'grab';
-            }
-        }).on('key.up', (e) =>
-        {
-            if (e.key === ' ')
-            {
-                viewport.cursor = 'default';
-                viewport.pause = false;
-            }
-        });
+        globalEmitter
+            .on('key.down', this.onKeyDown)
+            .on('key.up', this.onKeyUp);
     }
+
+    get isSpaceKeyDown()
+    {
+        return isKeyPressed(' ');
+    }
+
+    protected onKeyDown = (e: KeyboardEvent) =>
+    {
+        if (e.key === ' ')
+        {
+            this.viewport.cursor = 'grab';
+            this.transformGizmo.isInteractive = false;
+        }
+    };
+
+    protected onKeyUp = (e: KeyboardEvent) =>
+    {
+        if (e.key === ' ')
+        {
+            this.viewport.cursor = 'default';
+            this.viewport.pause = false;
+            this.transformGizmo.isInteractive = true;
+        }
+    };
 
     protected onDblClick = (e: InteractionEvent) =>
     {
         const globalX = e.data.global.x;
         const globalY = e.data.global.y;
         const { selection } = Application.instance;
-        const underCursor = this.getUnderCursor(globalX, globalY).filter((node) => !selection.has(node));
+        const underCursor = this.findNodesAtPoint(globalX, globalY).filter((node) => !selection.has(node));
         const topNode = underCursor[0];
 
         if (underCursor.length > 0)
@@ -103,64 +116,63 @@ export class EditableView
         const globalX = e.data.global.x;
         const globalY = e.data.global.y;
         const { selection } = Application.instance;
-        const underCursor = this.getUnderCursor(globalX, globalY).filter((node) => !selection.has(node));
+        const underCursor = this.findNodesAtPoint(globalX, globalY).filter((node) => !selection.has(node));
         const topNode = underCursor[0];
-        const isSpacePressed = isKeyPressed(' ');
+        const isSpacePressed = this.isSpaceKeyDown;
         const isShiftKeyPressed = e.data.originalEvent.shiftKey;
         const isMetaKeyPressed = e.data.originalEvent.shiftKey;
         const isAddKey = isShiftKeyPressed || isMetaKeyPressed;
 
-        if (!this.transformGizmo.frame.getGlobalBounds().contains(globalX, globalY))
+        if (isSpacePressed)
         {
-            // click outside of transform gizmo area
-            if (underCursor.length === 0)
-            {
-                if (!isSpacePressed)
-                {
-                    // nothing selected, deselect
-                    selection.deselect();
-                }
-            }
-            else
-            {
-                const selectedNode = topNode.getCloneRoot().cast<DisplayObjectNode>();
-                // const selectedNode = topNode;
+            // don't select anything when panning view
+            this.viewport.cursor = 'grabbing';
 
-                if (isAddKey)
-                {
-                    // add to selection
-                    selection.add(topNode);
-                }
-                else
-                {
-                    // new selection and start dragging
-                    this.selectWithDrag(selectedNode, e);
-                }
-            }
+            return;
         }
-        else if (isAddKey)
+
+        if (this.transformGizmo.frame.getGlobalBounds().contains(globalX, globalY) && isAddKey)
         {
             // click inside transform gizmo area remove from selection if shift down
-            const underCursor = this.getUnderCursor(globalX, globalY).filter((node) => selection.has(node));
+            const underCursor = this.findNodesAtPoint(globalX, globalY).filter((node) => selection.has(node));
             const topNode = underCursor[0];
 
             selection.remove(topNode);
         }
 
-        this.viewport.pause = !isSpacePressed;
+        // click outside of transform gizmo area
+        if (underCursor.length === 0)
+        {
+            // nothing selected, deselect
+            selection.deselect();
+        }
+        else
+        {
+            const selectedNode = topNode.getCloneRoot().cast<DisplayObjectNode>();
+            // const selectedNode = topNode;
+
+            if (isAddKey)
+            {
+                // add to selection
+                selection.add(topNode);
+            }
+            else
+            {
+                // new selection and start dragging
+                this.selectWithDrag(selectedNode, e);
+            }
+        }
     };
 
     protected onMouseUp = () =>
     {
-        this.viewport.pause = false;
-        this.viewport.cursor = 'default';
+        this.viewport.cursor = this.isSpaceKeyDown ? 'grab' : 'default';
     };
 
     protected onViewportChanged = () =>
     {
         this.viewport.updateTransform();
         this.transformGizmo.onRootContainerChanged();
-        this.viewport.cursor = 'grabbing';
     };
 
     protected selectWithDrag(selectedNode: DisplayObjectNode, e: InteractionEvent)
@@ -173,7 +185,7 @@ export class EditableView
         }
     }
 
-    protected getUnderCursor(globalX: number, globalY: number)
+    protected findNodesAtPoint(globalX: number, globalY: number)
     {
         const underCursor: DisplayObjectNode[] = [];
 

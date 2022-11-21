@@ -41,6 +41,7 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
         this.primaryHandles = new Container();
         this.secondaryHandles = new Container();
         this.border = new Graphics();
+        this.border.interactive = true;
 
         this.pivotView = yellowPivot;
         this.info = new TransformGizmoInfo(this);
@@ -99,7 +100,6 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
     {
         const { border } = this;
 
-        border.interactive = true;
         border
             .on('mousedown', this.gizmo.onMouseDown)
             .on('mousemove', this.gizmo.onMouseMove);

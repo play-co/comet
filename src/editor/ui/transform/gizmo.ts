@@ -285,6 +285,16 @@ export class TransformGizmo extends Container
         return 10;
     }
 
+    public get isInteractive()
+    {
+        return this.frame.border.interactive;
+    }
+
+    public set isInteractive(value: boolean)
+    {
+        this.frame.border.interactive = value;
+    }
+
     public get isVisible()
     {
         return this.frame.container.visible;
@@ -495,8 +505,6 @@ export class TransformGizmo extends Container
 
             this.update();
             this.frame.updateOperation(this.dragInfo);
-
-            event.stopPropagation();
         }
     };
 
@@ -516,8 +524,6 @@ export class TransformGizmo extends Container
             this.operation.end(this.dragInfo);
             this.update();
             this.frame.endOperation(this.dragInfo);
-
-            event.stopPropagation();
         }
 
         this.clearOperation();
