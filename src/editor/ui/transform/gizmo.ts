@@ -283,12 +283,12 @@ export class TransformGizmo extends Container
 
     get gridXUnit()
     {
-        return 10;
+        return Application.instance.gridSettings.smallUnit;
     }
 
     get gridYUnit()
     {
-        return 10;
+        return Application.instance.gridSettings.smallUnit;
     }
 
     public get isInteractive()

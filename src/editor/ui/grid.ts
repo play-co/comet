@@ -1,6 +1,7 @@
 import Color from 'color';
 import { Container, Graphics, Rectangle } from 'pixi.js';
 
+import { Application } from '../application';
 import { snapToIncrement } from './transform/util';
 
 export interface GridConfig
@@ -8,18 +9,12 @@ export interface GridConfig
     scale: number;
     x: number;
     y: number;
-    bigUnit: number;
-    mediumUnit: number;
-    smallUnit: number;
 }
 
 export const defaultGridConfig: GridConfig = {
     scale: 1,
     x: 0,
     y: 0,
-    bigUnit: 100,
-    mediumUnit: 50,
-    smallUnit: 10,
 };
 
 const light = 0.1;
@@ -43,6 +38,11 @@ export class Grid extends Graphics
         };
         this.container = new Container();
         this.addChild(this.container);
+    }
+
+    get gridSettings()
+    {
+        return Application.instance.gridSettings;
     }
 
     public setConfig(config: Partial<GridConfig>)
@@ -72,7 +72,7 @@ export class Grid extends Graphics
 
     protected get localScreenRect()
     {
-        const { screenWidth, screenHeight, container: { worldTransform }, config: { smallUnit } } = this;
+        const { screenWidth, screenHeight, container: { worldTransform }, gridSettings: { smallUnit } } = this;
         const p1 = worldTransform.applyInverse({ x: 0, y: 0 });
         const p2 = worldTransform.applyInverse({ x: screenWidth, y: screenHeight });
 
@@ -115,7 +115,7 @@ export class Grid extends Graphics
 
     protected drawHorizontal()
     {
-        const { globalOrigin, localScreenRect, config: { smallUnit }, screenWidth } = this;
+        const { globalOrigin, localScreenRect, gridSettings: { smallUnit }, screenWidth } = this;
         const green = Color('green');
         const unit = smallUnit;
 
@@ -150,7 +150,7 @@ export class Grid extends Graphics
 
     protected drawVertical()
     {
-        const { globalOrigin, localScreenRect, config: { smallUnit }, screenHeight } = this;
+        const { globalOrigin, localScreenRect, gridSettings: { smallUnit }, screenHeight } = this;
         const green = Color('green');
         const unit = smallUnit;
 

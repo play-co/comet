@@ -71,9 +71,22 @@ export abstract class DisplayObjectNode<
         view.visible = visible;
     }
 
+    public getLocalBounds()
+    {
+        return this.view.getLocalBounds();
+    }
+
     public getGlobalBounds()
     {
         return this.view.getBounds();
+    }
+
+    public containsPoint(globalX: number, globalY: number)
+    {
+        const view = this.view;
+        const localPoint = view.worldTransform.applyInverse({ x: globalX, y: globalY });
+
+        return this.getLocalBounds().contains(localPoint.x, localPoint.y);
     }
 
     // not the localBounds (which includes the children, but the single local dimension of this view)
