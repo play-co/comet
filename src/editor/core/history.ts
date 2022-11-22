@@ -1,4 +1,4 @@
-import { Application } from '../application';
+import { Application } from './application';
 import { getUserName } from '../sync/user';
 import { createCommand } from './commandFactory';
 import { commandHistoryKey, undoHistoryKey } from './localStorage';

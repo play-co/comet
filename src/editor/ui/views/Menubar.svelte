@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { getGlobalEmitter } from "../../core/events";
-  import { Actions } from "../actions";
-  import type { ProjectEvent } from "../events/projectEvents";
+  import { getGlobalEmitter } from "../../../core/events";
+  import { Actions } from "../../actions";
+  import type { ProjectEvent } from "../../events/projectEvents";
   let isReady = false;
   const globalEmitter = getGlobalEmitter<ProjectEvent>();
   globalEmitter.on("project.ready", () => (isReady = true));

@@ -1,8 +1,8 @@
 import Color from 'color';
 import { Container, Graphics, Rectangle } from 'pixi.js';
 
-import { Application } from '../application';
-import { snapToIncrement } from './transform/util';
+import { Application } from '../../core/application';
+import { snapToIncrement } from './../transform/util';
 
 export interface GridConfig
 {

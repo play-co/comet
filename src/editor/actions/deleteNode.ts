@@ -1,4 +1,4 @@
-import { Application } from '../application';
+import { Application } from '../core/application';
 import { RemoveNodesCommand } from '../commands/removeNodes';
 import { Action } from '../core/action';
 

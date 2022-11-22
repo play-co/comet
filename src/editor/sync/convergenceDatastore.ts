@@ -16,7 +16,7 @@ import type { CustomPropertyType, CustomPropertyValueType } from '../../core/nod
 import { consolidateId, getInstance } from '../../core/nodes/instances';
 import type { CloneInfoSchema, NodeSchema, ProjectSchema, TextureAssetSchema } from '../../core/nodes/schema';
 import { createProjectSchema } from '../../core/nodes/schema';
-import { Application } from '../application';
+import { Application } from '../core/application';
 import type { DatastoreEvent } from '../events/datastoreEvents';
 import { DatastoreBase } from './datastoreBase';
 import { getUserLogColor, getUserName } from './user';

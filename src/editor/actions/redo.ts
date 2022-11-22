@@ -1,4 +1,4 @@
-import { Application } from '../application';
+import { Application } from '../core/application';
 import { Action } from '../core/action';
 import { writeCommandList } from '../core/history';
 

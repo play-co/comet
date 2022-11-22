@@ -1,5 +1,5 @@
-import { getGlobalEmitter } from '../../core/events';
-import type { GlobalKeyboardEvent } from '../events/keyboardEvents';
+import { getGlobalEmitter } from '../../../core/events';
+import type { GlobalKeyboardEvent } from '../../events/keyboardEvents';
 
 const keyMap: Map<string, boolean> = new Map();
 

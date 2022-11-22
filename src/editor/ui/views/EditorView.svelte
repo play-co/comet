@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { EditableView } from "../ui/editableView";
+  import type { EditableView } from "../../ui/components/editableView";
 
   export let view: EditableView;
 

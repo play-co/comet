@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Application } from "../application";
+  import { Application } from "../../core/application";
   import EditorView from "./EditorView.svelte";
   import DropZone from "./DropZone.svelte";
 </script>

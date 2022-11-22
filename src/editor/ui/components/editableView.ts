@@ -1,16 +1,15 @@
-import type { InteractionEvent } from 'pixi.js';
-import { Application as PixiApplication, Container } from 'pixi.js';
+import { type InteractionEvent, Application as PixiApplication, Container } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 
-import { getGlobalEmitter } from '../../core/events';
-import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObject';
-import type { ContainerNode } from '../../core/nodes/concrete/container';
-import { Application } from '../application';
-import type { GlobalKeyboardEvent } from '../events/keyboardEvents';
+import { getGlobalEmitter } from '../../../core/events';
+import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
+import type { ContainerNode } from '../../../core/nodes/concrete/container';
+import { Application } from '../../core/application';
+import type { GlobalKeyboardEvent } from '../../events/keyboardEvents';
+import { TransformGizmo } from '../transform/gizmo';
 import { BoxSelection } from './boxSelection';
 import { Grid } from './grid';
-import { isKeyPressed } from './keyboard';
-import { TransformGizmo } from './transform/gizmo';
+import { isKeyPressed } from './keyboardListener';
 
 const globalEmitter = getGlobalEmitter<GlobalKeyboardEvent>();
 

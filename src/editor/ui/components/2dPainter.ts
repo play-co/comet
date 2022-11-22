@@ -1,4 +1,4 @@
-import { degToRad } from '../../core/util/geom';
+import { degToRad } from '../../../core/util/geom';
 
 export const px = (value: number) => value + 0.5;
 

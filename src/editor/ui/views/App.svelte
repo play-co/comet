@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { delay } from "../../core/util";
-  import { Application } from "../application";
-  import { getUrlParam } from "../util";
+  import { delay } from "../../../core/util";
+  import { Application } from "../../core/application";
+  import { getUrlParam } from "../../util";
   import MainLayout from "./MainLayout.svelte";
 
   let isConnected = false;
@@ -34,7 +34,7 @@
   {:else if isConnected}
     <MainLayout />
   {:else}
-    <div class="fill flex-container-center">
+    <div class="connect">
       <button on:click={() => connect()}>Connect</button>
     </div>
   {/if}
@@ -53,12 +53,17 @@
     background-color: red;
     color: white;
     position: absolute;
-  }
-
-  .error {
     top: 0;
     left: 0;
     right: 0;
     height: 20px;
+  }
+
+  .connect {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 </style>

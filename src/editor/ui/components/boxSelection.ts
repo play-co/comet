@@ -1,7 +1,7 @@
 import Color from 'color';
 import { type InteractionEvent, Graphics, Point, Rectangle } from 'pixi.js';
 
-import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObject';
+import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
 
 export class BoxSelection extends Graphics
 {

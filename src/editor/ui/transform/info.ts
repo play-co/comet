@@ -1,7 +1,7 @@
 import { Container, Graphics } from 'pixi.js';
 
 import { degToRad } from '../../../core/util/geom';
-import { KeyValueLabel } from '../keyValueLabel';
+import { KeyValueLabel } from '../components/keyValueLabel';
 import type { TransformGizmoFrame } from './frame';
 import type { DragInfo } from './operation';
 import { RotateOperation } from './operations/rotate';

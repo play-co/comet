@@ -1,7 +1,7 @@
 <script lang="ts">
   import Menubar from "./Menubar.svelte";
   import Viewport from "./Viewport.svelte";
-  import { Application } from "../application";
+  import { Application } from "../../core/application";
 
   Application.instance.init();
 </script>

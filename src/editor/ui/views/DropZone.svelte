@@ -9,7 +9,7 @@
 </script>
 
 <script lang="ts">
-  import { Application } from "../application";
+  import { Application } from "../../core/application";
 
   const onDragStart = (e: DragEvent) => {
     const { dataTransfer } = e;

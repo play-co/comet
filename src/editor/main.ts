@@ -3,12 +3,12 @@ import './core/nodeRegistry';
 // styles
 import './style';
 
-import { Application } from './application';
+import { Application } from './core/application';
 
 // eslint-disable-next-line no-new
 new Application({});
 
-import App from './views/App.svelte';
+import App from './ui/views/App.svelte';
 
 const target = document.getElementById('app') as HTMLElement;
 
