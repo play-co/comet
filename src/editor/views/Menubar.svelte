@@ -7,7 +7,7 @@
   globalEmitter.on("project.ready", () => (isReady = true));
 </script>
 
-<div data-id="menubar" class="fill flex-container-center">
+<menu-bar>
   {#if isReady}
     <button on:click={() => Actions.newContainer.dispatch()}
       >New Container</button>
@@ -17,10 +17,15 @@
           addToSelected: true,
         })}>New Node</button>
   {/if}
-</div>
+</menu-bar>
 
 <style>
-  [data-id="menubar"] {
+  menu-bar {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background-color: var(--menubar-bg-color);
   }
 

@@ -39,10 +39,16 @@
   };
 </script>
 
-<div
+<drop-zone
   on:dragenter={onDragStart}
   on:dragleave={onDragLeave}
-  on:drop={onDragDrop}
-  class="fill">
+  on:drop={onDragDrop}>
   <slot />
-</div>
+</drop-zone>
+
+<style>
+  drop-zone {
+    width: 100%;
+    height: 100%;
+  }
+</style>

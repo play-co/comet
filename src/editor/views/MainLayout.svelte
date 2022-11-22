@@ -6,17 +6,17 @@
   Application.instance.init();
 </script>
 
-<div data-id="main-layout">
+<main-layout>
   <div class="header">
     <Menubar />
   </div>
   <div class="body">
     <Viewport />
   </div>
-</div>
+</main-layout>
 
 <style>
-  [data-id="main-layout"] {
+  main-layout {
     position: absolute;
     width: 100%;
     height: 100%;
