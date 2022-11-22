@@ -24,14 +24,3 @@ body {
   background-color: var(--main-bg-color);
   user-select: none;
 }
-
-.fill {
-  width: 100%;
-  height: 100%;
-}
-
-.flex-container-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}

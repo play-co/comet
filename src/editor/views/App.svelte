@@ -3,7 +3,6 @@
   import { delay } from "../../core/util";
   import { Application } from "../application";
   import { getUrlParam } from "../util";
-  import HotReload from "./HotReload.svelte";
   import MainLayout from "./MainLayout.svelte";
 
   let isConnected = false;
@@ -39,8 +38,6 @@
       <button on:click={() => connect()}>Connect</button>
     </div>
   {/if}
-
-  <HotReload />
 </main>
 
 <style>

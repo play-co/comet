@@ -11,7 +11,4 @@
   });
 </script>
 
-<div
-  data-section="editorView"
-  class="fill flex-container-center"
-  bind:this={container} />
+<div class="fill flex-container-center" bind:this={container} />

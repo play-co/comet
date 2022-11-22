@@ -43,7 +43,6 @@
   on:dragenter={onDragStart}
   on:dragleave={onDragLeave}
   on:drop={onDragDrop}
-  class="fill"
-  data-section="dragzone">
+  class="fill">
   <slot />
 </div>

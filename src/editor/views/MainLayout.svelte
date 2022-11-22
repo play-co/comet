@@ -6,17 +6,17 @@
   Application.instance.init();
 </script>
 
-<div data-section="main-layout">
-  <div data-section="header">
+<div data-id="main-layout">
+  <div class="header">
     <Menubar />
   </div>
-  <div data-section="body">
+  <div class="body">
     <Viewport />
   </div>
 </div>
 
 <style>
-  [data-section="main-layout"] {
+  [data-id="main-layout"] {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -25,12 +25,12 @@
     background-color: var(--main-bg-color);
   }
 
-  [data-section="header"] {
+  .header {
     flex-grow: 0;
     height: 30px;
   }
 
-  [data-section="body"] {
+  .body {
     flex-grow: 1;
   }
 </style>

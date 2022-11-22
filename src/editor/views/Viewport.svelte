@@ -4,14 +4,14 @@
   import DropZone from "./DropZone.svelte";
 </script>
 
-<div data-section="viewport" class="fill">
+<div data-id="viewport" class="fill">
   <DropZone>
     <EditorView view={Application.instance.activeEditorView} />
   </DropZone>
 </div>
 
 <style>
-  [data-section="viewport"] {
+  [data-id="viewport"] {
     background-color: var(--container-bg-color);
   }
 </style>

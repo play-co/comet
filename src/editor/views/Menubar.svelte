@@ -7,7 +7,7 @@
   globalEmitter.on("project.ready", () => (isReady = true));
 </script>
 
-<div data-section="menubar" class="fill flex-container-center">
+<div data-id="menubar" class="fill flex-container-center">
   {#if isReady}
     <button on:click={() => Actions.newContainer.dispatch()}
       >New Container</button>
@@ -20,7 +20,7 @@
 </div>
 
 <style>
-  [data-section="menubar"] {
+  [data-id="menubar"] {
     background-color: var(--menubar-bg-color);
   }
 

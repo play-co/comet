@@ -1,10 +1,7 @@
-// register all node types!
+// implicitly register all core node types, editor must also register types
 import './core/nodeRegistry';
 // styles
-import './style/app.css';
-import './style/theme.css';
-import './style/dark-theme.css';
-import './style/light-theme.css';
+import './style';
 
 import { Application } from './application';
 
