@@ -71,8 +71,7 @@ export class EditableView
             .on('mousemove', this.onMouseMove)
             .on('moved', this.onViewportChanged)
             .on('moved-end', this.onViewportChanged)
-            .on('zoomed-end', this.onViewportChanged)
-            .on('drag-start', this.onViewportDragStart);
+            .on('zoomed-end', this.onViewportChanged);
 
         viewport
             .drag()
@@ -237,11 +236,6 @@ export class EditableView
         });
     };
 
-    protected onViewportDragStart = () =>
-    {
-        //
-    };
-
     protected selectWithDrag(selectedNode: DisplayObjectNode, e: InteractionEvent)
     {
         Application.instance.selection.set(selectedNode);
@@ -258,9 +252,7 @@ export class EditableView
 
         this.rootNode.walk<DisplayObjectNode>((node) =>
         {
-            const bounds = node.getGlobalBounds();
-
-            if (bounds.contains(globalX, globalY) && !node.isMetaNode)
+            if (node.containsPoint(globalX, globalY) && !node.isMetaNode)
             {
                 underCursor.push(node);
             }

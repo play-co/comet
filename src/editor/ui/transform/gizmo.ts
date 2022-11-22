@@ -1,4 +1,4 @@
-import type { DisplayObject, InteractionEvent } from 'pixi.js';
+import type { InteractionEvent } from 'pixi.js';
 import { Container, Graphics, Matrix, Transform } from 'pixi.js';
 
 import { getGlobalEmitter } from '../../../core/events';
@@ -109,7 +109,6 @@ export class TransformGizmo extends Container
     {
         const { selection: { isSingle, isMulti, isEmpty, nodes } } = Application.instance;
 
-        console.log('!');
         if (isSingle)
         {
             this.updateSingleSelectionNode();
