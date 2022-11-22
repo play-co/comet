@@ -23,7 +23,8 @@ import type { TransformGizmoConfig } from './types';
 import { defaultTransformGizmoConfig } from './types';
 import type { InitialGizmoTransform } from './util';
 import {
-    bluePivot,     decomposeTransform,
+    bluePivot,
+    decomposeTransform,
     defaultInitialGizmoTransform,
     getGizmoInitialTransformFromView,
     getTotalGlobalBounds,
@@ -663,7 +664,7 @@ export class TransformGizmo extends Container
 
             matrix.append(view.parent.worldTransform.clone().invert());
             matrix.append(cachedMatrix.world);
-            matrix.append(this.initialTransform.worldMatrix.clone().invert());
+            matrix.append(this.initialTransform.matrix.clone().invert());
             matrix.append(this.worldTransform);
 
             view.transform.setFromMatrix(matrix);
@@ -679,7 +680,7 @@ export class TransformGizmo extends Container
 
                 matrix.append(view.parent.worldTransform.clone().invert());
                 matrix.append(this.worldTransform);
-                matrix.append(this.initialTransform.worldMatrix.clone().invert());
+                matrix.append(this.initialTransform.matrix.clone().invert());
                 matrix.append(cachedMatrix.world);
 
                 view.transform.setFromMatrix(matrix);

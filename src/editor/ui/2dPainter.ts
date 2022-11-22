@@ -172,5 +172,7 @@ export default class Canvas2DPainter
         ctx.arc(x, y, radius, 0, degToRad(360));
         ctx.fill();
         ctx.closePath();
+
+        return this;
     }
 }

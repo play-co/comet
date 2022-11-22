@@ -20,8 +20,7 @@ export interface InitialGizmoTransform
     scaleY: number;
     skewX: number;
     skewY: number;
-    worldMatrix: Matrix;
-    localMatrix: Matrix;
+    matrix: Matrix;
 }
 
 export function round(num: number, places: number)
@@ -58,8 +57,8 @@ export function getGizmoInitialTransformFromView(
     const p0 = matrix.apply({ x: view.pivot.x, y: view.pivot.y });
 
     const rotation = angleBetween(p1.x, p1.y, p2.x, p2.y);
-    const x = p0.x + 0;
-    const y = p0.y + 0;
+    const x = p0.x;
+    const y = p0.y;
     const pivotX = view.pivot.x;
     const pivotY = view.pivot.y;
     const scaleX = transform.scale.x;
@@ -69,8 +68,7 @@ export function getGizmoInitialTransformFromView(
 
     return {
         localBounds,
-        worldMatrix: view.worldTransform.clone(),
-        localMatrix: view.localTransform.clone(),
+        matrix: view.worldTransform.clone(),
         naturalWidth,
         naturalHeight,
         width,
@@ -251,6 +249,5 @@ export const defaultInitialGizmoTransform: InitialGizmoTransform = {
     scaleY: 1,
     skewX: 0,
     skewY: 0,
-    worldMatrix: Matrix.IDENTITY,
-    localMatrix: Matrix.IDENTITY,
+    matrix: Matrix.IDENTITY,
 };

@@ -15,3 +15,9 @@
 * Not on latest Pixi
     - on 6, upgrade to 7 has breaking changes around event handling
 * Git hooks disabled
+
+# Major Missing Features
+
+* User awareness
+    - membership, auth
+    - presence, cursors
