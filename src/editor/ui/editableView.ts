@@ -118,7 +118,7 @@ export class EditableView
     protected onDblClick = (e: InteractionEvent) =>
     {
         const isShiftKeyPressed = e.data.originalEvent.shiftKey;
-        const isMetaKeyPressed = e.data.originalEvent.shiftKey;
+        const isMetaKeyPressed = e.data.originalEvent.metaKey;
         const isAddKey = isShiftKeyPressed || isMetaKeyPressed;
         const globalX = e.data.global.x;
         const globalY = e.data.global.y;
@@ -159,7 +159,7 @@ export class EditableView
         const topNode = underCursor[0];
         const isSpacePressed = this.isSpaceKeyDown;
         const isShiftKeyPressed = e.data.originalEvent.shiftKey;
-        const isMetaKeyPressed = e.data.originalEvent.shiftKey;
+        const isMetaKeyPressed = e.data.originalEvent.metaKey;
         const isAddKey = isShiftKeyPressed || isMetaKeyPressed;
 
         this.viewport.pause = !isSpacePressed;
