@@ -30,6 +30,19 @@ const logStyle = 'color:LightCyan;';
 
 export type AppOptions = {};
 
+export interface GridSettings
+{
+    bigUnit: number;
+    mediumUnit: number;
+    smallUnit: number;
+}
+
+export const defaultGridSettings: GridSettings = {
+    bigUnit: 100,
+    mediumUnit: 50,
+    smallUnit: 10,
+};
+
 export class Application
 {
     public datastore: ConvergenceDatastore;
@@ -39,6 +52,7 @@ export class Application
     public storageProvider: LocalStorageProvider;
     public project: ProjectNode;
     public selection: NodeSelection;
+    public gridSettings: GridSettings;
 
     private static _instance: Application;
 
@@ -66,6 +80,9 @@ export class Application
         this.nodeUpdater = new RemoteObjectSync(datastore);
         this.editorViews = [new EditableView(this.project.cast<ContainerNode>())];
         this.undoStack = new UndoStack();
+        this.gridSettings = {
+            ...defaultGridSettings,
+        };
 
         Cache.textures.fetchProvider = (storageKey: string) =>
             this.storageProvider.download(storageKey);

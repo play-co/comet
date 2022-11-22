@@ -1,4 +1,4 @@
-# Known Feature Issues
+# Known Feature Issues or Edge Cases
 
 * Multi-selection undo does not reset gizmo transform correctly, it resets it
     - May need to store transform gizmo state with each command in undo stack?
