@@ -1,4 +1,4 @@
-import type { InteractionEvent } from 'pixi.js';
+import type { DisplayObject, InteractionEvent } from 'pixi.js';
 import { Container, Graphics, Matrix, Transform } from 'pixi.js';
 
 import { getGlobalEmitter } from '../../../core/events';
@@ -109,6 +109,7 @@ export class TransformGizmo extends Container
     {
         const { selection: { isSingle, isMulti, isEmpty, nodes } } = Application.instance;
 
+        console.log('!');
         if (isSingle)
         {
             this.updateSingleSelectionNode();
@@ -434,16 +435,16 @@ export class TransformGizmo extends Container
     {
         const isShiftKeyPressed = event.data.originalEvent.shiftKey;
         const isSpacePressed = isKeyPressed(' ');
-        const wasDoubleClick = this.wasDoubleClick() || isShiftKeyPressed;
+        const wasDrillDownClick = this.wasDoubleClick() || isShiftKeyPressed;
 
         if (isSpacePressed)
         {
             return;
         }
 
-        if (wasDoubleClick)
+        if (wasDrillDownClick)
         {
-            this.emit('dblclick', event);
+            this.emit('drilldown', event);
 
             return;
         }
@@ -482,6 +483,7 @@ export class TransformGizmo extends Container
         }
         else if (isAltDown)
         {
+            this.isDirty = true;
             config.enablePivotTranslation && this.setOperation(new TranslatePivotOperation(this));
         }
         else
@@ -737,16 +739,22 @@ export class TransformGizmo extends Container
 
             if (selection.length === 1)
             {
+                const p1 = matrix.apply({ x: view.pivot.x, y: view.pivot.y });
+                const p2 = matrix.apply({ x: pivotX, y: pivotY });
+                const deltaX = p2.x - p1.x;
+                const deltaY = p2.y - p1.y;
+
                 values.pivotX = pivotX;
                 values.pivotY = pivotY;
+
+                values.x = x + deltaX;
+                values.y = y + deltaY;
             }
 
             modifications.push({
                 nodeId: node.id,
                 values,
             });
-
-            view.transform.setFromMatrix(matrix);
         });
 
         Application.instance.undoStack.exec(new ModifyModelsCommand({ modifications }));

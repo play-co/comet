@@ -63,7 +63,7 @@ export class EditableView
 
         gizmo
             .on('mouseup', this.onMouseUp)
-            .on('dblclick', this.onDblClick);
+            .on('drilldown', this.onDrillDownClick);
 
         viewport
             .on('mousedown', this.onMouseDown)
@@ -115,7 +115,7 @@ export class EditableView
         }
     };
 
-    protected onDblClick = (e: InteractionEvent) =>
+    protected onDrillDownClick = (e: InteractionEvent) =>
     {
         const isShiftKeyPressed = e.data.originalEvent.shiftKey;
         const isMetaKeyPressed = e.data.originalEvent.metaKey;
@@ -132,10 +132,8 @@ export class EditableView
             {
                 if (selection.deepContains(topNode))
                 {
-                    // add new node to selection
-                    const selectedNode = topNode.getCloneRoot().cast<DisplayObjectNode>();
-
-                    selection.remove(selectedNode);
+                    // replace selection if a child of currently selected node
+                    selection.set(topNode);
                 }
                 else
                 {
