@@ -8,7 +8,7 @@ import { Application } from './core/application';
 // eslint-disable-next-line no-new
 new Application({});
 
-import App from './ui/views/App.svelte';
+import App from './ui/views/app.svelte';
 
 const target = document.getElementById('app') as HTMLElement;
 

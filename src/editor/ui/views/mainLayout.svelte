@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Menubar from "./Menubar.svelte";
-  import Viewport from "./Viewport.svelte";
+  import Menubar from "./menubar.svelte";
+  import Viewport from "./viewport.svelte";
   import { Application } from "../../core/application";
 
   Application.instance.init();

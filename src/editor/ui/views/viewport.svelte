@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Application } from "../../core/application";
-  import EditorView from "./EditorView.svelte";
-  import DropZone from "./DropZone.svelte";
+  import EditorView from "./editorView.svelte";
+  import DropZone from "./dropZone.svelte";
 </script>
 
 <view-port>

@@ -3,7 +3,7 @@
   import { delay } from "../../../core/util";
   import { Application } from "../../core/application";
   import { getUrlParam } from "../../util";
-  import MainLayout from "./MainLayout.svelte";
+  import MainLayout from "./mainLayout.svelte";
 
   let isConnected = false;
   let connectionError: Error | undefined;
