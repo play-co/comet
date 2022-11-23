@@ -1,6 +1,5 @@
 <script lang="ts">
   import Panel from "./components/panel.svelte";
-
   let foo = 1;
 </script>
 
