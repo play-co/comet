@@ -21,6 +21,9 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: var(--main-bg-color);
-  user-select: none;
+  background-color: var(--app-bg-color);
+}
+
+* {
+  box-sizing: border-box;
 }

@@ -14,6 +14,5 @@
   view-port {
     width: 100%;
     height: 100%;
-    background-color: var(--container-bg-color);
   }
 </style>
