@@ -36,6 +36,7 @@
         "dropzone": "6.0.0-beta.2",
         "eventemitter3": "~4.0.7",
         "fast-equals": "^4.0.3",
+        "golden-layout": "^2.6.0",
         "hotkeys-js": "^3.10.0",
         "lz-string": "^1.4.4",
         "pixi-viewport": "^4.37.0",
