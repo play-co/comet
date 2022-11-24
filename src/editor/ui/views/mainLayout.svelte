@@ -1,12 +1,12 @@
 <script lang="ts">
   import { Application } from "../../core/application";
-  import PropertiesPanel from "./propertiesPanel.svelte";
+  import DockablePanelLayout from "./dockablePanelLayout.svelte";
 
   Application.instance.init();
 </script>
 
 <main-layout>
-  <PropertiesPanel />
+  <DockablePanelLayout />
 </main-layout>
 
 <style>

@@ -1,4 +1,3 @@
-import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObject';
 import type { TransformGizmo } from '../ui/transform/gizmo';
 
 
