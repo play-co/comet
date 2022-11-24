@@ -44,4 +44,6 @@ export function createLayout(container: HTMLElement) {
     layout.loadLayout(layoutConfig);
 
     // layout.addComponent('MyComponent', undefined, 'Added Component');
+
+    return layout;
 }
