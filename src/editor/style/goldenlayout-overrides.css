@@ -1,0 +1,11 @@
+.lm_goldenlayout {
+    background-color: transparent;
+}
+
+.lm_tabs {
+    height: calc(100% - 6px);
+}
+
+.lm_tab {
+    height: 100% !important;
+}

@@ -2,12 +2,12 @@
   import Panel from "./components/panel.svelte";
 </script>
 
-<properties-panel>
-  <Panel>Properties...</Panel>
-</properties-panel>
+<hierarchy-panel>
+  <Panel>Hierarchy...</Panel>
+</hierarchy-panel>
 
 <style>
-  properties-panel {
+  hierarchy-panel {
     width: 100%;
     height: 100%;
   }

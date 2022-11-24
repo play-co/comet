@@ -1,5 +1,5 @@
 :root {
-  --app-bg-color: #222;
-  --panel-bg-color: #333;
-  --panel-border-size: 3px;
+  --app-bg-color: #151515;
+  --panel-bg-color-dark: #222;
+  --panel-bg-color-light: #333;
 }

@@ -2,12 +2,12 @@
   import Panel from "./components/panel.svelte";
 </script>
 
-<properties-panel>
-  <Panel>Properties...</Panel>
-</properties-panel>
+<project-panel>
+  <Panel>Project...</Panel>
+</project-panel>
 
 <style>
-  properties-panel {
+  project-panel {
     width: 100%;
     height: 100%;
   }

@@ -6,7 +6,7 @@
 
   onMount(() => {
     const layout = createLayout(container);
-    console.log(layout);
+    console.log(layout.saveLayout());
   });
 </script>
 

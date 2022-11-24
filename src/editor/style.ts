@@ -3,6 +3,7 @@ import './style/global.css';
 // golden layout themes
 import './style/goldenlayout-base.css';
 import './style/goldenlayout-dark-theme.css';
+import './style/goldenlayout-overrides.css';
 // base theme styles
 import './style/theme/base/theme.css';
 // specific themes

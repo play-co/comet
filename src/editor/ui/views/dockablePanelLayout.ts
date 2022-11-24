@@ -1,12 +1,18 @@
-import { GoldenLayout, type ComponentContainer, type LayoutConfig } from 'golden-layout';
+import { type ComponentContainer, type LayoutConfig, GoldenLayout } from 'golden-layout';
+
+import HierarchyPanel from './hierarchyPanel.svelte';
+import ProjectPanel from './projectPanel.svelte';
 import PropertiesPanel from './propertiesPanel.svelte';
 
-function createPanelFactory<T>(Ctor: { new(params: { target: HTMLElement }): T }) {
-    return function factoryFunc(container: ComponentContainer) {
+function createPanelFactory<T>(Ctor: { new(params: { target: HTMLElement }): T })
+{
+    return function factoryFunc(container: ComponentContainer)
+    {
+        // eslint-disable-next-line no-new
         new Ctor({
             target: container.element,
         });
-    }
+    };
 }
 
 const layoutConfig: LayoutConfig = {
@@ -14,33 +20,45 @@ const layoutConfig: LayoutConfig = {
         type: 'row',
         content: [
             {
-                title: 'PropertiesPanel1',
+                title: 'Hierarchy',
                 type: 'component',
-                componentType: 'PropertiesPanel',
-                width: 50,
-                // header: {
-                //     show: false,
-                // },
+                componentType: 'HierarchyPanel',
+                // width: 30,
+                size: '1fr',
                 isClosable: false,
+                minSize: '250px',
             },
             {
-                title: 'PropertiesPanel2',
+                type: 'column',
+                id: 'foo',
+                size: '2fr',
+                content: [
+
+                ],
+            },
+            {
+                title: 'Properties',
                 type: 'component',
                 componentType: 'PropertiesPanel',
-                // componentState: { text: 'Component 2' },
+                minSize: '250px',
             },
         ],
-        isClosable: false,
+    },
+    dimensions: {
+        headerHeight: 30,
     },
 };
 
-export function createLayout(container: HTMLElement) {
+export function createLayout(container: HTMLElement)
+{
     const layout = new GoldenLayout(container);
 
     layout.resizeWithContainerAutomatically = true;
-    
-    layout.registerComponentFactoryFunction('PropertiesPanel', createPanelFactory(PropertiesPanel))
-    
+
+    layout.registerComponentFactoryFunction('PropertiesPanel', createPanelFactory(PropertiesPanel));
+    layout.registerComponentFactoryFunction('ProjectPanel', createPanelFactory(ProjectPanel));
+    layout.registerComponentFactoryFunction('HierarchyPanel', createPanelFactory(HierarchyPanel));
+
     layout.loadLayout(layoutConfig);
 
     // layout.addComponent('MyComponent', undefined, 'Added Component');
