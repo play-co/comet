@@ -15,8 +15,9 @@ const globalEmitter = getGlobalEmitter<GlobalKeyboardEvent>();
 
 export class EditableView
 {
+    public title: string;
     public rootNode: ContainerNode;
-    public canvas: HTMLCanvasElement;
+    public container: HTMLDivElement;
     public pixi: PixiApplication;
     public transformGizmo: TransformGizmo;
     public nodeLayer: Container;
@@ -25,16 +26,27 @@ export class EditableView
     public grid: Grid;
     public boxSelection: BoxSelection;
 
-    constructor(rootNode: ContainerNode)
+    constructor(rootNode: ContainerNode, title: string)
     {
+        this.title = title;
         this.rootNode = rootNode;
 
-        const canvas = this.canvas = document.createElement('canvas');
+        const container = this.container = document.createElement('div');
+
+        container.style.cssText = `
+            display: block;
+            width: 100%;
+            height: 100%;
+        `;
 
         const pixi = this.pixi = new PixiApplication({
-            view: canvas,
             backgroundColor: 0x111111,
+            resizeTo: container,
         });
+
+        const canvas = pixi.renderer.view;
+
+        container.appendChild(canvas);
 
         const grid = this.grid = new Grid(canvas);
 
@@ -82,7 +94,8 @@ export class EditableView
             .on('key.up', this.onKeyUp);
     }
 
-    get stage() {
+    get stage()
+    {
         return this.pixi.stage;
     }
 
@@ -93,8 +106,17 @@ export class EditableView
 
     public init(container: HTMLDivElement)
     {
+        // this.pixi.resizeTo = container;
+        // container.appendChild(this.canvas);
+        // this.grid.draw();
+    }
+
+    public mount(container: HTMLElement)
+    {
+        container.appendChild(this.container);
         this.pixi.resizeTo = container;
-        container.appendChild(this.canvas);
+        debugger;
+        this.pixi.resize();
         this.grid.draw();
     }
 
@@ -266,12 +288,18 @@ export class EditableView
         return underCursor;
     }
 
-    public setRoot(rootNode: ContainerNode)
-    {
-        const { nodeLayer } = this;
+    // public resizeTo(container: HTMLElement)
+    // {
+    //     setTimeout(() =>
+    //     {
+    //         const width = container.offsetWidth;
+    //         const height = container.offsetHeight;
 
-        nodeLayer.removeChild(this.rootNode.view);
-        this.rootNode = rootNode;
-        nodeLayer.addChild(rootNode.view);
-    }
+    //         // this.canvas.width = width;
+    //         // this.canvas.height = height;
+    //         this.pixi.resizeTo = container;
+    //         // this.pixi.renderer.resize(container.offsetWidth, container.offsetHeight);
+    //         // this.pixi.resize();
+    //     }, 0);
+    // }
 }

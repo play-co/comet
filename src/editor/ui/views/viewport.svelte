@@ -1,49 +1,32 @@
 <script lang="ts">
-  import type { LayoutConfig } from "golden-layout";
-  import PropertiesPanel from "./propertiesPanel.svelte";
-  import DockablePanelLayout from "./dockablePanelLayout.svelte";
-  import type { FactoryTypes } from "./dockablePanelLayout.svelte";
+  import { onMount } from "svelte";
+  import type { EditableView } from "../components/editableView";
 
-  const factoryTypes: FactoryTypes = {
-    Properties: PropertiesPanel,
-  };
+  export let editableView: EditableView;
 
-  const layoutConfig: LayoutConfig = {
-    root: {
-      type: "row",
-      content: [
-        {
-          type: "stack",
-          content: [
-            {
-              title: "Properties",
-              type: "component",
-              componentType: "Properties",
-              minSize: "250px",
-            },
-            {
-              title: "Properties",
-              type: "component",
-              componentType: "Properties",
-              minSize: "250px",
-            },
-          ],
-        },
-      ],
-    },
-    dimensions: {
-      headerHeight: 30,
-    },
-  };
+  let container: HTMLDivElement;
+
+  onMount(() => {
+    setTimeout(() => {
+      editableView.mount(container);
+    }, 0);
+  });
 </script>
 
-<view-port>
-  <DockablePanelLayout {layoutConfig} {factoryTypes} />
+<view-port bind:this={container}>
+  <!-- custom tags require closing tag-->
 </view-port>
 
 <style>
   view-port {
+    display: flex;
     width: 100%;
     height: 100%;
   }
+
+  /* * :global(canvas) {
+    width: 100%;
+    height: 100%;
+    border: solid 2px red;
+  } */
 </style>

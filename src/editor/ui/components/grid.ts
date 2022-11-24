@@ -38,6 +38,8 @@ export class Grid extends Graphics
         };
         this.container = new Container();
         this.addChild(this.container);
+
+        this.draw();
     }
 
     get gridSettings()

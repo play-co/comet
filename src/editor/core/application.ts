@@ -2,6 +2,7 @@ import { Cache } from '../../core/cache';
 import { getGlobalEmitter } from '../../core/events';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObject';
+import { CloneMode } from '../../core/nodes/cloneInfo';
 import type { ContainerNode } from '../../core/nodes/concrete/container';
 import { ProjectNode } from '../../core/nodes/concrete/project';
 import { clearInstances, getInstance } from '../../core/nodes/instances';
@@ -10,6 +11,7 @@ import { CreateTextureAssetCommand } from '../commands/createTextureAsset';
 import { RemoveNodeCommand } from '../commands/removeNode';
 import type { DatastoreEvent } from '../events/datastoreEvents';
 import type { ProjectEvent } from '../events/projectEvents';
+import type { ViewportEvent } from '../events/viewportEvents';
 import { LocalStorageProvider } from '../storage/localStorageProvider';
 import { ConvergenceDatastore } from '../sync/convergenceDatastore';
 import { RemoteObjectSync } from '../sync/remoteObjectSync';
@@ -22,6 +24,7 @@ import UndoStack from './undoStack';
 
 const datastoreGlobalEmitter = getGlobalEmitter<DatastoreEvent>();
 const projectGlobalEmitter = getGlobalEmitter<ProjectEvent>();
+const viewportGlobalEmitter = getGlobalEmitter<ViewportEvent>();
 
 const userName = getUserName();
 const userColor = getUserLogColor(userName);
@@ -78,7 +81,7 @@ export class Application
         this.project = new ProjectNode();
         this.selection = new NodeSelection();
         this.nodeUpdater = new RemoteObjectSync(datastore);
-        this.editorViews = [new EditableView(this.project.cast<ContainerNode>())];
+        this.editorViews = [];
         this.undoStack = new UndoStack();
         this.gridSettings = {
             ...defaultGridSettings,
@@ -93,12 +96,6 @@ export class Application
         });
 
         initHistory();
-    }
-
-    public get activeEditorView(): EditableView
-    {
-        // simple single view for now, but we could make it multi-view this way later
-        return this.editorViews[0];
     }
 
     public async connect()
@@ -128,8 +125,6 @@ export class Application
                 nodes.push(node);
             }
         });
-
-        // this.selection.add(nodes[0].cast<DisplayObjectNode>());
     }
 
     public async createProject(name: string, id: string)
@@ -167,7 +162,17 @@ export class Application
 
     protected initProject()
     {
-        this.editorViews.forEach((editorView) => editorView.setRoot(this.project.cast<ContainerNode>()));
+        this.newView(this.project.cast<ContainerNode>(), 'view1');
+        // this.newView(this.project.clone(CloneMode.Reference).cast<ContainerNode>(), 'view2');
+    }
+
+    public newView(root: ContainerNode, title: string)
+    {
+        const view = new EditableView(root, title);
+
+        this.editorViews.push(view);
+
+        viewportGlobalEmitter.emit('viewport.open', view);
     }
 
     protected clear()
