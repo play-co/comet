@@ -1,12 +1,34 @@
+<script lang="ts" context="module">
+  export type FactoryTypes = {
+    [name: string]: { new (params: { target: HTMLElement }): object };
+  };
+</script>
+
 <script lang="ts">
   import { onMount } from "svelte";
-  import { createLayout } from "./dockablePanelLayout";
+  import type { ComponentContainer, LayoutConfig } from "golden-layout";
+  import { GoldenLayout } from "golden-layout";
+
+  export let layoutConfig: LayoutConfig;
+  export let factoryTypes: FactoryTypes;
 
   let container: HTMLElement;
 
   onMount(() => {
-    const layout = createLayout(container);
-    console.log(layout.saveLayout());
+    const layout = new GoldenLayout(container);
+
+    layout.resizeWithContainerAutomatically = true;
+
+    for (const [name, Ctor] of Object.entries(factoryTypes)) {
+      layout.registerComponentFactoryFunction(
+        name,
+        (container: ComponentContainer) => {
+          new Ctor({ target: container.element });
+        }
+      );
+    }
+
+    layout.loadLayout(layoutConfig);
   });
 </script>
 

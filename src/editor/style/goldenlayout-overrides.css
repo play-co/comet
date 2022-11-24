@@ -9,3 +9,10 @@
 .lm_tab {
     height: 100% !important;
 }
+
+.lm_tab[title="Hierarchy"] .lm_close_tab,
+.lm_tab[title="Properties"] .lm_close_tab,
+.lm_tab[title="Project"] .lm_close_tab
+ {
+    display: none;
+}

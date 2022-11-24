@@ -24,6 +24,10 @@ body {
   background-color: var(--app-bg-color);
 }
 
+html, body {
+  overflow: hidden;
+}
+
 * {
   box-sizing: border-box;
 }
