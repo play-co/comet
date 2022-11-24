@@ -1,8 +1,8 @@
 import { getGlobalEmitter } from '../../core/events';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import { getInstance } from '../../core/nodes/instances';
-import { Application } from './application';
 import type { CommandEvent } from '../events/commandEvents';
+import { Application } from './application';
 import type { CommandName } from './commandFactory';
 
 export type UpdateMode = 'graphOnly' | 'full';
@@ -49,7 +49,7 @@ export abstract class Command<ParamsType extends {} = {}, ReturnType = void, Cac
 
         this.hasRun = true;
 
-        globalEmitter.emit('command.exec', { command: this });
+        globalEmitter.emit('command.exec', this);
 
         return result as unknown as ReturnType;
     }

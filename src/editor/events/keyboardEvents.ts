@@ -1,10 +1,10 @@
-interface CommandPayload
+interface EventData
 {
     key: string;
 }
 
 export interface GlobalKeyboardEvent
 {
-    'key.down': CommandPayload;
-    'key.up': CommandPayload;
+    'key.down': EventData;
+    'key.up': EventData;
 }

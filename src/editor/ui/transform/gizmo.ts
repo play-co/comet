@@ -10,6 +10,8 @@ import { Application } from '../../core/application';
 import type { CommandEvent } from '../../events/commandEvents';
 import type { DatastoreEvent } from '../../events/datastoreEvents';
 import type { SelectionEvent } from '../../events/selectionEvents';
+import type { TransformEvent } from '../../events/transformEvents';
+import type { EditableView } from '../components/editableView';
 import { isKeyPressed } from '../components/keyboardListener';
 import { TransformGizmoFrame } from './frame';
 import type { HandleVertex } from './handle';
@@ -33,7 +35,7 @@ import {
 
 export const dblClickMsThreshold = 250;
 
-const globalEmitter = getGlobalEmitter<DatastoreEvent & CommandEvent & SelectionEvent>();
+const globalEmitter = getGlobalEmitter<DatastoreEvent & CommandEvent & SelectionEvent & TransformEvent>();
 
 type MatrixCache = {
     local: Matrix;
@@ -42,7 +44,7 @@ type MatrixCache = {
 
 export class TransformGizmo extends Container
 {
-    public stage: Container;
+    public editableView: EditableView;
     public config: TransformGizmoConfig;
 
     public visualPivot?: Point;
@@ -61,11 +63,11 @@ export class TransformGizmo extends Container
     protected lastClick: number;
     protected isDirty: boolean;
 
-    constructor(stage: Container, config: Partial<TransformGizmoConfig> = {})
+    constructor(editableView: EditableView, config: Partial<TransformGizmoConfig> = {})
     {
         super();
 
-        this.stage = stage;
+        this.editableView = editableView;
         this.lastClick = -1;
         this.isDirty = false;
 
@@ -83,7 +85,7 @@ export class TransformGizmo extends Container
         this.groupSizeGraphic = new Graphics();
         this.groupSizeContainer.addChild(this.groupSizeGraphic);
         this.groupSizeContainer.visible = false;
-        this.stage.addChild(this.groupSizeContainer);
+        this.editableView.stage.addChild(this.groupSizeContainer);
 
         this.hide();
 
@@ -115,7 +117,6 @@ export class TransformGizmo extends Container
         }
         else if (isMulti)
         {
-            // this.selectMultipleNodes(nodes);
             this.selectNodes(nodes);
         }
         else if (isEmpty)
@@ -463,35 +464,44 @@ export class TransformGizmo extends Container
 
         if (isMetaDown && !isAltDown)
         {
+            // rotation
             config.enableRotation && this.setOperation(new RotateOperation(this));
         }
         else if (isVertexDrag)
         {
+            // scaling
             const { defaultScaleMode } = config;
             const PrimaryScaleOperation = defaultScaleMode === 'edge' ? ScaleByEdgeOperation : ScaleByPivotOperation;
             const SecondaryScaleOperation = defaultScaleMode === 'edge' ? ScaleByPivotOperation : ScaleByEdgeOperation;
 
             if (isMetaDown && isAltDown)
             {
+                // secondary scale operation (scale by pivot)
                 config.enableScaling && this.setOperation(new SecondaryScaleOperation(this));
             }
             else
             {
+                // primary scale operation (scale by edge)
                 config.enableScaling && this.setOperation(new PrimaryScaleOperation(this));
             }
         }
         else if (isAltDown)
         {
-            this.isDirty = true;
+            // translate pivot
             config.enablePivotTranslation && this.setOperation(new TranslatePivotOperation(this));
+
+            // pivot modifies transform instantly, doesn't need a mousemove event
+            this.isDirty = true;
         }
         else
         {
+            // translation
             config.enableTranslation && this.setOperation(new TranslateOperation(this));
         }
 
         if (this.operation)
         {
+            // start the operation
             this.operation.init(this.dragInfo);
             this.operation.drag(this.dragInfo);
         }
@@ -501,6 +511,8 @@ export class TransformGizmo extends Container
         this.frame.startOperation(this.dragInfo);
 
         this.lastClick = Date.now();
+
+        globalEmitter.emit('transform.start', this);
     };
 
     public onMouseMove = (event: InteractionEvent) =>
@@ -513,6 +525,8 @@ export class TransformGizmo extends Container
 
             this.update();
             this.frame.updateOperation(this.dragInfo);
+
+            globalEmitter.emit('transform.modify', this);
         }
     };
 
@@ -533,11 +547,14 @@ export class TransformGizmo extends Container
             this.update();
             this.frame.endOperation(this.dragInfo);
             this.clearOperation();
+
             if (this.isDirty)
             {
                 this.updateSelectedModels();
                 this.isDirty = false;
             }
+
+            globalEmitter.emit('transform.end', this);
         }
 
         this.emit('mouseup');

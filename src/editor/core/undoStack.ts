@@ -92,7 +92,7 @@ export default class UndoStack
 
             cmd.undo();
 
-            globalEmitter.emit('command.undo', { command: cmd });
+            globalEmitter.emit('command.undo', cmd);
         }
 
         this.head = nextUndoRootIndex - 1;
@@ -106,7 +106,7 @@ export default class UndoStack
         {
             cmd.redo();
 
-            globalEmitter.emit('command.redo', { command: cmd });
+            globalEmitter.emit('command.redo', cmd);
 
             this.head++;
         }

@@ -47,7 +47,7 @@ export class EditableView
         const nodeLayer = this.nodeLayer = new Container();
         const editLayer = this.editLayer = new Container();
 
-        const gizmo = this.transformGizmo = new TransformGizmo(pixi.stage);
+        const gizmo = this.transformGizmo = new TransformGizmo(this);
 
         viewport.addChild(nodeLayer);
         viewport.addChild(gizmo);
@@ -80,6 +80,10 @@ export class EditableView
         globalEmitter
             .on('key.down', this.onKeyDown)
             .on('key.up', this.onKeyUp);
+    }
+
+    get stage() {
+        return this.pixi.stage;
     }
 
     get isSpaceKeyDown()

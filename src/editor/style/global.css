@@ -72,6 +72,10 @@ h2{
   height: 100%;
 }
 
-.lm_title.lm_focused {
-  background-color: white;
+.lm_tab.lm_active.lm_focused {
+  font-weight: bold
+}
+
+.lm_tab {
+  min-width: 200px;
 }
