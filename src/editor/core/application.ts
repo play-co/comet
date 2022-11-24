@@ -2,8 +2,6 @@ import { Cache } from '../../core/cache';
 import { getGlobalEmitter } from '../../core/events';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObject';
-import { CloneMode } from '../../core/nodes/cloneInfo';
-import type { ContainerNode } from '../../core/nodes/concrete/container';
 import { ProjectNode } from '../../core/nodes/concrete/project';
 import { clearInstances, getInstance } from '../../core/nodes/instances';
 import { Actions } from '../actions';
@@ -11,7 +9,6 @@ import { CreateTextureAssetCommand } from '../commands/createTextureAsset';
 import { RemoveNodeCommand } from '../commands/removeNode';
 import type { DatastoreEvent } from '../events/datastoreEvents';
 import type { ProjectEvent } from '../events/projectEvents';
-import type { ViewportEvent } from '../events/viewportEvents';
 import { LocalStorageProvider } from '../storage/localStorageProvider';
 import { ConvergenceDatastore } from '../sync/convergenceDatastore';
 import { RemoteObjectSync } from '../sync/remoteObjectSync';
@@ -24,7 +21,6 @@ import UndoStack from './undoStack';
 
 const datastoreGlobalEmitter = getGlobalEmitter<DatastoreEvent>();
 const projectGlobalEmitter = getGlobalEmitter<ProjectEvent>();
-const viewportGlobalEmitter = getGlobalEmitter<ViewportEvent>();
 
 const userName = getUserName();
 const userColor = getUserLogColor(userName);
@@ -51,7 +47,7 @@ export class Application
     public datastore: ConvergenceDatastore;
     public nodeUpdater: RemoteObjectSync;
     public undoStack: UndoStack;
-    public editorViews: EditableView[];
+    public editorView: EditableView;
     public storageProvider: LocalStorageProvider;
     public project: ProjectNode;
     public selection: NodeSelection;
@@ -77,15 +73,16 @@ export class Application
 
         const datastore = this.datastore = new ConvergenceDatastore();
 
+        this.gridSettings = {
+            ...defaultGridSettings,
+        };
+
         this.storageProvider = new LocalStorageProvider();
         this.project = new ProjectNode();
         this.selection = new NodeSelection();
         this.nodeUpdater = new RemoteObjectSync(datastore);
-        this.editorViews = [];
+        this.editorView = new EditableView(this.project);
         this.undoStack = new UndoStack();
-        this.gridSettings = {
-            ...defaultGridSettings,
-        };
 
         Cache.textures.fetchProvider = (storageKey: string) =>
             this.storageProvider.download(storageKey);
@@ -162,17 +159,7 @@ export class Application
 
     protected initProject()
     {
-        this.newView(this.project.cast<ContainerNode>(), 'view1');
-        // this.newView(this.project.clone(CloneMode.Reference).cast<ContainerNode>(), 'view2');
-    }
-
-    public newView(root: ContainerNode, title: string)
-    {
-        const view = new EditableView(root, title);
-
-        this.editorViews.push(view);
-
-        viewportGlobalEmitter.emit('viewport.open', view);
+        this.editorView.setRoot(this.project);
     }
 
     protected clear()

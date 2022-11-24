@@ -6,18 +6,19 @@ import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObje
 import type { ContainerNode } from '../../../core/nodes/concrete/container';
 import { Application } from '../../core/application';
 import type { GlobalKeyboardEvent } from '../../events/keyboardEvents';
+import type { ViewportEvent } from '../../events/viewportEvents';
 import { TransformGizmo } from '../transform/gizmo';
 import { BoxSelection } from './boxSelection';
 import { Grid } from './grid';
 import { isKeyPressed } from './keyboardListener';
 
-const globalEmitter = getGlobalEmitter<GlobalKeyboardEvent>();
+const keyboardEmitter = getGlobalEmitter<GlobalKeyboardEvent>();
+const viewportEmitter = getGlobalEmitter<ViewportEvent>();
 
 export class EditableView
 {
-    public title: string;
     public rootNode: ContainerNode;
-    public container: HTMLDivElement;
+    public canvas: HTMLCanvasElement;
     public pixi: PixiApplication;
     public transformGizmo: TransformGizmo;
     public nodeLayer: Container;
@@ -26,27 +27,15 @@ export class EditableView
     public grid: Grid;
     public boxSelection: BoxSelection;
 
-    constructor(rootNode: ContainerNode, title: string)
+    constructor(rootNode: ContainerNode)
     {
-        this.title = title;
         this.rootNode = rootNode;
-
-        const container = this.container = document.createElement('div');
-
-        container.style.cssText = `
-            display: block;
-            width: 100%;
-            height: 100%;
-        `;
 
         const pixi = this.pixi = new PixiApplication({
             backgroundColor: 0x111111,
-            resizeTo: container,
         });
 
-        const canvas = pixi.renderer.view;
-
-        container.appendChild(canvas);
+        const canvas = this.canvas = pixi.renderer.view;
 
         const grid = this.grid = new Grid(canvas);
 
@@ -89,9 +78,12 @@ export class EditableView
             .pinch()
             .wheel();
 
-        globalEmitter
+        keyboardEmitter
             .on('key.down', this.onKeyDown)
             .on('key.up', this.onKeyUp);
+
+        viewportEmitter
+            .on('viewport.resize', this.onResize);
     }
 
     get stage()
@@ -102,22 +94,6 @@ export class EditableView
     get isSpaceKeyDown()
     {
         return isKeyPressed(' ');
-    }
-
-    public init(container: HTMLDivElement)
-    {
-        // this.pixi.resizeTo = container;
-        // container.appendChild(this.canvas);
-        // this.grid.draw();
-    }
-
-    public mount(container: HTMLElement)
-    {
-        container.appendChild(this.container);
-        this.pixi.resizeTo = container;
-        debugger;
-        this.pixi.resize();
-        this.grid.draw();
     }
 
     protected onKeyDown = (e: KeyboardEvent) =>
@@ -288,18 +264,35 @@ export class EditableView
         return underCursor;
     }
 
-    // public resizeTo(container: HTMLElement)
-    // {
-    //     setTimeout(() =>
-    //     {
-    //         const width = container.offsetWidth;
-    //         const height = container.offsetHeight;
+    public onResize = () =>
+    {
+        const container = this.canvas.parentElement as HTMLDivElement;
 
-    //         // this.canvas.width = width;
-    //         // this.canvas.height = height;
-    //         this.pixi.resizeTo = container;
-    //         // this.pixi.renderer.resize(container.offsetWidth, container.offsetHeight);
-    //         // this.pixi.resize();
-    //     }, 0);
-    // }
+        if (container)
+        {
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            this.pixi.renderer.resize(width, height);
+            console.log({ width, height });
+            this.grid.draw();
+        }
+    };
+
+    public mount(container: HTMLElement)
+    {
+        // this.pixi.resizeTo = container;
+        container.appendChild(this.canvas);
+        // this.onResize();
+        this.onResize();
+
+        (window as any).test = this;
+    }
+
+    public setRoot(node: ContainerNode)
+    {
+        this.nodeLayer.removeChild(this.rootNode.view);
+        this.rootNode = node;
+        this.nodeLayer.addChild(this.rootNode.view);
+    }
 }

@@ -7,7 +7,7 @@
   import HierarchyPanel from "./hierarchyPanel.svelte";
   import ProjectPanel from "./projectPanel.svelte";
   import PropertiesPanel from "./propertiesPanel.svelte";
-  import DockableViewports from "./dockableViewports.svelte";
+  import Viewport from "./viewport.svelte";
 
   Application.instance.init();
 
@@ -15,7 +15,7 @@
     Hierarchy: HierarchyPanel,
     Properties: PropertiesPanel,
     Project: ProjectPanel,
-    Viewports: DockableViewports,
+    Viewport: Viewport,
   };
 
   const layoutConfig: LayoutConfig = {
@@ -47,9 +47,9 @@
           size: "2fr",
           content: [
             {
-              title: "Viewports",
+              title: "Viewport",
               type: "component",
-              componentType: "Viewports",
+              componentType: "Viewport",
               size: "1fr",
               header: {
                 show: false,

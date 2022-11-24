@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { EditableView } from "../components/editableView";
+  import { Application } from "../../core/application";
 
-  export let editableView: EditableView;
+  const editableView = Application.instance.editorView;
 
   let container: HTMLDivElement;
 
@@ -19,7 +19,7 @@
 
 <style>
   view-port {
-    display: flex;
+    display: block;
     width: 100%;
     height: 100%;
   }

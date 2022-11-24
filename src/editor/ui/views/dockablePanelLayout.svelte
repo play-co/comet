@@ -8,6 +8,10 @@
   import { onMount } from "svelte";
   import type { ComponentContainer, LayoutConfig } from "golden-layout";
   import { GoldenLayout } from "golden-layout";
+  import { getGlobalEmitter } from "../../../core/events";
+  import type { ViewportEvent } from "../../events/viewportEvents";
+
+  const globalEmitter = getGlobalEmitter<ViewportEvent>();
 
   export let layoutConfig: LayoutConfig;
   export let factoryTypes: FactoryTypes;
@@ -29,6 +33,9 @@
     }
 
     layout.loadLayout(layoutConfig);
+    layout.on("stateChanged", () => {
+      globalEmitter.emit("viewport.resize");
+    });
   });
 </script>
 
