@@ -2,14 +2,10 @@
   import { onMount } from "svelte";
   import { Application } from "../../core/application";
 
-  const editableView = Application.instance.viewport;
-
   let container: HTMLDivElement;
 
   onMount(() => {
-    setTimeout(() => {
-      editableView.mount(container);
-    }, 0);
+    Application.instance.viewport.mount(container);
   });
 </script>
 
@@ -23,10 +19,4 @@
     width: 100%;
     height: 100%;
   }
-
-  /* * :global(canvas) {
-    width: 100%;
-    height: 100%;
-    border: solid 2px red;
-  } */
 </style>

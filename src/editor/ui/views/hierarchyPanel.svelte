@@ -14,6 +14,7 @@
     node: DisplayObjectNode;
     isSelected: boolean;
     isExpanded: boolean;
+    isVisible: boolean;
   }
 
   let model: ModelItem[] = [];
@@ -26,6 +27,7 @@
           depth: options.depth,
           isSelected: Application.instance.selection.shallowContains(node),
           isExpanded: true,
+          isVisible: true,
           node,
         });
       },
@@ -35,8 +37,6 @@
         },
       }
     ).model;
-
-    console.log(model);
   }
 
   function updateModel(fn: (item: ModelItem) => void) {
@@ -79,6 +79,16 @@
 
   function toggleItemExpanded(e: MouseEvent, item: ModelItem) {
     item.isExpanded = !item.isExpanded;
+    const index = model.indexOf(item);
+    for (let i = index + 1; i <= model.length - 1; i++) {
+      const subItem = model[i];
+      if (subItem.depth > item.depth) {
+        subItem.isVisible = item.isExpanded;
+      } else if (subItem.depth <= item.depth) {
+        break;
+      }
+    }
+    item.isVisible = true;
     e.stopPropagation();
     refresh();
   }
@@ -104,7 +114,10 @@
         {#each model as item (item.node.id)}
           <tr>
             <td
-              class={item.isSelected ? "selected" : undefined}
+              class={[
+                item.isSelected ? "selected" : "",
+                item.isVisible ? "visible" : "hidden",
+              ].join(" ")}
               on:click={(e) => selectItem(e, item)}
               ><span class="indentation" style="width:{item.depth * 10}px" />
               {#if item.node.hasChildren}<span
@@ -112,7 +125,7 @@
                   class="arrow {item.isExpanded
                     ? 'expanded'
                     : 'collapsed'}" />{:else}<span class="arrow-filler" />{/if}
-              <span class="label {item.isSelected ? 'selected' : undefined}"
+              <span class="label {item.isSelected ? 'selected' : ''}"
                 >{item.node.id}</span
               ></td>
           </tr>
@@ -150,6 +163,10 @@
 
   td.selected {
     background-color: #2eb2c8;
+  }
+
+  td.hidden {
+    display: none;
   }
 
   td span {
