@@ -40,7 +40,10 @@ export class EditableViewport
 
         pixi.stage.addChild(grid);
 
-        const viewport = this.viewport = new Viewport();
+        const viewport = this.viewport = new Viewport({
+            divWheel: canvas,
+            interaction: pixi.renderer.plugins.interaction,
+        });
 
         pixi.stage.addChild(viewport);
 
@@ -274,6 +277,7 @@ export class EditableViewport
             const height = container.clientHeight;
 
             pixi.renderer.resize(width, height);
+
             grid.draw();
         }
     };

@@ -15,6 +15,11 @@ export abstract class GraphNode
         this.created = Date.now();
     }
 
+    get hasChildren()
+    {
+        return this.children.length > 0;
+    }
+
     public abstract nodeType(): string;
 
     public cast<T extends GraphNode>()
