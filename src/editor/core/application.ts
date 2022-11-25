@@ -13,7 +13,7 @@ import { LocalStorageProvider } from '../storage/localStorageProvider';
 import { ConvergenceDatastore } from '../sync/convergenceDatastore';
 import { RemoteObjectSync } from '../sync/remoteObjectSync';
 import { getUserLogColor, getUserName } from '../sync/user';
-import { EditableView } from '../ui/components/editableView';
+import { EditableViewport } from '../ui/components/viewport';
 import { getUrlParam } from '../util';
 import { initHistory, writeUndoStack } from './history';
 import { NodeSelection } from './selection';
@@ -47,7 +47,7 @@ export class Application
     public datastore: ConvergenceDatastore;
     public nodeUpdater: RemoteObjectSync;
     public undoStack: UndoStack;
-    public editorView: EditableView;
+    public viewport: EditableViewport;
     public storageProvider: LocalStorageProvider;
     public project: ProjectNode;
     public selection: NodeSelection;
@@ -81,7 +81,7 @@ export class Application
         this.project = new ProjectNode();
         this.selection = new NodeSelection();
         this.nodeUpdater = new RemoteObjectSync(datastore);
-        this.editorView = new EditableView(this.project);
+        this.viewport = new EditableViewport(this.project);
         this.undoStack = new UndoStack();
 
         Cache.textures.fetchProvider = (storageKey: string) =>
@@ -159,7 +159,7 @@ export class Application
 
     protected initProject()
     {
-        this.editorView.setRoot(this.project);
+        this.viewport.setRoot(this.project);
     }
 
     protected clear()

@@ -3,7 +3,6 @@ import { Viewport } from 'pixi-viewport';
 
 import { getGlobalEmitter } from '../../../core/events';
 import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
-import type { ContainerNode } from '../../../core/nodes/concrete/container';
 import { Application } from '../../core/application';
 import type { GlobalKeyboardEvent } from '../../events/keyboardEvents';
 import type { ViewportEvent } from '../../events/viewportEvents';
@@ -15,9 +14,9 @@ import { isKeyPressed } from './keyboardListener';
 const keyboardEmitter = getGlobalEmitter<GlobalKeyboardEvent>();
 const viewportEmitter = getGlobalEmitter<ViewportEvent>();
 
-export class EditableView
+export class EditableViewport
 {
-    public rootNode: ContainerNode;
+    public rootNode: DisplayObjectNode;
     public canvas: HTMLCanvasElement;
     public pixi: PixiApplication;
     public transformGizmo: TransformGizmo;
@@ -27,7 +26,7 @@ export class EditableView
     public grid: Grid;
     public boxSelection: BoxSelection;
 
-    constructor(rootNode: ContainerNode)
+    constructor(rootNode: DisplayObjectNode)
     {
         this.rootNode = rootNode;
 
@@ -266,33 +265,31 @@ export class EditableView
 
     public onResize = () =>
     {
-        const container = this.canvas.parentElement as HTMLDivElement;
+        const { canvas, pixi, grid } = this;
+        const container = canvas.parentElement as HTMLDivElement;
 
         if (container)
         {
             const width = container.clientWidth;
             const height = container.clientHeight;
 
-            this.pixi.renderer.resize(width, height);
-            console.log({ width, height });
-            this.grid.draw();
+            pixi.renderer.resize(width, height);
+            grid.draw();
         }
     };
 
     public mount(container: HTMLElement)
     {
-        // this.pixi.resizeTo = container;
         container.appendChild(this.canvas);
-        // this.onResize();
         this.onResize();
-
-        (window as any).test = this;
     }
 
-    public setRoot(node: ContainerNode)
+    public setRoot(node: DisplayObjectNode)
     {
         this.nodeLayer.removeChild(this.rootNode.view);
         this.rootNode = node;
         this.nodeLayer.addChild(this.rootNode.view);
+
+        viewportEmitter.emit('viewport.root.changed', node);
     }
 }

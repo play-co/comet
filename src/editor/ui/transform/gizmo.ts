@@ -11,8 +11,8 @@ import type { CommandEvent } from '../../events/commandEvents';
 import type { DatastoreEvent } from '../../events/datastoreEvents';
 import type { SelectionEvent } from '../../events/selectionEvents';
 import type { TransformEvent } from '../../events/transformEvents';
-import type { EditableView } from '../components/editableView';
 import { isKeyPressed } from '../components/keyboardListener';
+import type { EditableViewport } from '../components/viewport';
 import { TransformGizmoFrame } from './frame';
 import type { HandleVertex } from './handle';
 import { type DragInfo, type TransformOperation, defaultDragInfo } from './operation';
@@ -44,7 +44,7 @@ type MatrixCache = {
 
 export class TransformGizmo extends Container
 {
-    public editableView: EditableView;
+    public editableView: EditableViewport;
     public config: TransformGizmoConfig;
 
     public visualPivot?: Point;
@@ -63,7 +63,7 @@ export class TransformGizmo extends Container
     protected lastClick: number;
     protected isDirty: boolean;
 
-    constructor(editableView: EditableView, config: Partial<TransformGizmoConfig> = {})
+    constructor(editableView: EditableViewport, config: Partial<TransformGizmoConfig> = {})
     {
         super();
 

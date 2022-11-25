@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { Application } from "../../core/application";
 
-  const editableView = Application.instance.editorView;
+  const editableView = Application.instance.viewport;
 
   let container: HTMLDivElement;
 
