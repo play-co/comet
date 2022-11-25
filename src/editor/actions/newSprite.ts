@@ -3,13 +3,18 @@ import Color from 'color';
 import type { ContainerNode } from '../../core/nodes/concrete/container';
 import type { SpriteModel, SpriteNode } from '../../core/nodes/concrete/sprite';
 import { createNodeSchema } from '../../core/nodes/schema';
-import { Application } from '../core/application';
 import { type AddChildCommandReturn, AddChildCommand } from '../commands/addChild';
 import { Action } from '../core/action';
+import { Application } from '../core/application';
 
 export type NewSpriteOptions = {
     addToSelected?: boolean;
     model?: Partial<SpriteModel>;
+};
+
+export const defaultNewSpriteOptions: NewSpriteOptions = {
+    model: {},
+    addToSelected: true,
 };
 
 export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
@@ -26,17 +31,18 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
         return Math.random() * 255;
     }
 
-    protected exec(options: NewSpriteOptions = {
-        model: {},
-        addToSelected: true,
-    }): SpriteNode
+    protected exec(options?: Partial<NewSpriteOptions>): SpriteNode
     {
+        const actionOptions = {
+            ...defaultNewSpriteOptions,
+            ...options,
+        };
         const app = Application.instance;
         const selectedNode = app.selection.lastNode;
 
         let parentId = 'Scene:1';
 
-        if (selectedNode && options.addToSelected)
+        if (selectedNode && actionOptions.addToSelected)
         {
             parentId = selectedNode.id;
         }
@@ -53,7 +59,7 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
                 scaleX: 1,
                 scaleY: 1,
                 tint: tint.rgbNumber(),
-                ...options.model,
+                ...actionOptions.model,
             },
         });
 

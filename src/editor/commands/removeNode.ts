@@ -1,8 +1,12 @@
+import { getGlobalEmitter } from '../../core/events';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import { DisplayObjectNode } from '../../core/nodes/abstract/displayObject';
 import { getInstance } from '../../core/nodes/instances';
 import { getNodeSchema } from '../../core/nodes/schema';
 import { Command } from '../core/command';
+import type { DatastoreEvent } from '../events/datastoreEvents';
+
+const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
 
 export interface RemoveNodeCommandParams
 {
@@ -42,11 +46,14 @@ export class RemoveNodeCommand
         if (node instanceof DisplayObjectNode && app.selection.deepContains(node.cast<DisplayObjectNode>()))
         {
             cache.wasSelected = true;
+
             if (app.selection.shallowContains(node))
             {
                 app.selection.remove(node);
             }
         }
+
+        datastoreEmitter.emit('datastore.local.node.cloaked', node.cast<ClonableNode>());
 
         return { node: node.cast<ClonableNode>() };
     }
@@ -69,5 +76,7 @@ export class RemoveNodeCommand
         {
             app.selection.add(node);
         }
+
+        datastoreEmitter.emit('datastore.local.node.uncloaked', node.cast<ClonableNode>());
     }
 }

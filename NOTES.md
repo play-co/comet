@@ -6,6 +6,7 @@
 * Empty (Container) icon needs to be selectable, but not scale with viewport
     - Also needs to select all children, not itself when clicked so transform gizmo can manipulate
 * 'mousemove' event for viewport needs to be trapped globally, grabbing and panning stops when mouse leaves canvas
+* Undoing nested nodes restores children which were also removed, could be an uncloaking problem
 
 # Enhancements
 

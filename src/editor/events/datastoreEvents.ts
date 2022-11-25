@@ -1,3 +1,4 @@
+import type { ClonableNode } from '../../core';
 import type { ModelValue } from '../../core/model/model';
 import type { CustomPropertyType, CustomPropertyValueType } from '../../core/nodes/customProperties';
 import type { CloneInfoSchema, TextureAssetSchema } from '../../core/nodes/schema';
@@ -27,4 +28,7 @@ export interface DatastoreEvent
         value: ModelValue;
     };
     'datastore.remote.node.cloneInfo.modified': EventData & CloneInfoSchema;
+    'datastore.local.node.created': ClonableNode;
+    'datastore.local.node.cloaked': ClonableNode;
+    'datastore.local.node.uncloaked': ClonableNode;
 }

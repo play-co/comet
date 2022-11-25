@@ -279,6 +279,8 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         {
             this.setNodeParent(nodeSchema.id, nodeSchema.parent);
         }
+
+        globalEmitter.emit('datastore.local.node.created', { nodeId: nodeSchema.id });
     }
 
     public removeNode(nodeId: string)

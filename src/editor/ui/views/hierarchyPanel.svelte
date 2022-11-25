@@ -2,12 +2,14 @@
   import { getGlobalEmitter } from "../../../core/events";
   import type { DisplayObjectNode } from "../../../core/nodes/abstract/displayObject";
   import { Application } from "../../core/application";
+  import type { DatastoreEvent } from "../../events/datastoreEvents";
   import type { SelectionEvent } from "../../events/selectionEvents";
   import type { ViewportEvent } from "../../events/viewportEvents";
   import Panel from "./components/panel.svelte";
 
   const viewportEmitter = getGlobalEmitter<ViewportEvent>();
   const selectionEmitter = getGlobalEmitter<SelectionEvent>();
+  const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
 
   interface ModelItem {
     depth: number;
@@ -23,6 +25,9 @@
   function generateModel() {
     model = root.walk<DisplayObjectNode, { model: ModelItem[] }>(
       (node, options) => {
+        if (node.isCloaked) {
+          return;
+        }
         options.data.model.push({
           depth: options.depth,
           isSelected: Application.instance.selection.shallowContains(node),
@@ -46,6 +51,30 @@
 
   function refresh() {
     model = [...model];
+  }
+
+  function toggleItemExpanded(e: MouseEvent, item: ModelItem) {
+    item.isExpanded = !item.isExpanded;
+    const index = model.indexOf(item);
+    for (let i = index + 1; i <= model.length - 1; i++) {
+      const subItem = model[i];
+      if (subItem.depth > item.depth) {
+        subItem.isVisible = item.isExpanded;
+      } else if (subItem.depth <= item.depth) {
+        break;
+      }
+    }
+    item.isVisible = true;
+    e.stopPropagation();
+    refresh();
+  }
+
+  function selectItem(e: MouseEvent, item: ModelItem) {
+    if (e.shiftKey || e.metaKey) {
+      Application.instance.selection.add(item.node);
+    } else {
+      Application.instance.selection.set(item.node);
+    }
   }
 
   const onViewportRootChanged = (node: DisplayObjectNode) => {
@@ -75,31 +104,12 @@
     .on("selection.set", onSelectionChanged)
     .on("selection.deselect", onDeselect);
 
+  datastoreEmitter
+    .on("datastore.local.node.created", generateModel)
+    .on("datastore.local.node.cloaked", generateModel)
+    .on("datastore.local.node.uncloaked", generateModel);
+
   generateModel();
-
-  function toggleItemExpanded(e: MouseEvent, item: ModelItem) {
-    item.isExpanded = !item.isExpanded;
-    const index = model.indexOf(item);
-    for (let i = index + 1; i <= model.length - 1; i++) {
-      const subItem = model[i];
-      if (subItem.depth > item.depth) {
-        subItem.isVisible = item.isExpanded;
-      } else if (subItem.depth <= item.depth) {
-        break;
-      }
-    }
-    item.isVisible = true;
-    e.stopPropagation();
-    refresh();
-  }
-
-  function selectItem(e: MouseEvent, item: ModelItem) {
-    if (e.shiftKey || e.metaKey) {
-      Application.instance.selection.add(item.node);
-    } else {
-      Application.instance.selection.set(item.node);
-    }
-  }
 </script>
 
 <hierarchy-panel>
