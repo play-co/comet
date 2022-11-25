@@ -12,6 +12,8 @@
   interface ModelItem {
     depth: number;
     node: DisplayObjectNode;
+    isSelected: boolean;
+    isExpanded: boolean;
   }
 
   let model: ModelItem[] = [];
@@ -22,6 +24,8 @@
       (node, options) => {
         options.data.model.push({
           depth: options.depth,
+          isSelected: Application.instance.selection.shallowContains(node),
+          isExpanded: true,
           node,
         });
       },
@@ -33,13 +37,27 @@
     ).model;
   }
 
+  function refresh() {
+    model = [...model];
+  }
+
+  const toggleItemExpanded = (item: ModelItem) => {
+    item.isExpanded = !item.isExpanded;
+    refresh();
+  };
+
   const onViewportRootChanged = (node: DisplayObjectNode) => {
     root = node;
     generateModel();
   };
 
   const onSelectionChanged = () => {
-    console.log("!");
+    model.forEach((item) => {
+      item.isSelected = Application.instance.selection.shallowContains(
+        item.node
+      );
+    });
+    refresh();
   };
 
   viewportEmitter.on("viewport.root.changed", onViewportRootChanged);
@@ -64,11 +82,16 @@
       <tbody>
         {#each model as item}
           <tr>
-            <td
-              ><span style="width:{item.depth * 10}px" />
-              {#if item.node.hasChildren}<span class="arrow-down" />{:else}<span
-                  class="arrow-filler" />{/if}
-              <span>{item.node.id}</span></td>
+            <td class={item.isSelected ? "selected" : undefined}
+              ><span class="indentation" style="width:{item.depth * 10}px" />
+              {#if item.node.hasChildren}<span
+                  on:click={() => toggleItemExpanded(item)}
+                  class="arrow {item.isExpanded
+                    ? 'expanded'
+                    : 'collapsed'}" />{:else}<span class="arrow-filler" />{/if}
+              <span class="label {item.isSelected ? 'selected' : undefined}"
+                >{item.node.id}</span
+              ></td>
           </tr>
         {/each}
       </tbody>
@@ -95,8 +118,23 @@
     background-color: #000000;
   }
 
+  td {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  td.selected {
+    background-color: #2eb2c8;
+  }
+
   td span {
     display: inline-block;
+  }
+
+  .label.selected {
+    font-weight: bold;
+    color: black;
   }
 
   .arrow-filler {
@@ -105,21 +143,23 @@
     height: 5px;
   }
 
-  .arrow-right {
+  .arrow {
     display: inline-block;
     width: 0;
     height: 0;
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-    border-left: 8px solid #ccc;
+    border: 5px solid transparent;
+    cursor: pointer;
   }
 
-  .arrow-down {
-    display: inline-block;
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
+  .arrow.collapsed {
+    border-left: 8px solid #ccc;
+    margin-right: 2px;
+  }
+
+  .arrow.expanded {
     border-top: 8px solid #ccc;
+    position: relative;
+    top: 2px;
+    margin-right: 5px;
   }
 </style>
