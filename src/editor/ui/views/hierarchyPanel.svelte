@@ -5,6 +5,7 @@
   import type { DatastoreEvent } from "../../events/datastoreEvents";
   import type { SelectionEvent } from "../../events/selectionEvents";
   import type { ViewportEvent } from "../../events/viewportEvents";
+  import { mouseDrag } from "../components/dragger";
   import Panel from "./components/panel.svelte";
 
   const viewportEmitter = getGlobalEmitter<ViewportEvent>();
@@ -19,15 +20,23 @@
     isVisible: boolean;
   }
 
+  // view state
+
   let model: ModelItem[] = [];
   let root: DisplayObjectNode = Application.instance.viewport.rootNode;
+  let dragItem: ModelItem | undefined = undefined;
+  let dragTarget: ModelItem | undefined = undefined;
+
+  // view functions
 
   function generateModel() {
     model = root.walk<DisplayObjectNode, { model: ModelItem[] }>(
       (node, options) => {
         if (node.isCloaked) {
+          // deleted nodes are actually just cloaked, don't include them
           return;
         }
+
         options.data.model.push({
           depth: options.depth,
           isSelected: Application.instance.selection.shallowContains(node),
@@ -77,6 +86,27 @@
     }
   }
 
+  function startDrag(e: MouseEvent, item: ModelItem) {
+    dragItem = item;
+
+    selectItem(e, item);
+
+    mouseDrag(e, () => {
+      //
+    }).then(() => {
+      dragItem = undefined;
+      dragTarget = undefined;
+    });
+  }
+
+  function dragOver(item: ModelItem) {
+    if (dragItem) {
+      dragTarget = item;
+    }
+  }
+
+  // handlers
+
   const onViewportRootChanged = (node: DisplayObjectNode) => {
     root = node;
     generateModel();
@@ -96,6 +126,8 @@
     });
   };
 
+  // bind to global events
+
   viewportEmitter.on("viewport.root.changed", onViewportRootChanged);
 
   selectionEmitter
@@ -108,6 +140,8 @@
     .on("datastore.local.node.created", generateModel)
     .on("datastore.local.node.cloaked", generateModel)
     .on("datastore.local.node.uncloaked", generateModel);
+
+  // populate current model
 
   generateModel();
 </script>
@@ -123,21 +157,26 @@
       <tbody>
         {#each model as item (item.node.id)}
           <tr>
+            <!-- svelte-ignore a11y-mouse-events-have-key-events -->
             <td
               class={[
                 item.isSelected ? "selected" : "",
                 item.isVisible ? "visible" : "hidden",
               ].join(" ")}
-              on:click={(e) => selectItem(e, item)}
+              on:mousedown={(e) => startDrag(e, item)}
+              on:mouseover={() => dragOver(item)}
               ><span class="indentation" style="width:{item.depth * 10}px" />
               {#if item.node.hasChildren}<span
                   on:click={(e) => toggleItemExpanded(e, item)}
                   class="arrow {item.isExpanded
                     ? 'expanded'
                     : 'collapsed'}" />{:else}<span class="arrow-filler" />{/if}
+
               <span class="label {item.isSelected ? 'selected' : ''}"
-                >{item.node.id}</span
-              ></td>
+                >{item.node.id}</span>
+              {#if dragTarget === item && dragItem !== item}<div
+                  class="dragTarget" />{/if}
+            </td>
           </tr>
         {/each}
       </tbody>
@@ -169,6 +208,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    position: relative;
   }
 
   td.selected {
@@ -212,5 +252,13 @@
     position: relative;
     top: 2px;
     margin-right: 5px;
+  }
+
+  .dragTarget {
+    background-color: #00f9ff;
+    height: 3px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
   }
 </style>
