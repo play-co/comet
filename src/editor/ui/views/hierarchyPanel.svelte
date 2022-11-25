@@ -24,7 +24,7 @@
 
   let model: ModelItem[] = [];
   let root: DisplayObjectNode = Application.instance.viewport.rootNode;
-  let dragItem: ModelItem | undefined = undefined;
+  let dragSource: ModelItem | undefined = undefined;
   let dragTarget: ModelItem | undefined = undefined;
 
   // view functions
@@ -87,20 +87,37 @@
   }
 
   function startDrag(e: MouseEvent, item: ModelItem) {
-    dragItem = item;
+    dragSource = item;
 
     selectItem(e, item);
 
-    mouseDrag(e, () => {
-      //
-    }).then(() => {
-      dragItem = undefined;
+    mouseDrag(e).then(() => {
+      if (dragSource && dragTarget && dragSource !== dragTarget) {
+        const sourceNode = dragSource.node;
+        const targetNode = dragTarget.node;
+
+        if (sourceNode.parent) {
+          sourceNode.parent.removeChild(sourceNode);
+        }
+
+        targetNode.addChild(sourceNode);
+
+        const viewMatrix = sourceNode.view.worldTransform.clone();
+        const parentMatrix = sourceNode.view.parent.worldTransform.clone();
+
+        viewMatrix.prepend(parentMatrix.invert());
+
+        sourceNode.view.transform.setFromMatrix(viewMatrix);
+
+        generateModel();
+      }
+      dragSource = undefined;
       dragTarget = undefined;
     });
   }
 
   function dragOver(item: ModelItem) {
-    if (dragItem) {
+    if (dragSource) {
       dragTarget = item;
     }
   }
@@ -149,11 +166,6 @@
 <hierarchy-panel>
   <Panel>
     <table>
-      <thead>
-        <tr>
-          <th>Node</th>
-        </tr>
-      </thead>
       <tbody>
         {#each model as item (item.node.id)}
           <tr>
@@ -162,6 +174,9 @@
               class={[
                 item.isSelected ? "selected" : "",
                 item.isVisible ? "visible" : "hidden",
+                dragTarget === item && dragSource !== item
+                  ? "dragTargetRow"
+                  : "",
               ].join(" ")}
               on:mousedown={(e) => startDrag(e, item)}
               on:mouseover={() => dragOver(item)}
@@ -174,8 +189,8 @@
 
               <span class="label {item.isSelected ? 'selected' : ''}"
                 >{item.node.id}</span>
-              {#if dragTarget === item && dragItem !== item}<div
-                  class="dragTarget" />{/if}
+              {#if dragTarget === item && dragSource !== item}<div
+                  class="dragTargetIndicator" />{/if}
             </td>
           </tr>
         {/each}
@@ -254,11 +269,15 @@
     margin-right: 5px;
   }
 
-  .dragTarget {
+  .dragTargetIndicator {
     background-color: #00f9ff;
     height: 3px;
     width: 100%;
     position: absolute;
     bottom: 0;
+  }
+
+  .dragTargetRow {
+    background-color: #00a7ff24;
   }
 </style>

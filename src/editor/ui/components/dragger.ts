@@ -1,4 +1,4 @@
-export function mouseDrag(e: MouseEvent, onMove: (deltaX: number, deltaY: number) => void): Promise<{deltaX: number; deltaY: number}>
+export function mouseDrag(e: MouseEvent, onMove?: (deltaX: number, deltaY: number) => void): Promise<{deltaX: number; deltaY: number}>
 {
     return new Promise((resolve) =>
     {
@@ -10,7 +10,10 @@ export function mouseDrag(e: MouseEvent, onMove: (deltaX: number, deltaY: number
             const deltaX = e.clientX - startX;
             const deltaY = e.clientY - startY;
 
-            onMove(deltaX, deltaY);
+            if (onMove)
+            {
+                onMove(deltaX, deltaY);
+            }
         };
 
         const onMouseUp = (e: MouseEvent) =>

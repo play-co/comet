@@ -159,7 +159,7 @@ export class Application
 
     protected initProject()
     {
-        this.viewport.setRoot(this.project);
+        this.viewport.setRoot(this.project.getChildAt(0));
     }
 
     protected clear()

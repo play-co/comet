@@ -3,7 +3,7 @@
 </script>
 
 <properties-panel>
-  <Panel>Properties...</Panel>
+  <Panel>&nbsp;</Panel>
 </properties-panel>
 
 <style>

@@ -1,7 +1,7 @@
 <script lang="ts">
 </script>
 
-<tool-panel> Tools... </tool-panel>
+<tool-panel>&nbsp;</tool-panel>
 
 <style>
   tool-panel {
