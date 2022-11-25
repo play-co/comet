@@ -1,4 +1,4 @@
-import { Graphics } from 'pixi.js';
+import { SmoothGraphics as Graphics } from '@pixi/graphics-smooth';
 
 export type HandleVertexHorizontal = 'none' | 'left' | 'center' | 'right';
 export type HandleVertexVertical = 'none' | 'top' | 'center' | 'bottom';

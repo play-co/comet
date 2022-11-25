@@ -1,3 +1,4 @@
+import type { SmoothGraphics } from '@pixi/graphics-smooth';
 import type { InteractionEvent } from 'pixi.js';
 import { Container, Graphics, Matrix, Transform } from 'pixi.js';
 
@@ -635,7 +636,7 @@ export class TransformGizmo extends Container
         this.initNodes(nodes, initialTransform, yellowPivot);
     }
 
-    protected initNodes<T extends DisplayObjectNode>(nodes: T[], initialTransform: InitialGizmoTransform, pivotView: Graphics)
+    protected initNodes<T extends DisplayObjectNode>(nodes: T[], initialTransform: InitialGizmoTransform, pivotView: Graphics | SmoothGraphics)
     {
         this.initialTransform = initialTransform;
 

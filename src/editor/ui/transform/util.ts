@@ -1,5 +1,6 @@
+import { SmoothGraphics as Graphics } from '@pixi/graphics-smooth';
 import type { Container, DisplayObject } from 'pixi.js';
-import { Graphics, Matrix, Rectangle, Transform } from 'pixi.js';
+import { Matrix, Rectangle, Transform } from 'pixi.js';
 
 import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
 import { angleBetween } from '../../../core/util/geom';

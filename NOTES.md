@@ -5,7 +5,7 @@
     - Also need a way to recalculate multi-transform gizmo when remote nodes move
 * Empty (Container) icon needs to be selectable, but not scale with viewport
     - Also needs to select all children, not itself when clicked so transform gizmo can manipulate
-* 'mousemove' event for viewport needs to be trapped globally, not on view otherwise transform gizmo drags stop when mouse leaves canvas
+* 'mousemove' event for viewport needs to be trapped globally, grabbing and panning stops when mouse leaves canvas
 
 # Enhancements
 

@@ -35,16 +35,18 @@
         },
       }
     ).model;
+
+    console.log(model);
+  }
+
+  function updateModel(fn: (item: ModelItem) => void) {
+    model.forEach(fn);
+    refresh();
   }
 
   function refresh() {
     model = [...model];
   }
-
-  const toggleItemExpanded = (item: ModelItem) => {
-    item.isExpanded = !item.isExpanded;
-    refresh();
-  };
 
   const onViewportRootChanged = (node: DisplayObjectNode) => {
     root = node;
@@ -52,12 +54,17 @@
   };
 
   const onSelectionChanged = () => {
-    model.forEach((item) => {
+    updateModel((item) => {
       item.isSelected = Application.instance.selection.shallowContains(
         item.node
       );
     });
-    refresh();
+  };
+
+  const onDeselect = () => {
+    updateModel((item) => {
+      item.isSelected = false;
+    });
   };
 
   viewportEmitter.on("viewport.root.changed", onViewportRootChanged);
@@ -66,9 +73,23 @@
     .on("selection.add", onSelectionChanged)
     .on("selection.remove", onSelectionChanged)
     .on("selection.set", onSelectionChanged)
-    .on("selection.deselect", onSelectionChanged);
+    .on("selection.deselect", onDeselect);
 
   generateModel();
+
+  function toggleItemExpanded(e: MouseEvent, item: ModelItem) {
+    item.isExpanded = !item.isExpanded;
+    e.stopPropagation();
+    refresh();
+  }
+
+  function selectItem(e: MouseEvent, item: ModelItem) {
+    if (e.shiftKey || e.metaKey) {
+      Application.instance.selection.add(item.node);
+    } else {
+      Application.instance.selection.set(item.node);
+    }
+  }
 </script>
 
 <hierarchy-panel>
@@ -80,12 +101,14 @@
         </tr>
       </thead>
       <tbody>
-        {#each model as item}
+        {#each model as item (item.node.id)}
           <tr>
-            <td class={item.isSelected ? "selected" : undefined}
+            <td
+              class={item.isSelected ? "selected" : undefined}
+              on:click={(e) => selectItem(e, item)}
               ><span class="indentation" style="width:{item.depth * 10}px" />
               {#if item.node.hasChildren}<span
-                  on:click={() => toggleItemExpanded(item)}
+                  on:click={(e) => toggleItemExpanded(e, item)}
                   class="arrow {item.isExpanded
                     ? 'expanded'
                     : 'collapsed'}" />{:else}<span class="arrow-filler" />{/if}
@@ -104,6 +127,7 @@
     width: 100%;
     height: 100%;
     overflow-y: auto;
+    user-select: none;
   }
 
   table {
