@@ -77,7 +77,7 @@ export class BoxSelection extends Graphics
         this.drawRect(selectionBounds.left, selectionBounds.top, selectionBounds.width, selectionBounds.height);
     }
 
-    public select(rootNode: DisplayObjectNode)
+    public selectWithinRootNode(rootNode: DisplayObjectNode)
     {
         const { selectionBounds } = this;
 
@@ -92,7 +92,7 @@ export class BoxSelection extends Graphics
                 return;
             }
 
-            const bounds = node.getGlobalBounds();
+            const bounds = node.getGlobalBounds(false);
 
             if (bounds.intersects(selectionBounds))
             {
@@ -103,9 +103,10 @@ export class BoxSelection extends Graphics
         // filter down to top level clone root
         allNodes.forEach((node) =>
         {
-            const root = node.getCloneRoot().cast<DisplayObjectNode>();
+            // const root = node.getCloneRoot().cast<DisplayObjectNode>();
 
-            selected.add(root);
+            // selected.add(root);
+            selected.add(node);
         });
 
         return [...selected];

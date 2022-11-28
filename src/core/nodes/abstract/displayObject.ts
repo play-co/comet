@@ -1,4 +1,4 @@
-import type { DisplayObject } from 'pixi.js';
+import { type DisplayObject, Rectangle } from 'pixi.js';
 
 import { NumericRangeLimitConstraint, ReferenceConstraint } from '../../model/constraints';
 import type { ModelBase } from '../../model/model';
@@ -76,9 +76,24 @@ export abstract class DisplayObjectNode<
         return this.view.getLocalBounds();
     }
 
-    public getGlobalBounds()
+    public getGlobalBounds(includeChildren = true)
     {
-        return this.view.getBounds();
+        if (includeChildren)
+        {
+            return this.view.getBounds();
+        }
+        const { naturalWidth, naturalHeight } = this;
+        const matrix = this.view.worldTransform;
+        const p1 = matrix.apply({ x: 0, y: 0 });
+        const p2 = matrix.apply({ x: naturalWidth, y: 0 });
+        const p3 = matrix.apply({ x: naturalWidth, y: naturalHeight });
+        const p4 = matrix.apply({ x: 0, y: naturalHeight });
+        const left = Math.min(p1.x, p2.x, p3.x, p4.x);
+        const right = Math.max(p1.x, p2.x, p3.x, p4.x);
+        const top = Math.min(p1.y, p2.y, p3.y, p4.y);
+        const bottom = Math.max(p1.y, p2.y, p3.y, p4.y);
+
+        return new Rectangle(left, top, right - left, bottom - top);
     }
 
     public containsPoint(globalX: number, globalY: number)

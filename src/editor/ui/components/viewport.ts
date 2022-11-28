@@ -217,14 +217,16 @@ export class EditableViewport
 
         viewport.pause = false;
         viewport.cursor = isSpaceKeyDown ? 'grab' : 'default';
+
         if (boxSelection.isSelecting)
         {
             const { selection } = Application.instance;
-            const nodes = boxSelection.select(this.rootNode);
+            const nodes = boxSelection.selectWithinRootNode(this.rootNode);
 
             selection.deselect();
             nodes.forEach((node) => selection.add(node));
         }
+
         this.boxSelection.onMouseUp();
     };
 

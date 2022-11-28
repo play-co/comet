@@ -63,8 +63,10 @@
   }
 
   function toggleItemExpanded(e: MouseEvent, item: ModelItem) {
-    item.isExpanded = !item.isExpanded;
     const index = model.indexOf(item);
+
+    item.isExpanded = !item.isExpanded;
+
     for (let i = index + 1; i <= model.length - 1; i++) {
       const subItem = model[i];
       if (subItem.depth > item.depth) {
@@ -73,23 +75,39 @@
         break;
       }
     }
+
     item.isVisible = true;
+
     e.stopPropagation();
     refresh();
   }
 
-  function selectItem(e: MouseEvent, item: ModelItem) {
+  function selectItem(e: MouseEvent, item: ModelItem): void | false {
+    const { selection } = Application.instance;
+    const { node } = item;
+
     if (e.shiftKey || e.metaKey) {
-      Application.instance.selection.add(item.node);
-    } else {
-      Application.instance.selection.set(item.node);
+      if (selection.shallowContains(node)) {
+        // remove from selection
+        selection.remove(node);
+        return false;
+      } else {
+        // add to selection
+        selection.add(node);
+      }
+    } else if (!selection.shallowContains(node)) {
+      // replace selection if not already selected
+      selection.set(node);
     }
   }
 
   function startDrag(e: MouseEvent, item: ModelItem) {
-    dragSource = item;
+    if (selectItem(e, item) === false) {
+      // item was removed from selection, abort drag
+      return;
+    }
 
-    selectItem(e, item);
+    dragSource = item;
 
     mouseDrag(e).then(() => {
       if (dragSource && dragTarget && dragSource !== dragTarget) {
