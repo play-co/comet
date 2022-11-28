@@ -1,8 +1,10 @@
 import { SmoothGraphics as Graphics } from '@pixi/graphics-smooth';
+import Color from 'color';
 import { EventEmitter } from 'eventemitter3';
 import type { DisplayObject, InteractionEvent } from 'pixi.js';
 import { Container, Rectangle } from 'pixi.js';
 
+import { Application } from '../../core/application';
 import type { TransformGizmo } from './gizmo';
 import { type HandleVertexHorizontal, type HandleVertexVertical, TransformGizmoHandle } from './handle';
 import { TransformGizmoInfo } from './info';
@@ -109,9 +111,9 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
 
     public getGlobalBounds()
     {
-        const { gizmo: { selection }, gizmo, matrix } = this;
+        const { gizmo, matrix } = this;
 
-        if (selection.length === 0)
+        if (Application.instance.selection.length === 0)
         {
             return Rectangle.EMPTY;
         }
@@ -131,11 +133,32 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
         return rect;
     }
 
+    protected drawSelected()
+    {
+        const { border } = this;
+
+        Application.instance.selection.forEach((node) =>
+        {
+            const matrix = node.view.worldTransform;
+            const width = node.naturalWidth;
+            const height = node.naturalHeight;
+            const p1 = matrix.apply({ x: 0, y: 0 });
+            const p2 = matrix.apply({ x: width, y: 0 });
+            const p3 = matrix.apply({ x: width, y: height });
+            const p4 = matrix.apply({ x: 0, y: height });
+            // const path = [p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y];
+
+            border.lineStyle(2, Color('cyan').rgbNumber(), 1);
+            border.moveTo(p1.x, p1.y); border.lineTo(p2.x, p2.y);
+            border.moveTo(p2.x, p2.y); border.lineTo(p3.x, p3.y);
+            border.moveTo(p3.x, p3.y); border.lineTo(p4.x, p4.y);
+            border.moveTo(p4.x, p4.y); border.lineTo(p1.x, p1.y);
+        });
+    }
+
     protected drawBorder()
     {
         const { border, matrix, gizmo: { initialTransform: { localBounds }, config } } = this;
-
-        border.clear();
 
         if (config.showTransformBorder)
         {
@@ -261,6 +284,9 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
 
     public update()
     {
+        this.border.clear();
+
+        this.drawSelected();
         this.drawBorder();
         this.drawPivot();
         this.drawHandles();

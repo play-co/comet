@@ -3,14 +3,11 @@
   import type { DisplayObjectNode } from "../../../core/nodes/abstract/displayObject";
   import { Application } from "../../core/application";
   import type { DatastoreEvent } from "../../events/datastoreEvents";
+  import type { GlobalKeyboardEvent } from "../../events/keyboardEvents";
   import type { SelectionEvent } from "../../events/selectionEvents";
   import type { ViewportEvent } from "../../events/viewportEvents";
   import { mouseDrag } from "../components/dragger";
   import Panel from "./components/panel.svelte";
-
-  const viewportEmitter = getGlobalEmitter<ViewportEvent>();
-  const selectionEmitter = getGlobalEmitter<SelectionEvent>();
-  const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
 
   interface ModelItem {
     depth: number;
@@ -20,12 +17,20 @@
     isVisible: boolean;
   }
 
+  const viewportEmitter = getGlobalEmitter<ViewportEvent>();
+  const selectionEmitter = getGlobalEmitter<SelectionEvent>();
+  const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
+  const keyboardEmitter = getGlobalEmitter<GlobalKeyboardEvent>();
+
+  const { selection, viewport } = Application.instance;
+
   // view state
 
   let model: ModelItem[] = [];
-  let root: DisplayObjectNode = Application.instance.viewport.rootNode;
-  let dragSource: ModelItem | undefined = undefined;
+  let root: DisplayObjectNode = viewport.rootNode;
+  let isDragging: boolean = false;
   let dragTarget: ModelItem | undefined = undefined;
+  let isReparent: boolean = true;
 
   // view functions
 
@@ -39,7 +44,7 @@
 
         options.data.model.push({
           depth: options.depth,
-          isSelected: Application.instance.selection.shallowContains(node),
+          isSelected: selection.shallowContains(node),
           isExpanded: true,
           isVisible: true,
           node,
@@ -83,7 +88,6 @@
   }
 
   function selectItem(e: MouseEvent, item: ModelItem): void | false {
-    const { selection } = Application.instance;
     const { node } = item;
 
     if (e.shiftKey || e.metaKey) {
@@ -107,36 +111,44 @@
       return;
     }
 
-    dragSource = item;
+    isDragging = true;
+    isReparent = !e.altKey;
 
     mouseDrag(e).then(() => {
-      if (dragSource && dragTarget && dragSource !== dragTarget) {
-        const sourceNode = dragSource.node;
-        const targetNode = dragTarget.node;
+      if (isDragging && dragTarget) {
+        selection.forEach((node) => {
+          const sourceNode = node;
+          const targetNode = (dragTarget as ModelItem).node;
 
-        if (sourceNode.parent) {
-          sourceNode.parent.removeChild(sourceNode);
-        }
+          if (sourceNode.parent) {
+            sourceNode.parent.removeChild(sourceNode);
+          }
 
-        targetNode.addChild(sourceNode);
+          targetNode.addChild(sourceNode);
 
-        const viewMatrix = sourceNode.view.worldTransform.clone();
-        const parentMatrix = sourceNode.view.parent.worldTransform.clone();
+          const viewMatrix = sourceNode.view.worldTransform.clone();
+          const parentMatrix = sourceNode.view.parent.worldTransform.clone();
 
-        viewMatrix.prepend(parentMatrix.invert());
+          viewMatrix.prepend(parentMatrix.invert());
+          sourceNode.view.transform.setFromMatrix(viewMatrix);
 
-        sourceNode.view.transform.setFromMatrix(viewMatrix);
-
-        generateModel();
+          generateModel();
+        });
       }
-      dragSource = undefined;
+
+      isDragging = false;
       dragTarget = undefined;
     });
   }
 
-  function dragOver(item: ModelItem) {
-    if (dragSource) {
-      dragTarget = item;
+  function dragOver(e: MouseEvent, item: ModelItem) {
+    if (isDragging) {
+      isReparent = !e.altKey;
+      if (selection.shallowContains(item.node)) {
+        dragTarget = undefined;
+      } else {
+        dragTarget = item;
+      }
     }
   }
 
@@ -149,9 +161,7 @@
 
   const onSelectionChanged = () => {
     updateModel((item) => {
-      item.isSelected = Application.instance.selection.shallowContains(
-        item.node
-      );
+      item.isSelected = selection.shallowContains(item.node);
     });
   };
 
@@ -160,6 +170,8 @@
       item.isSelected = false;
     });
   };
+
+  const onGlobalKeyPress = (e: KeyboardEvent) => (isReparent = !e.altKey);
 
   // bind to global events
 
@@ -175,6 +187,10 @@
     .on("datastore.local.node.created", generateModel)
     .on("datastore.local.node.cloaked", generateModel)
     .on("datastore.local.node.uncloaked", generateModel);
+
+  keyboardEmitter
+    .on("key.down", onGlobalKeyPress)
+    .on("key.up", onGlobalKeyPress);
 
   // populate current model
 
@@ -192,12 +208,12 @@
               class={[
                 item.isSelected ? "selected" : "",
                 item.isVisible ? "visible" : "hidden",
-                dragTarget === item && dragSource !== item
+                dragTarget === item && !selection.shallowContains(item.node)
                   ? "dragTargetRow"
                   : "",
               ].join(" ")}
               on:mousedown={(e) => startDrag(e, item)}
-              on:mouseover={() => dragOver(item)}
+              on:mouseover={(e) => dragOver(e, item)}
               ><span class="indentation" style="width:{item.depth * 10}px" />
               {#if item.node.hasChildren}<span
                   on:click={(e) => toggleItemExpanded(e, item)}
@@ -206,8 +222,10 @@
                     : 'collapsed'}" />{:else}<span class="arrow-filler" />{/if}
 
               <span class="label {item.isSelected ? 'selected' : ''}"
-                >{item.node.id}</span>
-              {#if dragTarget === item && dragSource !== item}<div
+                >{item.node
+                  .id}{#if dragTarget === item && !selection.shallowContains(item.node) && isReparent}<div
+                    class="dragTargetIndicator" />{/if}</span>
+              {#if dragTarget === item && !selection.shallowContains(item.node) && !isReparent}<div
                   class="dragTargetIndicator" />{/if}
             </td>
           </tr>

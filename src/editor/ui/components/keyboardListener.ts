@@ -13,7 +13,7 @@ window.addEventListener('keydown', (e: KeyboardEvent) =>
     {
         keyMap.set(key, true);
 
-        globalEmitter.emit('key.down', { key });
+        globalEmitter.emit('key.down', e);
     }
 });
 
@@ -23,7 +23,7 @@ window.addEventListener('keyup', (e: KeyboardEvent) =>
 
     keyMap.delete(key);
 
-    globalEmitter.emit('key.up', { key });
+    globalEmitter.emit('key.up', e);
 });
 
 export function isKeyPressed(key: string)
