@@ -17,6 +17,11 @@
     isVisible: boolean;
   }
 
+  enum Operation {
+    Reparent,
+    Reorder,
+  }
+
   const viewportEmitter = getGlobalEmitter<ViewportEvent>();
   const selectionEmitter = getGlobalEmitter<SelectionEvent>();
   const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
@@ -30,7 +35,7 @@
   let root: DisplayObjectNode = viewport.rootNode;
   let isDragging: boolean = false;
   let dragTarget: ModelItem | undefined = undefined;
-  let isReparent: boolean = true;
+  let operation: Operation = Operation.Reparent;
 
   // view functions
 
@@ -112,7 +117,7 @@
     }
 
     isDragging = true;
-    isReparent = !e.altKey;
+    operation = e.altKey ? Operation.Reorder : Operation.Reparent;
 
     mouseDrag(e).then(() => {
       if (isDragging && dragTarget) {
@@ -120,36 +125,44 @@
           const sourceNode = node;
           const targetNode = (dragTarget as ModelItem).node;
 
-          if (sourceNode.parent) {
-            sourceNode.parent.removeChild(sourceNode);
+          if (operation === Operation.Reparent) {
+            if (sourceNode.parent) {
+              sourceNode.parent.removeChild(sourceNode);
+            }
+
+            targetNode.addChild(sourceNode);
+
+            const viewMatrix = sourceNode.view.worldTransform.clone();
+            const parentMatrix = sourceNode.view.parent.worldTransform.clone();
+
+            viewMatrix.prepend(parentMatrix.invert());
+            sourceNode.view.transform.setFromMatrix(viewMatrix);
+          } else {
+            //
           }
-
-          targetNode.addChild(sourceNode);
-
-          const viewMatrix = sourceNode.view.worldTransform.clone();
-          const parentMatrix = sourceNode.view.parent.worldTransform.clone();
-
-          viewMatrix.prepend(parentMatrix.invert());
-          sourceNode.view.transform.setFromMatrix(viewMatrix);
 
           generateModel();
         });
       }
 
-      isDragging = false;
-      dragTarget = undefined;
+      clearDrag();
     });
   }
 
   function dragOver(e: MouseEvent, item: ModelItem) {
     if (isDragging) {
-      isReparent = !e.altKey;
+      operation = e.altKey ? Operation.Reorder : Operation.Reparent;
       if (selection.shallowContains(item.node)) {
         dragTarget = undefined;
       } else {
         dragTarget = item;
       }
     }
+  }
+
+  function clearDrag() {
+    isDragging = false;
+    dragTarget = undefined;
   }
 
   // handlers
@@ -171,7 +184,9 @@
     });
   };
 
-  const onGlobalKeyPress = (e: KeyboardEvent) => (isReparent = !e.altKey);
+  const onGlobalKeyPress = (e: KeyboardEvent) => {
+    operation = e.altKey ? Operation.Reorder : Operation.Reparent;
+  };
 
   // bind to global events
 
@@ -223,10 +238,10 @@
 
               <span class="label {item.isSelected ? 'selected' : ''}"
                 >{item.node
-                  .id}{#if dragTarget === item && !selection.shallowContains(item.node) && isReparent}<div
-                    class="dragTargetIndicator" />{/if}</span>
-              {#if dragTarget === item && !selection.shallowContains(item.node) && !isReparent}<div
-                  class="dragTargetIndicator" />{/if}
+                  .id}{#if dragTarget === item && !selection.shallowContains(item.node) && operation === Operation.Reparent}
+                  <div class="dragTargetIndicator reparent" />{/if}</span>
+              {#if dragTarget === item && !selection.shallowContains(item.node) && operation === Operation.Reorder}
+                <div class="dragTargetIndicator reorder" />{/if}
             </td>
           </tr>
         {/each}
@@ -306,11 +321,18 @@
   }
 
   .dragTargetIndicator {
-    background-color: #00f9ff;
     height: 3px;
     width: 100%;
     position: absolute;
     bottom: 0;
+  }
+
+  .reparent {
+    background-color: #00f9ff;
+  }
+
+  .reorder {
+    background-color: #00ff3c;
   }
 
   .dragTargetRow {
