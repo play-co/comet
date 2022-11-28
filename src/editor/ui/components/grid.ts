@@ -6,12 +6,20 @@ import { snapToIncrement } from './../transform/util';
 
 export interface GridConfig
 {
+    style: {
+        color: Color;
+        origin: Color;
+    };
     scale: number;
     x: number;
     y: number;
 }
 
 export const defaultGridConfig: GridConfig = {
+    style: {
+        color: Color('darkcyan'),
+        origin: Color('cyan'),
+    },
     scale: 1,
     x: 0,
     y: 0,
@@ -115,8 +123,7 @@ export class Grid extends Graphics
 
     protected drawHorizontal()
     {
-        const { globalOrigin, localScreenRect, gridSettings: { smallUnit }, screenWidth } = this;
-        const green = Color('green');
+        const { globalOrigin, localScreenRect, gridSettings: { smallUnit }, screenWidth, config: { style: { color } } } = this;
         const unit = smallUnit;
 
         if (globalOrigin.x > 0)
@@ -127,7 +134,7 @@ export class Grid extends Graphics
                 const p1 = this.localToGlobal({ x: i, y: localScreenRect.top });
                 const p2 = this.localToGlobal({ x: i, y: localScreenRect.bottom });
 
-                this.lineStyle(1, this.lineColor(green, i), 1);
+                this.lineStyle(1, this.lineColor(color, i), 1);
                 this.moveTo(p1.x, p1.y);
                 this.lineTo(p2.x, p2.y);
             }
@@ -141,7 +148,7 @@ export class Grid extends Graphics
                 const p1 = this.localToGlobal({ x: i, y: localScreenRect.top });
                 const p2 = this.localToGlobal({ x: i, y: localScreenRect.bottom });
 
-                this.lineStyle(1, this.lineColor(green, i), 1);
+                this.lineStyle(1, this.lineColor(color, i), 1);
                 this.moveTo(p1.x, p1.y);
                 this.lineTo(p2.x, p2.y);
             }
@@ -150,8 +157,7 @@ export class Grid extends Graphics
 
     protected drawVertical()
     {
-        const { globalOrigin, localScreenRect, gridSettings: { smallUnit }, screenHeight } = this;
-        const green = Color('green');
+        const { globalOrigin, localScreenRect, gridSettings: { smallUnit }, screenHeight, config: { style: { color } } } = this;
         const unit = smallUnit;
 
         if (globalOrigin.y > 0)
@@ -162,7 +168,7 @@ export class Grid extends Graphics
                 const p1 = this.localToGlobal({ x: localScreenRect.left, y: i });
                 const p2 = this.localToGlobal({ x: localScreenRect.right, y: i });
 
-                this.lineStyle(1, this.lineColor(green, i), 1);
+                this.lineStyle(1, this.lineColor(color, i), 1);
                 this.moveTo(p1.x, p1.y);
                 this.lineTo(p2.x, p2.y);
             }
@@ -176,7 +182,7 @@ export class Grid extends Graphics
                 const p1 = this.localToGlobal({ x: localScreenRect.left, y: i });
                 const p2 = this.localToGlobal({ x: localScreenRect.right, y: i });
 
-                this.lineStyle(1, this.lineColor(green, i), 1);
+                this.lineStyle(1, this.lineColor(color, i), 1);
                 this.moveTo(p1.x, p1.y);
                 this.lineTo(p2.x, p2.y);
             }
@@ -185,12 +191,11 @@ export class Grid extends Graphics
 
     protected drawOrigin()
     {
-        const { localScreenRect, globalOrigin } = this;
+        const { localScreenRect, globalOrigin, config: { style: { origin } } } = this;
         const p1 = this.localToGlobal({ x: localScreenRect.left, y: localScreenRect.top });
         const p2 = this.localToGlobal({ x: localScreenRect.right, y: localScreenRect.bottom });
-        const yellow = Color('lime');
 
-        this.lineStyle(1, yellow.rgbNumber(), 1);
+        this.lineStyle(1, origin.rgbNumber(), 1);
         this.moveTo(globalOrigin.x, p1.y);
         this.lineTo(globalOrigin.x, p2.y);
         this.moveTo(p1.x, globalOrigin.y);

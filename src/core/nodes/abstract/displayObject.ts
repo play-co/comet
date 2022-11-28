@@ -80,8 +80,11 @@ export abstract class DisplayObjectNode<
     {
         if (includeChildren)
         {
+            // return global bounds encompassing children
             return this.view.getBounds();
         }
+
+        // project the natural local bounds (excluding children) to global space
         const { naturalWidth, naturalHeight } = this;
         const matrix = this.view.worldTransform;
         const p1 = matrix.apply({ x: 0, y: 0 });
