@@ -98,6 +98,11 @@ export abstract class GraphNode
         return nodes;
     }
 
+    public indexOf(node: GraphNode)
+    {
+        return this.children.indexOf(node);
+    }
+
     public setParent(parent: GraphNode)
     {
         if (parent.children.indexOf(this) > -1)
@@ -162,6 +167,8 @@ export abstract class GraphNode
 
         children.splice(currentIndex, 1);
 
+        node.onRemovedFromParent(this);
+
         if (index === maxIndex)
         {
             children.push(node);
@@ -174,6 +181,8 @@ export abstract class GraphNode
         {
             children.splice(index - 1, 0, node);
         }
+
+        node.onAddedToParent();
     }
 
     public isSiblingOf(node: GraphNode)

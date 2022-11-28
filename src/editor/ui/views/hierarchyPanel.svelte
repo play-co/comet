@@ -149,9 +149,14 @@
             const index =
               dragTargetNode === sourceNode.parent
                 ? 0
-                : parentNode.children.indexOf(dragTargetNode) + 1;
+                : parentNode.indexOf(dragTargetNode) + 1;
 
             parentNode.setChildIndex(sourceNode, index);
+
+            console.log(
+              parentNode.children.map((node) => node.id),
+              parentNode.children.map((node) => (node as any).view.__node_id)
+            );
           }
 
           generateModel();
