@@ -3,7 +3,6 @@
   import type { DisplayObjectNode } from "../../../core/nodes/abstract/displayObject";
   import { Application } from "../../core/application";
   import type { DatastoreEvent } from "../../events/datastoreEvents";
-  import type { GlobalKeyboardEvent } from "../../events/keyboardEvents";
   import type { SelectionEvent } from "../../events/selectionEvents";
   import type { ViewportEvent } from "../../events/viewportEvents";
   import { mouseDrag } from "../components/dragger";
@@ -25,7 +24,6 @@
   const viewportEmitter = getGlobalEmitter<ViewportEvent>();
   const selectionEmitter = getGlobalEmitter<SelectionEvent>();
   const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
-  const keyboardEmitter = getGlobalEmitter<GlobalKeyboardEvent>();
 
   const { selection, viewport } = Application.instance;
 
@@ -117,20 +115,23 @@
     }
 
     isDragging = true;
-    operation = e.altKey ? Operation.Reorder : Operation.Reparent;
+    operation =
+      selection.isSingle && e.altKey ? Operation.Reorder : Operation.Reparent;
 
     mouseDrag(e).then(() => {
       if (isDragging && dragTarget) {
+        const dragTargetNode = (dragTarget as ModelItem).node;
+
         selection.forEach((node) => {
           const sourceNode = node;
-          const targetNode = (dragTarget as ModelItem).node;
 
           if (operation === Operation.Reparent) {
+            // reparent
             if (sourceNode.parent) {
               sourceNode.parent.removeChild(sourceNode);
             }
 
-            targetNode.addChild(sourceNode);
+            dragTargetNode.addChild(sourceNode);
 
             const viewMatrix = sourceNode.view.worldTransform.clone();
             const parentMatrix = sourceNode.view.parent.worldTransform.clone();
@@ -138,7 +139,19 @@
             viewMatrix.prepend(parentMatrix.invert());
             sourceNode.view.transform.setFromMatrix(viewMatrix);
           } else {
-            //
+            // reorder
+            const sourceNode = selection.nodes[0];
+            const parentNode =
+              dragTargetNode === sourceNode.parent
+                ? dragTargetNode
+                : (dragTargetNode.parent as DisplayObjectNode);
+
+            const index =
+              dragTargetNode === sourceNode.parent
+                ? 0
+                : parentNode.children.indexOf(dragTargetNode) + 1;
+
+            parentNode.setChildIndex(sourceNode, index);
           }
 
           generateModel();
@@ -149,13 +162,17 @@
     });
   }
 
-  function dragOver(e: MouseEvent, item: ModelItem) {
+  function dragOver(_e: MouseEvent, item: ModelItem) {
     if (isDragging) {
-      operation = e.altKey ? Operation.Reorder : Operation.Reparent;
-      if (selection.shallowContains(item.node)) {
-        dragTarget = undefined;
+      if (operation === Operation.Reorder) {
+        item.node.isSiblingOf(selection.nodes[0]) ||
+        item.node === selection.nodes[0].parent
+          ? (dragTarget = item)
+          : (dragTarget = undefined);
       } else {
-        dragTarget = item;
+        selection.shallowContains(item.node)
+          ? (dragTarget = undefined)
+          : (dragTarget = item);
       }
     }
   }
@@ -184,10 +201,6 @@
     });
   };
 
-  const onGlobalKeyPress = (e: KeyboardEvent) => {
-    operation = e.altKey ? Operation.Reorder : Operation.Reparent;
-  };
-
   // bind to global events
 
   viewportEmitter.on("viewport.root.changed", onViewportRootChanged);
@@ -202,10 +215,6 @@
     .on("datastore.local.node.created", generateModel)
     .on("datastore.local.node.cloaked", generateModel)
     .on("datastore.local.node.uncloaked", generateModel);
-
-  keyboardEmitter
-    .on("key.down", onGlobalKeyPress)
-    .on("key.up", onGlobalKeyPress);
 
   // populate current model
 

@@ -100,17 +100,16 @@ export abstract class GraphNode
 
     public setParent(parent: GraphNode)
     {
-        this.parent = parent;
-
         if (parent.children.indexOf(this) > -1)
         {
             throw new Error(`"${parent.id}" already contains child "${this.id}"`);
         }
+
+        this.parent = parent;
+
         parent.children.push(this);
 
         this.onAddedToParent();
-
-        // parent.emit('childAdded', this);
     }
 
     public addChild(node: GraphNode)
@@ -121,6 +120,70 @@ export abstract class GraphNode
         }
 
         node.setParent(this);
+    }
+
+    public addChildAt(node: GraphNode, index: number)
+    {
+        const maxIndex = this.children.length - 1;
+
+        if (index > maxIndex)
+        {
+            throw new Error(`Cannot add child past max index ${maxIndex}`);
+        }
+
+        if (this.children.indexOf(node) > -1)
+        {
+            throw new Error(`"${this.id}" already contains child "${node.id}`);
+        }
+
+        node.parent = this;
+
+        this.children.splice(index, 0, node);
+
+        node.onAddedToParent();
+    }
+
+    public setChildIndex(node: GraphNode, index: number)
+    {
+        const { children } = this;
+        const maxIndex = this.children.length;
+
+        if (index > maxIndex)
+        {
+            throw new Error(`"${this.id}" Cannot add child past max index ${maxIndex}`);
+        }
+
+        if (children.indexOf(node) === -1)
+        {
+            throw new Error(`"${this.id}" does not contain child "${node.id}`);
+        }
+
+        const currentIndex = children.indexOf(node);
+
+        children.splice(currentIndex, 1);
+
+        if (index === maxIndex)
+        {
+            children.push(node);
+        }
+        else if (index <= currentIndex)
+        {
+            children.splice(index, 0, node);
+        }
+        else
+        {
+            children.splice(index - 1, 0, node);
+        }
+    }
+
+    public isSiblingOf(node: GraphNode)
+    {
+        if (this.parent)
+        {
+            return this.parent.children.indexOf(node) > -1;
+        }
+
+        return false;
     }
 
     public removeChild(node: GraphNode)
@@ -136,8 +199,6 @@ export abstract class GraphNode
             delete node.parent;
 
             node.onRemovedFromParent(this);
-
-            // this.emit('childRemoved', node);
         }
         else
         {
@@ -157,7 +218,6 @@ export abstract class GraphNode
 
     public contains(node: GraphNode): boolean
     {
-        // return node.hasParent(this);
         return this.walk<GraphNode, { hasNode?: boolean }>((childNode, options) =>
         {
             if (childNode === node)
