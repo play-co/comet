@@ -26,7 +26,7 @@ export interface Table
     fontSize: number;
 }
 
-const indexKey = 'index';
+export const tableIndexKey = 'index';
 const hPad = 5;
 
 export function createTable<T extends Record<string, any>>(
@@ -36,14 +36,14 @@ export function createTable<T extends Record<string, any>>(
 ): Table
 {
     const indexColumn: Column = {
-        id: indexKey,
+        id: tableIndexKey,
         width: 0,
     };
     const columns: Column[] = [indexColumn];
     const rows: Row[] = [];
     const columnsById: Map<string, Column> = new Map();
 
-    columnsById.set(indexKey, indexColumn);
+    columnsById.set(tableIndexKey, indexColumn);
 
     const registerFields = (item: T) =>
     {
@@ -80,7 +80,7 @@ export function createTable<T extends Record<string, any>>(
         {
             const row = registerFields(item);
 
-            row.set(indexKey, {
+            row.set(tableIndexKey, {
                 value: String(i),
             });
         });
@@ -91,7 +91,7 @@ export function createTable<T extends Record<string, any>>(
         {
             const row = registerFields(value);
 
-            row.set(indexKey, {
+            row.set(tableIndexKey, {
                 value: key,
             });
         }
@@ -99,7 +99,7 @@ export function createTable<T extends Record<string, any>>(
 
     // detect sizes
 
-    const cellSize = measureText(indexKey, fontSize);
+    const cellSize = measureText(tableIndexKey, fontSize);
 
     indexColumn.width = cellSize.width + hPad;
 
