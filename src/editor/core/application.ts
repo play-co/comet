@@ -9,6 +9,7 @@ import { CreateTextureAssetCommand } from '../commands/createTextureAsset';
 import { RemoveNodeCommand } from '../commands/removeNode';
 import { DatastoreNodeInspector } from '../devTools/datastoreNodeInspector';
 import { GraphNodeInspector } from '../devTools/graphNodeInspector';
+import { UndoStackInspector } from '../devTools/undoStackInspector';
 import type { DatastoreEvent } from '../events/datastoreEvents';
 import type { ProjectEvent } from '../events/projectEvents';
 import { LocalStorageProvider } from '../storage/localStorageProvider';
@@ -165,9 +166,11 @@ export class Application
 
         const graphNodeInspector = new GraphNodeInspector('Graph Nodes', 'blue');
         const datastoreNodeInspector = new DatastoreNodeInspector('Datastore Nodes', 'green');
+        const undoStackInspector = new UndoStackInspector('UndoStack', 'purple');
 
         graphNodeInspector.mount(document.body);
         datastoreNodeInspector.mount(document.body);
+        undoStackInspector.mount(document.body);
     }
 
     protected clear()

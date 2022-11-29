@@ -38,10 +38,12 @@ export abstract class DevInspector<T extends Record<string, any> >
             display: none;
         `;
 
-        container.innerHTML = `<label><span>${this.id}</span><div>+</div></label>`;
+        container.innerHTML = `<label><span>${this.id}</span><div class="inspect">?</div><div class="toggle">+</div></label>`;
 
         const label = container.querySelector('label') as HTMLLabelElement;
-        const button = container.querySelector('div') as HTMLDivElement;
+        const span = container.querySelector('span') as HTMLSpanElement;
+        const inspectButton = container.querySelector('.inspect') as HTMLDivElement;
+        const toggleButton = container.querySelector('.toggle') as HTMLDivElement;
 
         label.style.cssText = `
             display: flex;
@@ -57,7 +59,17 @@ export abstract class DevInspector<T extends Record<string, any> >
             height: 25px;
         `;
 
-        button.style.cssText = `
+        span.style.cssText = `
+            flex-grow: 1;
+        `;
+
+        inspectButton.style.cssText = `
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        `;
+
+        toggleButton.style.cssText = `
             width: 16px;
             height: 16px;
             cursor: pointer;
@@ -104,11 +116,15 @@ export abstract class DevInspector<T extends Record<string, any> >
             return false;
         };
 
-        button.onclick = (e: MouseEvent) =>
+        toggleButton.onclick = () =>
         {
-            console.log(e.target, e.currentTarget);
             this.isExpanded = !this.isExpanded;
             this.updateExpandedState();
+        };
+
+        inspectButton.onclick = () =>
+        {
+            this.inspect();
         };
 
         setInterval(() =>
@@ -118,6 +134,7 @@ export abstract class DevInspector<T extends Record<string, any> >
     }
 
     protected abstract getDetails(): Record<string, T> | T[];
+    protected abstract inspect(): void;
 
     protected update()
     {
@@ -125,7 +142,14 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         const table = createTable(details, this.painter.font.size);
 
-        renderTable(table, this.painter, this.onCellStyle);
+        if (table.rows.length === 0)
+        {
+            this.painter.size(0, 0);
+        }
+        else
+        {
+            renderTable(table, this.painter, this.onCellStyle);
+        }
 
         this.container.style.display = 'flex';
     }
@@ -135,7 +159,12 @@ export abstract class DevInspector<T extends Record<string, any> >
         this.painter.canvas.style.display = this.isExpanded ? 'block' : 'none';
     }
 
-    public abstract onCellStyle(row: Row, column: Column, cellStyle: CellStyle): void;
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public onCellStyle = (row: Row, column: Column, cellStyle: CellStyle): void =>
+    {
+        //
+    };
 
     public mount(container: HTMLElement)
     {
