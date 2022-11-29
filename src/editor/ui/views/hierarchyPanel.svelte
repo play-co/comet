@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getGlobalEmitter } from "../../../core/events";
   import type { DisplayObjectNode } from "../../../core/nodes/abstract/displayObject";
+  import { SetParentCommand } from "../../commands/setParent";
   import { Application } from "../../core/application";
   import type { DatastoreEvent } from "../../events/datastoreEvents";
   import type { SelectionEvent } from "../../events/selectionEvents";
@@ -38,7 +39,7 @@
   // view functions
 
   function generateModel() {
-    model = root.walk<DisplayObjectNode, { model: ModelItem[] }>(
+    const newModel = root.walk<DisplayObjectNode, { model: ModelItem[] }>(
       (node, options) => {
         if (node.isCloaked) {
           // deleted nodes are actually just cloaked, don't include them
@@ -59,6 +60,8 @@
         },
       }
     ).model;
+    console.log(newModel);
+    model = newModel;
   }
 
   function updateModel(fn: (item: ModelItem) => void) {
@@ -127,17 +130,24 @@
 
           if (operation === Operation.Reparent) {
             // reparent
-            if (sourceNode.parent) {
-              sourceNode.parent.removeChild(sourceNode);
-            }
+            // if (sourceNode.parent) {
+            //   sourceNode.parent.removeChild(sourceNode);
+            // }
 
-            dragTargetNode.addChild(sourceNode);
+            // dragTargetNode.addChild(sourceNode);
 
-            const viewMatrix = sourceNode.view.worldTransform.clone();
-            const parentMatrix = sourceNode.view.parent.worldTransform.clone();
+            // const viewMatrix = sourceNode.view.worldTransform.clone();
+            // const parentMatrix = sourceNode.view.parent.worldTransform.clone();
 
-            viewMatrix.prepend(parentMatrix.invert());
-            sourceNode.view.transform.setFromMatrix(viewMatrix);
+            // viewMatrix.prepend(parentMatrix.invert());
+            // sourceNode.view.transform.setFromMatrix(viewMatrix);
+
+            Application.instance.undoStack.exec(
+              new SetParentCommand({
+                nodeId: sourceNode.id,
+                parentId: dragTargetNode.id,
+              })
+            );
           } else {
             // reorder
             const sourceNode = selection.nodes[0];
@@ -276,6 +286,7 @@
     border-collapse: collapse;
     width: 100%;
     font-size: 12px;
+    margin: 5px;
   }
 
   th {

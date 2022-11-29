@@ -29,9 +29,18 @@ export class SetParentCommand
 
         const parentNode = this.getInstance(parentId);
         const childNode = this.getInstance(nodeId);
+        const prevParentId = childNode.parent?.id;
 
         // cache previous parent
-        this.cache.prevParentId = childNode.parent?.id;
+        this.cache.prevParentId = prevParentId;
+
+        // remove from existing parent
+        if (prevParentId)
+        {
+            const prevParent = this.getInstance(prevParentId);
+
+            prevParent.removeChild(childNode);
+        }
 
         // update datastore
         datastore.setNodeParent(nodeId, parentId);
