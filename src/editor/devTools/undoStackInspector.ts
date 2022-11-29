@@ -28,7 +28,7 @@ export class UndoStackInspector extends DevInspector<UndoStackDetail>
         return details;
     }
 
-    public onCellStyle = (row: Row, _column: Column, cellStyle: CellStyle) =>
+    public onCellStyle = (row: Row, column: Column, cellStyle: CellStyle) =>
     {
         const undoStack = Application.instance.undoStack;
         const indexCell = this.getCell(tableIndexKey, row);
@@ -40,6 +40,11 @@ export class UndoStackInspector extends DevInspector<UndoStackDetail>
             cellStyle.fontColor = 'white';
             cellStyle.fontStyle = 'bold';
         }
+
+        if (column.id === tableIndexKey)
+        {
+            cellStyle.text = String(parseInt(cellStyle.text.replace(/"/g, ''), 10));
+        }
     };
 
     protected inspect()
@@ -47,5 +52,10 @@ export class UndoStackInspector extends DevInspector<UndoStackDetail>
         const undoStack = Application.instance.undoStack;
 
         console.log(undoStack.stack);
+    }
+
+    protected indexColumnLabel()
+    {
+        return 'index';
     }
 }

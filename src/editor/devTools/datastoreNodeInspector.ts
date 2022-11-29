@@ -35,4 +35,9 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
 
         console.log(datastore.toProjectSchema());
     }
+
+    protected indexColumnLabel()
+    {
+        return 'id';
+    }
 }

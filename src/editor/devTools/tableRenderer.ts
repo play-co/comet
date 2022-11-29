@@ -18,6 +18,7 @@ export type Row = Map<string, Cell>;
 
 export interface Table
 {
+    indexColumnLabel: string;
     columns: Column[];
     rows: Row[];
     width: number;
@@ -26,11 +27,12 @@ export interface Table
     fontSize: number;
 }
 
-export const tableIndexKey = 'index';
+export const tableIndexKey = '$$index';
 const hPad = 5;
 
 export function createTable<T extends Record<string, any>>(
     data: Record<string, T> | T[],
+    indexColumnLabel: string,
     fontSize: number,
     rowHeight = 20,
 ): Table
@@ -123,6 +125,7 @@ export function createTable<T extends Record<string, any>>(
     });
 
     return {
+        indexColumnLabel,
         width: tableWidth,
         height: rowHeight * (rows.length + 1),
         columns,
@@ -146,7 +149,7 @@ export function renderTable(
     cellStyleFn: (row: Row, column: Column, cellStyle: CellStyle) => string | void,
 )
 {
-    const { rowHeight, columns, rows, fontSize } = table;
+    const { rowHeight, columns, rows, fontSize, indexColumnLabel } = table;
     let x = 0;
     let y = 0;
 
@@ -171,7 +174,7 @@ export function renderTable(
     columns.forEach((column) =>
     {
         const cellStyle: CellStyle = {
-            text: column.id,
+            text: column.id === tableIndexKey ? indexColumnLabel : column.id,
             fillColor: Color(painter.backgroundColor).darken(0.5).hex(),
             fontColor: 'white',
             fontStyle: 'bold',

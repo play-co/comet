@@ -146,6 +146,7 @@ export abstract class DevInspector<T extends Record<string, any> >
         }));
     }
 
+    protected abstract indexColumnLabel(): string;
     protected abstract getDetails(): Record<string, T> | T[];
     protected abstract inspect(): void;
 
@@ -153,7 +154,7 @@ export abstract class DevInspector<T extends Record<string, any> >
     {
         const details = this.getDetails();
 
-        const table = createTable(details, this.painter.font.size);
+        const table = createTable(details, this.indexColumnLabel(), this.painter.font.size);
 
         if (table.rows.length === 0)
         {

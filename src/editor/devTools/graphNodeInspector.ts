@@ -68,4 +68,9 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
 
         console.log(nodes);
     }
+
+    protected indexColumnLabel()
+    {
+        return 'id';
+    }
 }

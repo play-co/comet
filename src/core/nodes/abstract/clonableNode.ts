@@ -678,6 +678,11 @@ export abstract class ClonableNode<
         return modelKeys;
     }
 
+    public indexOf(node: GraphNode)
+    {
+        return this.children.filter((node) => !(node as unknown as ClonableNode).isCloaked).indexOf(node);
+    }
+
     public cloak()
     {
         this.isCloaked = true;
