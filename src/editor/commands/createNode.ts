@@ -71,7 +71,7 @@ export class CreateNodeCommand<
             new AssignCustomPropCommand({ nodeId: nodeSchema.id, modelKey, customKey, updateMode: 'graphOnly' }).run();
         }
 
-        datastoreEmitter.emit('datastore.local.node.created', node);
+        datastoreEmitter.emit('datastore.local.node.created', { nodeId: node.id });
 
         return { node };
     }

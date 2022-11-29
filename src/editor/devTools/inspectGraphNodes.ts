@@ -22,8 +22,8 @@ export function inspectGraphNodes()
         const detail: Detail = {
             depth: options.depth,
             index: node.index,
-            parent: node.parent ? node.parent.id : 'none',
-            children: node.children.map((node) => node.id).join(','),
+            parent: node.parent ? node.parent.id : '#none',
+            children: node.children.length === 0 ? '#empty' : node.children.map((node) => node.id).join(','),
             cloaked: node.isCloaked,
             node,
         };

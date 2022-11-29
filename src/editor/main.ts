@@ -7,6 +7,7 @@ import { Application } from './core/application';
 // main app and tools
 import { inspectDatastoreNodes } from './devTools/inspectDatastore';
 import { inspectGraphNodes } from './devTools/inspectGraphNodes';
+import { inspectUndoStack } from './devTools/inspectUndoStack';
 
 (window as any).inspect = {
     all: () =>
@@ -14,6 +15,7 @@ import { inspectGraphNodes } from './devTools/inspectGraphNodes';
         console.clear();
         inspectGraphNodes();
         inspectDatastoreNodes();
+        inspectUndoStack();
     },
     graph: {
         nodes: () => inspectGraphNodes(),
@@ -21,6 +23,7 @@ import { inspectGraphNodes } from './devTools/inspectGraphNodes';
     datastore: {
         nodes: () => inspectDatastoreNodes(),
     },
+    undoStack: () => inspectUndoStack(),
 
 };
 

@@ -60,7 +60,6 @@
         },
       }
     ).model;
-    console.log(newModel);
     model = newModel;
   }
 
@@ -129,19 +128,7 @@
           const sourceNode = node;
 
           if (operation === Operation.Reparent) {
-            // reparent
-            // if (sourceNode.parent) {
-            //   sourceNode.parent.removeChild(sourceNode);
-            // }
-
-            // dragTargetNode.addChild(sourceNode);
-
-            // const viewMatrix = sourceNode.view.worldTransform.clone();
-            // const parentMatrix = sourceNode.view.parent.worldTransform.clone();
-
-            // viewMatrix.prepend(parentMatrix.invert());
-            // sourceNode.view.transform.setFromMatrix(viewMatrix);
-
+            // reparent using command
             Application.instance.undoStack.exec(
               new SetParentCommand({
                 nodeId: sourceNode.id,
@@ -149,7 +136,7 @@
               })
             );
           } else {
-            // reorder
+            // reorder using command
             const sourceNode = selection.nodes[0];
             const parentNode =
               dragTargetNode === sourceNode.parent
@@ -162,11 +149,6 @@
                 : parentNode.indexOf(dragTargetNode) + 1;
 
             parentNode.setChildIndex(sourceNode, index);
-
-            console.log(
-              parentNode.children.map((node) => node.id),
-              parentNode.children.map((node) => (node as any).view.__node_id)
-            );
           }
 
           generateModel();

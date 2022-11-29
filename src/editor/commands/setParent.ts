@@ -48,6 +48,13 @@ export class SetParentCommand
         // update graph node
         parentNode.addChild(childNode);
 
+        // update worldTransform
+        const viewMatrix = childNode.view.worldTransform.clone();
+        const parentMatrix = childNode.view.parent.worldTransform.clone();
+
+        viewMatrix.prepend(parentMatrix.invert());
+        childNode.view.transform.setFromMatrix(viewMatrix);
+
         return { parentNode, childNode };
     }
 

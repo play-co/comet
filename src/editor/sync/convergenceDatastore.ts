@@ -336,6 +336,20 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         const parentElement = this.getNodeElement(parentId);
         const childElement = this.getNodeElement(childId);
+        const prevParentId = childElement.get('parent').value() as string;
+        const prevParentElement = this.hasNode(prevParentId) ? this.getNodeElement(prevParentId) : undefined;
+
+        // remove from previous parents children first
+        if (prevParentElement)
+        {
+            const childArray = prevParentElement.get('children') as RealTimeArray;
+            const index = childArray.findIndex((id) => id.value() === childId);
+
+            if (index > -1)
+            {
+                childArray.remove(index);
+            }
+        }
 
         // set parent data
         childElement.set('parent', this.assertValue(parentId));

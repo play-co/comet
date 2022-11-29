@@ -21,8 +21,8 @@ export function inspectDatastoreNodes()
     {
         details[nodeId] = {
             type: node.type,
-            parent: node.parent ? node.parent : 'none',
-            children: node.children.join(','),
+            parent: node.parent ? node.parent : '#none',
+            children: node.children.length === 0 ? '#empty' : node.children.join(','),
             node,
         };
         nodeCount++;
