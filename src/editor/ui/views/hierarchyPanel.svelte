@@ -280,11 +280,11 @@
     margin: 5px;
   }
 
-  th {
+  /* th {
     position: sticky;
     top: 0;
     background-color: #000000;
-  }
+  } */
 
   td {
     display: flex;

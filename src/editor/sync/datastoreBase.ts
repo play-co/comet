@@ -34,25 +34,27 @@ export interface DatastoreCommandProvider
     assignCustomProperty: (nodeId: string, modelKey: string, customKey: string) => void;
     unassignCustomProperty: (nodeId: string, modelKey: string) => void;
     createTexture: (asset: TextureAsset) => Promise<void>;
+    setNodeIndex: (nodeId: string, index: number) => void;
 }
 
-export interface DatastoreChangeEventHandler<ChangeEventType>
+export interface DatastoreChangeEventHandler<RemoteChangeEvent>
 {
-    onRemoteNodeCreated: (event: ChangeEventType) => void;
-    onRemoteNodeRemoved: (event: ChangeEventType) => void;
-    onRemoteNodeRootPropertySet: (event: ChangeEventType) => void;
-    onRemoteNodeDefinedCustomPropSet: (event: ChangeEventType) => void;
-    onRemoteNodeDefinedCustomPropRemoved: (event: ChangeEventType) => void;
-    onRemoteNodeAssignedCustomPropSet: (event: ChangeEventType) => void;
-    onRemoteNodeAssignedCustomPropRemoved: (event: ChangeEventType) => void;
-    onRemoteNodeModelPropertySet: (event: ChangeEventType) => void;
-    onRemoteNodeModelValueSet: (event: ChangeEventType) => void;
-    onRemoteNodeModelPropertyRemove: (event: ChangeEventType) => void;
-    onRemoteNodeCloneInfoValueSet: (event: ChangeEventType) => void;
+    onRemoteNodeCreated: (event: RemoteChangeEvent) => void;
+    onRemoteNodeRemoved: (event: RemoteChangeEvent) => void;
+    onRemoteNodeRootPropertySet: (event: RemoteChangeEvent) => void;
+    onRemoteNodeDefinedCustomPropSet: (event: RemoteChangeEvent) => void;
+    onRemoteNodeDefinedCustomPropRemoved: (event: RemoteChangeEvent) => void;
+    onRemoteNodeAssignedCustomPropSet: (event: RemoteChangeEvent) => void;
+    onRemoteNodeAssignedCustomPropRemoved: (event: RemoteChangeEvent) => void;
+    onRemoteNodeModelPropertySet: (event: RemoteChangeEvent) => void;
+    onRemoteNodeModelValueSet: (event: RemoteChangeEvent) => void;
+    onRemoteNodeModelPropertyRemove: (event: RemoteChangeEvent) => void;
+    onRemoteNodeCloneInfoValueSet: (event: RemoteChangeEvent) => void;
+    onRemoteNodeSetIndex: (event: RemoteChangeEvent) => void;
 }
 
-export abstract class DatastoreBase<NodeProxyObject, ChangeEventType>
-implements Datastore, DatastoreCommandProvider, DatastoreChangeEventHandler<ChangeEventType>
+export abstract class DatastoreBase<NodeProxyObject, RemoteChangeEvent>
+implements Datastore, DatastoreCommandProvider, DatastoreChangeEventHandler<RemoteChangeEvent>
 {
     protected nodeProxies: Map<string, NodeProxyObject>;
 
@@ -89,19 +91,21 @@ implements Datastore, DatastoreCommandProvider, DatastoreChangeEventHandler<Chan
     public abstract assignCustomProperty(nodeId: string, modelKey: string, customKey: string): void;
     public abstract unassignCustomProperty(nodeId: string, modelKey: string): void;
     public abstract createTexture(asset: TextureAsset): Promise<void>;
+    public abstract setNodeIndex(nodeId: string, index: number): void;
 
     // change event handles
-    public abstract onRemoteNodeCreated(event: ChangeEventType): void;
-    public abstract onRemoteNodeRemoved(event: ChangeEventType): void;
-    public abstract onRemoteNodeRootPropertySet(event: ChangeEventType): void;
-    public abstract onRemoteNodeDefinedCustomPropSet(event: ChangeEventType): void;
-    public abstract onRemoteNodeDefinedCustomPropRemoved(event: ChangeEventType): void;
-    public abstract onRemoteNodeAssignedCustomPropSet(event: ChangeEventType): void;
-    public abstract onRemoteNodeAssignedCustomPropRemoved(event: ChangeEventType): void;
-    public abstract onRemoteNodeModelPropertySet(event: ChangeEventType): void;
-    public abstract onRemoteNodeModelValueSet(event: ChangeEventType): void;
-    public abstract onRemoteNodeModelPropertyRemove(event: ChangeEventType): void;
-    public abstract onRemoteNodeCloneInfoValueSet(event: ChangeEventType): void;
-    public abstract onTextureCreated(event: ChangeEventType): void;
-    public abstract onTextureRemoved(event: ChangeEventType): void;
+    public abstract onRemoteNodeCreated(event: RemoteChangeEvent): void;
+    public abstract onRemoteNodeRemoved(event: RemoteChangeEvent): void;
+    public abstract onRemoteNodeRootPropertySet(event: RemoteChangeEvent): void;
+    public abstract onRemoteNodeDefinedCustomPropSet(event: RemoteChangeEvent): void;
+    public abstract onRemoteNodeDefinedCustomPropRemoved(event: RemoteChangeEvent): void;
+    public abstract onRemoteNodeAssignedCustomPropSet(event: RemoteChangeEvent): void;
+    public abstract onRemoteNodeAssignedCustomPropRemoved(event: RemoteChangeEvent): void;
+    public abstract onRemoteNodeModelPropertySet(event: RemoteChangeEvent): void;
+    public abstract onRemoteNodeModelValueSet(event: RemoteChangeEvent): void;
+    public abstract onRemoteNodeModelPropertyRemove(event: RemoteChangeEvent): void;
+    public abstract onRemoteNodeCloneInfoValueSet(event: RemoteChangeEvent): void;
+    public abstract onTextureCreated(event: RemoteChangeEvent): void;
+    public abstract onTextureRemoved(event: RemoteChangeEvent): void;
+    public abstract onRemoteNodeSetIndex(event: RemoteChangeEvent): void;
 }
