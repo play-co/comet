@@ -8,6 +8,7 @@ import { CreateNodeCommand } from '../commands/createNode';
 import { RemoveCustomPropCommand } from '../commands/removeCustomProp';
 import { RemoveNodeCommand } from '../commands/removeNode';
 import { SetCustomPropCommand } from '../commands/setCustomProp';
+import { SetParentCommand } from '../commands/setParent';
 import { UnAssignCustomPropCommand } from '../commands/unassignCustomProp';
 import type { DatastoreEvent } from '../events/datastoreEvents';
 import type { DatastoreBase } from './datastoreBase';
@@ -76,14 +77,11 @@ export class RemoteObjectSync
 
         const { nodeId, parentId } = event;
 
-        // update graph node
-        const parentNode = getInstance<ClonableNode>(parentId);
-        const childNode = getInstance<ClonableNode>(nodeId);
-
-        if (parentNode.children.indexOf(childNode) === -1)
-        {
-            parentNode.addChild(childNode);
-        }
+        new SetParentCommand({
+            nodeId,
+            parentId,
+            updateMode: 'graphOnly',
+        }).run();
     };
 
     protected onCustomPropDefined = (event: DatastoreEvent['datastore.node.customProp.defined']) =>

@@ -1,7 +1,6 @@
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import { ContainerNode } from '../../core/nodes/concrete/container';
 import { type UpdateMode, Command } from '../core/command';
-import { getUserName } from '../sync/user';
 
 export interface SetParentCommandParams
 {
@@ -20,8 +19,6 @@ export interface SetParentCommandCache
 {
     prevParentId?: string;
 }
-
-const user = getUserName();
 
 export class SetParentCommand
     extends Command<SetParentCommandParams, SetParentCommandReturn, SetParentCommandCache>
@@ -48,7 +45,10 @@ export class SetParentCommand
         }
 
         // update datastore
-        datastore.setNodeParent(nodeId, parentId);
+        if (updateMode === 'full')
+        {
+            datastore.setNodeParent(nodeId, parentId);
+        }
 
         // update graph node
         parentNode.addChild(childNode);
@@ -72,7 +72,7 @@ export class SetParentCommand
 
         if (prevParentId)
         {
-            new SetParentCommand({ parentId: prevParentId, nodeId }).run();
+            new SetParentCommand({ parentId: prevParentId, nodeId, updateMode: 'full' }).run();
         }
     }
 }

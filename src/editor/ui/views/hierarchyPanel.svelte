@@ -135,6 +135,7 @@
               new SetParentCommand({
                 nodeId: sourceNode.id,
                 parentId: dragTargetNode.id,
+                updateMode: "full",
               })
             );
           } else {
