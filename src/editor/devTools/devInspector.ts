@@ -1,6 +1,9 @@
+import { getUserName } from '../sync/user';
 import { mouseDrag } from '../ui/components/dragger';
 import Canvas2DPainter from './2dPainter';
 import { type Cell, type CellStyle, type Column, type Row, createTable, renderTable } from './tableRenderer';
+
+const user = getUserName();
 
 export abstract class DevInspector<T extends Record<string, any> >
 {
@@ -73,7 +76,7 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         container.appendChild(canvas);
 
-        const localStorageKey = `comet:devtool:inspector:${id}`;
+        const localStorageKey = this.localStorageKey;
 
         const data = localStorage.getItem(localStorageKey);
 
@@ -130,10 +133,15 @@ export abstract class DevInspector<T extends Record<string, any> >
         }, 250);
     }
 
+    get localStorageKey()
+    {
+        return `comet:${user}:devtool:inspector:${this.id}`;
+    }
+
     protected storeState()
     {
-        const { container, id } = this;
-        const localStorageKey = `comet:devtool:inspector:${id}`;
+        const { container } = this;
+        const localStorageKey = this.localStorageKey;
 
         localStorage.setItem(localStorageKey, JSON.stringify({
             x: container.offsetLeft,

@@ -51,7 +51,7 @@ export class ContainerNode<
         //
     }
 
-    public updateTransformFromParent()
+    public reParentTransform()
     {
         const viewMatrix = this.view.worldTransform.clone();
         const parentMatrix = this.view.parent.worldTransform.clone();

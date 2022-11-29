@@ -28,7 +28,6 @@ export interface Table
 }
 
 export const tableIndexKey = '$$index';
-const hPad = 5;
 
 export function createTable<T extends Record<string, any>>(
     data: Record<string, T> | T[],
@@ -103,7 +102,7 @@ export function createTable<T extends Record<string, any>>(
 
     const cellSize = measureText(tableIndexKey, fontSize);
 
-    indexColumn.width = cellSize.width + hPad;
+    indexColumn.width = cellSize.width;
 
     rows.forEach((row) =>
     {
@@ -113,7 +112,7 @@ export function createTable<T extends Record<string, any>>(
             const cellSize = measureText(JSON.stringify(row.get(columnId)), fontSize);
             const columnHeadingSize = measureText(columnId, fontSize);
 
-            column.width = Math.max(cellSize.width + hPad, column.width + hPad, columnHeadingSize.width + hPad);
+            column.width = Math.max(cellSize.width, column.width, columnHeadingSize.width);
         }
     });
 

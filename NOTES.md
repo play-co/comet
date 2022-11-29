@@ -30,5 +30,5 @@
 
 * Hierarchy panel needs:
     - re-parent needs to clean-up previous parents, both in node graph and datastore
-    - re-order needs new command so it updates remote users and is undoable
     - re-parenting remote events need to update worldTransform of affected nodes in local
+    - re-order needs new command so it updates remote users and is undoable

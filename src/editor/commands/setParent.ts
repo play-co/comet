@@ -51,7 +51,7 @@ export class SetParentCommand
 
         if (childNode instanceof ContainerNode)
         {
-            childNode.updateTransformFromParent();
+            childNode.reParentTransform();
         }
 
         return { parentNode, childNode };
