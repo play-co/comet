@@ -1,7 +1,7 @@
 import type { TextureAsset } from '../../core/assets/textureAsset';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { CustomPropertyType, CustomPropertyValueType } from '../../core/nodes/customProperties';
-import type { CloneInfoSchema, NodeSchema } from '../../core/nodes/schema';
+import type { CloneInfoSchema, NodeSchema, ProjectSchema } from '../../core/nodes/schema';
 
 export interface Datastore
 {
@@ -19,6 +19,7 @@ export interface Datastore
     deleteProject: (name: string) => Promise<void>;
     hydrate: () => ClonableNode;
     reset: () => void;
+    toProjectSchema: () => ProjectSchema;
 }
 
 export interface DatastoreCommandProvider
@@ -75,6 +76,7 @@ implements Datastore, DatastoreCommandProvider, DatastoreChangeEventHandler<Chan
     public abstract deleteProject(name: string): Promise<void>;
     public abstract hydrate(): ClonableNode;
     public abstract reset(): void;
+    public abstract toProjectSchema(): ProjectSchema;
 
     // command API
     public abstract createNode(nodeSchema: NodeSchema): void;

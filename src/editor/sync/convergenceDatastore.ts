@@ -14,7 +14,12 @@ import type { ModelValue } from '../../core/model/model';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { CustomPropertyType, CustomPropertyValueType } from '../../core/nodes/customProperties';
 import { consolidateId, getInstance } from '../../core/nodes/instances';
-import type { CloneInfoSchema, NodeSchema, ProjectSchema, TextureAssetSchema } from '../../core/nodes/schema';
+import type {
+    CloneInfoSchema,
+    NodeSchema,
+    ProjectSchema,
+    TextureAssetSchema,
+} from '../../core/nodes/schema';
 import { createProjectSchema } from '../../core/nodes/schema';
 import { Application } from '../core/application';
 import type { DatastoreEvent } from '../events/datastoreEvents';
@@ -255,6 +260,11 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         this.nodeProxies.clear();
 
         delete this._model;
+    }
+
+    public toProjectSchema()
+    {
+        return this.model.root().toJSON() as ProjectSchema;
     }
 
     public createNode(nodeSchema: NodeSchema)
@@ -614,11 +624,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
     public setNodesData(data: Record<string, NodeSchema>)
     {
         this.nodes.value(data);
-    }
-
-    public toJSON(): ProjectSchema
-    {
-        return this.model.root().toJSON() as ProjectSchema;
     }
 
     public getNodeElement(id: string)

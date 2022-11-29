@@ -29,6 +29,13 @@ export type TextureAssetSchema = AssetSchema<{
     wrapMode: WRAP_MODES;
 }>;
 
+export interface ProjectAssetsSchema
+{
+    textures: Record<string, TextureAssetSchema>;
+}
+
+export type ProjectNodesSchema = Record<string, NodeSchema<any>>;
+
 export interface CustomPropsSchema
 {
     defined: Record<string, CustomProperty>;
@@ -59,11 +66,9 @@ export interface ProjectSchema
     name: string;
     version: string;
     createdBy: string;
-    nodes: Record<string, NodeSchema<any>>;
     root: id;
-    assets: {
-        textures: Record<string, TextureAssetSchema>;
-    };
+    nodes: ProjectNodesSchema;
+    assets: ProjectAssetsSchema;
 }
 
 export interface NodeOptionsSchema<M extends ModelBase>

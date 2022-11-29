@@ -4,6 +4,25 @@ import './core/nodeRegistry';
 import './style';
 
 import { Application } from './core/application';
+// main app and tools
+import { inspectDatastoreNodes } from './devTools/inspectDatastore';
+import { inspectGraphNodes } from './devTools/inspectGraphNodes';
+
+(window as any).inspect = {
+    all: () =>
+    {
+        console.clear();
+        inspectGraphNodes();
+        inspectDatastoreNodes();
+    },
+    graph: {
+        nodes: () => inspectGraphNodes(),
+    },
+    datastore: {
+        nodes: () => inspectDatastoreNodes(),
+    },
+
+};
 
 // eslint-disable-next-line no-new
 new Application({});

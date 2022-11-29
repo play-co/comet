@@ -20,6 +20,11 @@ export abstract class GraphNode
         return this.children.length > 0;
     }
 
+    get index()
+    {
+        return this.parent ? this.parent.indexOf(this) : -1;
+    }
+
     public abstract nodeType(): string;
 
     public cast<T extends GraphNode>()
