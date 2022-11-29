@@ -1,7 +1,7 @@
 import Color from 'color';
 
 import { Application } from '../core/application';
-import { DevInspector } from './inspector';
+import { DevInspector } from './devInspector';
 import { type CellStyle, type Column, type Row, tableIndexKey } from './tableRenderer';
 
 interface UndoStackDetail

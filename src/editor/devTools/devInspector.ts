@@ -18,10 +18,6 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         const canvas = this.painter.canvas;
 
-        canvas.style.cssText = `
-            border: 1px outset #666;
-        `;
-
         const container = this.container = document.createElement('div');
 
         container.style.cssText = `

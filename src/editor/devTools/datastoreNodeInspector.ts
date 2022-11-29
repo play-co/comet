@@ -1,9 +1,9 @@
 import { Application } from '../core/application';
-import { DevInspector } from './inspector';
+import { DevInspector } from './devInspector';
+import type { CellStyle, Column, Row } from './tableRenderer';
 
 export interface DatastoreNodeDetail
 {
-    type: string;
     parent: string;
     children: string;
 }
@@ -20,7 +20,6 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
         for (const [nodeId, node] of Object.entries(project.nodes))
         {
             details[nodeId] = {
-                type: node.type,
                 parent: node.parent ? node.parent : '#empty#',
                 children: node.children.length === 0 ? '#empty#' : node.children.join(','),
             };
@@ -28,6 +27,18 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
 
         return details;
     }
+
+    public onCellStyle = (row: Row, column: Column, cellStyle: CellStyle) =>
+    {
+        const currentCell = this.getCell(column.id, row);
+
+        if (currentCell.value === '#empty#')
+        {
+            cellStyle.fontStyle = 'italic';
+            cellStyle.fontColor = '#aaa';
+            cellStyle.text = 'none';
+        }
+    };
 
     protected inspect()
     {

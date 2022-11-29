@@ -154,7 +154,7 @@ export function renderTable(
     let y = 0;
 
     painter
-        .size(table.width + 1, table.height + 1)
+        .size(table.width, table.height)
         .clear()
         .fontColor('white');
 
@@ -182,7 +182,7 @@ export function renderTable(
 
         painter
             .fontStyle('bold')
-            .strokeColor('#ccc')
+            .strokeColor('#999')
             .fillColor(cellStyle.fillColor)
             .fillRect(x + 1, y + 1, x + column.width - 2, y + rowHeight - 2);
 
@@ -207,7 +207,7 @@ export function renderTable(
 
             painter
                 .fontStyle('normal')
-                .strokeColor('#ccc');
+                .strokeColor('#999');
 
             const cellStyle: CellStyle = {
                 text: JSON.stringify(cell.value),

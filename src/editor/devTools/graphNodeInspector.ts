@@ -2,7 +2,7 @@ import Color from 'color';
 
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import { Application } from '../core/application';
-import { DevInspector } from './inspector';
+import { DevInspector } from './devInspector';
 import type { CellStyle, Column, Row } from './tableRenderer';
 
 export interface GraphNodeDetail
