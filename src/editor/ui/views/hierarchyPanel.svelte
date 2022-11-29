@@ -211,6 +211,7 @@
     .on("selection.deselect", onDeselect);
 
   datastoreEmitter
+    .on("datastore.remote.node.parent.set", generateModel)
     .on("datastore.local.node.created", generateModel)
     .on("datastore.local.node.cloaked", generateModel)
     .on("datastore.local.node.uncloaked", generateModel);

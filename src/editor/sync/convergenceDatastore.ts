@@ -60,7 +60,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
     {
         return new Promise((resolve, reject) =>
         {
-            const url = 'https://localhost/realtime/convergence/default';
+            const url = 'https://localhost/realtime/~admin/local';
 
             const timeout = setTimeout(() =>
             {

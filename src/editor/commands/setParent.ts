@@ -1,11 +1,13 @@
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import { ContainerNode } from '../../core/nodes/concrete/container';
-import { Command } from '../core/command';
+import { type UpdateMode, Command } from '../core/command';
+import { getUserName } from '../sync/user';
 
 export interface SetParentCommandParams
 {
     parentId: string;
     nodeId: string;
+    updateMode: UpdateMode;
 }
 
 export interface SetParentCommandReturn
@@ -19,6 +21,8 @@ export interface SetParentCommandCache
     prevParentId?: string;
 }
 
+const user = getUserName();
+
 export class SetParentCommand
     extends Command<SetParentCommandParams, SetParentCommandReturn, SetParentCommandCache>
 {
@@ -26,7 +30,7 @@ export class SetParentCommand
 
     public apply(): SetParentCommandReturn
     {
-        const { datastore, params: { parentId, nodeId } } = this;
+        const { datastore, params: { parentId, nodeId, updateMode } } = this;
 
         const parentNode = this.getInstance(parentId);
         const childNode = this.getInstance(nodeId);
