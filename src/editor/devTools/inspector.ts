@@ -83,10 +83,13 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         if (data)
         {
-            const { x, y } = JSON.parse(data);
+            const { x, y, isExpanded } = JSON.parse(data);
 
             container.style.left = `${x}px`;
             container.style.top = `${y}px`;
+            this.isExpanded = isExpanded;
+
+            this.updateExpandedState();
         }
 
         container.onmousedown = (e: MouseEvent) =>
@@ -100,10 +103,7 @@ export abstract class DevInspector<T extends Record<string, any> >
                 container.style.top = `${startY + deltaY}px`;
             }).then(() =>
             {
-                localStorage.setItem(localStorageKey, JSON.stringify({
-                    x: container.offsetLeft,
-                    y: container.offsetTop,
-                }));
+                this.storeState();
             });
         };
 
@@ -119,6 +119,7 @@ export abstract class DevInspector<T extends Record<string, any> >
         toggleButton.onclick = () =>
         {
             this.isExpanded = !this.isExpanded;
+            this.storeState();
             this.updateExpandedState();
         };
 
@@ -131,6 +132,18 @@ export abstract class DevInspector<T extends Record<string, any> >
         {
             this.update();
         }, 250);
+    }
+
+    protected storeState()
+    {
+        const { container, id } = this;
+        const localStorageKey = `comet:devtool:inspector:${id}`;
+
+        localStorage.setItem(localStorageKey, JSON.stringify({
+            x: container.offsetLeft,
+            y: container.offsetTop,
+            isExpanded: this.isExpanded,
+        }));
     }
 
     protected abstract getDetails(): Record<string, T> | T[];
