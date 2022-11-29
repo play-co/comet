@@ -1,35 +1,27 @@
-import type { NodeSchema } from '../../core/nodes/schema';
 import { Application } from '../core/application';
 
-interface Detail
+export interface DatastoreNodeDetail
 {
     type: string;
-    created: number;
     parent: string;
     children: string;
-    node: NodeSchema;
 }
 
 export function inspectDatastoreNodes()
 {
     const datastore = Application.instance.datastore;
-    const details: Record<string, Detail> = {};
+    const details: Record<string, DatastoreNodeDetail> = {};
 
     const project = datastore.toProjectSchema();
-    let nodeCount = 0;
 
     for (const [nodeId, node] of Object.entries(project.nodes))
     {
         details[nodeId] = {
             type: node.type,
-            created: node.created,
-            parent: node.parent ? node.parent : '#none',
-            children: node.children.length === 0 ? '#empty' : node.children.join(','),
-            node,
+            parent: node.parent ? node.parent : '#empty#',
+            children: node.children.length === 0 ? '#empty#' : node.children.join(','),
         };
-        nodeCount++;
     }
 
-    console.log(`\n%cDatastore Nodes [${nodeCount}]`, 'color:cyan');
-    console.table(details);
+    return details;
 }

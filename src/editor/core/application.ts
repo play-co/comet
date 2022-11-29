@@ -7,6 +7,8 @@ import { clearInstances, getInstance } from '../../core/nodes/instances';
 import { Actions } from '../actions';
 import { CreateTextureAssetCommand } from '../commands/createTextureAsset';
 import { RemoveNodeCommand } from '../commands/removeNode';
+import { DatastoreNodeInspector } from '../devTools/datastoreNodeInspector';
+import { GraphNodeInspector } from '../devTools/graphNodeInspector';
 import type { DatastoreEvent } from '../events/datastoreEvents';
 import type { ProjectEvent } from '../events/projectEvents';
 import { LocalStorageProvider } from '../storage/localStorageProvider';
@@ -160,6 +162,12 @@ export class Application
     protected initProject()
     {
         this.viewport.setRoot(this.project.getChildAt(0));
+
+        const graphNodeInspector = new GraphNodeInspector('Graph Nodes', 'blue');
+        const datastoreNodeInspector = new DatastoreNodeInspector('Datastore Nodes', 'green');
+
+        graphNodeInspector.mount(document.body);
+        datastoreNodeInspector.mount(document.body);
     }
 
     protected clear()

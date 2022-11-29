@@ -1,4 +1,7 @@
-export function mouseDrag(e: MouseEvent, onMove?: (deltaX: number, deltaY: number) => void): Promise<{deltaX: number; deltaY: number}>
+export function mouseDrag(
+    e: MouseEvent,
+    onMove?: (deltaX: number, deltaY: number, startX: number, startY: number) => void,
+): Promise<{deltaX: number; deltaY: number}>
 {
     return new Promise((resolve) =>
     {
@@ -12,7 +15,7 @@ export function mouseDrag(e: MouseEvent, onMove?: (deltaX: number, deltaY: numbe
 
             if (onMove)
             {
-                onMove(deltaX, deltaY);
+                onMove(deltaX, deltaY, startX, startY);
             }
         };
 

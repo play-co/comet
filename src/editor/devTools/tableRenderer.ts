@@ -1,27 +1,39 @@
-import Canvas2DPainter, { measureText } from './2dPainter';
+import Color from 'color';
 
-interface Column
+import type Canvas2DPainter from './2dPainter';
+import { type FontStyle, measureText } from './2dPainter';
+
+export interface Column
 {
     id: string;
     width: number;
 }
 
-type Row = Map<string, string>;
+export interface Cell
+{
+    value: any;
+}
 
-interface Table
+export type Row = Map<string, Cell>;
+
+export interface Table
 {
     columns: Column[];
     rows: Row[];
     width: number;
     height: number;
     rowHeight: number;
+    fontSize: number;
 }
 
-const fontSize = 14;
 const indexKey = 'index';
-const hPad = 3;
+const hPad = 5;
 
-export function createTable<T extends Record<string, any>>(data: Record<string, T> | T[], rowHeight = 20): Table
+export function createTable<T extends Record<string, any>>(
+    data: Record<string, T> | T[],
+    fontSize: number,
+    rowHeight = 20,
+): Table
 {
     const indexColumn: Column = {
         id: indexKey,
@@ -50,7 +62,9 @@ export function createTable<T extends Record<string, any>>(data: Record<string, 
                 columnsById.set(key, column);
             }
 
-            row.set(key, JSON.stringify(value));
+            row.set(key, {
+                value,
+            });
         }
 
         rows.push(row);
@@ -66,7 +80,9 @@ export function createTable<T extends Record<string, any>>(data: Record<string, 
         {
             const row = registerFields(item);
 
-            row.set(indexKey, String(i));
+            row.set(indexKey, {
+                value: String(i),
+            });
         });
     }
     else
@@ -75,7 +91,9 @@ export function createTable<T extends Record<string, any>>(data: Record<string, 
         {
             const row = registerFields(value);
 
-            row.set(indexKey, key);
+            row.set(indexKey, {
+                value: key,
+            });
         }
     }
 
@@ -83,7 +101,7 @@ export function createTable<T extends Record<string, any>>(data: Record<string, 
 
     const cellSize = measureText(indexKey, fontSize);
 
-    indexColumn.width = cellSize.width;
+    indexColumn.width = cellSize.width + hPad;
 
     rows.forEach((row) =>
     {
@@ -93,7 +111,7 @@ export function createTable<T extends Record<string, any>>(data: Record<string, 
             const cellSize = measureText(JSON.stringify(row.get(columnId)), fontSize);
             const columnHeadingSize = measureText(columnId, fontSize);
 
-            column.width = Math.max(cellSize.width, column.width, columnHeadingSize.width);
+            column.width = Math.max(cellSize.width + hPad, column.width + hPad, columnHeadingSize.width + hPad);
         }
     });
 
@@ -110,26 +128,41 @@ export function createTable<T extends Record<string, any>>(data: Record<string, 
         columns,
         rows,
         rowHeight,
+        fontSize,
     };
 }
 
-export function renderTable(table: Table)
+export interface CellStyle
 {
-    console.log(table);
+    text: string;
+    fillColor: string;
+    fontColor: string;
+    fontStyle: FontStyle;
+}
 
-    const { rowHeight, columns, rows } = table;
-    const painter = new Canvas2DPainter(table.width, table.height, 'blue');
+export function renderTable(
+    table: Table,
+    painter: Canvas2DPainter,
+    cellStyleFn: (row: Row, column: Column, cellStyle: CellStyle) => string | void,
+)
+{
+    const { rowHeight, columns, rows, fontSize } = table;
     let x = 0;
     let y = 0;
 
-    painter.fillColor('white');
+    painter
+        .size(table.width + 1, table.height + 1)
+        .clear()
+        .fontColor('white');
 
-    const drawCell = (text: string, x: number, y: number, columnWidth: number) =>
+    const drawCell = (cellStyle: CellStyle, x: number, y: number, columnWidth: number) =>
     {
-        const textInfo = measureText(text, fontSize);
+        const textInfo = measureText(cellStyle.text, fontSize);
 
         painter
-            .drawText(text, x + ((columnWidth - textInfo.width) * 0.5) + hPad, y + ((rowHeight - textInfo.height) * 0.5) + (fontSize * 0.75))
+            .fontColor(cellStyle.fontColor)
+            .fontStyle(cellStyle.fontStyle)
+            .drawText(cellStyle.text, x + ((columnWidth - textInfo.width) * 0.5), y + ((rowHeight - textInfo.height) * 0.5) + (rowHeight * 0.35))
             .line(x + columnWidth, y, x + columnWidth, y + rowHeight);
     };
 
@@ -137,13 +170,20 @@ export function renderTable(table: Table)
 
     columns.forEach((column) =>
     {
-        painter
-            .strokeColor('#ccc')
-            .fillColor('darkblue')
-            .fillRect(x, y, x + column.width, y + rowHeight)
-            .fillColor('white');
+        const cellStyle: CellStyle = {
+            text: column.id,
+            fillColor: Color(painter.backgroundColor).darken(0.5).hex(),
+            fontColor: 'white',
+            fontStyle: 'bold',
+        };
 
-        drawCell(column.id, x, y, column.width);
+        painter
+            .fontStyle('bold')
+            .strokeColor('#ccc')
+            .fillColor(cellStyle.fillColor)
+            .fillRect(x + 1, y + 1, x + column.width - 2, y + rowHeight - 2);
+
+        drawCell(cellStyle, x, y, column.width);
 
         x += column.width;
     });
@@ -160,11 +200,26 @@ export function renderTable(table: Table)
 
         columns.forEach((column) =>
         {
-            painter
-                .strokeColor('#ccc')
-                .fillColor('white');
+            const cell = row.get(column.id) as Cell;
 
-            drawCell(String(row.get(column.id)), x, y, column.width);
+            painter
+                .fontStyle('normal')
+                .strokeColor('#ccc');
+
+            const cellStyle: CellStyle = {
+                text: JSON.stringify(cell.value),
+                fillColor: painter.backgroundColor,
+                fontColor: 'white',
+                fontStyle: 'normal',
+            };
+
+            cellStyleFn(row, column, cellStyle);
+
+            painter
+                .fillColor(cellStyle.fillColor)
+                .fillRect(x + 1, y + 1, x + column.width - 2, y + rowHeight - 2);
+
+            drawCell(cellStyle, x, y, column.width);
 
             x += column.width;
         });
@@ -173,17 +228,4 @@ export function renderTable(table: Table)
 
         y += rowHeight;
     });
-
-    // show canvas
-    const canvas = painter.canvas;
-
-    canvas.style.cssText = `
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    z-index: 1000;
-    border: 1px solid white;
-    `;
-
-    document.body.appendChild(canvas);
 }
