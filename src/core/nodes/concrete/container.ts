@@ -51,6 +51,15 @@ export class ContainerNode<
         //
     }
 
+    public updateTransformFromParent()
+    {
+        const viewMatrix = this.view.worldTransform.clone();
+        const parentMatrix = this.view.parent.worldTransform.clone();
+
+        viewMatrix.prepend(parentMatrix.invert());
+        this.view.transform.setFromMatrix(viewMatrix);
+    }
+
     protected addViewToParent(parent: ClonableNode): void
     {
         const thisView = this.view;

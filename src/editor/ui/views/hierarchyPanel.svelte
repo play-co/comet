@@ -3,6 +3,7 @@
   import type { DisplayObjectNode } from "../../../core/nodes/abstract/displayObject";
   import { SetParentCommand } from "../../commands/setParent";
   import { Application } from "../../core/application";
+  import type { CommandEvent } from "../../events/commandEvents";
   import type { DatastoreEvent } from "../../events/datastoreEvents";
   import type { SelectionEvent } from "../../events/selectionEvents";
   import type { ViewportEvent } from "../../events/viewportEvents";
@@ -25,6 +26,7 @@
   const viewportEmitter = getGlobalEmitter<ViewportEvent>();
   const selectionEmitter = getGlobalEmitter<SelectionEvent>();
   const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
+  const commandEmitter = getGlobalEmitter<CommandEvent>();
 
   const { selection, viewport } = Application.instance;
 
@@ -212,6 +214,11 @@
     .on("datastore.local.node.created", generateModel)
     .on("datastore.local.node.cloaked", generateModel)
     .on("datastore.local.node.uncloaked", generateModel);
+
+  commandEmitter
+    .on("command.undo", generateModel)
+    .on("command.redo", generateModel)
+    .on("command.exec", generateModel);
 
   // populate current model
 

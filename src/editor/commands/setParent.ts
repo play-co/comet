@@ -1,4 +1,5 @@
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
+import { ContainerNode } from '../../core/nodes/concrete/container';
 import { Command } from '../core/command';
 
 export interface SetParentCommandParams
@@ -48,12 +49,10 @@ export class SetParentCommand
         // update graph node
         parentNode.addChild(childNode);
 
-        // update worldTransform
-        const viewMatrix = childNode.view.worldTransform.clone();
-        const parentMatrix = childNode.view.parent.worldTransform.clone();
-
-        viewMatrix.prepend(parentMatrix.invert());
-        childNode.view.transform.setFromMatrix(viewMatrix);
+        if (childNode instanceof ContainerNode)
+        {
+            childNode.updateTransformFromParent();
+        }
 
         return { parentNode, childNode };
     }
