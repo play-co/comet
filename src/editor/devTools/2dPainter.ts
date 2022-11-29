@@ -1,4 +1,4 @@
-import { degToRad } from '../../../core/util/geom';
+import { degToRad } from '../../core/util/geom';
 
 export const px = (value: number) => value + 0.5;
 
@@ -35,10 +35,11 @@ export function createTextCanvas(
     return canvas;
 }
 
+const textMeasureCanvas: HTMLCanvasElement = document.createElement('canvas');
+
 export function measureText(text: string, fontSize = 12)
 {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    const ctx = textMeasureCanvas.getContext('2d') as CanvasRenderingContext2D;
 
     ctx.font = `${fontSize}px sans-serif`;
 
@@ -59,7 +60,8 @@ export default class Canvas2DPainter
         this.backgroundColor = backgroundColor;
         this.canvas = document.createElement('canvas');
         this
-            .setSize(width, height);
+            .setSize(width, height)
+            .clear();
     }
 
     get ctx()

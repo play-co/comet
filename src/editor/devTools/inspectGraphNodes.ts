@@ -1,5 +1,6 @@
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import { Application } from '../core/application';
+import { createTable, renderTable } from './tableRenderer';
 
 interface Detail
 {
@@ -8,7 +9,6 @@ interface Detail
     parent: string;
     children: string;
     cloaked: boolean;
-    node: ClonableNode;
 }
 
 export function inspectGraphNodes()
@@ -25,7 +25,7 @@ export function inspectGraphNodes()
             parent: node.parent ? node.parent.id : '#none',
             children: node.children.length === 0 ? '#empty' : node.children.map((node) => node.id).join(','),
             cloaked: node.isCloaked,
-            node,
+            // node,
         };
 
         details[node.id] = detail;
@@ -34,4 +34,8 @@ export function inspectGraphNodes()
 
     console.log(`\n%cGraph Nodes [${nodeCount}]`, 'color:cyan');
     console.table(details);
+
+    const table = createTable(details);
+
+    renderTable(table);
 }

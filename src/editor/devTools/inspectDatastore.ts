@@ -4,6 +4,7 @@ import { Application } from '../core/application';
 interface Detail
 {
     type: string;
+    created: number;
     parent: string;
     children: string;
     node: NodeSchema;
@@ -21,6 +22,7 @@ export function inspectDatastoreNodes()
     {
         details[nodeId] = {
             type: node.type,
+            created: node.created,
             parent: node.parent ? node.parent : '#none',
             children: node.children.length === 0 ? '#empty' : node.children.join(','),
             node,
