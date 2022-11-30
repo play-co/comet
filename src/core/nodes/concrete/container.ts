@@ -76,6 +76,27 @@ export class ContainerNode<
         parentView.removeChild(thisView);
     }
 
+    public updateViewIndex()
+    {
+        const { parent } = this;
+
+        if (parent)
+        {
+            const thisView = this.view;
+            const parentView = parent.cast<ClonableNode>().getView<Container>();
+
+            parentView.setChildIndex(thisView, parent.indexOf(this));
+        }
+    }
+
+    public reorderChildren(childIds: string[]): void
+    {
+        super.reorderChildren(childIds);
+        this.children
+            .filter((node) => !node.cast<ClonableNode>().isCloaked)
+            .forEach((node) => node.cast<ContainerNode>().updateViewIndex());
+    }
+
     protected onCloaked(): void
     {
         this.removeViewFromParent(this.getParent<ClonableNode>());

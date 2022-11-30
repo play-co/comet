@@ -1,9 +1,8 @@
 import Convergence, {
     type ConvergenceDomain,
     type IConvergenceEvent,
-    type ObjectSetEvent,
-    type RealTimeArray,
-    type RealTimeModel,
+    type ObjectSetEvent,     type RealTimeModel,
+    RealTimeArray,
     RealTimeObject,
 } from '@convergence/convergence';
 
@@ -44,6 +43,7 @@ export const connectionTimeout = 2500;
 
 function asObjectSetEvent(e: IConvergenceEvent)
 {
+    // note, this helper function is only useful for events on RealTimeObjects, arrays need different casting
     const event = e as ObjectSetEvent;
     const nodeElement = event.element as RealTimeObject;
     const nodeId = nodeElement.get('id').value() as string;
@@ -451,30 +451,10 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
     public setNodeChildren(nodeId: string, childIds: string[])
     {
         const nodeElement = this.getNodeElement(nodeId);
-        const parentId = nodeElement.get('parent').value() as string | undefined;
 
-        if (parentId)
-        {
-            const parentElement = this.getNodeElement(parentId);
-            const childArray = parentElement.get('children') as RealTimeArray;
-            const maxIndex = childArray.length();
-            const currentIndex = childArray.findIndex((id) => id.value() === nodeId);
+        const childArray = nodeElement.get('children') as RealTimeArray;
 
-            childArray.remove(currentIndex);
-
-            if (index === maxIndex)
-            {
-                childArray.push(nodeId);
-            }
-            else if (index <= currentIndex)
-            {
-                childArray.insert(index, nodeId);
-            }
-            else
-            {
-                childArray.insert(index - 1, nodeId);
-            }
-        }
+        childArray.value(childIds);
     }
 
     // remote change event handles
@@ -665,10 +645,20 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         //
     };
 
-    public onRemoteChildrenSet(event: IConvergenceEvent): void
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public onRemoteChildrenSet = (e: IConvergenceEvent) =>
     {
-        //
-    }
+        const event = e as ObjectSetEvent;
+        const array = event.element as unknown as RealTimeArray;
+        const parent = array.parent() as RealTimeObject;
+        const nodeId = parent.get('id').value();
+
+        globalEmitter.emit('datastore.remote.node.children.set', {
+            nodeId,
+            childIds: array.toJSON(),
+        });
+    };
 
     public getRegisteredIds()
     {
@@ -825,14 +815,17 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
             .on(RealTimeObject.Events.REMOVE, this.onRemoteNodeAssignedCustomPropRemoved);
 
         // catch events from model
-        nodeElement.elementAt('model')
+        nodeElement.get('model')
             .on(RealTimeObject.Events.SET, this.onRemoteNodeModelPropertySet)
             .on(RealTimeObject.Events.VALUE, this.onRemoteNodeModelValueSet)
             .on(RealTimeObject.Events.REMOVE, this.onRemoteNodeModelPropertyRemove);
 
         // catch events from cloneInfo
-        nodeElement.elementAt('cloneInfo')
+        nodeElement.get('cloneInfo')
             .on(RealTimeObject.Events.VALUE, this.onRemoteNodeCloneInfoValueSet);
+
+        nodeElement.get('children')
+            .on(RealTimeArray.Events.VALUE, this.onRemoteChildrenSet);
     }
 
     protected async joinActivity(type: string, id: string)

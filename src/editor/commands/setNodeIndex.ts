@@ -1,3 +1,6 @@
+import type { ClonableNode } from '../../core';
+import type { GraphNode } from '../../core/nodes/abstract/graphNode';
+import type { ContainerNode } from '../../core/nodes/concrete/container';
 import { type UpdateMode, Command } from '../core/command';
 
 export interface SetNodeIndexCommandParams
@@ -9,7 +12,7 @@ export interface SetNodeIndexCommandParams
 
 export interface SetNodeIndexCommandCache
 {
-    prevIndex: number;
+    prevChildArray: GraphNode[];
 }
 
 export class SetNodeIndexCommand
@@ -28,14 +31,18 @@ export class SetNodeIndexCommand
         {
             const parentNode = this.getInstance(parentId);
 
-            cache.prevIndex = parentNode.children.indexOf(sourceNode);
+            cache.prevChildArray = [...parentNode.children];
 
             parentNode.setChildIndex(sourceNode, index);
-        }
 
-        if (updateMode === 'full')
-        {
-            datastore.setNodeIndex(nodeId, index);
+            if (updateMode === 'full')
+            {
+                const childIds = parentNode.children
+                    .filter((node) => !node.cast<ClonableNode>().isCloaked)
+                    .map((node) => node.id);
+
+                datastore.setNodeChildren(parentId, childIds);
+            }
         }
     }
 
@@ -43,19 +50,25 @@ export class SetNodeIndexCommand
     {
         const { datastore, params: { nodeId, updateMode }, cache } = this;
 
-        const sourceNode = this.getInstance(nodeId);
+        const sourceNode = this.getInstance<ContainerNode>(nodeId);
         const parentId = sourceNode.parent?.id;
 
         if (parentId)
         {
             const parentNode = this.getInstance(parentId);
 
-            parentNode.setChildIndex(sourceNode, cache.prevIndex + 1);
-        }
+            parentNode.children = [...cache.prevChildArray];
 
-        if (updateMode === 'full')
-        {
-            datastore.setNodeIndex(nodeId, cache.prevIndex + 1);
+            sourceNode.updateViewIndex();
+
+            if (updateMode === 'full')
+            {
+                const childIds = cache.prevChildArray
+                    .filter((node) => !node.cast<ClonableNode>().isCloaked)
+                    .map((node) => node.id);
+
+                datastore.setNodeChildren(parentId, childIds);
+            }
         }
     }
 }

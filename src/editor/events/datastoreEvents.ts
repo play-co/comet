@@ -28,7 +28,7 @@ export interface DatastoreEvent
         value: ModelValue;
     };
     'datastore.remote.node.cloneInfo.modified': EventData & CloneInfoSchema;
-    'datastore.remote.node.setIndex': EventData & { index: number };
+    'datastore.remote.node.children.set': EventData & { childIds: string[] };
     'datastore.local.node.created': EventData;
     'datastore.local.node.cloaked': ClonableNode;
     'datastore.local.node.uncloaked': ClonableNode;

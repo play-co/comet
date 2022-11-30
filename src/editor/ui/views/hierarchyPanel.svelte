@@ -131,16 +131,21 @@
           const sourceNode = node;
 
           if (operation === Operation.Reparent) {
-            // reparent using command
-            Application.instance.undoStack.exec(
-              new SetParentCommand({
-                nodeId: sourceNode.id,
-                parentId: dragTargetNode.id,
-                updateMode: "full",
-              })
-            );
+            // reparent using command if different parent to existing
+            const nodeId = sourceNode.id;
+            const parentId = dragTargetNode.id;
+
+            if (sourceNode.parent && parentId !== sourceNode.parent.id) {
+              Application.instance.undoStack.exec(
+                new SetParentCommand({
+                  nodeId,
+                  parentId,
+                  updateMode: "full",
+                })
+              );
+            }
           } else {
-            // reorder using command
+            // reorder using command if different index to current
             const sourceNode = selection.nodes[0];
             const parentNode =
               dragTargetNode === sourceNode.parent

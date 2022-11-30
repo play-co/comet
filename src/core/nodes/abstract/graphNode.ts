@@ -190,6 +190,14 @@ export abstract class GraphNode
         node.onAddedToParent();
     }
 
+    public reorderChildren(childIds: string[])
+    {
+        const map: Map<string, GraphNode> = new Map();
+
+        this.children.forEach((node) => map.set(node.id, node));
+        this.children = childIds.map((id) => map.get(id) as GraphNode);
+    }
+
     public isSiblingOf(node: GraphNode)
     {
         if (this.parent)
