@@ -16,3 +16,7 @@
  {
     display: none;
 }
+
+.no_splitter_hover .lm_splitter:hover {
+    opacity: 0;
+}

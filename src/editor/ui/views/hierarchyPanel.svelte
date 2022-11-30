@@ -113,15 +113,14 @@
     }
   }
 
-  function startDrag(e: MouseEvent, item: ModelItem) {
+  function onRowMouseDown(e: MouseEvent, item: ModelItem) {
     if (selectItem(e, item) === false) {
       // item was removed from selection, abort drag
       return;
     }
 
     isDragging = true;
-    operation =
-      selection.isSingle && e.altKey ? Operation.Reorder : Operation.Reparent;
+    operation = Operation.Reparent;
 
     mouseDrag(e).then(() => {
       if (isDragging && dragTarget) {
@@ -176,14 +175,23 @@
     });
   }
 
-  function dragOver(_e: MouseEvent, item: ModelItem) {
+  function onRowMouseOver(e: MouseEvent, item: ModelItem) {
     if (isDragging) {
+      const targetElement = e.target as HTMLElement;
+      operation =
+        e.currentTarget === e.target ||
+        targetElement.classList.contains("arrow")
+          ? Operation.Reorder
+          : Operation.Reparent;
+
       if (operation === Operation.Reorder) {
+        // re-ordering
         item.node.isSiblingOf(selection.nodes[0]) ||
         item.node === selection.nodes[0].parent
           ? (dragTarget = item)
           : (dragTarget = undefined);
       } else {
+        // re-parenting
         selection.shallowContains(item.node)
           ? (dragTarget = undefined)
           : (dragTarget = item);
@@ -257,8 +265,8 @@
                   ? "dragTargetRow"
                   : "",
               ].join(" ")}
-              on:mousedown={(e) => startDrag(e, item)}
-              on:mouseover={(e) => dragOver(e, item)}
+              on:mousedown={(e) => onRowMouseDown(e, item)}
+              on:mouseover={(e) => onRowMouseOver(e, item)}
               ><span class="indentation" style="width:{item.depth * 10}px" />
               {#if item.node.hasChildren}<span
                   on:click={(e) => toggleItemExpanded(e, item)}

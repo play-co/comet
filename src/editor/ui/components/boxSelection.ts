@@ -23,6 +23,8 @@ export class BoxSelection extends Graphics
         this.isSelecting = true;
         this.origin = new Point(x, y);
         this.corner = new Point(x, y);
+
+        document.body.classList.add('no_splitter_hover');
     }
 
     public onMouseMove(e: InteractionEvent)
@@ -43,6 +45,8 @@ export class BoxSelection extends Graphics
         {
             this.isSelecting = false;
             this.clear();
+
+            document.body.classList.remove('no_splitter_hover');
         }
     }
 

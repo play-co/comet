@@ -514,6 +514,8 @@ export class TransformGizmo extends Container
         this.lastClick = Date.now();
 
         globalEmitter.emit('transform.start', this);
+
+        document.body.classList.add('no_splitter_hover');
     };
 
     public onMouseMove = (event: InteractionEvent) =>
@@ -559,6 +561,8 @@ export class TransformGizmo extends Container
         }
 
         this.emit('mouseup');
+
+        document.body.classList.remove('no_splitter_hover');
     };
 
     public clearOperation()
