@@ -2,11 +2,11 @@ import type { Model } from './model';
 
 export abstract class ModelConstraint<T>
 {
-    public abstract applyToValue(value: T, key: string, model: Model<any>): T;
+    public abstract applyToValue(value: T | undefined, key: string, model: Model<any>): T | undefined;
 }
 
 export type ModelConstraints<
-    M> = Partial<Record<keyof M, ModelConstraint<any>[]> & { '*': ModelConstraint<any>[]}
+    M> = Partial<Record<keyof M, ModelConstraint<any>[]>
     >;
 
 export class NumericRangeLimitConstraint extends ModelConstraint<number>

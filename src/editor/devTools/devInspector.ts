@@ -60,7 +60,7 @@ export abstract class DevInspector<T extends Record<string, any> >
             font-weight: bold;
             background: linear-gradient(180deg, #333 0, #000000 100%);
             justify-content: space-between;
-            padding: 3px;
+            padding: 0 5px;
             height: 25px;
         `;
 

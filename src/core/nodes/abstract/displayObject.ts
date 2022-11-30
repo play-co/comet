@@ -24,10 +24,12 @@ export const displayObjectSchema = new ModelSchema<DisplayObjectModel>({
     x: {
         defaultValue: 0,
         category: 'Transform',
+        constraints: [new ReferenceConstraint<DisplayObjectModel>(['x'])],
     },
     y: {
         defaultValue: 0,
         category: 'Transform',
+        constraints: [new ReferenceConstraint<DisplayObjectModel>(['y'])],
     },
     pivotX: {
         defaultValue: 0,
@@ -60,14 +62,12 @@ export const displayObjectSchema = new ModelSchema<DisplayObjectModel>({
     alpha: {
         defaultValue: 1,
         category: 'Display',
+        constraints: [new NumericRangeLimitConstraint(0, 1)],
     },
     visible: {
         defaultValue: true,
         category: 'Display',
     },
-}, {
-    '*': [new ReferenceConstraint<DisplayObjectModel>(['x', 'y'])],
-    alpha: [new NumericRangeLimitConstraint(0, 1)],
 });
 
 export abstract class DisplayObjectNode<
