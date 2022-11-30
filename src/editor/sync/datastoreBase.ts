@@ -34,7 +34,7 @@ export interface DatastoreCommandProvider
     assignCustomProperty: (nodeId: string, modelKey: string, customKey: string) => void;
     unassignCustomProperty: (nodeId: string, modelKey: string) => void;
     createTexture: (asset: TextureAsset) => Promise<void>;
-    setNodeIndex: (nodeId: string, index: number) => void;
+    setNodeChildren: (nodeId: string, childIds: string[]) => void;
 }
 
 export interface DatastoreChangeEventHandler<RemoteChangeEvent>
@@ -50,7 +50,7 @@ export interface DatastoreChangeEventHandler<RemoteChangeEvent>
     onRemoteNodeModelValueSet: (event: RemoteChangeEvent) => void;
     onRemoteNodeModelPropertyRemove: (event: RemoteChangeEvent) => void;
     onRemoteNodeCloneInfoValueSet: (event: RemoteChangeEvent) => void;
-    onRemoteNodeSetIndex: (event: RemoteChangeEvent) => void;
+    onRemoteChildrenSet: (event: RemoteChangeEvent) => void;
 }
 
 export abstract class DatastoreBase<NodeProxyObject, RemoteChangeEvent>
@@ -91,9 +91,9 @@ implements Datastore, DatastoreCommandProvider, DatastoreChangeEventHandler<Remo
     public abstract assignCustomProperty(nodeId: string, modelKey: string, customKey: string): void;
     public abstract unassignCustomProperty(nodeId: string, modelKey: string): void;
     public abstract createTexture(asset: TextureAsset): Promise<void>;
-    public abstract setNodeIndex(nodeId: string, index: number): void;
+    public abstract setNodeChildren(nodeId: string, childIds: string[]): void;
 
-    // change event handles
+    // remote change event handles
     public abstract onRemoteNodeCreated(event: RemoteChangeEvent): void;
     public abstract onRemoteNodeRemoved(event: RemoteChangeEvent): void;
     public abstract onRemoteNodeRootPropertySet(event: RemoteChangeEvent): void;
@@ -107,5 +107,5 @@ implements Datastore, DatastoreCommandProvider, DatastoreChangeEventHandler<Remo
     public abstract onRemoteNodeCloneInfoValueSet(event: RemoteChangeEvent): void;
     public abstract onTextureCreated(event: RemoteChangeEvent): void;
     public abstract onTextureRemoved(event: RemoteChangeEvent): void;
-    public abstract onRemoteNodeSetIndex(event: RemoteChangeEvent): void;
+    public abstract onRemoteChildrenSet(event: RemoteChangeEvent): void;
 }

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getGlobalEmitter } from "../../../core/events";
   import type { DisplayObjectNode } from "../../../core/nodes/abstract/displayObject";
+  import { SetNodeIndexCommand } from "../../commands/setNodeIndex";
   import { SetParentCommand } from "../../commands/setParent";
   import { Application } from "../../core/application";
   import type { CommandEvent } from "../../events/commandEvents";
@@ -149,9 +150,17 @@
             const index =
               dragTargetNode === sourceNode.parent
                 ? 0
-                : parentNode.indexOf(dragTargetNode) + 1;
+                : parentNode.indexOf(dragTargetNode, true) + 1;
 
-            parentNode.setChildIndex(sourceNode, index);
+            if (index !== sourceNode.index) {
+              Application.instance.undoStack.exec(
+                new SetNodeIndexCommand({
+                  nodeId: sourceNode.id,
+                  index,
+                  updateMode: "full",
+                })
+              );
+            }
           }
 
           generateModel();

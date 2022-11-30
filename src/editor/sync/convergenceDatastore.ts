@@ -56,6 +56,8 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
     protected _domain?: ConvergenceDomain;
     protected _model?: RealTimeModel;
 
+    // general public API
+
     public connect(): Promise<void>
     {
         return new Promise((resolve, reject) =>
@@ -267,6 +269,8 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         return this.model.root().toJSON() as ProjectSchema;
     }
 
+    // command API
+
     public createNode(nodeSchema: NodeSchema)
     {
         console.log(
@@ -443,6 +447,37 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         assignedCustomProps.remove(modelKey);
     }
+
+    public setNodeChildren(nodeId: string, childIds: string[])
+    {
+        const nodeElement = this.getNodeElement(nodeId);
+        const parentId = nodeElement.get('parent').value() as string | undefined;
+
+        if (parentId)
+        {
+            const parentElement = this.getNodeElement(parentId);
+            const childArray = parentElement.get('children') as RealTimeArray;
+            const maxIndex = childArray.length();
+            const currentIndex = childArray.findIndex((id) => id.value() === nodeId);
+
+            childArray.remove(currentIndex);
+
+            if (index === maxIndex)
+            {
+                childArray.push(nodeId);
+            }
+            else if (index <= currentIndex)
+            {
+                childArray.insert(index, nodeId);
+            }
+            else
+            {
+                childArray.insert(index - 1, nodeId);
+            }
+        }
+    }
+
+    // remote change event handles
 
     public onRemoteNodeCreated = (e: IConvergenceEvent) =>
     {
@@ -629,6 +664,11 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
     {
         //
     };
+
+    public onRemoteChildrenSet(event: IConvergenceEvent): void
+    {
+        //
+    }
 
     public getRegisteredIds()
     {

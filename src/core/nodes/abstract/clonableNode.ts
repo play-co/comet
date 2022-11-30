@@ -678,8 +678,13 @@ export abstract class ClonableNode<
         return modelKeys;
     }
 
-    public indexOf(node: GraphNode)
+    public indexOf(node: GraphNode, includeCloakedNodes = false)
     {
+        if (includeCloakedNodes)
+        {
+            return super.indexOf(node);
+        }
+
         return this.children.filter((node) => !(node as unknown as ClonableNode).isCloaked).indexOf(node);
     }
 
