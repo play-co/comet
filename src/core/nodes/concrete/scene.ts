@@ -1,4 +1,5 @@
 import type { Container } from 'pixi.js';
+
 import { MetaNode } from '../abstract/metaNode';
 import type { ContainerModel } from './container';
 

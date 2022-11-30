@@ -2,9 +2,19 @@ import { ModelSchema } from '../../../src/core/model/schema';
 
 describe('Model Schema', () =>
 {
-    const defaults = { x: 1, y: 2, z: 3 };
+    const properties = {
+        x: {
+            defaultValue: 1,
+        },
+        y: {
+            defaultValue: 2,
+        },
+        z: {
+            defaultValue: 3,
+        },
+    };
     const constraints = {} as any;
-    const schema = new ModelSchema(defaults, constraints);
+    const schema = new ModelSchema(properties, constraints);
 
     it('should create schema keys from given defaults', () =>
     {
@@ -13,7 +23,7 @@ describe('Model Schema', () =>
 
     it('should create schema with given defaults', () =>
     {
-        expect(schema.defaults).toEqual(defaults);
+        expect(schema.properties).toEqual(properties);
     });
 
     it('should create schema with given constraints', () =>

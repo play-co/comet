@@ -1,15 +1,22 @@
 import type { ModelConstraint, ModelConstraints } from './constraints';
 
+export interface PropertyDescriptor<M>
+{
+    defaultValue: M[keyof M];
+}
+
+export type PropertyDescriptors<M> = Record<keyof M, PropertyDescriptor<M>>;
+
 export class ModelSchema<M>
 {
     public keys: string[];
-    public defaults: M;
+    public properties: PropertyDescriptors<M>;
     public constraints: ModelConstraints<M>;
 
-    constructor(defaults: M, constraints: ModelConstraints<M> = {})
+    constructor(properties: PropertyDescriptors<M>, constraints: ModelConstraints<M> = {})
     {
-        this.keys = Object.getOwnPropertyNames(defaults);
-        this.defaults = defaults;
+        this.keys = Object.getOwnPropertyNames(properties);
+        this.properties = properties;
         this.constraints = constraints;
     }
 

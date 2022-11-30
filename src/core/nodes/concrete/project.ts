@@ -8,7 +8,7 @@ import { type ContainerModel, containerSchema } from './container';
 export type ProjectModel = ContainerModel;
 
 export const projectSchema = new ModelSchema<ProjectModel>({
-    ...containerSchema.defaults,
+    ...containerSchema.properties,
 
 }, containerSchema.constraints);
 

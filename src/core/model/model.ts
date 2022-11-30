@@ -75,7 +75,7 @@ export class Model<M> extends GraphNode
 
     public getValue(key: keyof M): M[keyof M]
     {
-        const { data, parent, schema: { defaults } } = this;
+        const { data, parent, schema: { properties } } = this;
 
         const value = (data as M)[key];
 
@@ -86,7 +86,7 @@ export class Model<M> extends GraphNode
                 return (parent as Model<any>).getValue(key) as M[keyof M];
             }
 
-            return defaults[key];
+            return properties[key].defaultValue;
         }
 
         return value;
@@ -182,7 +182,7 @@ export class Model<M> extends GraphNode
     {
         if (this.parent)
         {
-            const { schema: { keys, keys: { length: l }, defaults } } = this;
+            const { schema: { keys, keys: { length: l }, properties } } = this;
 
             for (let i = 0; i < l; i++)
             {
@@ -190,7 +190,7 @@ export class Model<M> extends GraphNode
 
                 const value = this.getValue(key);
 
-                if (value !== defaults[key])
+                if (value !== properties[key].defaultValue)
                 {
                     (this.data as M)[key] = value;
                 }

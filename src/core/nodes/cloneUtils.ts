@@ -1,4 +1,4 @@
-import type { ClonableNode } from './clonableNode';
+import type { ClonableNode } from './abstract/clonableNode';
 
 export function getAllCloned(node: ClonableNode, array: ClonableNode[] = []): ClonableNode[]
 {

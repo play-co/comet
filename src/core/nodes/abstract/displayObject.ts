@@ -21,17 +21,39 @@ export interface DisplayObjectModel extends ModelBase
 }
 
 export const displayObjectSchema = new ModelSchema<DisplayObjectModel>({
-    x: 0,
-    y: 0,
-    pivotX: 0,
-    pivotY: 0,
-    skewX: 0,
-    skewY: 0,
-    scaleX: 1,
-    scaleY: 1,
-    angle: 0,
-    alpha: 1,
-    visible: true,
+    x: {
+        defaultValue: 0,
+    },
+    y: {
+        defaultValue: 0,
+    },
+    pivotX: {
+        defaultValue: 0,
+    },
+    pivotY: {
+        defaultValue: 0,
+    },
+    skewX: {
+        defaultValue: 0,
+    },
+    skewY: {
+        defaultValue: 0,
+    },
+    scaleX: {
+        defaultValue: 1,
+    },
+    scaleY: {
+        defaultValue: 1,
+    },
+    angle: {
+        defaultValue: 0,
+    },
+    alpha: {
+        defaultValue: 1,
+    },
+    visible: {
+        defaultValue: true,
+    },
 }, {
     '*': [new ReferenceConstraint<DisplayObjectModel>(['x', 'y'])],
     alpha: [new NumericRangeLimitConstraint(0, 1)],

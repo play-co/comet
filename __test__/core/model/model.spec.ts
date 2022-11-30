@@ -13,10 +13,18 @@ export interface TestModel
 export const constraint = new NumericRangeLimitConstraint(10, 20);
 
 export const schema = new ModelSchema<TestModel>({
-    x: 1,
-    y: 2,
-    visible: true,
-    obj: { name: 'foo' },
+    x: {
+        defaultValue: 1,
+    },
+    y: {
+        defaultValue: 2,
+    },
+    visible: {
+        defaultValue: true,
+    },
+    obj: {
+        defaultValue: { name: 'foo' },
+    },
 }, {
     x: [constraint],
 });
@@ -42,10 +50,10 @@ describe('Model', () =>
         {
             const model = createModel(schema);
 
-            expect(model.getValue('x')).toBe(schema.defaults.x);
-            expect(model.getValue('y')).toBe(schema.defaults.y);
-            expect(model.getValue('visible')).toBe(schema.defaults.visible);
-            expect(model.getValue('obj')).toBe(schema.defaults.obj);
+            expect(model.getValue('x')).toBe(schema.properties.x);
+            expect(model.getValue('y')).toBe(schema.properties.y);
+            expect(model.getValue('visible')).toBe(schema.properties.visible);
+            expect(model.getValue('obj')).toBe(schema.properties.obj);
         });
 
         it('should return given prop values for own values if props passed', () =>
@@ -88,8 +96,8 @@ describe('Model', () =>
             expect(model.getValue('x')).toBe(props.x);
             expect(model.getValue('y')).toBe(props.y);
 
-            expect(model.getValue('visible')).toBe(schema.defaults.visible);
-            expect(model.getValue('obj')).toBe(schema.defaults.obj);
+            expect(model.getValue('visible')).toBe(schema.properties.visible);
+            expect(model.getValue('obj')).toBe(schema.properties.obj);
         });
 
         it('should throw if removing a model which is not a child', () =>
@@ -107,9 +115,9 @@ describe('Model', () =>
         {
             const [modelA, modelB, modelC] = setup([{}, {}, {}]);
 
-            expect(modelA.getValue('x')).toBe(schema.defaults['x']);
-            expect(modelB.getValue('x')).toBe(schema.defaults['x']);
-            expect(modelC.getValue('x')).toBe(schema.defaults['x']);
+            expect(modelA.getValue('x')).toBe(schema.properties['x']);
+            expect(modelB.getValue('x')).toBe(schema.properties['x']);
+            expect(modelC.getValue('x')).toBe(schema.properties['x']);
         });
 
         it('should return earliest overwrite if no local overwrite', () =>
@@ -125,7 +133,7 @@ describe('Model', () =>
         {
             const [modelA, modelB, modelC] = setup([{}, { x: 11 }, {}]);
 
-            expect(modelA.getValue('x')).toBe(schema.defaults['x']);
+            expect(modelA.getValue('x')).toBe(schema.properties['x']);
             expect(modelB.getValue('x')).toBe(11);
             expect(modelC.getValue('x')).toBe(11);
         });
@@ -134,8 +142,8 @@ describe('Model', () =>
         {
             const [modelA, modelB, modelC] = setup([{}, {}, { x: 11 }]);
 
-            expect(modelA.getValue('x')).toBe(schema.defaults['x']);
-            expect(modelB.getValue('x')).toBe(schema.defaults['x']);
+            expect(modelA.getValue('x')).toBe(schema.properties['x']);
+            expect(modelB.getValue('x')).toBe(schema.properties['x']);
             expect(modelC.getValue('x')).toBe(11);
         });
 
@@ -187,7 +195,7 @@ describe('Model', () =>
                 x: 11,
                 y: 12,
                 visible: false,
-                obj: schema.defaults.obj,
+                obj: schema.properties.obj,
             });
 
             expect(modelB.ownValues).toStrictEqual({
@@ -198,8 +206,8 @@ describe('Model', () =>
             expect(modelB.values).toStrictEqual({
                 x: 11,
                 y: 12,
-                visible: schema.defaults.visible,
-                obj: schema.defaults.obj,
+                visible: schema.properties.visible,
+                obj: schema.properties.obj,
             });
 
             expect(modelA.ownValues).toStrictEqual({
@@ -208,9 +216,9 @@ describe('Model', () =>
 
             expect(modelA.values).toStrictEqual({
                 x: 11,
-                y: schema.defaults.y,
-                visible: schema.defaults.visible,
-                obj: schema.defaults.obj,
+                y: schema.properties.y,
+                visible: schema.properties.visible,
+                obj: schema.properties.obj,
             });
         });
 
@@ -222,16 +230,16 @@ describe('Model', () =>
                 x: 11,
                 y: 12,
                 visible: false,
-                obj: schema.defaults.obj,
+                obj: schema.properties.obj,
             });
 
             model.reset();
 
             expect(model.values).toStrictEqual({
-                x: schema.defaults.x,
-                y: schema.defaults.y,
-                visible: schema.defaults.visible,
-                obj: schema.defaults.obj,
+                x: schema.properties.x,
+                y: schema.properties.y,
+                visible: schema.properties.visible,
+                obj: schema.properties.obj,
             });
         });
     });
@@ -277,19 +285,19 @@ describe('Model', () =>
         //             id: 'modelA',
         //             key: 'x',
         //             value: 12,
-        //             oldValue: schema.defaults.x,
+        //             oldValue: schema.properties.x,
         //         },
         //         {
         //             id: 'modelB',
         //             key: 'x',
         //             value: 12,
-        //             oldValue: schema.defaults.x,
+        //             oldValue: schema.properties.x,
         //         },
         //         {
         //             id: 'modelC',
         //             key: 'x',
         //             value: 12,
-        //             oldValue: schema.defaults.x,
+        //             oldValue: schema.properties.x,
         //         }]);
         //         done();
         //     });

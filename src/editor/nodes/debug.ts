@@ -9,8 +9,10 @@ export interface DebugModel extends SpriteModel
 }
 
 export const schema = new ModelSchema<DebugModel>({
-    ...spriteSchema.defaults,
-    label: '',
+    ...spriteSchema.properties,
+    label: {
+        defaultValue: '',
+    },
 }, {
     ...spriteSchema.constraints,
 });

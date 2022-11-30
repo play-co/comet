@@ -11,7 +11,9 @@ export interface TestModel extends ModelBase
 }
 
 export const schema = new ModelSchema<TestModel>({
-    x: 0,
+    x: {
+        defaultValue: 0,
+    },
 });
 
 const log: any[] = [];
@@ -272,7 +274,7 @@ describe('Component', () =>
 
             expect(copy.cloneInfo.isClonedFrom(component)).toBeTruthy();
             expect(copy.model.parent).toBeUndefined();
-            expect(copy.model.x).toBe(schema.defaults.x);
+            expect(copy.model.x).toBe(schema.properties.x.defaultValue);
         });
 
         it('should copy children when copied', () =>

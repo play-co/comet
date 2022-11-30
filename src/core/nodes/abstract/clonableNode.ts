@@ -1,13 +1,13 @@
 import { type Model, type ModelBase, createModel } from '../../model/model';
 import type { ModelSchema } from '../../model/schema';
 import { type Clonable, CloneInfo, CloneMode } from '../cloneInfo';
+import { getAllCloned, getDependants, getDependencies, getRestoreDependencies } from '../cloneUtils';
+import { sortNodesByCreation } from '../const';
 import type {
     CustomProperty,
     CustomPropertyType,
     CustomPropertyValueType,
 } from '../customProperties';
-import { getAllCloned, getDependants, getDependencies, getRestoreDependencies } from './cloneUtils';
-import { sortNodesByCreation } from './const';
 import { GraphNode } from './graphNode';
 
 export type ClonableNodeConstructor = {

@@ -15,11 +15,19 @@ export interface SpriteModel extends ContainerModel
 }
 
 export const spriteSchema = new ModelSchema<SpriteModel>({
-    ...containerSchema.defaults,
-    anchorX: 0,
-    anchorY: 0,
-    tint: 0xffffff,
-    textureAssetId: null,
+    ...containerSchema.properties,
+    anchorX: {
+        defaultValue: 0,
+    },
+    anchorY: {
+        defaultValue: 0,
+    },
+    tint: {
+        defaultValue: 0xffffff,
+    },
+    textureAssetId: {
+        defaultValue: null,
+    },
 }, {
     ...containerSchema.constraints,
 });

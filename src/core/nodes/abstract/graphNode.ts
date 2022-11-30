@@ -1,5 +1,5 @@
+import { type WalkOptions, type WalkReturnData, defaultWalkOptions } from '../const';
 import { newId } from '../instances';
-import { type WalkOptions, type WalkReturnData, defaultWalkOptions } from './const';
 
 export abstract class GraphNode
 {

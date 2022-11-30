@@ -8,9 +8,13 @@ import { createPivotShape } from '../ui/transform/util';
 const radius = 10;
 
 export const emptySchema = new ModelSchema<ContainerModel>({
-    ...displayObjectSchema.defaults,
-    pivotX: radius,
-    pivotY: radius,
+    ...displayObjectSchema.properties,
+    pivotX: {
+        defaultValue: radius,
+    },
+    pivotY: {
+        defaultValue: radius,
+    },
 }, displayObjectSchema.constraints);
 
 export class EmptyNode extends ContainerNode<ContainerModel, Container>

@@ -8,7 +8,7 @@ import { DisplayObjectNode, displayObjectSchema } from '../abstract/displayObjec
 export type ContainerModel = DisplayObjectModel;
 
 export const containerSchema = new ModelSchema<ContainerModel>({
-    ...displayObjectSchema.defaults,
+    ...displayObjectSchema.properties,
 }, displayObjectSchema.constraints);
 
 export class ContainerNode<
