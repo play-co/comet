@@ -92,6 +92,7 @@ export class ContainerNode<
     public reorderChildren(childIds: string[]): void
     {
         super.reorderChildren(childIds);
+
         this.children
             .filter((node) => !node.cast<ClonableNode>().isCloaked)
             .forEach((node) => node.cast<ContainerNode>().updateViewIndex());

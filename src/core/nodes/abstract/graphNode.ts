@@ -195,7 +195,17 @@ export abstract class GraphNode
         const map: Map<string, GraphNode> = new Map();
 
         this.children.forEach((node) => map.set(node.id, node));
-        this.children = childIds.map((id) => map.get(id) as GraphNode);
+        this.children = childIds.map((id) =>
+        {
+            const node = map.get(id);
+
+            if (!node)
+            {
+                throw new Error(`Cannot reorder as "${this.id}" does not contain child "id"`);
+            }
+
+            return node;
+        });
     }
 
     public isSiblingOf(node: GraphNode)
