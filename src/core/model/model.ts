@@ -1,4 +1,5 @@
 import EventEmitter from 'eventemitter3';
+
 import { GraphNode } from '../nodes/abstract/graphNode';
 import { newId } from '../nodes/instances';
 import type { ModelSchema } from './schema';
@@ -159,7 +160,7 @@ export class Model<M> extends GraphNode
         {
             const value = values[key] as M[keyof M];
 
-            if (value !== this.schema.defaults[key] && value !== ownValues[key])
+            if (value !== ownValues[key])
             {
                 prevValues[key] = this.ownValues[key];
                 this.setValue(key, value);

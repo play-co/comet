@@ -257,7 +257,7 @@ export class EditableViewport
 
         this.rootNode.walk<DisplayObjectNode>((node) =>
         {
-            if (node.containsPoint(globalX, globalY) && !node.isMetaNode)
+            if (node.containsPoint(globalX, globalY) && !node.isMetaNode && !node.isCloaked)
             {
                 underCursor.push(node);
             }

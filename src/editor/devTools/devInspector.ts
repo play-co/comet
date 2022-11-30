@@ -37,7 +37,13 @@ export abstract class DevInspector<T extends Record<string, any> >
             display: none;
         `;
 
-        container.innerHTML = `<label><span>${this.id}</span><div class="inspect">?</div><div class="toggle">+</div></label>`;
+        container.innerHTML = `
+        <label>
+            <span>${this.id}</span>
+            <div class="inspect"><a title="Inspect (Shift-click to clear console)">?</a></div>
+            <div class="toggle"><a title="Expand/Collapse">+</a></div>
+        </label>
+        `;
 
         const label = container.querySelector('label') as HTMLLabelElement;
         const span = container.querySelector('span') as HTMLSpanElement;
@@ -122,8 +128,12 @@ export abstract class DevInspector<T extends Record<string, any> >
             this.updateExpandedState();
         };
 
-        inspectButton.onclick = () =>
+        inspectButton.onclick = (e: MouseEvent) =>
         {
+            if (e.shiftKey)
+            {
+                console.clear();
+            }
             this.inspect();
         };
 
