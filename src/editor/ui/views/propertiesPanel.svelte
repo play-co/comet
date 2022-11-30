@@ -1,5 +1,8 @@
 <script lang="ts">
+  // import { createController } from "./propertiesPanel.js";
   import Panel from "./components/panel.svelte";
+
+  // const panel = createController();
 </script>
 
 <properties-panel>

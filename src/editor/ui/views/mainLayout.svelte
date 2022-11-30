@@ -3,13 +3,10 @@
   import DockablePanelLayout from "./dockablePanelLayout.svelte";
   import type { FactoryTypes } from "./dockablePanelLayout.svelte";
   import Tools from "./tools.svelte";
-  import { Application } from "../../core/application";
   import HierarchyPanel from "./hierarchyPanel.svelte";
   import ProjectPanel from "./projectPanel.svelte";
   import PropertiesPanel from "./propertiesPanel.svelte";
   import Viewport from "./viewport.svelte";
-
-  Application.instance.init();
 
   const factoryTypes: FactoryTypes = {
     Hierarchy: HierarchyPanel,

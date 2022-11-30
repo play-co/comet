@@ -12,6 +12,7 @@
     Application.instance
       .connect()
       .then(() => {
+        Application.instance.init();
         isConnected = true;
       })
       .catch((e) => {
