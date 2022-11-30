@@ -229,7 +229,8 @@
     .on("datastore.remote.node.parent.set", generateModel)
     .on("datastore.local.node.created", generateModel)
     .on("datastore.local.node.cloaked", generateModel)
-    .on("datastore.local.node.uncloaked", generateModel);
+    .on("datastore.local.node.uncloaked", generateModel)
+    .on("datastore.remote.node.children.set", generateModel);
 
   commandEmitter
     .on("command.undo", generateModel)
