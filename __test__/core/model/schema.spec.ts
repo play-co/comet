@@ -1,16 +1,19 @@
-import { ModelSchema } from '../../../src/core/model/schema';
+import { type PropertyDescriptors, ModelSchema } from '../../../src/core/model/schema';
 
 describe('Model Schema', () =>
 {
-    const properties = {
+    const properties: PropertyDescriptors<any> = {
         x: {
             defaultValue: 1,
+            category: 'Display',
         },
         y: {
             defaultValue: 2,
+            category: 'Display',
         },
         z: {
             defaultValue: 3,
+            category: 'Display',
         },
     };
     const constraints = {} as any;

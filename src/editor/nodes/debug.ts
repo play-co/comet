@@ -12,6 +12,7 @@ export const schema = new ModelSchema<DebugModel>({
     ...spriteSchema.properties,
     label: {
         defaultValue: '',
+        category: 'Text',
     },
 }, {
     ...spriteSchema.constraints,

@@ -11,9 +11,11 @@ export const emptySchema = new ModelSchema<ContainerModel>({
     ...displayObjectSchema.properties,
     pivotX: {
         defaultValue: radius,
+        category: 'Transform',
     },
     pivotY: {
         defaultValue: radius,
+        category: 'Transform',
     },
 }, displayObjectSchema.constraints);
 

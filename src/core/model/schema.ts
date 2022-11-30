@@ -1,8 +1,15 @@
 import type { ModelConstraint, ModelConstraints } from './constraints';
 
+export type PropertyCategory =
+| 'Transform'
+| 'Display'
+| 'Texture'
+| 'Text';
+
 export interface PropertyDescriptor<M>
 {
     defaultValue: M[keyof M];
+    category: PropertyCategory;
 }
 
 export type PropertyDescriptors<M> = Record<keyof M, PropertyDescriptor<M>>;

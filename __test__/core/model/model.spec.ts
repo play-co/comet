@@ -15,15 +15,19 @@ export const constraint = new NumericRangeLimitConstraint(10, 20);
 export const schema = new ModelSchema<TestModel>({
     x: {
         defaultValue: 1,
+        category: 'Transform',
     },
     y: {
         defaultValue: 2,
+        category: 'Transform',
     },
     visible: {
         defaultValue: true,
+        category: 'Display',
     },
     obj: {
         defaultValue: { name: 'foo' },
+        category: 'Display',
     },
 }, {
     x: [constraint],

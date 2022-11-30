@@ -13,6 +13,7 @@ export interface TestModel extends ModelBase
 export const schema = new ModelSchema<TestModel>({
     x: {
         defaultValue: 0,
+        category: 'Transform',
     },
 });
 
