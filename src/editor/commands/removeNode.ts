@@ -74,7 +74,7 @@ export class RemoveNodeCommand
 
         if (node instanceof DisplayObjectNode && cache.wasSelected)
         {
-            app.selection.add(node);
+            app.selection.set(node);
         }
 
         datastoreEmitter.emit('datastore.local.node.uncloaked', node.cast<ClonableNode>());
