@@ -17,7 +17,7 @@ export const emptySchema = new ModelSchema<ContainerModel>({
         defaultValue: radius,
         category: 'Transform',
     },
-}, displayObjectSchema.constraints);
+});
 
 export class EmptyNode extends ContainerNode<ContainerModel, Container>
 {

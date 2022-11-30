@@ -7,10 +7,7 @@ import { type ContainerModel, containerSchema } from './container';
 
 export type ProjectModel = ContainerModel;
 
-export const projectSchema = new ModelSchema<ProjectModel>({
-    ...containerSchema.properties,
-
-}, containerSchema.constraints);
+export const projectSchema = new ModelSchema<ProjectModel>(containerSchema.properties);
 
 export class ProjectNode extends MetaNode<ProjectModel, Container>
 {

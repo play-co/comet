@@ -14,8 +14,6 @@ export const schema = new ModelSchema<DebugModel>({
         defaultValue: '',
         category: 'Text',
     },
-}, {
-    ...spriteSchema.constraints,
 });
 
 export class DebugNode extends SpriteNode<DebugModel, Sprite>

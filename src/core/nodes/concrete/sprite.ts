@@ -32,8 +32,6 @@ export const spriteSchema = new ModelSchema<SpriteModel>({
         defaultValue: null,
         category: 'Texture',
     },
-}, {
-    ...containerSchema.constraints,
 });
 
 export class SpriteNode<M extends SpriteModel = SpriteModel, V extends Sprite = Sprite> extends ContainerNode<M, V>
