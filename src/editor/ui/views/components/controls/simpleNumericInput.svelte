@@ -1,5 +1,8 @@
 <script lang="ts">
   import { getGlobalEmitter } from "../../../../../core/events";
+  import type { ModifyModelCommandParams } from "../../../../commands/modifyModel";
+  import { ModifyModelsCommand } from "../../../../commands/modifyModels";
+  import { Application } from "../../../../core/application";
   import type { DatastoreEvent } from "../../../../events/datastoreEvents";
   import type { PropertyBinding } from "../../propertiesPanel";
 
@@ -39,11 +42,37 @@
     value = getValue();
   };
 
+  const onChange = (e: Event) => {
+    const element = e.target as HTMLInputElement;
+    const number = parseFloat(element.value);
+
+    if (!isNaN(number)) {
+      const modifications: ModifyModelCommandParams<any>[] = [];
+
+      property.nodes.forEach((node) => {
+        const values: any = {};
+
+        values[property.key] = number;
+
+        modifications.push({
+          nodeId: node.id,
+          values,
+          updateMode: "full",
+        });
+      });
+
+      Application.instance.undoStack.exec(
+        new ModifyModelsCommand({ modifications })
+      );
+    }
+    element.blur();
+  };
+
   datastoreEmitter.on("datastore.local.node.modified", onUpdate);
 </script>
 
 <numeric-control>
-  <input type="text" {value} />
+  <input type="text" {value} on:change={onChange} />
 </numeric-control>
 
 <style>
