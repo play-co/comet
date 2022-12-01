@@ -40,24 +40,23 @@ export class PropertyBinding
     }
 }
 
-export interface PropertiesPanel
+export class PropertiesPanel
 {
-    category: PanelCategory;
-    properties: PropertyBinding[];
-    component: ConstructorOfATypedSvelteComponent;
+    public category: PanelCategory;
+    public properties: PropertyBinding[];
+    public component: ConstructorOfATypedSvelteComponent;
+
+    constructor(category: PanelCategory, properties: PropertyBinding[], component: ConstructorOfATypedSvelteComponent)
+    {
+        this.category = category;
+        this.properties = properties;
+        this.component = component;
+    }
 }
 
-const projectPanel: PropertiesPanel =  {
-    category: 'project',
-    properties: [],
-    component: ProjectPanel,
-};
+const projectPanel = new PropertiesPanel('project', [], ProjectPanel);
 
-const gridPanel: PropertiesPanel =  {
-    category: 'grid',
-    properties: [],
-    component: GridPanel,
-};
+const gridPanel = new PropertiesPanel('grid', [], GridPanel);
 
 function createController()
 {
@@ -69,10 +68,6 @@ function createController()
 
     function update()
     {
-        // go through each selected node
-        // collect all properties which are not hidden
-        // create panel and give properties
-
         const categories: Map<PropertyCategory, Map<string, PropertyBinding>> = new Map();
 
         selection.nodes.forEach((node) =>
@@ -112,11 +107,7 @@ function createController()
                 continue;
             }
 
-            const panel: PropertiesPanel = {
-                category,
-                properties,
-                component,
-            };
+            const panel = new PropertiesPanel(category, properties, component);
 
             array.push(panel);
         }

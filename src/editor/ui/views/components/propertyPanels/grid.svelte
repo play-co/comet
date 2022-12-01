@@ -1,5 +1,5 @@
 <script lang="ts">
-  import PropertyPanel from "../propertyCategorySubPanel.svelte";
+  import PropertyPanel from "../panelGroup.svelte";
 </script>
 
 <PropertyPanel title="Grid">

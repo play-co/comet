@@ -2,15 +2,15 @@
   export let title: string;
 </script>
 
-<property-panel>
+<panel-group>
   <fieldset>
     <legend>{title}</legend>
     <slot />
   </fieldset>
-</property-panel>
+</panel-group>
 
 <style>
-  property-panel {
+  panel-group {
     display: flex;
     flex-direction: column;
     border-radius: 10px;
@@ -23,6 +23,8 @@
     background: #ffffff08;
     border-left: none;
     border-right: none;
+    display: flex;
+    flex-direction: column;
   }
 
   legend {

@@ -1,13 +1,16 @@
 <script lang="ts">
-  import type { PropertyBinding } from "../../propertiesPanel";
-  import PropertyPanel from "../propertyCategorySubPanel.svelte";
+  import type { PropertiesPanel } from "../../propertiesPanel";
+  import PropertyPanel from "../panelGroup.svelte";
+  import PropertyControl from "../propertyControl.svelte";
 
-  export let properties: PropertyBinding[];
+  export let panel: PropertiesPanel;
 </script>
 
 <PropertyPanel title="Display">
-  {#each properties as property (property.key)}
-    <div>{property.key}</div>
+  {#each panel.properties as property (property.key)}
+    <PropertyControl label={property.key}>
+      <span>control...</span>
+    </PropertyControl>
   {/each}
 </PropertyPanel>
 

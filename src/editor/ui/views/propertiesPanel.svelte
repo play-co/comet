@@ -9,7 +9,7 @@
 <properties-panel>
   <Panel>
     {#each $panels as panel (panel.category)}
-      <svelte:component this={panel.component} properties={panel.properties} />
+      <svelte:component this={panel.component} {panel} />
     {/each}
   </Panel>
 </properties-panel>
