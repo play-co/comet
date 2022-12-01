@@ -73,7 +73,7 @@ export class Model<M> extends GraphNode
         return values;
     }
 
-    public getValue(key: keyof M): M[keyof M]
+    public getValue<T extends M[keyof M]>(key: keyof M): T
     {
         const { data, parent, schema: { properties } } = this;
 
@@ -83,13 +83,13 @@ export class Model<M> extends GraphNode
         {
             if (parent)
             {
-                return (parent as Model<any>).getValue(key) as M[keyof M];
+                return (parent as Model<any>).getValue(key);
             }
 
-            return properties[key].defaultValue;
+            return properties[key].defaultValue as T;
         }
 
-        return value;
+        return value as T;
     }
 
     public setValue<K extends keyof M>(key: K, newValue: M[K]): boolean

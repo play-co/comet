@@ -3,10 +3,10 @@ import { getGlobalEmitter } from '../../../core/events';
 import type { PropertyCategory } from '../../../core/model/schema';
 import { Application } from '../../core/application';
 import type { SelectionEvent } from '../../events/selectionEvents';
-import DisplayPanel from './components/propertyPanels/display.svelte';
-import GridPanel from './components/propertyPanels/grid.svelte';
-import ProjectPanel from './components/propertyPanels/project.svelte';
-import TransformPanel from './components/propertyPanels/transform.svelte';
+import DisplayPanel from './components/propertyPanels/displayPanel.svelte';
+import GridPanel from './components/propertyPanels/gridPanel.svelte';
+import ProjectPanel from './components/propertyPanels/projectPanel.svelte';
+import TransformPanel from './components/propertyPanels/transformPanel.svelte';
 import { WritableStore } from './store';
 
 type PanelCategory = PropertyCategory | 'project' | 'grid';

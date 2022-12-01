@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { PropertiesPanel } from "../../propertiesPanel";
-  import PropertyPanel from "../panelGroup.svelte";
-  import PropertyControl from "../propertyControl.svelte";
+  import PropertyPanel from "./panelGroup.svelte";
+  import PropertyControl from "./propertyControl.svelte";
 
   export let panel: PropertiesPanel;
 </script>
@@ -9,10 +9,14 @@
 <PropertyPanel title="Display">
   {#each panel.properties as property (property.key)}
     <PropertyControl label={property.key}>
-      <span>control...</span>
+      <span>control todo...</span>
     </PropertyControl>
   {/each}
 </PropertyPanel>
 
 <style>
+  span {
+    font-size: 11px;
+    font-style: italic;
+  }
 </style>
