@@ -16,8 +16,7 @@ describe('Model Schema', () =>
             category: 'Display',
         },
     };
-    const constraints = {} as any;
-    const schema = new ModelSchema(properties, constraints);
+    const schema = new ModelSchema(properties);
 
     it('should create schema keys from given defaults', () =>
     {
@@ -27,10 +26,5 @@ describe('Model Schema', () =>
     it('should create schema with given defaults', () =>
     {
         expect(schema.properties).toEqual(properties);
-    });
-
-    it('should create schema with given constraints', () =>
-    {
-        expect(schema.constraints).toEqual(constraints);
     });
 });

@@ -91,7 +91,6 @@ export function createCommand<
     const command = new CommandClass(params);
 
     command.cache = commandJSON.cache;
-    command.isUndoRoot = commandJSON.isUndoRoot;
 
     return command;
 }

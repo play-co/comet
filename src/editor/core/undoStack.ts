@@ -27,10 +27,8 @@ export default class UndoStack
         return this.stack.length;
     }
 
-    public exec<R = unknown>(command: Command, isUndoRoot = true): R
+    public exec<R = unknown>(command: Command): R
     {
-        command.isUndoRoot = isUndoRoot;
-
         writeCommandList(command.name);
 
         this.push(command);
@@ -72,55 +70,54 @@ export default class UndoStack
         }
 
         stack.push(command);
+
         this.head++;
     }
 
     public undo()
     {
-        const { stack, head, nextUndoRootIndex } = this;
+        const { stack, head } = this;
 
         if (stack.length === 0 || head === -1)
         {
             return;
         }
 
-        const headStart = head;
+        const command = stack[head];
 
-        for (let i = headStart; i >= nextUndoRootIndex; i--)
-        {
-            const cmd = stack[i];
+        command.undo();
 
-            cmd.undo();
+        globalEmitter.emit('command.undo', command);
 
-            globalEmitter.emit('command.undo', cmd);
-        }
-
-        this.head = nextUndoRootIndex - 1;
+        this.head -= 1;
     }
 
     public redo()
     {
-        const { commands } = this.nextRedoCommands;
+        const { stack, head } = this;
 
-        for (const cmd of commands)
+        if (stack.length === 0 || head === stack.length - 1)
         {
-            cmd.redo();
-
-            globalEmitter.emit('command.redo', cmd);
-
-            this.head++;
+            return;
         }
+
+        const command = stack[head + 1];
+
+        command.redo();
+
+        globalEmitter.emit('command.redo', command);
+
+        this.head++;
     }
 
     public apply()
     {
-        const { commands } = this.nextRedoCommands;
+        const { stack, head } = this;
+        const command = stack[head];
 
-        for (const cmd of commands)
-        {
-            cmd.apply();
-            this.head++;
-        }
+        command.apply();
+
+        this.head++;
     }
 
     public get isHeadAtEnd()
@@ -131,67 +128,6 @@ export default class UndoStack
     public get isEmpty()
     {
         return this.stack.length === 0;
-    }
-
-    public get nextRedoCommands(): {head: number; commands: Command[]}
-    {
-        const { stack, head, isHeadAtEnd, isEmpty, nextRedoRootIndex } = this;
-        const commands: Command[] = [];
-
-        if (isHeadAtEnd || isEmpty)
-        {
-            return { head: stack.length - 1, commands };
-        }
-
-        let newHead = head;
-
-        const headStart = nextRedoRootIndex;
-
-        for (let i = headStart; i < stack.length; i++)
-        {
-            const cmd = stack[i];
-
-            if (cmd.isUndoRoot && i > headStart)
-            {
-                break;
-            }
-
-            newHead = i;
-
-            commands.push(cmd);
-        }
-
-        return { head: newHead, commands };
-    }
-
-    public get nextUndoRootIndex()
-    {
-        const { head, stack } = this;
-
-        for (let i = head; i >= 0; i--)
-        {
-            if (stack[i].isUndoRoot)
-            {
-                return i;
-            }
-        }
-
-        return head;
-    }
-
-    public get nextRedoRootIndex()
-    {
-        const { head, stack } = this;
-
-        for (let i = head + 1; i < stack.length; i++)
-        {
-            if (stack[i].isUndoRoot)
-            {
-                return i;
-            }
-        }
-
-        return stack.length - 1;
     }
 
     public get hasCommands()
@@ -205,35 +141,8 @@ export default class UndoStack
         this.head = -1;
     }
 
-    protected get peek(): Command | null
-    {
-        const { stack } = this;
-
-        return stack.length ? stack[this.stack.length - 1] : null;
-    }
-
     public toJSON(): object[]
     {
         return this.stack.flat().map((cmd) => cmd.toJSON());
-    }
-
-    public debugPrint()
-    {
-        const { head, stack } = this;
-
-        const array = stack.map((command, i) =>
-        {
-            const cmdName = `[${i}]:${command.name}`;
-            const cmd = command.isUndoRoot ? [`✅${cmdName}`] : [cmdName];
-
-            if (i === head)
-            {
-                return [`<b style="color:white">${cmd}</b>`];
-            }
-
-            return cmd;
-        }).flat(5);
-
-        return `@${head}~${array.join(' / ')}`;
     }
 }

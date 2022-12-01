@@ -18,13 +18,11 @@ const globalEmitter = getGlobalEmitter<CommandEvent>();
 export abstract class Command<ParamsType extends {} = {}, ReturnType = void, CacheType extends {} = {}>
 {
     public cache: CacheType;
-    public isUndoRoot: boolean;
     public hasRun: boolean;
 
     constructor(public readonly params: ParamsType)
     {
         this.cache = {} as CacheType;
-        this.isUndoRoot = false;
         this.hasRun = false;
     }
 

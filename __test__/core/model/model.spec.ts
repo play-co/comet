@@ -16,6 +16,7 @@ export const schema = new ModelSchema<TestModel>({
     x: {
         defaultValue: 1,
         category: 'Transform',
+        constraints: [constraint],
     },
     y: {
         defaultValue: 2,
@@ -29,8 +30,6 @@ export const schema = new ModelSchema<TestModel>({
         defaultValue: { name: 'foo' },
         category: 'Display',
     },
-}, {
-    x: [constraint],
 });
 
 describe('Model', () =>
