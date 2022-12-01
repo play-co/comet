@@ -7,7 +7,7 @@
 
 <PropertyPanel title="Transform">
   {#each properties as property (property.key)}
-    {property.key}
+    <div>{property.key}</div>
   {/each}
 </PropertyPanel>
 

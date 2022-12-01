@@ -110,6 +110,9 @@ function createController()
         .on('selection.set.multi', update)
         .on('selection.deselect', clear);
 
+    // start with unselected state
+    clear();
+
     return {
         store: {
             panels: panels.store,
