@@ -1,10 +1,10 @@
 import type { ModelConstraint } from './constraints';
 
 export type PropertyCategory =
-| 'Transform'
-| 'Display'
-| 'Texture'
-| 'Text';
+| 'transform'
+| 'display'
+| 'texture'
+| 'text';
 
 export interface PropertyDescriptor<M>
 {

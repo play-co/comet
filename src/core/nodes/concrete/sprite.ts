@@ -18,19 +18,19 @@ export const spriteSchema = new ModelSchema<SpriteModel>({
     ...containerSchema.properties,
     anchorX: {
         defaultValue: 0,
-        category: 'Transform',
+        category: 'transform',
     },
     anchorY: {
         defaultValue: 0,
-        category: 'Transform',
+        category: 'transform',
     },
     tint: {
         defaultValue: 0xffffff,
-        category: 'Display',
+        category: 'display',
     },
     textureAssetId: {
         defaultValue: null,
-        category: 'Texture',
+        category: 'texture',
     },
 });
 

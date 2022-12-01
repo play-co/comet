@@ -3,10 +3,15 @@
   import Panel from "./components/panel.svelte";
 
   const panel = createController();
+  const { panels } = panel.store;
 </script>
 
 <properties-panel>
-  <Panel>&nbsp;</Panel>
+  <Panel>
+    {#each $panels as panel (panel.category)}
+      <svelte:component this={panel.component} properties={panel.properties} />
+    {/each}
+  </Panel>
 </properties-panel>
 
 <style>

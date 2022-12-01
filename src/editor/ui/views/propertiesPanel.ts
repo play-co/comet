@@ -3,17 +3,21 @@ import { getGlobalEmitter } from '../../../core/events';
 import type { PropertyCategory } from '../../../core/model/schema';
 import { Application } from '../../core/application';
 import type { SelectionEvent } from '../../events/selectionEvents';
-import TransformPanel from './properties.transform.svelte';
+import TransformPanel from './components/propertyPanels/transform.svelte';
 import { WritableStore } from './store';
+
+export const PropertyPanelComponents: Partial<Record<PropertyCategory, ConstructorOfATypedSvelteComponent>> = {
+    transform: TransformPanel,
+};
 
 export class PropertyBinding
 {
-    public propertyKey: string;
+    public key: string;
     public bindings: ClonableNode[];
 
     constructor(propertyKey: string)
     {
-        this.propertyKey = propertyKey;
+        this.key = propertyKey;
         this.bindings = [];
     }
 
@@ -23,17 +27,18 @@ export class PropertyBinding
     }
 }
 
-export interface PropertyPanel
+export interface PropertiesPanel
 {
-    type: PropertyCategory;
+    category: string;
     properties: PropertyBinding[];
+    component: ConstructorOfATypedSvelteComponent;
 }
 
 function createController()
 {
     const { selection } = Application.instance;
 
-    const panels = new WritableStore<PropertyPanel[]>([]);
+    const panels = new WritableStore<PropertiesPanel[]>([]);
 
     const selectionEmitter = getGlobalEmitter<SelectionEvent>();
 
@@ -56,26 +61,54 @@ function createController()
                     categories.set(category, new Map());
                 }
 
-                const propertyBindings = categories.get(category) as Map<string, PropertyBinding>;
+                const propertyBindingsByKey = categories.get(category) as Map<string, PropertyBinding>;
 
-                if (!propertyBindings.has(propertyKey))
+                if (!propertyBindingsByKey.has(propertyKey))
                 {
-                    propertyBindings.set(propertyKey, new PropertyBinding(propertyKey));
+                    propertyBindingsByKey.set(propertyKey, new PropertyBinding(propertyKey));
                 }
 
-                const propertyBinding = propertyBindings.get(propertyKey) as PropertyBinding;
+                const propertyBinding = propertyBindingsByKey.get(propertyKey) as PropertyBinding;
 
                 propertyBinding.addNode(node.asClonableNode());
             }
         });
 
-        console.log(selection.nodes.length, categories);
+        const array = [];
+
+        for (const [category, propertyBindingsByKey] of categories.entries())
+        {
+            const properties = [...propertyBindingsByKey.values()];
+            const component = PropertyPanelComponents[category as PropertyCategory];
+
+            if (!component)
+            {
+                // throw new Error(`Property panel "${category}" not found`);
+                continue;
+            }
+
+            const panel: PropertiesPanel = {
+                category,
+                properties,
+                component,
+            };
+
+            array.push(panel);
+        }
+
+        panels.value = array;
+    }
+
+    function clear()
+    {
+        panels.value = [];
     }
 
     selectionEmitter
         .on('selection.add', update)
         .on('selection.set.single', update)
-        .on('selection.set.multi', update);
+        .on('selection.set.multi', update)
+        .on('selection.deselect', clear);
 
     return {
         store: {
