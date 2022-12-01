@@ -94,17 +94,17 @@ export class TransformGizmo extends Container
         this.initFrame();
 
         globalEmitter
-            .on('selection.add', this.updateSelection)
             .on('selection.set.single', this.updateSelection)
             .on('selection.set.multi', this.updateSelection)
+            .on('selection.add', this.updateSelection)
             .on('selection.remove', this.updateSelection)
             .on('selection.deselect', this.onSelectionDeselect)
-            .on('datastore.remote.node.model.modified', this.updateSelection)
             .on('command.exec', this.updateSelection)
             .on('command.undo', this.updateSelection)
             .on('command.redo', this.updateSelection)
             .on('datastore.remote.node.removed', this.updateSelection)
-            .on('datastore.remote.node.created', this.updateSelection);
+            .on('datastore.remote.node.created', this.updateSelection)
+            .on('datastore.remote.node.model.modified', this.updateSelection);
     }
 
     get selection()
