@@ -26,22 +26,23 @@ export const PropertyCategoryOrder: PropertyCategory[] = [
 export class PropertyBinding
 {
     public key: string;
-    public bindings: ClonableNode[];
+    public nodes: ClonableNode[];
 
     constructor(propertyKey: string)
     {
         this.key = propertyKey;
-        this.bindings = [];
+        this.nodes = [];
     }
 
     public addNode(node: ClonableNode)
     {
-        this.bindings.push(node);
+        this.nodes.push(node);
     }
 }
 
 export class PropertiesPanel
 {
+    public id = String(Date.now());
     public category: PanelCategory;
     public properties: PropertyBinding[];
     public component: ConstructorOfATypedSvelteComponent;
@@ -94,7 +95,7 @@ function createController()
             }
         });
 
-        const array = [];
+        const array: PropertiesPanel[] = [];
 
         for (const [category, propertyBindingsByKey] of categories.entries())
         {

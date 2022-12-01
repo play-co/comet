@@ -1,6 +1,7 @@
 <script lang="ts">
   export let label: string;
   export let align: "left" | "right" = "left";
+  export let id: string;
 </script>
 
 <property-control class={`align-${align}`}>

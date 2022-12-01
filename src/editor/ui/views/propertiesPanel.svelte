@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createController } from "./propertiesPanel.js";
   import Panel from "./components/panel.svelte";
+  import TransformPanel from "./components/propertyPanels/transformPanel.svelte";
 
   const panel = createController();
   const { panels } = panel.store;
@@ -9,7 +10,9 @@
 <properties-panel>
   <Panel>
     {#each $panels as panel (panel.category)}
-      <svelte:component this={panel.component} {panel} />
+      id:{panel.id}
+      <!-- <svelte:component this={panel.component} {panel} /> -->
+      <TransformPanel {panel} />
     {/each}
   </Panel>
 </properties-panel>
