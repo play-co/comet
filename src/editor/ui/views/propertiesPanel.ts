@@ -3,12 +3,25 @@ import { getGlobalEmitter } from '../../../core/events';
 import type { PropertyCategory } from '../../../core/model/schema';
 import { Application } from '../../core/application';
 import type { SelectionEvent } from '../../events/selectionEvents';
+import DisplayPanel from './components/propertyPanels/display.svelte';
+import GridPanel from './components/propertyPanels/grid.svelte';
+import ProjectPanel from './components/propertyPanels/project.svelte';
 import TransformPanel from './components/propertyPanels/transform.svelte';
 import { WritableStore } from './store';
 
+type PanelCategory = PropertyCategory | 'project' | 'grid';
+
 export const PropertyPanelComponents: Partial<Record<PropertyCategory, ConstructorOfATypedSvelteComponent>> = {
     transform: TransformPanel,
+    display: DisplayPanel,
 };
+
+export const PropertyCategoryOrder: PropertyCategory[] = [
+    'display',
+    'transform',
+    'text',
+    'texture',
+];
 
 export class PropertyBinding
 {
@@ -29,10 +42,22 @@ export class PropertyBinding
 
 export interface PropertiesPanel
 {
-    category: string;
+    category: PanelCategory;
     properties: PropertyBinding[];
     component: ConstructorOfATypedSvelteComponent;
 }
+
+const projectPanel: PropertiesPanel =  {
+    category: 'project',
+    properties: [],
+    component: ProjectPanel,
+};
+
+const gridPanel: PropertiesPanel =  {
+    category: 'grid',
+    properties: [],
+    component: GridPanel,
+};
 
 function createController()
 {
@@ -48,7 +73,7 @@ function createController()
         // collect all properties which are not hidden
         // create panel and give properties
 
-        const categories: Map<string, Map<string, PropertyBinding>> = new Map();
+        const categories: Map<PropertyCategory, Map<string, PropertyBinding>> = new Map();
 
         selection.nodes.forEach((node) =>
         {
@@ -79,7 +104,7 @@ function createController()
         for (const [category, propertyBindingsByKey] of categories.entries())
         {
             const properties = [...propertyBindingsByKey.values()];
-            const component = PropertyPanelComponents[category as PropertyCategory];
+            const component = PropertyPanelComponents[category];
 
             if (!component)
             {
@@ -96,12 +121,20 @@ function createController()
             array.push(panel);
         }
 
+        array.sort((a, b) =>
+        {
+            const aIndex = PropertyCategoryOrder.indexOf(a.category as PropertyCategory);
+            const bIndex = PropertyCategoryOrder.indexOf(b.category as PropertyCategory);
+
+            return aIndex - bIndex;
+        });
+
         panels.value = array;
     }
 
     function clear()
     {
-        panels.value = [];
+        panels.value = [projectPanel, gridPanel];
     }
 
     selectionEmitter
