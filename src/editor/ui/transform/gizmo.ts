@@ -8,6 +8,7 @@ import { type Point, degToRad, radToDeg } from '../../../core/util/geom';
 import type { ModifyModelCommandParams } from '../../commands/modifyModel';
 import { ModifyModelsCommand } from '../../commands/modifyModels';
 import { Application } from '../../core/application';
+import type { UpdateMode } from '../../core/command';
 import type { CommandEvent } from '../../events/commandEvents';
 import type { DatastoreEvent } from '../../events/datastoreEvents';
 import type { SelectionEvent } from '../../events/selectionEvents';
@@ -38,9 +39,9 @@ export const dblClickMsThreshold = 250;
 
 const globalEmitter = getGlobalEmitter<DatastoreEvent & CommandEvent & SelectionEvent & TransformEvent>();
 
-type MatrixCache = {
-    local: Matrix;
-    world: Matrix;
+type CachedNode = {
+    worldTransform: Matrix;
+    ownValues: Partial<DisplayObjectModel>;
 };
 
 export class TransformGizmo extends Container
@@ -52,7 +53,7 @@ export class TransformGizmo extends Container
 
     public initialTransform: InitialGizmoTransform;
     public frame: TransformGizmoFrame;
-    public matrixCache: Map<DisplayObjectNode, MatrixCache>;
+    public nodeCache: Map<DisplayObjectNode, CachedNode>;
 
     public vertex: HandleVertex;
     public operation?: TransformOperation;
@@ -80,7 +81,7 @@ export class TransformGizmo extends Container
         this.initialTransform = defaultInitialGizmoTransform;
         this.frame = new TransformGizmoFrame(this);
         this.vertex = { h: 'none', v: 'none' };
-        this.matrixCache = new Map();
+        this.nodeCache = new Map();
 
         this.groupSizeContainer = new Container();
         this.groupSizeGraphic = new Graphics();
@@ -134,7 +135,7 @@ export class TransformGizmo extends Container
 
         selection.nodes.forEach((node) => (node.view.interactive = false));
 
-        this.matrixCache.clear();
+        this.nodeCache.clear();
 
         this.hide();
     };
@@ -146,9 +147,9 @@ export class TransformGizmo extends Container
         this.selectNode(nodes[0]);
     }
 
-    protected getCachedMatrix(node: DisplayObjectNode): MatrixCache
+    protected getCachedMatrix(node: DisplayObjectNode): CachedNode
     {
-        return this.matrixCache.get(node) as MatrixCache;
+        return this.nodeCache.get(node) as CachedNode;
     }
 
     protected wasDoubleClick()
@@ -531,6 +532,8 @@ export class TransformGizmo extends Container
             this.update();
             this.frame.updateOperation(this.dragInfo);
 
+            this.updateSelectedModels('graphOnly');
+
             globalEmitter.emit('transform.modify', this);
         }
     };
@@ -664,9 +667,9 @@ export class TransformGizmo extends Container
 
             view.interactive = true;
 
-            this.matrixCache.set(node, {
-                local: view.localTransform.clone(),
-                world: view.worldTransform.clone(),
+            this.nodeCache.set(node, {
+                worldTransform: view.worldTransform.clone(),
+                ownValues: { ...node.model.ownValues },
             });
         });
 
@@ -688,7 +691,7 @@ export class TransformGizmo extends Container
             const matrix = new Matrix();
 
             matrix.append(view.parent.worldTransform.clone().invert());
-            matrix.append(cachedMatrix.world);
+            matrix.append(cachedMatrix.worldTransform);
             matrix.append(this.initialTransform.matrix.clone().invert());
             matrix.append(this.worldTransform);
 
@@ -706,14 +709,14 @@ export class TransformGizmo extends Container
                 matrix.append(view.parent.worldTransform.clone().invert());
                 matrix.append(this.worldTransform);
                 matrix.append(this.initialTransform.matrix.clone().invert());
-                matrix.append(cachedMatrix.world);
+                matrix.append(cachedMatrix.worldTransform);
 
                 view.transform.setFromMatrix(matrix);
             });
         }
     }
 
-    protected updateSelectedModels()
+    protected updateSelectedModels(updateMode: UpdateMode = 'full')
     {
         const { selection } = this;
         const modifications: ModifyModelCommandParams<any>[] = [];
@@ -774,12 +777,23 @@ export class TransformGizmo extends Container
                 values.y = y + deltaY;
             }
 
+            const prevValues = this.getCachedMatrix(node).ownValues;
+
             modifications.push({
                 nodeId: node.id,
                 values,
+                updateMode,
+                prevValues,
             });
         });
 
-        Application.instance.undoStack.exec(new ModifyModelsCommand({ modifications }));
+        if (updateMode === 'full')
+        {
+            Application.instance.undoStack.exec(new ModifyModelsCommand({ modifications }));
+        }
+        else
+        {
+            new ModifyModelsCommand({ modifications }).run();
+        }
     }
 }

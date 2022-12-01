@@ -35,9 +35,11 @@
     return num.toFixed(1).replace(/\.00$/, "");
   }
 
-  datastoreEmitter.on("datastore.local.node.modified", () => {
+  const onUpdate = () => {
     value = getValue();
-  });
+  };
+
+  datastoreEmitter.on("datastore.local.node.modified", onUpdate);
 </script>
 
 <numeric-control>
