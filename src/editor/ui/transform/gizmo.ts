@@ -94,6 +94,8 @@ export class TransformGizmo extends Container
 
         globalEmitter
             .on('selection.add', this.updateSelection)
+            .on('selection.set.single', this.updateSelection)
+            .on('selection.set.multi', this.updateSelection)
             .on('selection.remove', this.updateSelection)
             .on('selection.deselect', this.onSelectionDeselect)
             .on('datastore.remote.node.model.modified', this.updateSelection)

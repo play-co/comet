@@ -1,5 +1,6 @@
 import { type WalkOptions, type WalkReturnData, defaultWalkOptions } from '../const';
 import { newId } from '../instances';
+import type { ClonableNode } from './clonableNode';
 
 export abstract class GraphNode
 {
@@ -355,5 +356,10 @@ export abstract class GraphNode
     protected onRemovedFromParent(oldParent: GraphNode)
     {
         // subclasses
+    }
+
+    public asClonableNode()
+    {
+        return this as unknown as ClonableNode;
     }
 }

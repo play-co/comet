@@ -107,9 +107,6 @@ export class BoxSelection extends Graphics
         // filter down to top level clone root
         allNodes.forEach((node) =>
         {
-            // const root = node.getCloneRoot().cast<DisplayObjectNode>();
-
-            // selected.add(root);
             selected.add(node);
         });
 

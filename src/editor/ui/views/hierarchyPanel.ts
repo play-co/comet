@@ -210,14 +210,14 @@ function createController()
 
             if (operation.value === Operation.ReOrder)
             {
-            // re-ordering
+                // re-ordering
                 item.node.isSiblingOf(selection.nodes[0]) || item.node === selection.nodes[0].parent
                     ? dragTarget.value = item
                     : dragTarget.value = undefined;
             }
             else
             {
-            // re-parenting
+                // re-parenting
                 selection.shallowContains(item.node)
                     ? dragTarget.value = undefined
                     : dragTarget.value = item;
@@ -267,7 +267,8 @@ function createController()
     selectionEmitter
         .on('selection.add', onSelectionChanged)
         .on('selection.remove', onSelectionChanged)
-        .on('selection.set', onSelectionChanged)
+        .on('selection.set.single', onSelectionChanged)
+        .on('selection.set.multi', onSelectionChanged)
         .on('selection.deselect', onDeselect);
 
     datastoreEmitter

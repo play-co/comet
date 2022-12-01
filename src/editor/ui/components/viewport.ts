@@ -134,8 +134,8 @@ export class EditableViewport
             {
                 if (selection.deepContains(topNode))
                 {
-                    // replace selection if a child of currently selected node
-                    selection.set(topNode);
+                    // remove selection if a child of currently selected node
+                    selection.remove(topNode);
                 }
                 else
                 {
@@ -145,7 +145,7 @@ export class EditableViewport
             }
             else
             {
-                Application.instance.selection.set(topNode);
+                selection.set(topNode);
             }
         }
     };
@@ -224,7 +224,18 @@ export class EditableViewport
             const nodes = boxSelection.selectWithinRootNode(this.rootNode);
 
             selection.deselect();
-            nodes.forEach((node) => selection.add(node));
+
+            if (nodes.length > 0)
+            {
+                if (nodes.length === 1)
+                {
+                    selection.set(nodes[0]);
+                }
+                else
+                {
+                    selection.set(nodes);
+                }
+            }
         }
 
         this.boxSelection.onMouseUp();

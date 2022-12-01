@@ -13,14 +13,24 @@ export class NodeSelection
         this.nodes = [];
     }
 
-    public set(node: DisplayObjectNode)
+    public set(node: DisplayObjectNode | DisplayObjectNode[])
     {
         if (!this.isEmpty)
         {
             this.deselect();
         }
 
-        this.add(node);
+        if (Array.isArray(node))
+        {
+            this.nodes.length = 0;
+            this.nodes.push(...node);
+
+            globalEmitter.emit('selection.set.multi', this.nodes);
+        }
+        else
+        {
+            this.add(node);
+        }
     }
 
     public add(node: DisplayObjectNode)
