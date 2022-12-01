@@ -3,21 +3,21 @@
   import Panel from "./components/panel.svelte";
 
   const panel = createController();
+  const { model, dragTarget, operation } = panel.store;
 </script>
 
 <hierarchy-panel>
   <Panel>
     <table>
       <tbody>
-        {#each $panel.model as item (item.node.id)}
+        {#each $model as item (item.node.id)}
           <tr>
             <!-- svelte-ignore a11y-mouse-events-have-key-events -->
             <td
               class={[
                 item.isSelected ? "selected" : "",
                 item.isVisible ? "visible" : "hidden",
-                $panel.dragTarget === item &&
-                !panel.doesSelectionContainItem(item)
+                $dragTarget === item && !panel.doesSelectionContainItem(item)
                   ? "dragTargetRow"
                   : "",
               ].join(" ")}
@@ -32,9 +32,9 @@
 
               <span class="label {item.isSelected ? 'selected' : ''}"
                 >{item.node
-                  .id}{#if $panel.dragTarget === item && !panel.doesSelectionContainItem(item) && $panel.operation === Operation.ReParent}
+                  .id}{#if $dragTarget === item && !panel.doesSelectionContainItem(item) && $operation === Operation.ReParent}
                   <div class="dragTargetIndicator reparent" />{/if}</span>
-              {#if $panel.dragTarget === item && !panel.doesSelectionContainItem(item) && $panel.operation === Operation.ReOrder}
+              {#if $dragTarget === item && !panel.doesSelectionContainItem(item) && $operation === Operation.ReOrder}
                 <div class="dragTargetIndicator reorder" />{/if}
             </td>
           </tr>
@@ -120,6 +120,7 @@
     width: 100%;
     position: absolute;
     bottom: 0;
+    pointer-events: none;
   }
 
   .reparent {

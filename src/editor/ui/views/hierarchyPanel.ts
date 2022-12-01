@@ -1,5 +1,3 @@
-import { writable } from 'svelte/store';
-
 import { getGlobalEmitter } from '../../../core/events';
 import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
 import { SetNodeIndexCommand } from '../../commands/setNodeIndex';
@@ -10,6 +8,7 @@ import type { DatastoreEvent } from '../../events/datastoreEvents';
 import type { SelectionEvent } from '../../events/selectionEvents';
 import type { ViewportEvent } from '../../events/viewportEvents';
 import { mouseDrag } from '../components/dragger';
+import { WritableStore } from './store';
 
 export interface ModelItem
 {
@@ -26,39 +25,24 @@ export enum Operation
     ReOrder,
 }
 
-export interface State
-{
-    model: ModelItem[];
-    root: DisplayObjectNode;
-    isDragging: boolean;
-    dragTarget?: ModelItem;
-    operation: Operation;
-}
-
 function createController()
 {
     const { selection, viewport } = Application.instance;
-    const state: State = {
-        model: [],
-        root: viewport.rootNode,
-        isDragging: false,
-        operation: Operation.ReParent,
-    };
-    const { subscribe, set } = writable(state);
+
+    const model = new WritableStore<ModelItem[]>([]);
+    const root = new WritableStore<DisplayObjectNode>(viewport.rootNode);
+    const isDragging = new WritableStore<boolean>(false);
+    const dragTarget = new WritableStore<ModelItem | undefined>(undefined);
+    const operation = new WritableStore<Operation>(Operation.ReParent);
 
     const viewportEmitter = getGlobalEmitter<ViewportEvent>();
     const selectionEmitter = getGlobalEmitter<SelectionEvent>();
     const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
     const commandEmitter = getGlobalEmitter<CommandEvent>();
 
-    function update()
-    {
-        set({ ...state });
-    }
-
     function generateModel()
     {
-        const newModel = state.root.walk<DisplayObjectNode, { model: ModelItem[] }>(
+        const newModel = root.value.walk<DisplayObjectNode, { model: ModelItem[] }>(
             (node, options) =>
             {
                 if (node.isCloaked)
@@ -81,31 +65,24 @@ function createController()
             },
         ).model;
 
-        state.model = newModel;
-        update();
+        model.value = newModel;
     }
 
     function updateModel(fn: (item: ModelItem) => void)
     {
-        state.model.forEach(fn);
-        refresh();
-    }
-
-    function refresh()
-    {
-        state.model = [...state.model];
-        update();
+        model.value.forEach(fn);
+        model.value = [...model.value];
     }
 
     function toggleItemExpanded(e: MouseEvent, item: ModelItem)
     {
-        const index = state.model.indexOf(item);
+        const index = model.value.indexOf(item);
 
         item.isExpanded = !item.isExpanded;
 
-        for (let i = index + 1; i <= state.model.length - 1; i++)
+        for (let i = index + 1; i <= model.value.length - 1; i++)
         {
-            const subItem = state.model[i];
+            const subItem = model.value[i];
 
             if (subItem.depth > item.depth)
             {
@@ -120,7 +97,8 @@ function createController()
         item.isVisible = true;
 
         e.stopPropagation();
-        refresh();
+
+        model.value = [...model.value];
     }
 
     function selectItem(e: MouseEvent, item: ModelItem): undefined | false
@@ -156,22 +134,20 @@ function createController()
             return;
         }
 
-        state.isDragging = true;
-        state.operation = Operation.ReParent;
-
-        update();
+        isDragging.value = true;
+        operation.value = Operation.ReParent;
 
         mouseDrag(e).then(() =>
         {
-            if (state.isDragging && state.dragTarget)
+            if (isDragging.value && dragTarget.value)
             {
-                const dragTargetNode = state.dragTarget.node;
+                const dragTargetNode = dragTarget.value.node;
 
                 selection.forEach((node) =>
                 {
                     const sourceNode = node;
 
-                    if (state.operation === Operation.ReParent)
+                    if (operation.value === Operation.ReParent)
                     {
                         // re-parent using command if different parent to existing
                         const nodeId = sourceNode.id;
@@ -224,42 +200,35 @@ function createController()
 
     function onRowMouseOver(e: MouseEvent, item: ModelItem)
     {
-        if (state.isDragging)
+        if (isDragging.value)
         {
             const targetElement = e.target as HTMLElement;
 
-            state.operation
-            = e.currentTarget === e.target
-            || targetElement.classList.contains('arrow')
-                    ? Operation.ReOrder
-                    : Operation.ReParent;
+            operation.value = e.currentTarget === e.target || targetElement.classList.contains('arrow')
+                ? Operation.ReOrder
+                : Operation.ReParent;
 
-            if (state.operation === Operation.ReOrder)
+            if (operation.value === Operation.ReOrder)
             {
             // re-ordering
-                item.node.isSiblingOf(selection.nodes[0])
-            || item.node === selection.nodes[0].parent
-                    ? (state.dragTarget = item)
-                    : (state.dragTarget = undefined);
+                item.node.isSiblingOf(selection.nodes[0]) || item.node === selection.nodes[0].parent
+                    ? dragTarget.value = item
+                    : dragTarget.value = undefined;
             }
             else
             {
             // re-parenting
                 selection.shallowContains(item.node)
-                    ? (state.dragTarget = undefined)
-                    : (state.dragTarget = item);
+                    ? dragTarget.value = undefined
+                    : dragTarget.value = item;
             }
-
-            update();
         }
     }
 
     function clearDrag()
     {
-        state.isDragging = false;
-        state.dragTarget = undefined;
-
-        update();
+        isDragging.value = false;
+        dragTarget.value = undefined;
     }
 
     function doesSelectionContainItem(item: ModelItem)
@@ -271,7 +240,7 @@ function createController()
 
     const onViewportRootChanged = (node: DisplayObjectNode) =>
     {
-        state.root = node;
+        root.value = node;
         generateModel();
     };
 
@@ -318,7 +287,13 @@ function createController()
     generateModel();
 
     return {
-        subscribe,
+        store: {
+            model: model.store,
+            root: root.store,
+            isDragging: isDragging.store,
+            dragTarget: dragTarget.store,
+            operation: operation.store,
+        },
         onRowMouseDown,
         onRowMouseOver,
         toggleItemExpanded,
@@ -327,3 +302,4 @@ function createController()
 }
 
 export { createController };
+

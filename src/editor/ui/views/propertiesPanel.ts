@@ -1,6 +1,8 @@
 import { writable } from 'svelte/store';
 
+import { getGlobalEmitter } from '../../../core/events';
 import { Application } from '../../core/application';
+import type { SelectionEvent } from '../../events/selectionEvents';
 
 export type State =
 {
@@ -16,14 +18,14 @@ function createController()
     const { subscribe, set } = writable(state);
 
     // const viewportEmitter = getGlobalEmitter<ViewportEvent>();
-    // const selectionEmitter = getGlobalEmitter<SelectionEvent>();
+    const selectionEmitter = getGlobalEmitter<SelectionEvent>();
     // const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
     // const commandEmitter = getGlobalEmitter<CommandEvent>();
 
-    // function update()
-    // {
-    //     set({ ...state });
-    // }
+    function update()
+    {
+        set({ ...state });
+    }
 
     // function generateModel()
     // {
@@ -244,13 +246,13 @@ function createController()
     //     generateModel();
     // };
 
-    // const onSelectionChanged = () =>
-    // {
-    //     updateModel((item) =>
-    //     {
-    //         item.isSelected = selection.shallowContains(item.node);
-    //     });
-    // };
+    const onSelectionChanged = () =>
+    {
+        selection.forEach((node) =>
+        {
+            console.log(node.model.schema.properties);
+        });
+    };
 
     // const onDeselect = () =>
     // {
@@ -264,11 +266,11 @@ function createController()
 
     // viewportEmitter.on('viewport.root.changed', onViewportRootChanged);
 
-    // selectionEmitter
-    //     .on('selection.add', onSelectionChanged)
-    //     .on('selection.remove', onSelectionChanged)
-    //     .on('selection.set', onSelectionChanged)
-    //     .on('selection.deselect', onDeselect);
+    selectionEmitter
+        .on('selection.add', onSelectionChanged)
+        .on('selection.remove', onSelectionChanged)
+        .on('selection.set', onSelectionChanged);
+    // .on('selection.deselect', onDeselect);
 
     // datastoreEmitter
     //     .on('datastore.remote.node.parent.set', generateModel)
