@@ -13,7 +13,14 @@
       if (nodes.length === 1) {
         return format(nodes[0].model.getValue(property.key));
       } else {
-        return "#mixed";
+        let values = new Set();
+        nodes.forEach((node) => values.add(node.model.getValue(property.key)));
+        if (values.size === 1) {
+          const [firstValue] = values;
+          return String(firstValue);
+        } else {
+          return "#mixed";
+        }
       }
     } catch (e) {
       return "ERROR";
