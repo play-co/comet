@@ -1,6 +1,10 @@
+import { getGlobalEmitter } from '../../core/events';
 import type { ModelBase } from '../../core/model/model';
 import { Command } from '../core/command';
+import type { DatastoreEvent } from '../events/datastoreEvents';
 import { getUrlParam } from '../util';
+
+const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
 
 export interface ModifyModelCommandParams<M>
 {
@@ -50,6 +54,11 @@ export class ModifyModelCommand<M extends ModelBase>
 
             this.cache.prevValues = values;
         }
+
+        datastoreEmitter.emit('datastore.local.node.modified', {
+            nodeId,
+            values,
+        });
     }
 
     public undo(): void

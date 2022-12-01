@@ -31,7 +31,7 @@ export class RemoteObjectSync
             .on('datastore.node.hydrated', this.onRemoteNodeCreated)
             .on('datastore.remote.node.removed', this.onRemoteNodeRemoved)
             .on('datastore.remote.node.parent.set', this.onRemoteNodeParentSet)
-            .on('datastore.node.customProp.defined', this.onRemoteNodeCustomPropDefined)
+            .on('datastore.remote.node.customProp.defined', this.onRemoteNodeCustomPropDefined)
             .on('datastore.remote.node.customProp.undefined', this.onRemoteNodeCustomPropUndefined)
             .on('datastore.remote.node.customProp.assigned', this.onRemoteNodeCustomPropAssigned)
             .on('datastore.remote.node.customProp.unassigned', this.onRemoteNodeCustomPropUnassigned)
@@ -86,7 +86,7 @@ export class RemoteObjectSync
         }).run();
     };
 
-    protected onRemoteNodeCustomPropDefined = (event: DatastoreEvent['datastore.node.customProp.defined']) =>
+    protected onRemoteNodeCustomPropDefined = (event: DatastoreEvent['datastore.remote.node.customProp.defined']) =>
     {
         this.log('onCustomPropDefined', event);
 

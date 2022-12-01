@@ -60,6 +60,8 @@ function formatStack(error: Error)
     // const error = new Error();
 
     // console.log(`%c${logId}:%c🔆"${event}" %c${formatStack(error)}`, userColor, logStyle1, logStyle2);
+    // console.log(`%c${logId}:%cEmit:"${event}"`, userColor, logStyle1);
+
     EventEmitter.prototype.emit.apply(emitter, [event, ...args]);
 };
 

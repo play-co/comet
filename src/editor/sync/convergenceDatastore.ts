@@ -523,7 +523,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         console.log(`%c${logId}:%c🟦 onNodeDefinedCustomPropSet: nodeId: "${nodeId}" info: ${info}`, userColor, logStyle);
 
-        globalEmitter.emit('datastore.node.customProp.defined', { nodeId, customKey, type, value });
+        globalEmitter.emit('datastore.remote.node.customProp.defined', { nodeId, customKey, type, value });
     };
 
     public onRemoteNodeDefinedCustomPropRemoved = (e: IConvergenceEvent) =>

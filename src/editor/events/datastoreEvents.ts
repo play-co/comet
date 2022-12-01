@@ -19,7 +19,7 @@ export interface DatastoreEvent
     'datastore.remote.node.created': EventData;
     'datastore.remote.node.removed': EventData & { parentId?: string };
     'datastore.remote.node.parent.set': EventData & { parentId: string };
-    'datastore.node.customProp.defined': EventData & { customKey: string; type: CustomPropertyType; value: CustomPropertyValueType };
+    'datastore.remote.node.customProp.defined': EventData & { customKey: string; type: CustomPropertyType; value: CustomPropertyValueType };
     'datastore.remote.node.customProp.undefined': EventData & { customKey: string };
     'datastore.remote.node.customProp.assigned': EventData & { modelKey: string; customKey: string };
     'datastore.remote.node.customProp.unassigned': EventData & { modelKey: string };
@@ -30,6 +30,7 @@ export interface DatastoreEvent
     'datastore.remote.node.cloneInfo.modified': EventData & CloneInfoSchema;
     'datastore.remote.node.children.set': EventData & { childIds: string[] };
     'datastore.local.node.created': EventData;
+    'datastore.local.node.modified': EventData & { values: Partial<Record<string, ModelValue>> };
     'datastore.local.node.cloaked': ClonableNode;
     'datastore.local.node.uncloaked': ClonableNode;
 }
