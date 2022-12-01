@@ -7,10 +7,10 @@
   export let panel: PropertiesPanel;
 </script>
 
-<PropertyPanel title={`Transform-${panel.id}`}>
+<PropertyPanel title={`Transform`}>
   {#each panel.properties as property (property.key)}
-    <PropertyControl label={property.key} id={panel.id}>
-      <SimpleNumericInput {property} id={panel.id} />
+    <PropertyControl label={property.key}>
+      <SimpleNumericInput {property} />
     </PropertyControl>
   {/each}
 </PropertyPanel>

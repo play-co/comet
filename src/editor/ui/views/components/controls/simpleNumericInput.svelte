@@ -1,8 +1,11 @@
 <script lang="ts">
+  import { getGlobalEmitter } from "../../../../../core/events";
+  import type { DatastoreEvent } from "../../../../events/datastoreEvents";
   import type { PropertyBinding } from "../../propertiesPanel";
 
   export let property: PropertyBinding;
-  export let id: string;
+
+  const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
 
   function getValue() {
     try {
@@ -10,7 +13,7 @@
       if (nodes.length === 1) {
         return format(nodes[0].model.getValue(property.key));
       } else {
-        return "<mixed>";
+        return "#mixed";
       }
     } catch (e) {
       return "ERROR";
@@ -22,12 +25,15 @@
   $: (value = getValue()), property;
 
   function format(num: number) {
-    return num.toFixed(2).replace(/\.00$/, "");
+    return num.toFixed(1).replace(/\.00$/, "");
   }
+
+  datastoreEmitter.on("datastore.local.node.modified", () => {
+    value = getValue();
+  });
 </script>
 
 <numeric-control>
-  {id}
   <input type="text" {value} />
 </numeric-control>
 

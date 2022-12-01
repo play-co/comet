@@ -10,7 +10,6 @@
 <properties-panel>
   <Panel>
     {#each $panels as panel (panel.category)}
-      id:{panel.id}
       <!-- <svelte:component this={panel.component} {panel} /> -->
       <TransformPanel {panel} />
     {/each}

@@ -42,7 +42,6 @@ export class PropertyBinding
 
 export class PropertiesPanel
 {
-    public id = String(Date.now());
     public category: PanelCategory;
     public properties: PropertyBinding[];
     public component: ConstructorOfATypedSvelteComponent;
