@@ -146,14 +146,19 @@ export function renderTable(
     table: Table,
     painter: Canvas2DPainter,
     cellStyleFn: (row: Row, column: Column, cellStyle: CellStyle) => string | void,
+    width: number,
+    height: number,
+    scrollTop: number,
 )
 {
     const { rowHeight, columns, rows, fontSize, indexColumnLabel } = table;
+    const w = width > -1 ? width : table.width;
+    const h = height > -1 ? height : table.height;
     let x = 0;
     let y = 0;
 
     painter
-        .size(table.width, table.height)
+        .size(w, h)
         .clear()
         .fontColor('white');
 
@@ -190,17 +195,19 @@ export function renderTable(
         x += column.width;
     });
 
-    painter.line(0, y + rowHeight, table.width, y + rowHeight);
+    painter.line(0, y + rowHeight, w, y + rowHeight);
 
     y += rowHeight;
 
     // render rows
 
-    rows.forEach((row) =>
+    for (let i = scrollTop; i < rows.length; i++)
     {
+        const row = rows[i];
+
         x = 0;
 
-        columns.forEach((column) =>
+        for (const column of columns)
         {
             const cell = row.get(column.id) as Cell;
 
@@ -224,10 +231,15 @@ export function renderTable(
             drawCell(cellStyle, x, y, column.width);
 
             x += column.width;
-        });
+        }
 
         painter.line(0, y + rowHeight, table.width, y + rowHeight);
 
         y += rowHeight;
-    });
+
+        if (y > h)
+        {
+            return;
+        }
+    }
 }

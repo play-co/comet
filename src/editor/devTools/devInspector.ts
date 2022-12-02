@@ -1,7 +1,7 @@
 import { getUserName } from '../sync/user';
 import { mouseDrag } from '../ui/components/dragger';
 import Canvas2DPainter from './2dPainter';
-import { type Cell, type CellStyle, type Column, type Row, createTable, renderTable } from './tableRenderer';
+import { type Cell, type CellStyle, type Column, type Row, type Table, createTable, renderTable } from './tableRenderer';
 
 const user = getUserName();
 
@@ -9,7 +9,13 @@ export abstract class DevInspector<T extends Record<string, any> >
 {
     public id: string;
     public painter: Canvas2DPainter;
+    public table: Table;
     public container: HTMLDivElement;
+    public scrollOuterDiv: HTMLDivElement;
+    public scrollInnerDiv: HTMLDivElement;
+    public width: number;
+    public height: number;
+    public scrollTop: number;
 
     protected isExpanded: boolean;
 
@@ -18,6 +24,9 @@ export abstract class DevInspector<T extends Record<string, any> >
         this.id = id;
         this.painter = new Canvas2DPainter(0, 0, backgroundColor);
         this.isExpanded = true;
+        this.width = -1;
+        this.height = -1;
+        this.scrollTop = 0;
 
         const canvas = this.painter.canvas;
 
@@ -50,6 +59,8 @@ export abstract class DevInspector<T extends Record<string, any> >
         const inspectButton = container.querySelector('.inspect') as HTMLDivElement;
         const toggleButton = container.querySelector('.toggle') as HTMLDivElement;
 
+        const titleBarHeight = 25;
+
         label.style.cssText = `
             display: flex;
             cursor: inherit;
@@ -61,7 +72,7 @@ export abstract class DevInspector<T extends Record<string, any> >
             background: linear-gradient(180deg, #333 0, #000000 100%);
             justify-content: space-between;
             padding: 0 5px;
-            height: 25px;
+            height: ${titleBarHeight}px;
         `;
 
         span.style.cssText = `
@@ -81,6 +92,36 @@ export abstract class DevInspector<T extends Record<string, any> >
         `;
 
         container.appendChild(canvas);
+
+        const scrollOuterDiv = this.scrollOuterDiv = document.createElement('div');
+        const scrollInnerDiv = this.scrollInnerDiv = document.createElement('div');
+
+        this.table = this.update();
+
+        scrollOuterDiv.style.cssText = `
+            opacity: 0.5;
+            position: absolute;
+            top: ${titleBarHeight + this.table.rowHeight}px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            /*overflow-y: auto;*/
+            overflow-y: auto;
+        `;
+
+        scrollInnerDiv.style.cssText = `
+            background-color: red;
+            opacity: 0.5;
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            /*visibility: hidden;*/
+            visibility: hidden;
+        `;
+
+        container.appendChild(scrollOuterDiv);
+        scrollOuterDiv.appendChild(scrollInnerDiv);
 
         const localStorageKey = this.localStorageKey;
 
@@ -137,6 +178,22 @@ export abstract class DevInspector<T extends Record<string, any> >
             this.inspect();
         };
 
+        scrollOuterDiv.onwheel = (e: WheelEvent) =>
+        {
+            const { deltaY } = e;
+            const { scrollTop } = this;
+            const inc = 1;
+            const value = deltaY < 0 ? scrollTop - inc : scrollTop + inc;
+
+            this.setScrollTop(value);
+        };
+
+        scrollOuterDiv.onscroll = () =>
+        {
+            // scrollOuterDiv.scrollTop = this.scrollTop * this.table.rowHeight * -1;
+            console.log(scrollOuterDiv.scrollTop);
+        };
+
         setInterval(() =>
         {
             this.update();
@@ -164,11 +221,45 @@ export abstract class DevInspector<T extends Record<string, any> >
     protected abstract getDetails(): Record<string, T> | T[];
     protected abstract inspect(): void;
 
+    public setSize(width: number, height: number)
+    {
+        this.width = width;
+        this.height = height;
+        this.update();
+
+        return this;
+    }
+
+    public setWidth(width: number)
+    {
+        this.width = width;
+        this.update();
+
+        return this;
+    }
+
+    public setHeight(height: number)
+    {
+        this.height = height;
+        this.update();
+
+        return this;
+    }
+
+    public setScrollTop(scrollTop: number)
+    {
+        this.scrollTop = Math.max(0, Math.min(this.table.rows.length - 1, scrollTop));
+        this.update();
+
+        return this;
+    }
+
     protected update()
     {
+        const { container, scrollInnerDiv: scrollDiv, scrollTop } = this;
         const details = this.getDetails();
 
-        const table = createTable(details, this.indexColumnLabel(), this.painter.font.size);
+        const table = this.table = createTable(details, this.indexColumnLabel(), this.painter.font.size);
 
         if (table.rows.length === 0)
         {
@@ -176,10 +267,16 @@ export abstract class DevInspector<T extends Record<string, any> >
         }
         else
         {
-            renderTable(table, this.painter, this.onCellStyle);
+            renderTable(table, this.painter, this.onCellStyle, this.width, this.height, this.scrollTop);
         }
 
-        this.container.style.display = 'flex';
+        container.style.display = 'flex';
+
+        scrollDiv.style.top = `${scrollTop * table.rowHeight * -1}px`;
+        scrollDiv.style.width = `${table.width - 30}px`;
+        scrollDiv.style.height = `${table.height - table.rowHeight}px`;
+
+        return table;
     }
 
     protected updateExpandedState()
