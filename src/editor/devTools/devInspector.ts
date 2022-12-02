@@ -1,3 +1,5 @@
+import Color from 'color';
+
 import { getUserName } from '../sync/user';
 import { mouseDrag } from '../ui/components/dragger';
 import Canvas2DPainter from './2dPainter';
@@ -5,14 +7,18 @@ import { type Cell, type CellStyle, type Column, type Row, type Table, createTab
 
 const user = getUserName();
 
+const scrollBoxWidth = 10;
+const scrollBoxHeight = 15;
+const titleBarHeight = 25;
+
 export abstract class DevInspector<T extends Record<string, any> >
 {
     public id: string;
     public painter: Canvas2DPainter;
     public table: Table;
     public container: HTMLDivElement;
-    public scrollOuterDiv: HTMLDivElement;
-    public scrollInnerDiv: HTMLDivElement;
+    public scrollTrack: HTMLDivElement;
+    public scrollBox: HTMLDivElement;
     public width: number;
     public height: number;
     public scrollTop: number;
@@ -59,8 +65,6 @@ export abstract class DevInspector<T extends Record<string, any> >
         const inspectButton = container.querySelector('.inspect') as HTMLDivElement;
         const toggleButton = container.querySelector('.toggle') as HTMLDivElement;
 
-        const titleBarHeight = 25;
-
         label.style.cssText = `
             display: flex;
             cursor: inherit;
@@ -93,35 +97,33 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         container.appendChild(canvas);
 
-        const scrollOuterDiv = this.scrollOuterDiv = document.createElement('div');
-        const scrollInnerDiv = this.scrollInnerDiv = document.createElement('div');
+        const scrollTrack = this.scrollTrack = document.createElement('div');
+        const scrollBox = this.scrollBox = document.createElement('div');
 
         this.table = this.update();
 
-        scrollOuterDiv.style.cssText = `
-            opacity: 0.5;
+        scrollTrack.style.cssText = `
             position: absolute;
             top: ${titleBarHeight + this.table.rowHeight}px;
-            left: 0;
             right: 0;
+            width: ${scrollBoxWidth}px;
             bottom: 0;
-            /*overflow-y: auto;*/
-            overflow-y: auto;
+            background-color: rgba(0,0,0,0.3);
         `;
 
-        scrollInnerDiv.style.cssText = `
-            background-color: red;
+        scrollBox.style.cssText = `
+            background-color: ${Color(this.painter.backgroundColor).darken(0.7)};
             opacity: 0.5;
             position: absolute;
+            width: ${scrollBoxWidth}px;
+            height: ${scrollBoxHeight}px;
             top: 0;
-            left: 0;
-            pointer-events: none;
-            /*visibility: hidden;*/
-            visibility: hidden;
+            right: 0;
+            border: 1px outset #888;
         `;
 
-        container.appendChild(scrollOuterDiv);
-        scrollOuterDiv.appendChild(scrollInnerDiv);
+        container.appendChild(scrollTrack);
+        scrollTrack.appendChild(scrollBox);
 
         const localStorageKey = this.localStorageKey;
 
@@ -178,7 +180,7 @@ export abstract class DevInspector<T extends Record<string, any> >
             this.inspect();
         };
 
-        scrollOuterDiv.onwheel = (e: WheelEvent) =>
+        canvas.onwheel = (e: WheelEvent) =>
         {
             const { deltaY } = e;
             const { scrollTop } = this;
@@ -188,10 +190,22 @@ export abstract class DevInspector<T extends Record<string, any> >
             this.setScrollTop(value);
         };
 
-        scrollOuterDiv.onscroll = () =>
+        scrollBox.onmousedown = (e) =>
         {
-            // scrollOuterDiv.scrollTop = this.scrollTop * this.table.rowHeight * -1;
-            console.log(scrollOuterDiv.scrollTop);
+            const startY = parseFloat(scrollBox.style.top);
+            const h = scrollTrack.offsetHeight - scrollBoxHeight;
+
+            e.stopPropagation();
+
+            mouseDrag(e, (_deltaX: number, deltaY: number) =>
+            {
+                const top = Math.max(0, Math.min(startY + deltaY, h));
+
+                //
+                const t = top / h;
+
+                this.setScrollTop(Math.round(this.table.rows.length * t));
+            });
         };
 
         setInterval(() =>
@@ -256,7 +270,7 @@ export abstract class DevInspector<T extends Record<string, any> >
 
     protected update()
     {
-        const { container, scrollInnerDiv: scrollDiv, scrollTop } = this;
+        const { container, scrollTrack, scrollBox, scrollTop, painter } = this;
         const details = this.getDetails();
 
         const table = this.table = createTable(details, this.indexColumnLabel(), this.painter.font.size);
@@ -272,9 +286,13 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         container.style.display = 'flex';
 
-        scrollDiv.style.top = `${scrollTop * table.rowHeight * -1}px`;
-        scrollDiv.style.width = `${table.width - 30}px`;
-        scrollDiv.style.height = `${table.height - table.rowHeight}px`;
+        const t = scrollTop / (this.table.rows.length - 1);
+        const h = scrollTrack.offsetHeight;
+        const top = (h - scrollBoxHeight) * t;
+
+        scrollTrack.style.display = painter.canvas.offsetHeight > table.height || table.rows.length === 0 ? 'none' : 'block';
+
+        scrollBox.style.top = `${top}px`;
 
         return table;
     }

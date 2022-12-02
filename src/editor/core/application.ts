@@ -166,17 +166,17 @@ export class Application
 
         if (getUrlParam<number>('devtools') === 1)
         {
-            // const graphNodeInspector = new GraphNodeInspector('Graph Nodes', 'blue');
+            const graphNodeInspector = new GraphNodeInspector('Graph Nodes', 'blue');
             const datastoreNodeInspector = new DatastoreNodeInspector('Datastore Nodes', 'green');
-            // const undoStackInspector = new UndoStackInspector('UndoStack', 'purple');
+            const undoStackInspector = new UndoStackInspector('UndoStack', 'purple');
 
-            datastoreNodeInspector
-                .setHeight(80);
-            // .setScrollTop(2);
+            graphNodeInspector.setHeight(100);
+            datastoreNodeInspector.setHeight(100);
+            undoStackInspector.setHeight(500);
 
-            // graphNodeInspector.mount(document.body);
+            graphNodeInspector.mount(document.body);
             datastoreNodeInspector.mount(document.body);
-            // undoStackInspector.mount(document.body);
+            undoStackInspector.mount(document.body);
         }
     }
 
