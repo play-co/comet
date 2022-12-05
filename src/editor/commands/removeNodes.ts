@@ -26,12 +26,36 @@ export class RemoveNodesCommand
     {
         const { cache, params: { nodeIds } } = this;
 
+        // remove child duplicates, find highest parent node
+        const allNodes: ClonableNode[] = [];
+
+        nodeIds.forEach((nodeId) =>
+        {
+            const node = this.getInstance(nodeId);
+
+            allNodes.push(node);
+        });
+
+        const filteredNodes = allNodes.filter((node) =>
+        {
+            for (const allNode of allNodes)
+            {
+                if (allNode.contains(node))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
         cache.commands = [];
 
         const deletedNodes: ClonableNode[] = [];
 
-        nodeIds.forEach((nodeId) =>
+        filteredNodes.forEach((node) =>
         {
+            const nodeId = node.id;
             const command = new RemoveChildCommand({ nodeId });
 
             cache.commands.push(command);
