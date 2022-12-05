@@ -78,6 +78,7 @@ export class EditableViewport
         viewport
             .drag()
             .pinch()
+            .decelerate()
             .wheel();
 
         keyboardEmitter

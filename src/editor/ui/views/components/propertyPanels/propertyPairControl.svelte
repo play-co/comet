@@ -29,5 +29,7 @@
   .controls {
     display: flex;
     flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
   }
 </style>

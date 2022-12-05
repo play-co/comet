@@ -39,9 +39,12 @@
   {/if}
   {#if properties.has("angle")}
     <!-- angle -->
-    <PropertyControl label="θ">
-      <SimpleNumericInput property={properties.get("angle")} />
-    </PropertyControl>
+    <div class="single">
+      <PropertyControl label="θ">
+        <SimpleNumericInput property={properties.get("angle")} />
+      </PropertyControl>
+      <div class="spacer" />
+    </div>
   {/if}
   {#if properties.has("scaleX", "scaleY")}
     <!-- scale: x,y -->
@@ -78,3 +81,13 @@
   {/if}
   <toolcool-color-picker color="#e76ff1" id="color-picker-1" />
 </PropertyPanel>
+
+<style>
+  .single {
+    display: flex;
+  }
+
+  .spacer {
+    width: 100px;
+  }
+</style>

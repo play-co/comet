@@ -16,9 +16,9 @@
   }
 
   label {
-    min-width: 25px;
+    min-width: 35px;
     text-align: right;
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .spacer {
