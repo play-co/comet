@@ -173,11 +173,13 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         if (data)
         {
-            const { x, y, isExpanded } = JSON.parse(data);
+            const { x, y, width, height, isExpanded } = JSON.parse(data);
 
             container.style.left = `${x}px`;
             container.style.top = `${y}px`;
             this.isExpanded = isExpanded;
+            this.width = width;
+            this.height = height;
 
             this.updateExpandedState();
         }
@@ -298,6 +300,8 @@ export abstract class DevInspector<T extends Record<string, any> >
         localStorage.setItem(localStorageKey, JSON.stringify({
             x: container.offsetLeft,
             y: container.offsetTop,
+            width: this.width,
+            height: this.height,
             isExpanded: this.isExpanded,
         }));
     }
@@ -310,6 +314,18 @@ export abstract class DevInspector<T extends Record<string, any> >
     {
         this.width = Math.min(this.table.width, width);
         this.height = Math.min(this.table.height, height);
+
+        if (this.width === this.table.width)
+        {
+            this.width = -1;
+        }
+
+        if (this.height === this.table.height)
+        {
+            this.height = -1;
+        }
+
+        this.storeState();
 
         this.update();
 

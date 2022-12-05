@@ -34,6 +34,11 @@ export class RemoveNodeCommand
 
         const node = getInstance<ClonableNode>(nodeId);
 
+        if (node.isCloaked)
+        {
+            return { node };
+        }
+
         cache.wasSelected = false;
 
         if (datastore.hasNode(nodeId))
