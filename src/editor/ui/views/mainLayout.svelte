@@ -60,7 +60,7 @@
           title: "Properties",
           type: "component",
           componentType: "Properties",
-          minWidth: 200,
+          minWidth: 250,
         },
       ],
     },

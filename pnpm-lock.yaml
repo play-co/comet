@@ -38,6 +38,7 @@ specifiers:
   svelte-check: ~2.8.0
   svelte-preprocess: ~4.10.7
   svelte-routing: ^1.6.0
+  toolcool-color-picker: ^1.0.13
   ts-jest: ~28.0.7
   ts-json-schema-generator: ~1.0.0
   ts-node: ^10.9.1
@@ -61,6 +62,7 @@ dependencies:
   pixi-viewport: 4.37.0
   pixi.js: 6.5.2
   svelte-routing: 1.6.0_ueozcsexptisi2awlbuwt6eqmq
+  toolcool-color-picker: 1.0.13
   tslib: 2.4.0
   uuid: 8.3.2
 
@@ -611,6 +613,11 @@ packages:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
     dev: true
+
+  /@ctrl/tinycolor/3.4.1:
+    resolution: {integrity: sha512-ej5oVy6lykXsvieQtqZxCOaLT+xD4+QNarq78cIYISHmZXshCvROLudpQN3lfL8G0NL7plMSSK+zlyvCaIJ4Iw==}
+    engines: {node: '>=10'}
+    dev: false
 
   /@esbuild/linux-loong64/0.14.54:
     resolution: {integrity: sha512-bZBrLAIX1kpWelV0XemxBZllyRmM6vgFQQG2GdNb+r3Fkp0FOh1NJSvekXDs7jq70k4euu1cryLMfU+mTXlEpw==}
@@ -7426,6 +7433,12 @@ packages:
       regex-not: 1.0.2
       safe-regex: 1.1.0
     dev: true
+
+  /toolcool-color-picker/1.0.13:
+    resolution: {integrity: sha512-ffDey7/0Z/NG8DCKIPVsN1P5XyiUoIEFUDLscXOxJ1z3ghO9Qjh5C9fpAo2XEQfXeqHllx0KLxdrLvw0roxgmA==}
+    dependencies:
+      '@ctrl/tinycolor': 3.4.1
+    dev: false
 
   /tough-cookie/4.1.1:
     resolution: {integrity: sha512-Ns3k8QxkEzIfLZbRwLOrMPDqRa1BEAl4BzNNAOYY4BhBmEkf+HvP467F4NrD9loK3NcYflWOpUH3LJg0ehq/rQ==}

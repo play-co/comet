@@ -110,7 +110,8 @@
       isNumericInput(key) ||
       isDeleteKey(key) ||
       isAcceptKey(key) ||
-      isArrowKey(key);
+      isArrowKey(key) ||
+      key === "Tab";
 
     if (key === "z" && isKeyPressed("Control")) {
       if (isKeyPressed("Shift")) {

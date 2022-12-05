@@ -5,6 +5,7 @@
   import PropertyPairControl from "./propertyPairControl.svelte";
   import PropertyControl from "./propertyControl.svelte";
   import SimpleNumericInput from "../controls/numericControl.svelte";
+  import "toolcool-color-picker";
 
   export let panel: PropertiesPanel;
 
@@ -75,4 +76,5 @@
       </PropertyControl>
     </PropertyPairControl>
   {/if}
+  <toolcool-color-picker color="#e76ff1" id="color-picker-1" />
 </PropertyPanel>
