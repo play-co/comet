@@ -99,12 +99,10 @@ export class TransformGizmo extends Container
             .on('selection.add', this.updateSelection)
             .on('selection.remove', this.updateSelection)
             .on('selection.deselect', this.onSelectionDeselect)
-            .on('command.exec', this.updateSelection)
             .on('command.undo', this.updateSelection)
             .on('command.redo', this.updateSelection)
             .on('datastore.remote.node.removed', this.updateSelection)
-            .on('datastore.remote.node.created', this.updateSelection)
-            .on('datastore.remote.node.model.modified', this.updateSelection);
+            .on('datastore.remote.node.created', this.updateSelection);
     }
 
     get selection()

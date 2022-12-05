@@ -2,7 +2,6 @@ import { getGlobalEmitter } from '../../core/events';
 import type { ModelBase } from '../../core/model/model';
 import { type UpdateMode, Command } from '../core/command';
 import type { DatastoreEvent } from '../events/datastoreEvents';
-import { getUrlParam } from '../util';
 
 const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
 
@@ -32,7 +31,7 @@ export class ModifyModelCommand<M extends ModelBase>
         const nodeId = node.id;
 
         // update datastore
-        if (updateMode === 'full' || getUrlParam<number>('readonly') !== 1)
+        if (updateMode === 'full')
         {
             datastore.modifyNodeModel(nodeId, values);
         }
