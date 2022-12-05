@@ -41,6 +41,8 @@ export default class UndoStack
         console.group(`%c${logId}:%c🔔 ${command.name}.run()`, userColor, `font-weight:bold;${logStyle}`);
         console.log(`%c${JSON.stringify(command.params)}`, 'color:#999');
 
+        command.storeSelection();
+
         const result = command.run();
 
         console.groupEnd();
@@ -86,6 +88,8 @@ export default class UndoStack
         const command = stack[head];
 
         command.undo();
+
+        command.restoreSelection();
 
         globalEmitter.emit('command.undo', command);
 

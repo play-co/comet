@@ -19,11 +19,13 @@ export abstract class Command<ParamsType extends {} = {}, ReturnType = void, Cac
 {
     public cache: CacheType;
     public hasRun: boolean;
+    public selectedNodes: string[];
 
     constructor(public readonly params: ParamsType)
     {
         this.cache = {} as CacheType;
         this.hasRun = false;
+        this.selectedNodes = [];
     }
 
     public static commandName = 'Untitled';
@@ -78,6 +80,16 @@ export abstract class Command<ParamsType extends {} = {}, ReturnType = void, Cac
         }
 
         return node as unknown as T;
+    }
+
+    public storeSelection()
+    {
+        this.selectedNodes = this.app.selection.nodes.map((node) => node.id);
+    }
+
+    public restoreSelection()
+    {
+        this.app.selection.set(this.selectedNodes.map((nodeId) => this.getInstance(nodeId)));
     }
 
     public toJSON(): CommandSchema
