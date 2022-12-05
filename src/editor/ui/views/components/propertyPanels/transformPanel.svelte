@@ -4,7 +4,7 @@
   import PropertyPanel from "./panelGroup.svelte";
   import PropertyPairControl from "./propertyPairControl.svelte";
   import PropertyControl from "./propertyControl.svelte";
-  import SimpleNumericInput from "../controls/simpleNumericInput.svelte";
+  import SimpleNumericInput from "../controls/numericControl.svelte";
 
   export let panel: PropertiesPanel;
 

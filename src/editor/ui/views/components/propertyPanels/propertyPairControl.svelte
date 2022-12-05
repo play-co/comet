@@ -20,7 +20,7 @@
 
   label {
     text-align: right;
-    font-size: 12px;
+    font-size: 14px;
     margin-left: 5px;
   }
 
