@@ -614,7 +614,7 @@ export class TransformGizmo extends Container
 
     public selectNode<T extends DisplayObjectNode>(node: T)
     {
-        const initialTransform = getGizmoInitialTransformFromView(node.view, node.naturalWidth, node.naturalWidth, this.parent.worldTransform);
+        const initialTransform = getGizmoInitialTransformFromView(node.view, node.width, node.width, this.parent.worldTransform);
 
         this.initNodes([node], initialTransform, bluePivot);
     }

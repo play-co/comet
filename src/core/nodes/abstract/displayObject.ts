@@ -118,12 +118,12 @@ export abstract class DisplayObjectNode<
         }
 
         // project the natural local bounds (excluding children) to global space
-        const { naturalWidth, naturalHeight } = this;
+        const { width, height } = this;
         const matrix = this.view.worldTransform;
         const p1 = matrix.apply({ x: 0, y: 0 });
-        const p2 = matrix.apply({ x: naturalWidth, y: 0 });
-        const p3 = matrix.apply({ x: naturalWidth, y: naturalHeight });
-        const p4 = matrix.apply({ x: 0, y: naturalHeight });
+        const p2 = matrix.apply({ x: width, y: 0 });
+        const p3 = matrix.apply({ x: width, y: height });
+        const p4 = matrix.apply({ x: 0, y: height });
         const left = Math.min(p1.x, p2.x, p3.x, p4.x);
         const right = Math.max(p1.x, p2.x, p3.x, p4.x);
         const top = Math.min(p1.y, p2.y, p3.y, p4.y);
@@ -141,6 +141,6 @@ export abstract class DisplayObjectNode<
     }
 
     // not the localBounds (which includes the children, but the single local dimension of this view)
-    public abstract get naturalWidth(): number;
-    public abstract get naturalHeight(): number;
+    public abstract get width(): number;
+    public abstract get height(): number;
 }

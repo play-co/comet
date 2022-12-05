@@ -140,8 +140,8 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
         Application.instance.selection.forEach((node) =>
         {
             const matrix = node.view.worldTransform;
-            const width = node.naturalWidth;
-            const height = node.naturalHeight;
+            const width = node.width;
+            const height = node.height;
             const p1 = matrix.apply({ x: 0, y: 0 });
             const p2 = matrix.apply({ x: width, y: 0 });
             const p3 = matrix.apply({ x: width, y: height });

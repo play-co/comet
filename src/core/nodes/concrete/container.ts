@@ -14,12 +14,12 @@ export class ContainerNode<
     V extends Container = Container,
 > extends DisplayObjectNode<M, V>
 {
-    public get naturalWidth(): number
+    public get width(): number
     {
         return 0;
     }
 
-    public get naturalHeight(): number
+    public get height(): number
     {
         return 0;
     }

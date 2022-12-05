@@ -21,12 +21,12 @@ export const emptySchema = new ModelSchema<ContainerModel>({
 
 export class EmptyNode extends ContainerNode<ContainerModel, Container>
 {
-    public get naturalWidth(): number
+    public get width(): number
     {
         return radius * 2;
     }
 
-    public get naturalHeight(): number
+    public get height(): number
     {
         return radius * 2;
     }

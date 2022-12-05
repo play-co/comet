@@ -131,14 +131,14 @@ export class SpriteNode<M extends SpriteModel = SpriteModel, V extends Sprite = 
         }
     }
 
-    public get naturalWidth(): number
+    public get width(): number
     {
         const { view, values: { textureAssetId } } = this;
 
         return textureAssetId ? Cache.textures.get(textureAssetId).properties.width : view.texture.width;
     }
 
-    public get naturalHeight(): number
+    public get height(): number
     {
         const { view, values: { textureAssetId } } = this;
 

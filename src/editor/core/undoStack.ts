@@ -109,6 +109,8 @@ export default class UndoStack
 
         command.redo();
 
+        command.restoreSelection();
+
         globalEmitter.emit('command.redo', command);
 
         this.head++;
