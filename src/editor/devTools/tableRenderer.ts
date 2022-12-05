@@ -153,7 +153,7 @@ export function renderTable(
 {
     const { rowHeight, columns, rows, fontSize, indexColumnLabel } = table;
     const w = width > -1 ? width : table.width;
-    const h = height > -1 ? height : table.height;
+    const h = height > -1 ? Math.min(height, table.height) : table.height;
     let x = 0;
     let y = 0;
 

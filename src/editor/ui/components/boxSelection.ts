@@ -91,7 +91,7 @@ export class BoxSelection extends Graphics
         // get all nodes (will return node children)
         rootNode.walk<DisplayObjectNode>((node) =>
         {
-            if (node.isMetaNode)
+            if (node.isMetaNode || node.isCloaked)
             {
                 return;
             }

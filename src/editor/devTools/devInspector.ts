@@ -200,8 +200,6 @@ export abstract class DevInspector<T extends Record<string, any> >
             mouseDrag(e, (_deltaX: number, deltaY: number) =>
             {
                 const top = Math.max(0, Math.min(startY + deltaY, h));
-
-                //
                 const t = top / h;
 
                 this.setScrollTop(Math.round(this.table.rows.length * t));
