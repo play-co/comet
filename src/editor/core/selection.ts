@@ -29,7 +29,12 @@ export class NodeSelection
         }
         else
         {
-            this.add(node);
+            this.nodes.length = 0;
+            this.nodes.push(node);
+
+            (window as any).$1 = node;
+
+            globalEmitter.emit('selection.set.single', node);
         }
     }
 
