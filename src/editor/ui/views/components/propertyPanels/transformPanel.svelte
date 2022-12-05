@@ -38,7 +38,7 @@
   {/if}
   {#if properties.has("angle")}
     <!-- angle -->
-    <PropertyControl label="angle">
+    <PropertyControl label="θ">
       <SimpleNumericInput property={properties.get("angle")} />
     </PropertyControl>
   {/if}

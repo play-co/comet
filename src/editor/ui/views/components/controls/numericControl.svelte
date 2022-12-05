@@ -24,6 +24,7 @@
 
   export const smallInc = 1;
   export const largeInc = 10;
+  const mixedToken = "mixed";
 
   function getValue() {
     try {
@@ -37,7 +38,7 @@
           const [firstValue] = values;
           return String(firstValue);
         } else {
-          return "#mixed";
+          return mixedToken;
         }
       }
     } catch (e) {
@@ -143,6 +144,7 @@
 <numeric-control>
   <input
     type="text"
+    class={value === mixedToken ? "mixed" : "normal"}
     {value}
     on:focus={onFocus}
     on:keydown={onKeyDown}
@@ -152,7 +154,7 @@
 <style>
   numeric-control {
     display: inline-block;
-    max-width: 55px;
+    max-width: 50px;
   }
 
   input {
@@ -163,5 +165,11 @@
     padding: 3px 5px;
     margin-bottom: 5px;
     border-radius: 3px;
+  }
+
+  input.mixed {
+    color: #777;
+    font-style: italic;
+    text-align: center;
   }
 </style>

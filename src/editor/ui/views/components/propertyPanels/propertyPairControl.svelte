@@ -20,8 +20,10 @@
 
   label {
     text-align: right;
-    font-size: 14px;
+    font-size: 10px;
     margin-left: 5px;
+    text-transform: uppercase;
+    color: #a2a2a2;
   }
 
   .controls {
