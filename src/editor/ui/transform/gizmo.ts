@@ -11,6 +11,7 @@ import { Application } from '../../core/application';
 import type { UpdateMode } from '../../core/command';
 import type { CommandEvent } from '../../events/commandEvents';
 import type { DatastoreEvent } from '../../events/datastoreEvents';
+import type { EditorEvent } from '../../events/editorEvents';
 import type { SelectionEvent } from '../../events/selectionEvents';
 import type { TransformEvent } from '../../events/transformEvents';
 import { isKeyPressed } from '../components/keyboardListener';
@@ -37,7 +38,13 @@ import {
 
 export const dblClickMsThreshold = 250;
 
-const globalEmitter = getGlobalEmitter<DatastoreEvent & CommandEvent & SelectionEvent & TransformEvent>();
+const globalEmitter = getGlobalEmitter<
+DatastoreEvent &
+CommandEvent &
+SelectionEvent &
+TransformEvent &
+EditorEvent
+>();
 
 type CachedNode = {
     worldTransform: Matrix;
@@ -102,7 +109,8 @@ export class TransformGizmo extends Container
             .on('command.undo', this.updateSelection)
             .on('command.redo', this.updateSelection)
             .on('datastore.remote.node.removed', this.updateSelection)
-            .on('datastore.remote.node.created', this.updateSelection);
+            .on('datastore.remote.node.created', this.updateSelection)
+            .on('editor.property.modified', this.updateSelection);
     }
 
     get selection()

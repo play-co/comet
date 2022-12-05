@@ -4,11 +4,13 @@
   import { ModifyModelsCommand } from "../../../../commands/modifyModels";
   import { Application } from "../../../../core/application";
   import type { DatastoreEvent } from "../../../../events/datastoreEvents";
+  import type { EditorEvent } from "../../../../events/editorEvents";
   import type { PropertyBinding } from "../../propertiesPanel";
 
   export let property: PropertyBinding;
 
   const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
+  const editorEmitter = getGlobalEmitter<EditorEvent>();
 
   function getValue() {
     try {
@@ -35,7 +37,7 @@
   $: (value = getValue()), property;
 
   function format(num: number) {
-    return num.toFixed(1).replace(/\.00$/, "");
+    return num.toFixed(1).replace(/\.0+$/, "");
   }
 
   const onUpdate = () => {
@@ -64,6 +66,8 @@
       Application.instance.undoStack.exec(
         new ModifyModelsCommand({ modifications })
       );
+
+      editorEmitter.emit("editor.property.modified", property);
     }
     element.blur();
   };
@@ -78,6 +82,7 @@
 <style>
   numeric-control {
     display: inline-block;
+    max-width: 55px;
   }
 
   input {

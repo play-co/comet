@@ -3,6 +3,7 @@ import { InspectAction } from './inspect';
 import { NewContainerAction } from './newContainer';
 import { NewSpriteAction } from './newSprite';
 import { RedoAction } from './redo';
+import { SelectAllAction } from './selectAll';
 import { UndoAction } from './undo';
 
 export const Actions = {
@@ -12,4 +13,5 @@ export const Actions = {
     redo: new RedoAction(),
     deleteNode: new DeleteNodeAction(),
     inspect: new InspectAction(),
+    selectAll: new SelectAllAction(),
 };

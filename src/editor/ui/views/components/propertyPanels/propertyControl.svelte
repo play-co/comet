@@ -16,7 +16,7 @@
   }
 
   label {
-    min-width: 70px;
+    min-width: 25px;
     text-align: right;
     font-size: 14px;
   }

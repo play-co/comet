@@ -278,6 +278,9 @@ export abstract class DevInspector<T extends Record<string, any> >
             mouseDrag(e, (deltaX: number, deltaY: number) =>
             {
                 this.setSize(startWidth + deltaX, startHeight + deltaY);
+            }).then(() =>
+            {
+                this.storeState();
             });
         };
 
@@ -324,8 +327,6 @@ export abstract class DevInspector<T extends Record<string, any> >
         {
             this.height = -1;
         }
-
-        this.storeState();
 
         this.update();
 
