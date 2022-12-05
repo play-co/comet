@@ -21,6 +21,7 @@ export abstract class DevInspector<T extends Record<string, any> >
     public scrollVBox: HTMLDivElement;
     public scrollHTrack: HTMLDivElement;
     public scrollHBox: HTMLDivElement;
+    public resizeBox: HTMLDivElement;
     public width: number;
     public height: number;
     public scrollTop: number;
@@ -105,6 +106,7 @@ export abstract class DevInspector<T extends Record<string, any> >
         const scrollVBox = this.scrollVBox = document.createElement('div');
         const scrollHTrack = this.scrollHTrack = document.createElement('div');
         const scrollHBox = this.scrollHBox = document.createElement('div');
+        const resizeBox = this.resizeBox = document.createElement('div');
 
         this.table = this.update();
 
@@ -148,10 +150,21 @@ export abstract class DevInspector<T extends Record<string, any> >
             border: 1px outset #888;
         `;
 
-        container.appendChild(scrollVTrack);
-        scrollVTrack.appendChild(scrollVBox);
+        resizeBox.style.cssText = `
+            background-color: ${Color(this.painter.backgroundColor).lighten(0.15)};
+            position: absolute;
+            height: ${scrollBoxTrackSize}px;
+            width: ${scrollBoxTrackSize}px;
+            bottom: 0;
+            right: 0;
+            border: 1px outset #888;
+        `;
 
+        container.appendChild(scrollVTrack);
         container.appendChild(scrollHTrack);
+        container.appendChild(resizeBox);
+
+        scrollVTrack.appendChild(scrollVBox);
         scrollHTrack.appendChild(scrollHBox);
 
         const localStorageKey = this.localStorageKey;
@@ -213,10 +226,10 @@ export abstract class DevInspector<T extends Record<string, any> >
         {
             const { deltaX, deltaY } = e;
             const { scrollLeft, scrollTop } = this;
-            const xInc = deltaX > 0 ? Math.max(deltaX * -1, -10) : Math.min(deltaX * -1, 10);
 
+            const xInc = deltaX !== 0 ? 0.1 : 0;
             const yInc = deltaY !== 0 ? 1 : 0;
-            const sl = deltaX !== 0 ? scrollLeft + xInc : scrollLeft;
+            const sl = deltaX > 0 ? scrollLeft - xInc : scrollLeft + xInc;
             const st = deltaY < 0 ? scrollTop - yInc : scrollTop + yInc;
 
             this.setScrollPos(sl, st);
@@ -241,7 +254,7 @@ export abstract class DevInspector<T extends Record<string, any> >
         scrollHBox.onmousedown = (e) =>
         {
             const startX = parseFloat(scrollHBox.style.left);
-            const w = scrollHTrack.offsetWidth;
+            const w = scrollHTrack.offsetWidth - scrollBoxThumbSize;
 
             e.stopPropagation();
 
@@ -249,7 +262,20 @@ export abstract class DevInspector<T extends Record<string, any> >
             {
                 const left = Math.max(0, Math.min(startX + deltaX, w));
 
-                this.setScrollPos(left, this.scrollTop);
+                this.setScrollPos(left / w, this.scrollTop);
+            });
+        };
+
+        resizeBox.onmousedown = (e) =>
+        {
+            const startWidth = this.width === -1 ? this.table.width : this.width;
+            const startHeight = this.height === -1 ? this.table.height : this.height;
+
+            e.stopPropagation();
+
+            mouseDrag(e, (deltaX: number, deltaY: number) =>
+            {
+                this.setSize(startWidth + deltaX, startHeight + deltaY);
             });
         };
 
@@ -282,8 +308,9 @@ export abstract class DevInspector<T extends Record<string, any> >
 
     public setSize(width: number, height: number)
     {
-        this.width = width;
-        this.height = height;
+        this.width = Math.min(this.table.width, width);
+        this.height = Math.min(this.table.height, height);
+
         this.update();
 
         return this;
@@ -291,25 +318,17 @@ export abstract class DevInspector<T extends Record<string, any> >
 
     public setWidth(width: number)
     {
-        this.width = width;
-        this.update();
-
-        return this;
+        return this.setSize(width, this.height);
     }
 
     public setHeight(height: number)
     {
-        this.height = height;
-        this.update();
-
-        return this;
+        return this.setSize(this.width, height);
     }
 
     public setScrollPos(scrollLeft: number, scrollTop: number)
     {
-        const hOverflow = Math.round(this.table.width - this.container.offsetWidth + scrollBoxTrackSize);
-
-        this.scrollLeft = hOverflow === 0 ? 0 : Math.max(0, Math.min(scrollLeft, hOverflow));
+        this.scrollLeft = Math.max(0, Math.min(scrollLeft, 1));
         this.scrollTop = Math.max(0, Math.min(this.table.rows.length - 1, scrollTop));
 
         this.update();
@@ -319,10 +338,12 @@ export abstract class DevInspector<T extends Record<string, any> >
 
     protected update()
     {
-        const { container, scrollVTrack, scrollHTrack, scrollVBox, scrollHBox, scrollTop, scrollLeft, painter } = this;
+        const { container, scrollVTrack, scrollHTrack, scrollVBox, scrollHBox, scrollTop, scrollLeft, painter, resizeBox } = this;
         const details = this.getDetails();
 
         const table = this.table = createTable(details, this.indexColumnLabel(), this.painter.font.size);
+
+        const hOverflow = Math.round(this.table.width - this.container.offsetWidth + scrollBoxTrackSize);
 
         if (table.rows.length === 0)
         {
@@ -330,22 +351,28 @@ export abstract class DevInspector<T extends Record<string, any> >
         }
         else
         {
-            renderTable(table, this.painter, this.onCellStyle, this.width, this.height, this.scrollLeft, this.scrollTop);
+            renderTable(table, this.painter, this.onCellStyle, this.width, this.height, hOverflow * this.scrollLeft, this.scrollTop);
         }
 
         container.style.display = 'flex';
 
-        const hOverflow = Math.round(this.table.width - this.container.offsetWidth);
+        const w = scrollHTrack.offsetWidth;
         const h = scrollVTrack.offsetHeight;
-        const t = scrollTop / (this.table.rows.length - 1);
-        const top = (h - scrollBoxThumbSize) * t;
-        const left = scrollLeft;
 
-        scrollVTrack.style.display = painter.canvas.offsetHeight > table.height || table.rows.length === 0 ? 'none' : 'block';
+        const top = (h - scrollBoxThumbSize) * (scrollTop / (this.table.rows.length - 1));
+
+        const left = (w - scrollBoxThumbSize) * scrollLeft;
+
+        const isVScrollHidden = painter.canvas.offsetHeight >= table.height || table.rows.length === 0;
+        const isHScrollHidden = Math.round(this.table.width - this.container.offsetWidth) === 0 || table.rows.length === 0;
+
+        scrollVTrack.style.display = isVScrollHidden ? 'none' : 'block';
         scrollVBox.style.top = `${top}px`;
 
-        scrollHTrack.style.display = hOverflow === 0 || table.rows.length === 0 ? 'none' : 'block';
+        scrollHTrack.style.display = isHScrollHidden ? 'none' : 'block';
         scrollHBox.style.left = `${left}px`;
+
+        resizeBox.style.display = table.rows.length === 0 ? 'none' : 'block';
 
         return table;
     }

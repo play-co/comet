@@ -1,6 +1,6 @@
-import { Application } from '../core/application';
 import { RemoveNodesCommand } from '../commands/removeNodes';
 import { Action } from '../core/action';
+import { Application } from '../core/application';
 
 export type DeleteNodeOptions = {
     nodeId?: string;
