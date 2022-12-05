@@ -102,6 +102,20 @@ export default class Canvas2DPainter
         return this;
     }
 
+    public resetTransform()
+    {
+        this.ctx.resetTransform();
+
+        return this;
+    }
+
+    public translate(x: number, y: number)
+    {
+        this.ctx.translate(x, y);
+
+        return this;
+    }
+
     public clear()
     {
         this.ctx.fillStyle = this._backgroundColor;

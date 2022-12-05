@@ -7,8 +7,8 @@ import { type Cell, type CellStyle, type Column, type Row, type Table, createTab
 
 const user = getUserName();
 
-const scrollBoxWidth = 10;
-const scrollBoxHeight = 15;
+const scrollBoxTrackSize = 10;
+const scrollBoxThumbSize = 15;
 const titleBarHeight = 25;
 
 export abstract class DevInspector<T extends Record<string, any> >
@@ -17,11 +17,14 @@ export abstract class DevInspector<T extends Record<string, any> >
     public painter: Canvas2DPainter;
     public table: Table;
     public container: HTMLDivElement;
-    public scrollTrack: HTMLDivElement;
-    public scrollBox: HTMLDivElement;
+    public scrollVTrack: HTMLDivElement;
+    public scrollVBox: HTMLDivElement;
+    public scrollHTrack: HTMLDivElement;
+    public scrollHBox: HTMLDivElement;
     public width: number;
     public height: number;
     public scrollTop: number;
+    public scrollLeft: number;
 
     protected isExpanded: boolean;
 
@@ -33,6 +36,7 @@ export abstract class DevInspector<T extends Record<string, any> >
         this.width = -1;
         this.height = -1;
         this.scrollTop = 0;
+        this.scrollLeft = 0;
 
         const canvas = this.painter.canvas;
 
@@ -97,33 +101,58 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         container.appendChild(canvas);
 
-        const scrollTrack = this.scrollTrack = document.createElement('div');
-        const scrollBox = this.scrollBox = document.createElement('div');
+        const scrollVTrack = this.scrollVTrack = document.createElement('div');
+        const scrollVBox = this.scrollVBox = document.createElement('div');
+        const scrollHTrack = this.scrollHTrack = document.createElement('div');
+        const scrollHBox = this.scrollHBox = document.createElement('div');
 
         this.table = this.update();
 
-        scrollTrack.style.cssText = `
+        scrollVTrack.style.cssText = `
             position: absolute;
             top: ${titleBarHeight + this.table.rowHeight}px;
             right: 0;
-            width: ${scrollBoxWidth}px;
-            bottom: 0;
-            background-color: rgba(0,0,0,0.3);
+            width: ${scrollBoxTrackSize}px;
+            bottom: ${scrollBoxTrackSize}px;
+            background-color: rgba(0,0,0,0.5);
+            display: none;
         `;
 
-        scrollBox.style.cssText = `
-            background-color: ${Color(this.painter.backgroundColor).darken(0.7)};
-            opacity: 0.5;
+        scrollVBox.style.cssText = `
+            background-color: ${Color(this.painter.backgroundColor).lighten(0.5)};
             position: absolute;
-            width: ${scrollBoxWidth}px;
-            height: ${scrollBoxHeight}px;
+            width: ${scrollBoxTrackSize}px;
+            height: ${scrollBoxThumbSize}px;
             top: 0;
             right: 0;
             border: 1px outset #888;
         `;
 
-        container.appendChild(scrollTrack);
-        scrollTrack.appendChild(scrollBox);
+        scrollHTrack.style.cssText = `
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            right: ${scrollBoxTrackSize}px;
+            height: ${scrollBoxTrackSize}px;
+            background-color: rgba(0,0,0,0.5);
+            display: none;
+        `;
+
+        scrollHBox.style.cssText = `
+            background-color: ${Color(this.painter.backgroundColor).lighten(0.5)};
+            position: absolute;
+            height: ${scrollBoxTrackSize}px;
+            width: ${scrollBoxThumbSize}px;
+            top: 0;
+            left: 0;
+            border: 1px outset #888;
+        `;
+
+        container.appendChild(scrollVTrack);
+        scrollVTrack.appendChild(scrollVBox);
+
+        container.appendChild(scrollHTrack);
+        scrollHTrack.appendChild(scrollHBox);
 
         const localStorageKey = this.localStorageKey;
 
@@ -182,18 +211,21 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         canvas.onwheel = (e: WheelEvent) =>
         {
-            const { deltaY } = e;
-            const { scrollTop } = this;
-            const inc = 1;
-            const value = deltaY < 0 ? scrollTop - inc : scrollTop + inc;
+            const { deltaX, deltaY } = e;
+            const { scrollLeft, scrollTop } = this;
+            const xInc = deltaX > 0 ? Math.max(deltaX * -1, -10) : Math.min(deltaX * -1, 10);
 
-            this.setScrollTop(value);
+            const yInc = deltaY !== 0 ? 1 : 0;
+            const sl = deltaX !== 0 ? scrollLeft + xInc : scrollLeft;
+            const st = deltaY < 0 ? scrollTop - yInc : scrollTop + yInc;
+
+            this.setScrollPos(sl, st);
         };
 
-        scrollBox.onmousedown = (e) =>
+        scrollVBox.onmousedown = (e) =>
         {
-            const startY = parseFloat(scrollBox.style.top);
-            const h = scrollTrack.offsetHeight - scrollBoxHeight;
+            const startY = parseFloat(scrollVBox.style.top);
+            const h = scrollVTrack.offsetHeight - scrollBoxThumbSize;
 
             e.stopPropagation();
 
@@ -202,7 +234,22 @@ export abstract class DevInspector<T extends Record<string, any> >
                 const top = Math.max(0, Math.min(startY + deltaY, h));
                 const t = top / h;
 
-                this.setScrollTop(Math.round(this.table.rows.length * t));
+                this.setScrollPos(this.scrollLeft, Math.round(this.table.rows.length * t));
+            });
+        };
+
+        scrollHBox.onmousedown = (e) =>
+        {
+            const startX = parseFloat(scrollHBox.style.left);
+            const w = scrollHTrack.offsetWidth;
+
+            e.stopPropagation();
+
+            mouseDrag(e, (deltaX: number) =>
+            {
+                const left = Math.max(0, Math.min(startX + deltaX, w));
+
+                this.setScrollPos(left, this.scrollTop);
             });
         };
 
@@ -258,9 +305,13 @@ export abstract class DevInspector<T extends Record<string, any> >
         return this;
     }
 
-    public setScrollTop(scrollTop: number)
+    public setScrollPos(scrollLeft: number, scrollTop: number)
     {
+        const hOverflow = Math.round(this.table.width - this.container.offsetWidth + scrollBoxTrackSize);
+
+        this.scrollLeft = hOverflow === 0 ? 0 : Math.max(0, Math.min(scrollLeft, hOverflow));
         this.scrollTop = Math.max(0, Math.min(this.table.rows.length - 1, scrollTop));
+
         this.update();
 
         return this;
@@ -268,7 +319,7 @@ export abstract class DevInspector<T extends Record<string, any> >
 
     protected update()
     {
-        const { container, scrollTrack, scrollBox, scrollTop, painter } = this;
+        const { container, scrollVTrack, scrollHTrack, scrollVBox, scrollHBox, scrollTop, scrollLeft, painter } = this;
         const details = this.getDetails();
 
         const table = this.table = createTable(details, this.indexColumnLabel(), this.painter.font.size);
@@ -279,18 +330,22 @@ export abstract class DevInspector<T extends Record<string, any> >
         }
         else
         {
-            renderTable(table, this.painter, this.onCellStyle, this.width, this.height, this.scrollTop);
+            renderTable(table, this.painter, this.onCellStyle, this.width, this.height, this.scrollLeft, this.scrollTop);
         }
 
         container.style.display = 'flex';
 
+        const hOverflow = Math.round(this.table.width - this.container.offsetWidth);
+        const h = scrollVTrack.offsetHeight;
         const t = scrollTop / (this.table.rows.length - 1);
-        const h = scrollTrack.offsetHeight;
-        const top = (h - scrollBoxHeight) * t;
+        const top = (h - scrollBoxThumbSize) * t;
+        const left = scrollLeft;
 
-        scrollTrack.style.display = painter.canvas.offsetHeight > table.height || table.rows.length === 0 ? 'none' : 'block';
+        scrollVTrack.style.display = painter.canvas.offsetHeight > table.height || table.rows.length === 0 ? 'none' : 'block';
+        scrollVBox.style.top = `${top}px`;
 
-        scrollBox.style.top = `${top}px`;
+        scrollHTrack.style.display = hOverflow === 0 || table.rows.length === 0 ? 'none' : 'block';
+        scrollHBox.style.left = `${left}px`;
 
         return table;
     }

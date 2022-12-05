@@ -148,6 +148,7 @@ export function renderTable(
     cellStyleFn: (row: Row, column: Column, cellStyle: CellStyle) => string | void,
     width: number,
     height: number,
+    scrollLeft: number,
     scrollTop: number,
 )
 {
@@ -160,7 +161,9 @@ export function renderTable(
     painter
         .size(w, h)
         .clear()
-        .fontColor('white');
+        .resetTransform()
+        .fontColor('white')
+        .translate(-scrollLeft, 0);
 
     const drawCell = (cellStyle: CellStyle, x: number, y: number, columnWidth: number) =>
     {

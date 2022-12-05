@@ -170,7 +170,7 @@ export class Application
             const datastoreNodeInspector = new DatastoreNodeInspector('Datastore Nodes', 'green');
             const undoStackInspector = new UndoStackInspector('UndoStack', 'purple');
 
-            graphNodeInspector.setHeight(100);
+            graphNodeInspector.setSize(250, 100);
             datastoreNodeInspector.setHeight(100);
             undoStackInspector.setHeight(500);
 
