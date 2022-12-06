@@ -13,7 +13,6 @@
 <style>
   property-control {
     display: flex;
-    align-items: center;
   }
 
   label {

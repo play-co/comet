@@ -121,3 +121,12 @@
 <color-picker-control>
   <ColorPickerButton {color} on:change={onChange} on:accept={onAccept} />
 </color-picker-control>
+
+<style>
+  color-picker-control {
+    border: 2px outset #6a6a6a;
+    height: 24px;
+    margin-bottom: 5px;
+    border-radius: 3px;
+  }
+</style>
