@@ -65,6 +65,8 @@
     titleBar.removeEventListener("change", onChange);
     keyboardEmitter.off("key.down", onKeyDown);
     window.removeEventListener("mouseup", onMouseUp);
+
+    dispatch("close");
   }
 
   const onMouseDown = (e: MouseEvent) => {
@@ -110,7 +112,6 @@
   const onKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Escape") {
       close();
-      dispatch("close");
     } else if (isDeleteKey(e.key)) {
       e.stopPropagation();
     }
@@ -136,6 +137,11 @@
     // restore deleteNode action
     Actions.deleteNode.isEnabled = true;
   };
+
+  const onCloseClick = (e: MouseEvent) => {
+    e.stopPropagation();
+    close();
+  };
 </script>
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
@@ -144,7 +150,9 @@
   on:keydown={onKeyUp}
   on:mouseover={onMouseOver}
   on:mouseout={onMouseOut}>
-  <div bind:this={titleBar} class="titlebar" />
+  <div bind:this={titleBar} class="titlebar">
+    <button class="close" on:click={onCloseClick}>x</button>
+  </div>
   <div class="picker">
     <toolcool-color-picker
       bind:this={picker}
@@ -172,6 +180,27 @@
     background-color: #333;
     cursor: move;
     border: 1px outset #888;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .close {
+    width: 20px;
+    height: 20px;
+    background-color: #242424;
+    border: 1px outset #878585;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9a9a9a;
+    font-family: sans-serif;
+    cursor: pointer;
+  }
+
+  .close:hover {
+    background-color: #363636;
   }
 
   .picker {

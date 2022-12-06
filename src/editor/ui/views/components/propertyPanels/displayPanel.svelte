@@ -4,6 +4,7 @@
   import PropertyControl from "./propertyControl.svelte";
   import ColorPickerControl from "../controls/colorPropertyControl.svelte";
   import CheckboxControl from "../controls/checkboxPropertyControl.svelte";
+  import NumericControl from "../controls/numericPropertyControl.svelte";
   import { PropertyMap } from "./propertyMap";
 
   export let panel: PropertiesPanel;
@@ -14,11 +15,11 @@
 </script>
 
 <PropertyPanel title="Display">
-  {#each panel.properties as property (property.key)}
-    <PropertyControl label={property.key}>
-      <span>control todo...</span>
+  {#if properties.has("alpha")}
+    <PropertyControl label={"Alpha"}>
+      <NumericControl property={properties.get("alpha")} />
     </PropertyControl>
-  {/each}
+  {/if}
   {#if properties.has("tint")}
     <PropertyControl label={"Tint"}>
       <ColorPickerControl property={properties.get("tint")} />
