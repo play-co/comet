@@ -38,6 +38,7 @@
     width: 30px;
     height: 20px;
     border: 1px outset #333;
+    cursor: pointer;
   }
 
   button:hover {

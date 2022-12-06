@@ -11,8 +11,6 @@
     isDeleteKey,
     isAcceptKey,
     isArrowKey,
-    isIncrementKey,
-    isDecrementKey,
   } from "../../../components/filters";
   import { isKeyPressed } from "../../../components/keyboardListener";
   import { Actions } from "../../../../actions";
@@ -141,12 +139,16 @@
     const value = parseFloat(element.value);
     const isMinusKeyAtNonZeroIndex =
       key === "-" && element.selectionStart !== 0;
-    const isValidKey =
+    let isValidKey =
       isNumericInput(key) ||
       isDeleteKey(key) ||
       isAcceptKey(key) ||
       isArrowKey(key) ||
       key === "Tab";
+
+    if (key === "." && element.value.indexOf(".") > -1) {
+      isValidKey = false;
+    }
 
     if (key === "z" && isKeyPressed("Control")) {
       if (isKeyPressed("Shift")) {
@@ -155,11 +157,11 @@
         Actions.undo.dispatch();
       }
       return true;
-    } else if (isIncrementKey(key)) {
+    } else if (key === "ArrowUp") {
       if (!isNaN(value)) {
         setValue(value + (isKeyPressed("Shift") ? largeInc : smallInc));
       }
-    } else if (isDecrementKey(key)) {
+    } else if (key === "ArrowDown") {
       if (!isNaN(value)) {
         setValue(value - (isKeyPressed("Shift") ? largeInc : smallInc));
       }

@@ -94,6 +94,7 @@
     background-color: #666;
     border: 1px outset #777;
     color: white;
+    cursor: pointer;
   }
 
   checkbox-control:hover {
