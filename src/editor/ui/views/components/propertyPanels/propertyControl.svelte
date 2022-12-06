@@ -13,10 +13,11 @@
 <style>
   property-control {
     display: flex;
+    align-items: center;
   }
 
   label {
-    min-width: 35px;
+    min-width: 42px;
     text-align: right;
     font-size: 13px;
   }

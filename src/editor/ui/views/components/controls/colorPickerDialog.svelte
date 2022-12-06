@@ -34,7 +34,9 @@
     // keep 3rd party component open
     setInterval(() => {
       if (picker && !picker.opened) {
+        picker.color = color;
         picker.opened = true;
+        colorBox.style.background = color;
       }
     }, 10);
 
@@ -49,10 +51,6 @@
       setTimeout(init, 10);
       return;
     }
-
-    picker.color = color;
-
-    onChange();
 
     // bind to events
     titleBar.addEventListener("mousedown", onMouseDown);
@@ -165,13 +163,13 @@
     position: fixed;
     display: flex;
     flex-direction: column;
-    box-shadow: 2px 6px 16px #00000052;
-    z-index: 1000;
+    box-shadow: 4px 5px 9px #00000082;
+    z-index: 100;
   }
 
   .titlebar {
     height: 20px;
-    background-color: #444;
+    background-color: #333;
     cursor: move;
     border: 1px outset #888;
   }

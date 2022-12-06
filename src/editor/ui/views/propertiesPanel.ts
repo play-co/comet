@@ -12,6 +12,8 @@ import { WritableStore } from './store';
 
 type PanelCategory = PropertyCategory | 'project' | 'grid';
 
+export const mixedToken = 'mixed';
+
 export const PropertyPanelComponents: Partial<Record<PropertyCategory, ConstructorOfATypedSvelteComponent>> = {
     transform: TransformPanel,
     display: DisplayPanel,

@@ -3,6 +3,7 @@
   import PropertyPanel from "./panelGroup.svelte";
   import PropertyControl from "./propertyControl.svelte";
   import ColorPickerControl from "../controls/colorPropertyControl.svelte";
+  import CheckboxControl from "../controls/checkboxPropertyControl.svelte";
   import { PropertyMap } from "./propertyMap";
 
   export let panel: PropertiesPanel;
@@ -21,6 +22,11 @@
   {#if properties.has("tint")}
     <PropertyControl label={"Tint"}>
       <ColorPickerControl property={properties.get("tint")} />
+    </PropertyControl>
+  {/if}
+  {#if properties.has("visible")}
+    <PropertyControl label={"Visible"}>
+      <CheckboxControl property={properties.get("visible")} />
     </PropertyControl>
   {/if}
 </PropertyPanel>

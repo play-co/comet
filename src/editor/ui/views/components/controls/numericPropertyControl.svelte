@@ -5,7 +5,7 @@
   import { Application } from "../../../../core/application";
   import type { DatastoreEvent } from "../../../../events/datastoreEvents";
   import type { EditorEvent } from "../../../../events/editorEvents";
-  import type { PropertyBinding } from "../../propertiesPanel";
+  import { mixedToken, type PropertyBinding } from "../../propertiesPanel";
   import {
     isNumericInput,
     isDeleteKey,
@@ -24,25 +24,20 @@
 
   export const smallInc = 1;
   export const largeInc = 10;
-  const mixedToken = "mixed";
 
   function getValue() {
-    try {
-      const { nodes } = property;
-      if (nodes.length === 1) {
-        return format(nodes[0].model.getValue(property.key));
+    const { nodes } = property;
+    if (nodes.length === 1) {
+      return format(nodes[0].model.getValue(property.key));
+    } else {
+      let values = new Set();
+      nodes.forEach((node) => values.add(node.model.getValue(property.key)));
+      if (values.size === 1) {
+        const [firstValue] = values;
+        return String(firstValue);
       } else {
-        let values = new Set();
-        nodes.forEach((node) => values.add(node.model.getValue(property.key)));
-        if (values.size === 1) {
-          const [firstValue] = values;
-          return String(firstValue);
-        } else {
-          return mixedToken;
-        }
+        return mixedToken;
       }
-    } catch (e) {
-      return "ERROR";
     }
   }
 
