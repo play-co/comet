@@ -16,17 +16,17 @@
 
 <PropertyPanel title="Display">
   {#if properties.has("alpha")}
-    <PropertyControl label={"Alpha"}>
+    <PropertyControl label={"alpha"}>
       <NumericControl property={properties.get("alpha")} />
     </PropertyControl>
   {/if}
   {#if properties.has("tint")}
-    <PropertyControl label={"Tint"}>
+    <PropertyControl label={"tint"}>
       <ColorPickerControl property={properties.get("tint")} />
     </PropertyControl>
   {/if}
   {#if properties.has("visible")}
-    <PropertyControl label={"Visible"}>
+    <PropertyControl label={"visible"}>
       <CheckboxControl property={properties.get("visible")} />
     </PropertyControl>
   {/if}

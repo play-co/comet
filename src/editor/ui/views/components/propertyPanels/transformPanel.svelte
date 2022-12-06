@@ -39,7 +39,7 @@
   {#if properties.has("angle")}
     <!-- angle -->
     <div class="single">
-      <PropertyControl label="θ">
+      <PropertyControl label="angle">
         <SimpleNumericInput property={properties.get("angle")} />
       </PropertyControl>
       <div class="spacer" />

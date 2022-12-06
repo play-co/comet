@@ -11,8 +11,8 @@
 
 <style>
   panel-group {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     border-radius: 10px;
   }
 

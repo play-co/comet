@@ -20,6 +20,8 @@
     min-width: 42px;
     text-align: right;
     font-size: 13px;
+    background: #3d3d3d;
+    border-radius: 3px;
   }
 
   .spacer {
