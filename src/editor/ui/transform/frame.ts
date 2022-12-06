@@ -118,11 +118,12 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
             return Rectangle.EMPTY;
         }
 
-        const { initialTransform: { width, height } } = gizmo;
-        const p1 = matrix.apply({ x: 0, y: 0 });
-        const p2 = matrix.apply({ x: width, y: 0 });
-        const p3 = matrix.apply({ x: width, y: height });
-        const p4 = matrix.apply({ x: 0, y: height });
+        const { initialTransform: { localBounds } } = gizmo;
+        const { left, top, width, height } = localBounds;
+        const p1 = matrix.apply({ x: left, y: top });
+        const p2 = matrix.apply({ x: width + left, y: top });
+        const p3 = matrix.apply({ x: width + left, y: height + top });
+        const p4 = matrix.apply({ x: left, y: height + top });
         const minX = Math.min(p1.x, p2.x, p3.x, p4.x);
         const minY = Math.min(p1.y, p2.y, p3.y, p4.y);
         const maxX = Math.max(p1.x, p2.x, p3.x, p4.x);
@@ -146,7 +147,6 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
             const p2 = matrix.apply({ x: width, y: 0 });
             const p3 = matrix.apply({ x: width, y: height });
             const p4 = matrix.apply({ x: 0, y: height });
-            // const path = [p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y];
 
             border.lineStyle(2, Color('cyan').rgbNumber(), 1);
             border.moveTo(p1.x, p1.y); border.lineTo(p2.x, p2.y);

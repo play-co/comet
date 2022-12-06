@@ -162,6 +162,7 @@ export class EditableViewport
         const isShiftKeyPressed = e.data.originalEvent.shiftKey;
         const isMetaKeyPressed = e.data.originalEvent.metaKey;
         const isAddKey = isShiftKeyPressed || isMetaKeyPressed;
+        const gizmoFrameBounds = this.transformGizmo.frame.getGlobalBounds();
 
         this.viewport.pause = !isSpacePressed;
 
@@ -173,10 +174,11 @@ export class EditableViewport
             return;
         }
 
-        if (this.transformGizmo.frame.getGlobalBounds().contains(globalX, globalY) && isAddKey)
+        if (gizmoFrameBounds.contains(globalX, globalY) && isAddKey)
         {
             // click inside transform gizmo area remove from selection if shift down
-            const underCursor = this.findNodesAtPoint(globalX, globalY).filter((node) => selection.deepContains(node));
+            const nodes = this.findNodesAtPoint(globalX, globalY);
+            const underCursor = nodes.filter((node) => selection.deepContains(node));
             const topNode = underCursor[0];
 
             selection.remove(topNode);

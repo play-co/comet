@@ -1,7 +1,6 @@
 <script lang="ts">
   import { createController } from "./propertiesPanel.js";
   import Panel from "./components/panel.svelte";
-  // import TransformPanel from "./components/propertyPanels/transformPanel.svelte";
 
   const panel = createController();
   const { panels } = panel.store;
