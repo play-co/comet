@@ -97,7 +97,7 @@
   }
 
   checkbox-control:hover {
-    border: 1px outset #ccc;
+    border-color: #ccc !important;
   }
 
   checkbox-control.down,

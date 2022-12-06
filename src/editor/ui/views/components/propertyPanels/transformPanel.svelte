@@ -4,7 +4,7 @@
   import PropertyPanel from "./panelGroup.svelte";
   import PropertyPairControl from "./propertyPairControl.svelte";
   import PropertyControl from "./propertyControl.svelte";
-  import SimpleNumericInput from "../controls/numericPropertyControl.svelte";
+  import NumericControl from "../controls/numericPropertyControl.svelte";
 
   export let panel: PropertiesPanel;
 
@@ -18,63 +18,66 @@
     <!-- position: x,y -->
     <PropertyPairControl label="Position">
       <PropertyControl label="x" slot="prop1">
-        <SimpleNumericInput property={properties.get("x")} />
+        <NumericControl property={properties.get("x")} />
       </PropertyControl>
       <PropertyControl label="y" slot="prop2">
-        <SimpleNumericInput property={properties.get("y")} />
+        <NumericControl property={properties.get("y")} />
       </PropertyControl>
     </PropertyPairControl>
   {/if}
-  {#if properties.has("pivotX", "pivotY")}
-    <!-- pivot: x,y -->
-    <PropertyPairControl label="Pivot">
+
+  {#if properties.has("scaleX", "scaleY")}
+    <!-- size: w,h -->
+    <PropertyPairControl label="Size">
+      <PropertyControl label="w" slot="prop1">
+        <NumericControl property={properties.get("scaleX")} mode={"width"} />
+      </PropertyControl>
+      <PropertyControl label="h" slot="prop2">
+        <NumericControl property={properties.get("scaleY")} mode={"height"} />
+      </PropertyControl>
+    </PropertyPairControl>
+
+    <!-- scale: x,y -->
+    <PropertyPairControl label="Scale">
       <PropertyControl label="x" slot="prop1">
-        <SimpleNumericInput property={properties.get("pivotX")} />
+        <NumericControl property={properties.get("scaleX")} />
       </PropertyControl>
       <PropertyControl label="y" slot="prop2">
-        <SimpleNumericInput property={properties.get("pivotY")} />
+        <NumericControl property={properties.get("scaleY")} />
       </PropertyControl>
     </PropertyPairControl>
   {/if}
+
   {#if properties.has("angle")}
     <!-- angle -->
     <div class="single">
       <PropertyControl label="angle">
-        <SimpleNumericInput property={properties.get("angle")} />
+        <NumericControl property={properties.get("angle")} />
       </PropertyControl>
       <div class="spacer" />
     </div>
   {/if}
-  {#if properties.has("scaleX", "scaleY")}
-    <!-- scale: x,y -->
-    <PropertyPairControl label="Scale">
+
+  {#if properties.has("pivotX", "pivotY")}
+    <!-- pivot: x,y -->
+    <PropertyPairControl label="Pivot">
       <PropertyControl label="x" slot="prop1">
-        <SimpleNumericInput property={properties.get("scaleX")} />
+        <NumericControl property={properties.get("pivotX")} />
       </PropertyControl>
       <PropertyControl label="y" slot="prop2">
-        <SimpleNumericInput property={properties.get("scaleY")} />
+        <NumericControl property={properties.get("pivotY")} />
       </PropertyControl>
     </PropertyPairControl>
   {/if}
+
   {#if properties.has("skewX", "skewY")}
     <!-- skew: x,y -->
     <PropertyPairControl label="Skew">
       <PropertyControl label="x" slot="prop1">
-        <SimpleNumericInput property={properties.get("skewX")} />
+        <NumericControl property={properties.get("skewX")} />
       </PropertyControl>
       <PropertyControl label="y" slot="prop2">
-        <SimpleNumericInput property={properties.get("skewY")} />
-      </PropertyControl>
-    </PropertyPairControl>
-  {/if}
-  {#if properties.has("anchorX", "anchorY")}
-    <!-- anchor: x,y -->
-    <PropertyPairControl label="Anchor">
-      <PropertyControl label="x" slot="prop1">
-        <SimpleNumericInput property={properties.get("anchorX")} />
-      </PropertyControl>
-      <PropertyControl label="y" slot="prop2">
-        <SimpleNumericInput property={properties.get("anchorY")} />
+        <NumericControl property={properties.get("skewY")} />
       </PropertyControl>
     </PropertyPairControl>
   {/if}

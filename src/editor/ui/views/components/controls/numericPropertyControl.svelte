@@ -16,38 +16,69 @@
   } from "../../../components/filters";
   import { isKeyPressed } from "../../../components/keyboardListener";
   import { Actions } from "../../../../actions";
+  import type { DisplayObjectNode } from "../../../../../core/nodes/abstract/displayObject";
 
+  // component props
   export let property: PropertyBinding;
+  export let mode: "normal" | "width" | "height" = "normal";
 
+  // consts
   const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
   const editorEmitter = getGlobalEmitter<EditorEvent>();
 
-  export const smallInc = 1;
-  export const largeInc = 10;
+  const smallInc = 1;
+  const largeInc = 10;
 
-  function getValue() {
-    const { nodes } = property;
-    if (nodes.length === 1) {
-      return format(nodes[0].model.getValue(property.key));
-    } else {
-      let values = new Set();
-      nodes.forEach((node) => values.add(node.model.getValue(property.key)));
-      if (values.size === 1) {
-        const [firstValue] = values;
-        return String(firstValue);
-      } else {
-        return mixedToken;
-      }
-    }
-  }
-
+  // component view state
   let value: string;
   let prevValue: string;
 
   $: (value = getValue()), property;
 
+  // component functions
   function format(value: number) {
     return value.toFixed(1).replace(/\.0+$/, "");
+  }
+
+  function getValue() {
+    const { nodes } = property;
+    const propValue = nodes[0].model.getValue<number>(property.key);
+
+    if (nodes.length === 1) {
+      if (mode === "normal") {
+        return format(propValue);
+      } else {
+        const node = nodes[0].cast<DisplayObjectNode>();
+        const nodeValue = mode === "width" ? node.width : node.height;
+
+        return format(propValue * nodeValue);
+      }
+    } else {
+      let values = new Set();
+
+      nodes.forEach((node) => {
+        const propValue = node.model.getValue<number>(property.key);
+        if (mode === "normal") {
+          values.add(propValue);
+        } else {
+          values.add(
+            Math.round(
+              mode === "width"
+                ? node.cast<DisplayObjectNode>().width * propValue
+                : node.cast<DisplayObjectNode>().height * propValue
+            )
+          );
+        }
+      });
+
+      if (values.size === 1) {
+        const [firstValue] = values;
+
+        return String(firstValue);
+      } else {
+        return mixedToken;
+      }
+    }
   }
 
   function setValue(value: number) {
@@ -56,7 +87,15 @@
     property.nodes.forEach((node) => {
       const values: any = {};
 
-      values[property.key] = value;
+      if (mode === "normal") {
+        values[property.key] = value;
+      } else {
+        values[property.key] =
+          mode === "width"
+            ? value / node.cast<DisplayObjectNode>().width
+            : value / node.cast<DisplayObjectNode>().height;
+        console.log(value, values);
+      }
 
       modifications.push({
         nodeId: node.id,
@@ -72,6 +111,7 @@
     editorEmitter.emit("editor.property.modified", property);
   }
 
+  // handlers
   const onUpdate = () => {
     value = getValue();
   };

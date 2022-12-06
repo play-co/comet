@@ -9,4 +9,8 @@
 </PropertyPanel>
 
 <style>
+  p {
+    color: #666;
+    font-style: italic;
+  }
 </style>
