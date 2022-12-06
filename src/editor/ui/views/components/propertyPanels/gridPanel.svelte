@@ -1,11 +1,12 @@
 <script lang="ts">
+  import type { PropertiesPanel } from "../../propertiesPanel";
   import PropertyPanel from "./panelGroup.svelte";
 
   export let panel: PropertiesPanel;
 </script>
 
 <PropertyPanel title="Grid">
-  <p>todo...</p>
+  <p>todo...{String(panel) ? "" : ""}</p>
 </PropertyPanel>
 
 <style>

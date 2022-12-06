@@ -46,10 +46,3 @@
     </PropertyPairControl>
   {/if}
 </PropertyPanel>
-
-<style>
-  span {
-    font-size: 11px;
-    font-style: italic;
-  }
-</style>
