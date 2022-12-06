@@ -2,6 +2,7 @@ import type { ClonableNode } from '../../../core';
 import { getGlobalEmitter } from '../../../core/events';
 import type { PropertyCategory } from '../../../core/model/schema';
 import { Application } from '../../core/application';
+import type { DatastoreEvent } from '../../events/datastoreEvents';
 import type { SelectionEvent } from '../../events/selectionEvents';
 import DisplayPanel from './components/propertyPanels/displayPanel.svelte';
 import GridPanel from './components/propertyPanels/gridPanel.svelte';
@@ -65,6 +66,7 @@ function createController()
     const panels = new WritableStore<PropertiesPanel[]>([]);
 
     const selectionEmitter = getGlobalEmitter<SelectionEvent>();
+    const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
 
     function update()
     {
@@ -133,6 +135,8 @@ function createController()
         .on('selection.set.single', update)
         .on('selection.set.multi', update)
         .on('selection.deselect', clear);
+
+    datastoreEmitter.on('datastore.local.node.cloaked', update);
 
     // start with unselected state
     clear();
