@@ -1,6 +1,7 @@
 export type LogSource =
 | 'datastore'
-| 'nodeFactory';
+| 'nodeFactory'
+| 'command';
 
 export interface LogEntry
 {

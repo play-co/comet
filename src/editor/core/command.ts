@@ -1,3 +1,4 @@
+import { log } from '../../core/log';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import { getInstance } from '../../core/nodes/instances';
 import Events from '../events';
@@ -47,6 +48,8 @@ export abstract class Command<ParamsType extends {} = {}, ReturnType = void, Cac
         this.hasRun = true;
 
         Events.command.exec.emit(this);
+
+        log('command', 'exec', this.toJSON());
 
         return result as unknown as ReturnType;
     }

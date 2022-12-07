@@ -8,6 +8,7 @@ const logSourceColor = new Map<LogSource, Color>();
 
 logSourceColor.set('datastore', Color('cyan'));
 logSourceColor.set('nodeFactory', Color('blue'));
+logSourceColor.set('command', Color('green'));
 
 export class LogInspector extends DevInspector<Omit<LogEntry, 'timestamp'>>
 {
@@ -61,7 +62,7 @@ export class LogInspector extends DevInspector<Omit<LogEntry, 'timestamp'>>
         }
         else if (column.id === 'data')
         {
-            cellStyle.text = currentCell.value.join(',');
+            cellStyle.text = JSON.stringify(currentCell.value);
         }
     };
 

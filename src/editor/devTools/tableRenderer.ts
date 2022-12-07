@@ -74,7 +74,6 @@ export function createTable<T extends Record<string, any>>(
     };
 
     // collect fields
-
     if (Array.isArray(data))
     {
         data.forEach((item, i) =>
@@ -99,8 +98,8 @@ export function createTable<T extends Record<string, any>>(
     }
 
     // detect sizes
-
     const cellSize = measureText(tableIndexKey, fontSize);
+    const maxColumnWidth = Math.round(document.body.clientWidth * 0.5);
 
     indexColumn.width = cellSize.width;
 
@@ -112,7 +111,7 @@ export function createTable<T extends Record<string, any>>(
             const cellSize = measureText(JSON.stringify(row.get(columnId)), fontSize);
             const columnHeadingSize = measureText(columnId, fontSize);
 
-            column.width = Math.max(cellSize.width, column.width, columnHeadingSize.width);
+            column.width = Math.min(maxColumnWidth, Math.max(cellSize.width, column.width, columnHeadingSize.width));
         }
     });
 
@@ -169,12 +168,18 @@ export function renderTable(
     {
         const textInfo = measureText(cellStyle.text, fontSize);
 
-        const text = cellStyle.text.replace(/^"|"$/g, '').substring(0, 20);
+        const text = cellStyle.text.replace(/^"|"$/g, '');
+
+        // const left = x + ((columnWidth - textInfo.width) * 0.5);
+        const left = x + 5;
 
         painter
             .fontColor(cellStyle.fontColor)
             .fontStyle(cellStyle.fontStyle)
-            .drawText(text, x + ((columnWidth - textInfo.width) * 0.5), y + ((rowHeight - textInfo.height) * 0.5) + (rowHeight * 0.35))
+            .save()
+            .clip(x, y, columnWidth, rowHeight)
+            .drawText(text, left, y + ((rowHeight - textInfo.height) * 0.5) + (rowHeight * 0.35))
+            .restore()
             .line(x + columnWidth, y, x + columnWidth, y + rowHeight);
     };
 

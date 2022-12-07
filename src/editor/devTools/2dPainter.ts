@@ -237,6 +237,30 @@ export default class Canvas2DPainter
         return this;
     }
 
+    public save()
+    {
+        this.ctx.save();
+
+        return this;
+    }
+
+    public restore()
+    {
+        this.ctx.restore();
+
+        return this;
+    }
+
+    public clip(x: number, y: number, w: number, h: number)
+    {
+        const region = new Path2D();
+
+        region.rect(x, y, w, h);
+        this.ctx.clip(region, 'nonzero');
+
+        return this;
+    }
+
     public get font()
     {
         return {
