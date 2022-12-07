@@ -9,7 +9,7 @@ import type { ModifyModelCommandParams } from '../../commands/modifyModel';
 import { ModifyModelsCommand } from '../../commands/modifyModels';
 import { Application } from '../../core/application';
 import type { UpdateMode } from '../../core/command';
-import type { CommandEvent } from '../../events/commandEvents';
+import type { CommandEvent } from '../../events/modules/commandEvents';
 import type { DatastoreEvent } from '../../events/datastoreEvents';
 import type { EditorEvent } from '../../events/editorEvents';
 import type { SelectionEvent } from '../../events/selectionEvents';

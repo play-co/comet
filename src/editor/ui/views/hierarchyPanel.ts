@@ -3,7 +3,7 @@ import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObje
 import { SetNodeIndexCommand } from '../../commands/setNodeIndex';
 import { SetParentCommand } from '../../commands/setParent';
 import { Application } from '../../core/application';
-import type { CommandEvent } from '../../events/commandEvents';
+import type { CommandEvent } from '../../events/modules/commandEvents';
 import type { DatastoreEvent } from '../../events/datastoreEvents';
 import type { SelectionEvent } from '../../events/selectionEvents';
 import type { ViewportEvent } from '../../events/viewportEvents';

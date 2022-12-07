@@ -1,7 +1,7 @@
 import { getGlobalEmitter } from '../../core/events';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import { getInstance } from '../../core/nodes/instances';
-import type { CommandEvent } from '../events/commandEvents';
+import type { CommandEvent } from '../events/modules/commandEvents';
 import { Application } from './application';
 import type { CommandName } from './commandFactory';
 

@@ -1,6 +1,6 @@
 import { getGlobalEmitter } from '../../core/events';
 import type { Command } from '../core/command';
-import type { CommandEvent } from '../events/commandEvents';
+import type { CommandEvent } from '../events/modules/commandEvents';
 import { getUserLogColor, getUserName } from '../sync/user';
 import { writeCommandList, writeUndoStack } from './history';
 
