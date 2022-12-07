@@ -11,7 +11,7 @@
 <script lang="ts">
   import { Application } from "../../core/application";
 
-  const onDragStart = (e: DragEvent) => {
+  const onDragEnter = (e: DragEvent) => {
     const { dataTransfer } = e;
     if (dataTransfer) {
       const d = dataTransfer.getData("application/x-moz-file");
@@ -27,7 +27,7 @@
     console.log("leave", e);
   };
 
-  const onDragDrop = (e: DragEvent) => {
+  const onDrop = (e: DragEvent) => {
     const { dataTransfer } = e;
     if (dataTransfer) {
       var files = dataTransfer.files;
@@ -40,9 +40,9 @@
 </script>
 
 <drop-zone
-  on:dragenter={onDragStart}
+  on:dragenter={onDragEnter}
   on:dragleave={onDragLeave}
-  on:drop={onDragDrop}>
+  on:drop={onDrop}>
   <slot />
 </drop-zone>
 

@@ -1,6 +1,5 @@
 import type { TransformGizmo } from '../ui/transform/gizmo';
 
-
 export interface TransformEvent
 {
     'transform.start': TransformGizmo;

@@ -6,14 +6,15 @@ import type { ModelSchema } from './schema';
 
 export type ModelValue = string | number | boolean | object | null;
 export type ModelBase = Record<string, ModelValue>;
+export type ModelModifiedHandler = (key: string, value: ModelValue, oldValue: ModelValue) => void;
 
 export class Model<M> extends GraphNode
 {
     public readonly schema: ModelSchema<M>;
     public readonly data: Partial<M>;
-    public readonly emitter: EventEmitter<'modified'>;
-
     public isReference: boolean;
+
+    protected readonly emitter: EventEmitter<'modified'>;
 
     constructor(schema: ModelSchema<M>, data: Partial<M>)
     {
@@ -244,6 +245,16 @@ export class Model<M> extends GraphNode
     public nodeType(): string
     {
         return 'Model';
+    }
+
+    public bind(handler: ModelModifiedHandler)
+    {
+        this.emitter.on('modified', handler);
+    }
+
+    public unbind(handler: ModelModifiedHandler)
+    {
+        this.emitter.off('modified', handler);
     }
 }
 

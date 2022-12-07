@@ -71,7 +71,7 @@ export abstract class ClonableNode<
         this.initView();
 
         this.initModel();
-        this.model.emitter.on('modified', this.onModelModified);
+        this.model.bind(this.onModelModified);
 
         this.initCloning();
 
@@ -207,7 +207,7 @@ export abstract class ClonableNode<
     {
         super.dispose();
 
-        this.model.emitter.off('modified', this.onModelModified);
+        this.model.unbind(this.onModelModified);
 
         if (this.cloneInfo.isClone)
         {

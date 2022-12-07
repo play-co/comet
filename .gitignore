@@ -79,3 +79,5 @@ dbDir
 datastore.json
 
 *.ref.ts
+
+.vscode
