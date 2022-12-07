@@ -1,9 +1,6 @@
-import { getGlobalEmitter } from '../../../core/events';
-import type { GlobalKeyboardEvent } from '../../events/keyboardEvents';
+import Events from '../../events';
 
 const keyMap: Map<string, boolean> = new Map();
-
-const globalEmitter = getGlobalEmitter<GlobalKeyboardEvent>();
 
 window.addEventListener('keydown', (e: KeyboardEvent) =>
 {
@@ -13,7 +10,7 @@ window.addEventListener('keydown', (e: KeyboardEvent) =>
     {
         keyMap.set(key, true);
 
-        globalEmitter.emit('key.down', e);
+        Events.key.down.emit(e);
     }
 });
 
@@ -23,7 +20,7 @@ window.addEventListener('keyup', (e: KeyboardEvent) =>
 
     keyMap.delete(key);
 
-    globalEmitter.emit('key.up', e);
+    Events.key.up.emit(e);
 });
 
 export function isKeyPressed(key: string)

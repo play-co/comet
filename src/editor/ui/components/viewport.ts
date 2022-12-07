@@ -1,18 +1,13 @@
 import { type InteractionEvent, Application as PixiApplication, Container } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 
-import { getGlobalEmitter } from '../../../core/events';
 import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
 import { Application } from '../../core/application';
-import type { GlobalKeyboardEvent } from '../../events/keyboardEvents';
-import type { ViewportEvent } from '../../events/viewportEvents';
+import Events from '../../events';
 import { TransformGizmo } from '../transform/gizmo';
 import { BoxSelection } from './boxSelection';
 import { Grid } from './grid';
 import { isKeyPressed } from './keyboardListener';
-
-const keyboardEmitter = getGlobalEmitter<GlobalKeyboardEvent>();
-const viewportEmitter = getGlobalEmitter<ViewportEvent>();
 
 export class EditableViewport
 {
@@ -81,12 +76,9 @@ export class EditableViewport
             .decelerate()
             .wheel();
 
-        keyboardEmitter
-            .on('key.down', this.onKeyDown)
-            .on('key.up', this.onKeyUp);
-
-        viewportEmitter
-            .on('viewport.resize', this.onResize);
+        Events.key.down.bind(this.onKeyDown);
+        Events.key.up.bind(this.onKeyUp);
+        Events.viewport.resize.bind(this.onResize);
     }
 
     get stage()
@@ -310,6 +302,6 @@ export class EditableViewport
         this.rootNode = node;
         this.nodeLayer.addChild(this.rootNode.view);
 
-        viewportEmitter.emit('viewport.root.changed', node);
+        Events.viewport.rootChanged.emit(node);
     }
 }

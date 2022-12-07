@@ -1,12 +1,9 @@
-import { getGlobalEmitter } from '../../core/events';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import { DisplayObjectNode } from '../../core/nodes/abstract/displayObject';
 import { getInstance } from '../../core/nodes/instances';
 import { getNodeSchema } from '../../core/nodes/schema';
 import { Command } from '../core/command';
-import type { DatastoreEvent } from '../events/datastoreEvents';
-
-const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
+import Events from '../events';
 
 export interface RemoveNodeCommandParams
 {
@@ -58,7 +55,7 @@ export class RemoveNodeCommand
             }
         }
 
-        datastoreEmitter.emit('datastore.local.node.cloaked', node.cast<ClonableNode>());
+        Events.datastore.node.local.cloaked.emit(node.cast<ClonableNode>());
 
         return { node: node.cast<ClonableNode>() };
     }
@@ -82,6 +79,6 @@ export class RemoveNodeCommand
             app.selection.set(node);
         }
 
-        datastoreEmitter.emit('datastore.local.node.uncloaked', node.cast<ClonableNode>());
+        Events.datastore.node.local.uncloaked.emit(node.cast<ClonableNode>());
     }
 }

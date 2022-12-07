@@ -1,3 +1,4 @@
+import { EventMap } from './emitter';
 import commandEvents from './modules/commandEvents';
 import datastoreEvents from './modules/datastoreEvents';
 import editorEvents from './modules/editorEvents';
@@ -7,13 +8,15 @@ import selectionEvents from './modules/selectionEvents';
 import transformEvents from './modules/transformEvents';
 import viewportEvents from './modules/viewportEvents';
 
-export default {
+const Events = EventMap({
     command: commandEvents,
     datastore: datastoreEvents,
     editor: editorEvents,
-    keyboard: keyboardEvents,
+    key: keyboardEvents,
     project: projectEvents,
     selection: selectionEvents,
     transform: transformEvents,
     viewport: viewportEvents,
-};
+});
+
+export default Events;

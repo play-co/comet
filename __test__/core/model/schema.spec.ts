@@ -5,15 +5,15 @@ describe('Model Schema', () =>
     const properties: PropertyDescriptors<any> = {
         x: {
             defaultValue: 1,
-            category: 'Display',
+            category: 'display',
         },
         y: {
             defaultValue: 2,
-            category: 'Display',
+            category: 'display',
         },
         z: {
             defaultValue: 3,
-            category: 'Display',
+            category: 'display',
         },
     };
     const schema = new ModelSchema(properties);

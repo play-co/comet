@@ -8,7 +8,6 @@ import Convergence, {
 
 import { TextureAsset } from '../../core/assets/textureAsset';
 import { Cache } from '../../core/cache';
-import { getGlobalEmitter } from '../../core/events';
 import type { ModelValue } from '../../core/model/model';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { CustomPropertyType, CustomPropertyValueType } from '../../core/nodes/customProperties';
@@ -21,11 +20,9 @@ import type {
 } from '../../core/nodes/schema';
 import { createProjectSchema } from '../../core/nodes/schema';
 import { Application } from '../core/application';
-import type { DatastoreEvent } from '../events/datastoreEvents';
+import Events from '../events';
 import { DatastoreBase } from './datastoreBase';
 import { getUserLogColor, getUserName } from './user';
-
-const globalEmitter = getGlobalEmitter<DatastoreEvent>();
 
 const userName = getUserName();
 const logStyle = 'color:LimeGreen';
@@ -243,7 +240,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
                 console.log(`%c${logId}:%cHydrate Texture Asset "${id}"`, userColor, logStyle);
 
-                globalEmitter.emit('datastore.texture.created', schema);
+                Events.datastore.texture.created.emit(schema);
             });
 
             // start hydrating from the root node (Project)
@@ -294,7 +291,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
             this.setNodeParent(nodeSchema.id, nodeSchema.parent);
         }
 
-        globalEmitter.emit('datastore.local.node.created', { nodeId: nodeSchema.id });
+        Events.datastore.node.local.created.emit({ nodeId: nodeSchema.id });
     }
 
     public removeNode(nodeId: string)
@@ -476,7 +473,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         this.registerExistingNode(nodeId, nodeElement);
 
-        globalEmitter.emit('datastore.remote.node.created', { nodeId });
+        Events.datastore.node.remote.created.emit({ nodeId });
     };
 
     public onRemoteNodeRemoved = (e: IConvergenceEvent) =>
@@ -490,7 +487,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         this.unRegisterNode(nodeId);
 
-        globalEmitter.emit('datastore.remote.node.removed', { nodeId, parentId });
+        Events.datastore.node.remote.removed.emit({ nodeId, parentId });
     };
 
     public onRemoteNodeRootPropertySet = (e: IConvergenceEvent) =>
@@ -508,7 +505,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
                 childId: "${nodeId}" oldParentId: "${oldParentId}"`, userColor, logStyle,
             );
 
-            globalEmitter.emit('datastore.remote.node.parent.set', { parentId, nodeId });
+            Events.datastore.node.remote.setParent.emit({ parentId, nodeId });
         }
     };
 
@@ -523,7 +520,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         console.log(`%c${logId}:%c🟦 onNodeDefinedCustomPropSet: nodeId: "${nodeId}" info: ${info}`, userColor, logStyle);
 
-        globalEmitter.emit('datastore.remote.node.customProp.defined', { nodeId, customKey, type, value });
+        Events.datastore.node.remote.customProp.defined.emit({ nodeId, customKey, type, value });
     };
 
     public onRemoteNodeDefinedCustomPropRemoved = (e: IConvergenceEvent) =>
@@ -538,7 +535,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
             logStyle,
         );
 
-        globalEmitter.emit('datastore.remote.node.customProp.undefined', { nodeId, customKey });
+        Events.datastore.node.remote.customProp.undefined.emit({ nodeId, customKey });
     };
 
     public onRemoteNodeAssignedCustomPropSet = (e: IConvergenceEvent) =>
@@ -554,7 +551,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
             logStyle,
         );
 
-        globalEmitter.emit('datastore.remote.node.customProp.assigned', { nodeId, modelKey, customKey });
+        Events.datastore.node.remote.customProp.assigned.emit({ nodeId, modelKey, customKey });
     };
 
     public onRemoteNodeAssignedCustomPropRemoved = (e: IConvergenceEvent) =>
@@ -568,7 +565,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
             logStyle,
         );
 
-        globalEmitter.emit('datastore.remote.node.customProp.unassigned', { nodeId, modelKey });
+        Events.datastore.node.remote.customProp.unassigned.emit({ nodeId, modelKey });
     };
 
     public onRemoteNodeModelPropertySet = (e: IConvergenceEvent) =>
@@ -589,7 +586,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
                 logStyle,
             );
 
-            globalEmitter.emit('datastore.remote.node.model.modified', { nodeId, key, value });
+            Events.datastore.node.remote.modelModified.emit({ nodeId, key, value });
         }
     };
 
@@ -600,7 +597,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         console.log(`%c${logId}:%c🟦 onNodeModelValueSet: nodeId: "${nodeId}" ${JSON.stringify(model)}`, userColor, logStyle);
 
-        globalEmitter.emit('datastore.remote.node.model.modified', { nodeId, key: null, value: model });
+        Events.datastore.node.remote.modelModified.emit({ nodeId, key: null, value: model });
     };
 
     public onRemoteNodeModelPropertyRemove = (e: IConvergenceEvent) =>
@@ -620,7 +617,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
             logStyle,
         );
 
-        globalEmitter.emit('datastore.remote.node.cloneInfo.modified', { nodeId, ...cloneInfo });
+        Events.datastore.node.remote.cloneInfoModified.emit({ nodeId, ...cloneInfo });
     };
 
     // @ts-ignore
@@ -654,10 +651,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         const parent = array.parent() as RealTimeObject;
         const nodeId = parent.get('id').value();
 
-        globalEmitter.emit('datastore.remote.node.children.set', {
-            nodeId,
-            childIds: array.toJSON(),
-        });
+        Events.datastore.node.remote.setChildren.emit({ nodeId, childIds: array.toJSON() });
     };
 
     public getRegisteredIds()
@@ -760,7 +754,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         consolidateId(id);
 
         // create the graph node
-        globalEmitter.emit('datastore.node.hydrated', { nodeId: id });
+        Events.datastore.node.local.hydrated.emit({ nodeId: id });
 
         // recursively create children
         (nodeElement.get('children').value() as RealTimeArray).forEach((id) =>

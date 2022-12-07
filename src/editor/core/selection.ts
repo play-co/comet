@@ -1,8 +1,5 @@
-import { getGlobalEmitter } from '../../core/events';
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObject';
-import type { SelectionEvent } from '../events/selectionEvents';
-
-const globalEmitter = getGlobalEmitter<SelectionEvent>();
+import Events from '../events';
 
 export class NodeSelection
 {
@@ -25,7 +22,7 @@ export class NodeSelection
             this.nodes.length = 0;
             this.nodes.push(...node);
 
-            globalEmitter.emit('selection.set.multi', this.nodes);
+            Events.selection.setMulti.emit(this.nodes);
         }
         else
         {
@@ -34,7 +31,7 @@ export class NodeSelection
 
             (window as any).$1 = node;
 
-            globalEmitter.emit('selection.set.single', node);
+            Events.selection.setSingle.emit(node);
         }
     }
 
@@ -42,7 +39,7 @@ export class NodeSelection
     {
         this.nodes.push(node);
 
-        globalEmitter.emit('selection.add', node);
+        Events.selection.add.emit(node);
     }
 
     public remove(node: DisplayObjectNode)
@@ -56,7 +53,7 @@ export class NodeSelection
 
         this.nodes.splice(index, 1);
 
-        globalEmitter.emit('selection.remove', node);
+        Events.selection.remove.emit(node);
     }
 
     public deselect()
@@ -66,7 +63,8 @@ export class NodeSelection
             return;
         }
 
-        globalEmitter.emit('selection.deselect');
+        Events.selection.deselect.emit();
+
         this.nodes.length = 0;
     }
 

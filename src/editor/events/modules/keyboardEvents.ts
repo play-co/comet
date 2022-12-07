@@ -1,6 +1,6 @@
 import { Emit } from '../emitter';
 
 export default {
-    keyDown: Emit<KeyboardEvent>(),
-    keyUp: Emit<KeyboardEvent>(),
+    down: Emit<KeyboardEvent>(),
+    up: Emit<KeyboardEvent>(),
 };

@@ -6,5 +6,5 @@ export default {
     setMulti: Emit<DisplayObjectNode[]>(),
     add: Emit<DisplayObjectNode>(),
     remove: Emit<DisplayObjectNode>(),
-    deselect: Emit<void[]>(),
+    deselect: Emit<void>(),
 };

@@ -1,10 +1,7 @@
 <script lang="ts">
-  import { getGlobalEmitter } from "../../../../../core/events";
   import type { ModifyModelCommandParams } from "../../../../commands/modifyModel";
   import { ModifyModelsCommand } from "../../../../commands/modifyModels";
   import { Application } from "../../../../core/application";
-  import type { DatastoreEvent } from "../../../../events/datastoreEvents";
-  import type { EditorEvent } from "../../../../events/editorEvents";
   import { mixedToken, type PropertyBinding } from "../../propertiesPanel";
   import {
     isNumericInput,
@@ -15,15 +12,13 @@
   import { isKeyPressed } from "../../../components/keyboardListener";
   import { Actions } from "../../../../actions";
   import type { DisplayObjectNode } from "../../../../../core/nodes/abstract/displayObject";
+  import Events from "../../../../events";
 
   // component props
   export let property: PropertyBinding;
   export let mode: "normal" | "width" | "height" = "normal";
 
   // consts
-  const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
-  const editorEmitter = getGlobalEmitter<EditorEvent>();
-
   const smallInc = 1;
   const largeInc = 10;
 
@@ -106,7 +101,7 @@
       new ModifyModelsCommand({ modifications })
     );
 
-    editorEmitter.emit("editor.property.modified", property);
+    Events.editor.propertyModified.emit(property);
   }
 
   // handlers
@@ -176,7 +171,7 @@
     return false;
   };
 
-  datastoreEmitter.on("datastore.local.node.modified", onUpdate);
+  Events.datastore.node.local.modified.bind(onUpdate);
 </script>
 
 <numeric-control>

@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { getGlobalEmitter } from "../../../core/events";
   import { Actions } from "../../actions";
-  import type { ProjectEvent } from "../../events/projectEvents";
+  import Events from "../../events";
+
   let isReady = false;
-  const globalEmitter = getGlobalEmitter<ProjectEvent>();
-  globalEmitter.on("project.ready", () => (isReady = true));
+
+  Events.project.ready.bind(() => (isReady = true));
 </script>
 
 <menu-bar>

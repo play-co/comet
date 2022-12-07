@@ -1,27 +1,24 @@
 <script lang="ts">
   import Color from "color";
-  import { getGlobalEmitter } from "../../../../../core/events";
   import type { ModifyModelCommandParams } from "../../../../commands/modifyModel";
   import { ModifyModelsCommand } from "../../../../commands/modifyModels";
   import { Application } from "../../../../core/application";
   import type { UpdateMode } from "../../../../core/command";
-  import type { EditorEvent } from "../../../../events/editorEvents";
+  import Events from "../../../../events";
   import type { PropertyBinding } from "../../propertiesPanel";
   import ColorPickerButton from "./colorPickerButton.svelte";
 
   export let property: PropertyBinding;
   export let setAlpha = true;
 
-  const editorEmitter = getGlobalEmitter<EditorEvent>();
-
-  const initalValues: Map<string, object> = new Map();
+  const initialValues: Map<string, object> = new Map();
 
   function getInitialColor() {
     const firstNodeColor = property.nodes[0].model.getValue<number>(
       property.key
     );
 
-    initalValues.clear();
+    initialValues.clear();
 
     property.nodes.forEach((node) => {
       const values: any = {};
@@ -32,7 +29,7 @@
         values.alpha = node.model.getValue<number>("alpha");
       }
 
-      initalValues.set(node.id, values);
+      initialValues.set(node.id, values);
     });
 
     let alpha = 1;
@@ -85,7 +82,7 @@
       };
 
       if (updateMode === "full") {
-        modification.prevValues = initalValues.get(node.id);
+        modification.prevValues = initialValues.get(node.id);
       }
 
       modifications.push(modification);
@@ -99,7 +96,7 @@
       );
     }
 
-    editorEmitter.emit("editor.property.modified", property);
+    Events.editor.propertyModified.emit(property);
   }
 
   let color: string;

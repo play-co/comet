@@ -1,4 +1,3 @@
-import { getGlobalEmitter } from '../../core/events';
 import type { ModelBase } from '../../core/model/model';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import { CloneInfo } from '../../core/nodes/cloneInfo';
@@ -6,7 +5,7 @@ import { getInstance, hasInstance } from '../../core/nodes/instances';
 import { createNode } from '../../core/nodes/nodeFactory';
 import type { NodeSchema } from '../../core/nodes/schema';
 import { Command } from '../core/command';
-import type { DatastoreEvent } from '../events/datastoreEvents';
+import Events from '../events';
 import { AssignCustomPropCommand } from './assignCustomProp';
 import { SetCustomPropCommand } from './setCustomProp';
 
@@ -19,8 +18,6 @@ export interface CreateNodeCommandReturn
 {
     node: ClonableNode;
 }
-
-const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
 
 export class CreateNodeCommand<
     M extends ModelBase = ModelBase,
@@ -71,7 +68,7 @@ export class CreateNodeCommand<
             new AssignCustomPropCommand({ nodeId: nodeSchema.id, modelKey, customKey, updateMode: 'graphOnly' }).run();
         }
 
-        datastoreEmitter.emit('datastore.local.node.created', { nodeId: node.id });
+        Events.datastore.node.local.created.emit({ nodeId: node.id });
 
         return { node };
     }

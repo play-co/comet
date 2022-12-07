@@ -3,9 +3,8 @@
   import { createEventDispatcher, onDestroy, onMount } from "svelte";
   import "toolcool-color-picker";
   import type ColorPicker from "toolcool-color-picker";
-  import { getGlobalEmitter } from "../../../../../core/events";
   import { Actions } from "../../../../actions";
-  import type { GlobalKeyboardEvent } from "../../../../events/keyboardEvents";
+  import Events from "../../../../events";
   import { mouseDrag } from "../../../components/dragger";
   import {
     isAcceptKey,
@@ -27,8 +26,6 @@
   let colorBox: HTMLButtonElement;
   let mouseArea: HTMLDivElement;
   let lastColor = color;
-
-  const keyboardEmitter = getGlobalEmitter<GlobalKeyboardEvent>();
 
   onMount(() => {
     // keep 3rd party component open
@@ -55,7 +52,7 @@
     // bind to events
     titleBar.addEventListener("mousedown", onMouseDown);
     picker.addEventListener("change", onChange);
-    keyboardEmitter.on("key.down", onKeyDown);
+    Events.key.down.bind(onKeyDown);
     window.addEventListener("mouseup", onMouseUp);
   }
 
@@ -63,7 +60,7 @@
     // unbind to events
     titleBar.removeEventListener("mousedown", onMouseDown);
     titleBar.removeEventListener("change", onChange);
-    keyboardEmitter.off("key.down", onKeyDown);
+    Events.key.down.unbind(onKeyDown);
     window.removeEventListener("mouseup", onMouseUp);
 
     dispatch("close");

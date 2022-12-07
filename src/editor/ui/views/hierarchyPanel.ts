@@ -1,12 +1,8 @@
-import { getGlobalEmitter } from '../../../core/events';
 import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
 import { SetNodeIndexCommand } from '../../commands/setNodeIndex';
 import { SetParentCommand } from '../../commands/setParent';
 import { Application } from '../../core/application';
-import type { CommandEvent } from '../../events/modules/commandEvents';
-import type { DatastoreEvent } from '../../events/datastoreEvents';
-import type { SelectionEvent } from '../../events/selectionEvents';
-import type { ViewportEvent } from '../../events/viewportEvents';
+import Events from '../../events';
 import { mouseDrag } from '../components/dragger';
 import { WritableStore } from './store';
 
@@ -34,11 +30,6 @@ function createController()
     const isDragging = new WritableStore<boolean>(false);
     const dragTarget = new WritableStore<ModelItem | undefined>(undefined);
     const operation = new WritableStore<Operation>(Operation.ReParent);
-
-    const viewportEmitter = getGlobalEmitter<ViewportEvent>();
-    const selectionEmitter = getGlobalEmitter<SelectionEvent>();
-    const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
-    const commandEmitter = getGlobalEmitter<CommandEvent>();
 
     function generateModel()
     {
@@ -237,7 +228,6 @@ function createController()
     }
 
     // handlers
-
     const onViewportRootChanged = (node: DisplayObjectNode) =>
     {
         root.value = node;
@@ -261,30 +251,25 @@ function createController()
     };
 
     // bind to global events
+    Events.viewport.rootChanged.bind(onViewportRootChanged);
 
-    viewportEmitter.on('viewport.root.changed', onViewportRootChanged);
+    Events.selection.add.bind(onSelectionChanged);
+    Events.selection.remove.bind(onSelectionChanged);
+    Events.selection.setSingle.bind(onSelectionChanged);
+    Events.selection.setMulti.bind(onSelectionChanged);
+    Events.selection.deselect.bind(onDeselect);
 
-    selectionEmitter
-        .on('selection.add', onSelectionChanged)
-        .on('selection.remove', onSelectionChanged)
-        .on('selection.set.single', onSelectionChanged)
-        .on('selection.set.multi', onSelectionChanged)
-        .on('selection.deselect', onDeselect);
+    Events.datastore.node.remote.setParent.bind(generateModel);
+    Events.datastore.node.remote.setChildren.bind(generateModel);
+    Events.datastore.node.local.created.bind(generateModel);
+    Events.datastore.node.local.cloaked.bind(generateModel);
+    Events.datastore.node.local.uncloaked.bind(generateModel);
 
-    datastoreEmitter
-        .on('datastore.remote.node.parent.set', generateModel)
-        .on('datastore.local.node.created', generateModel)
-        .on('datastore.local.node.cloaked', generateModel)
-        .on('datastore.local.node.uncloaked', generateModel)
-        .on('datastore.remote.node.children.set', generateModel);
-
-    commandEmitter
-        .on('command.undo', generateModel)
-        .on('command.redo', generateModel)
-        .on('command.exec', generateModel);
+    Events.command.undo.bind(generateModel);
+    Events.command.redo.bind(generateModel);
+    Events.command.exec.bind(generateModel);
 
     // init current model
-
     generateModel();
 
     return {

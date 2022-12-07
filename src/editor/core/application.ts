@@ -1,5 +1,4 @@
 import { Cache } from '../../core/cache';
-import { getGlobalEmitter } from '../../core/events';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObject';
 import { ProjectNode } from '../../core/nodes/concrete/project';
@@ -10,8 +9,7 @@ import { RemoveNodeCommand } from '../commands/removeNode';
 import { DatastoreNodeInspector } from '../devTools/datastoreNodeInspector';
 import { GraphNodeInspector } from '../devTools/graphNodeInspector';
 import { UndoStackInspector } from '../devTools/undoStackInspector';
-import type { DatastoreEvent } from '../events/datastoreEvents';
-import type { ProjectEvent } from '../events/projectEvents';
+import Events from '../events';
 import { LocalStorageProvider } from '../storage/localStorageProvider';
 import { ConvergenceDatastore } from '../sync/convergenceDatastore';
 import { RemoteObjectSync } from '../sync/remoteObjectSync';
@@ -21,9 +19,6 @@ import { getUrlParam } from '../util';
 import { initHistory, writeUndoStack } from './history';
 import { NodeSelection } from './selection';
 import UndoStack from './undoStack';
-
-const datastoreGlobalEmitter = getGlobalEmitter<DatastoreEvent>();
-const projectGlobalEmitter = getGlobalEmitter<ProjectEvent>();
 
 const userName = getUserName();
 const userColor = getUserLogColor(userName);
@@ -90,19 +85,18 @@ export class Application
         Cache.textures.fetchProvider = (storageKey: string) =>
             this.storageProvider.download(storageKey);
 
-        datastoreGlobalEmitter.on('datastore.remote.node.removed', () =>
-        {
-            writeUndoStack();
-        });
+        Events.datastore.node.remote.removed.bind(writeUndoStack);
 
         initHistory();
     }
 
     public async connect()
     {
-        datastoreGlobalEmitter.emit('datastore.connection.attempt');
+        Events.datastore.connection.attempt.emit();
+
         await this.datastore.connect();
-        datastoreGlobalEmitter.emit('datastore.connection.success');
+
+        Events.datastore.connection.success.emit();
     }
 
     public async init()
@@ -131,7 +125,7 @@ export class Application
     {
         const { datastore } = this;
 
-        projectGlobalEmitter.emit('project.create.attempt');
+        Events.project.create.attempt.emit();
 
         this.clear();
 
@@ -143,21 +137,21 @@ export class Application
         this.project = await datastore.createProject(name, id) as unknown as ProjectNode;
         this.initProject();
 
-        projectGlobalEmitter.emit('project.create.success');
-        projectGlobalEmitter.emit('project.ready');
+        Events.project.create.success.emit();
+        Events.project.ready.emit();
     }
 
     public async openProject(id: string)
     {
-        projectGlobalEmitter.emit('project.open.attempt');
+        Events.project.open.attempt.emit();
 
         this.clear();
 
         this.project = await this.datastore.openProject(id) as unknown as ProjectNode;
         this.initProject();
 
-        projectGlobalEmitter.emit('project.open.success');
-        projectGlobalEmitter.emit('project.ready');
+        Events.project.open.success.emit();
+        Events.project.ready.emit();
     }
 
     protected initProject()

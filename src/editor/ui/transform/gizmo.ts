@@ -2,18 +2,13 @@ import type { SmoothGraphics } from '@pixi/graphics-smooth';
 import type { InteractionEvent } from 'pixi.js';
 import { Container, Graphics, Matrix, Transform } from 'pixi.js';
 
-import { getGlobalEmitter } from '../../../core/events';
 import type { DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
 import { type Point, degToRad, radToDeg } from '../../../core/util/geom';
 import type { ModifyModelCommandParams } from '../../commands/modifyModel';
 import { ModifyModelsCommand } from '../../commands/modifyModels';
 import { Application } from '../../core/application';
 import type { UpdateMode } from '../../core/command';
-import type { CommandEvent } from '../../events/modules/commandEvents';
-import type { DatastoreEvent } from '../../events/datastoreEvents';
-import type { EditorEvent } from '../../events/editorEvents';
-import type { SelectionEvent } from '../../events/selectionEvents';
-import type { TransformEvent } from '../../events/transformEvents';
+import Events from '../../events';
 import { isKeyPressed } from '../components/keyboardListener';
 import type { EditableViewport } from '../components/viewport';
 import { TransformGizmoFrame } from './frame';
@@ -37,14 +32,6 @@ import {
 } from './util';
 
 export const dblClickMsThreshold = 250;
-
-const globalEmitter = getGlobalEmitter<
-DatastoreEvent &
-CommandEvent &
-SelectionEvent &
-TransformEvent &
-EditorEvent
->();
 
 type CachedNode = {
     worldTransform: Matrix;
@@ -100,17 +87,16 @@ export class TransformGizmo extends Container
 
         this.initFrame();
 
-        globalEmitter
-            .on('selection.set.single', this.updateSelection)
-            .on('selection.set.multi', this.updateSelection)
-            .on('selection.add', this.updateSelection)
-            .on('selection.remove', this.updateSelection)
-            .on('selection.deselect', this.onSelectionDeselect)
-            .on('command.undo', this.updateSelection)
-            .on('command.redo', this.updateSelection)
-            .on('datastore.remote.node.removed', this.updateSelection)
-            .on('datastore.remote.node.created', this.updateSelection)
-            .on('editor.property.modified', this.updateSelection);
+        Events.selection.setSingle.bind(this.updateSelection);
+        Events.selection.setMulti.bind(this.updateSelection);
+        Events.selection.add.bind(this.updateSelection);
+        Events.selection.remove.bind(this.updateSelection);
+        Events.selection.deselect.bind(this.onSelectionDeselect);
+        Events.command.undo.bind(this.updateSelection);
+        Events.command.redo.bind(this.updateSelection);
+        Events.datastore.node.remote.created.bind(this.updateSelection);
+        Events.datastore.node.remote.removed.bind(this.updateSelection);
+        Events.editor.propertyModified.bind(this.updateSelection);
     }
 
     get selection()
@@ -523,9 +509,9 @@ export class TransformGizmo extends Container
 
         this.lastClick = Date.now();
 
-        globalEmitter.emit('transform.start', this);
-
         document.body.classList.add('no_splitter_hover');
+
+        Events.transform.start.emit(this);
     };
 
     public onMouseMove = (event: InteractionEvent) =>
@@ -541,7 +527,7 @@ export class TransformGizmo extends Container
 
             this.updateSelectedModels('graphOnly');
 
-            globalEmitter.emit('transform.modify', this);
+            Events.transform.modify.emit(this);
         }
     };
 
@@ -569,7 +555,7 @@ export class TransformGizmo extends Container
                 this.isDirty = false;
             }
 
-            globalEmitter.emit('transform.end', this);
+            Events.transform.end.emit(this);
         }
 
         this.emit('mouseup');

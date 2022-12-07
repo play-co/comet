@@ -1,14 +1,11 @@
 <script lang="ts">
-  import { getGlobalEmitter } from "../../../../../core/events";
   import type { ModifyModelCommandParams } from "../../../../commands/modifyModel";
   import { ModifyModelsCommand } from "../../../../commands/modifyModels";
   import { Application } from "../../../../core/application";
-  import type { EditorEvent } from "../../../../events/editorEvents";
+  import Events from "../../../../events";
   import { mixedToken, type PropertyBinding } from "../../propertiesPanel";
 
   export let property: PropertyBinding;
-
-  const editorEmitter = getGlobalEmitter<EditorEvent>();
 
   function getValue() {
     const { nodes } = property;
@@ -49,7 +46,7 @@
       new ModifyModelsCommand({ modifications })
     );
 
-    editorEmitter.emit("editor.property.modified", property);
+    Events.editor.propertyModified.emit(property);
   }
 
   let value: boolean | string;

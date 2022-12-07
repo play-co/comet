@@ -1,9 +1,9 @@
+import type { ComponentType } from 'svelte';
+
 import type { ClonableNode } from '../../../core';
-import { getGlobalEmitter } from '../../../core/events';
 import type { PropertyCategory } from '../../../core/model/schema';
 import { Application } from '../../core/application';
-import type { DatastoreEvent } from '../../events/datastoreEvents';
-import type { SelectionEvent } from '../../events/selectionEvents';
+import Events from '../../events';
 import DisplayPanel from './components/propertyPanels/displayPanel.svelte';
 import GridPanel from './components/propertyPanels/gridPanel.svelte';
 import ProjectPanel from './components/propertyPanels/projectPanel.svelte';
@@ -14,7 +14,7 @@ type PanelCategory = PropertyCategory | 'project' | 'grid';
 
 export const mixedToken = 'mixed';
 
-export const PropertyPanelComponents: Partial<Record<PropertyCategory, ConstructorOfATypedSvelteComponent>> = {
+export const PropertyPanelComponents: Partial<Record<PropertyCategory, ComponentType>> = {
     transform: TransformPanel,
     display: DisplayPanel,
 };
@@ -47,9 +47,9 @@ export class PropertiesPanel
 {
     public category: PanelCategory;
     public properties: PropertyBinding[];
-    public component: ConstructorOfATypedSvelteComponent;
+    public component: ComponentType;
 
-    constructor(category: PanelCategory, properties: PropertyBinding[], component: ConstructorOfATypedSvelteComponent)
+    constructor(category: PanelCategory, properties: PropertyBinding[], component: ComponentType)
     {
         this.category = category;
         this.properties = properties;
@@ -66,9 +66,6 @@ function createController()
     const { selection } = Application.instance;
 
     const panels = new WritableStore<PropertiesPanel[]>([]);
-
-    const selectionEmitter = getGlobalEmitter<SelectionEvent>();
-    const datastoreEmitter = getGlobalEmitter<DatastoreEvent>();
 
     function update()
     {
@@ -132,13 +129,12 @@ function createController()
         panels.value = [projectPanel, gridPanel];
     }
 
-    selectionEmitter
-        .on('selection.add', update)
-        .on('selection.set.single', update)
-        .on('selection.set.multi', update)
-        .on('selection.deselect', clear);
+    Events.selection.add.bind(update);
+    Events.selection.setSingle.bind(update);
+    Events.selection.setMulti.bind(update);
+    Events.selection.deselect.bind(clear);
 
-    datastoreEmitter.on('datastore.local.node.cloaked', update);
+    Events.datastore.node.local.cloaked.bind(update);
 
     // start with unselected state
     clear();
