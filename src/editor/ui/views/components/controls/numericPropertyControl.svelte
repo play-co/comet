@@ -87,7 +87,6 @@
           mode === "width"
             ? value / node.cast<DisplayObjectNode>().width
             : value / node.cast<DisplayObjectNode>().height;
-        console.log(value, values);
       }
 
       modifications.push({
@@ -112,7 +111,6 @@
   const onFocus = (e: Event) => {
     const element = e.target as HTMLInputElement;
     prevValue = element.value;
-    console.log(prevValue);
   };
 
   const onChange = (e: Event) => {

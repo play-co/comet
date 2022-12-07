@@ -1,13 +1,10 @@
-import { getUserLogColor, getUserName } from '../../editor/sync/user';
+import { getUserName } from '../../editor/sync/user';
 import type { ClonableNode, ClonableNodeConstructor, NewNodeOptions } from './abstract/clonableNode';
 import { registerInstance } from './instances';
 
 export const nodeClasses: Map<string, ClonableNodeConstructor> = new Map();
 
-const logStyle = 'color:MediumTurquoise';
 const userName = getUserName();
-const userColor = getUserLogColor(userName);
-const logId = `${userName}`;
 
 export function registerNodeType(nodeClass: ClonableNodeConstructor)
 {
@@ -29,10 +26,6 @@ export function createNode<T>(nodeType: string, options: NewNodeOptions<{}>): T
     {
         throw new Error(`${userName}:Node type "${nodeType}" is unregistered.`);
     }
-
-    const { id } = options;
-
-    console.log(`%c${logId}:%cCreate Graph Node "${id}"`, userColor, logStyle);
 
     const node = new NodeClass(options) as ClonableNode;
 

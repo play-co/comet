@@ -22,12 +22,9 @@ import { createProjectSchema } from '../../core/nodes/schema';
 import { Application } from '../core/application';
 import Events from '../events';
 import { DatastoreBase } from './datastoreBase';
-import { getUserLogColor, getUserName } from './user';
+import { getUserName } from './user';
 
 const userName = getUserName();
-const logStyle = 'color:LimeGreen';
-const userColor = getUserLogColor(userName);
-const logId = `${userName}`;
 
 export const defaultProjectModelSettings = {
     collection: 'projects',
@@ -79,8 +76,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
                 },
             }).then((domain) =>
             {
-                console.log(`%c${logId}:%cConnected as "${userName}"`, userColor, logStyle);
-
                 clearTimeout(timeout);
                 this._domain = domain;
                 resolve();
@@ -94,7 +89,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         {
             await this.domain.disconnect();
             await this.domain.dispose();
-            console.log(`%c${logId}:%cDomain disposed`, userColor, logStyle);
         }
     }
 
@@ -111,7 +105,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         if (!nodeElement)
         {
-            throw new Error(`${logId}:Existing node "${nodeId}" RealTimeObject not found, cannot track.`);
+            throw new Error(`${userName}:Existing node "${nodeId}" RealTimeObject not found, cannot track.`);
         }
 
         if (!this.nodeProxies.has(nodeId))
@@ -151,16 +145,12 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
             data,
         });
 
-        console.log(`%c${logId}:%cCreated project "${model.modelId()}"`, userColor, logStyle);
-
         return await this.openProject(model.modelId());
     }
 
     public async openProject(id: string): Promise<ClonableNode>
     {
         const model = await this.domain.models().open(id);
-
-        console.log(`%c${logId}:%cOpened project "${model.modelId()}"`, userColor, logStyle);
 
         this._model = model;
 
@@ -204,8 +194,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
     public async deleteProject(id: string)
     {
         await this.domain.models().remove(id);
-
-        console.log(`%c${logId}:%cDelete project "${id}"`, userColor, logStyle);
     }
 
     public hydrate()
@@ -238,8 +226,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
                 consolidateId(id);
 
-                console.log(`%c${logId}:%cHydrate Texture Asset "${id}"`, userColor, logStyle);
-
                 Events.datastore.texture.created.emit(schema);
             });
 
@@ -248,7 +234,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         }
         else
         {
-            throw new Error(`${logId}:Could not find project node`);
+            throw new Error(`${userName}:Could not find project node`);
         }
 
         return getInstance<ClonableNode>(rootId);
@@ -270,16 +256,9 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
     public createNode(nodeSchema: NodeSchema)
     {
-        console.log(
-            `%c${logId}:%c🟩 createNode() nodeId: "${nodeSchema.id}" %c${JSON.stringify(nodeSchema)}`,
-            userColor,
-            logStyle,
-            'color:#999',
-        );
-
         if (this.nodes.hasKey(nodeSchema.id))
         {
-            throw new Error(`${logId}:Node "${nodeSchema.id}" node already registered.`);
+            throw new Error(`${userName}:Node "${nodeSchema.id}" node already registered.`);
         }
 
         const nodeElement = this.nodes.set(nodeSchema.id, nodeSchema) as RealTimeObject;
@@ -296,12 +275,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
     public removeNode(nodeId: string)
     {
-        console.log(
-            `%c${logId}:%c🟩 removeNode() nodeId: ${nodeId}`,
-            userColor,
-            logStyle,
-        );
-
         const nodeElement = this.getNodeElement(nodeId);
         const parentId = nodeElement.get('parent').value() as string | undefined;
 
@@ -317,7 +290,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
             if (index === -1)
             {
-                throw new Error(`${logId}:Could not find child "${nodeId}" reference in parent "${parentId}"`);
+                throw new Error(`${userName}:Could not find child "${nodeId}" reference in parent "${parentId}"`);
             }
 
             childArray.remove(index);
@@ -329,12 +302,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
     public setNodeParent(childId: string, parentId: string)
     {
-        console.log(
-            `%c${logId}:%c🟩 setNodeParent() childId: ${childId} parentId: ${parentId}`,
-            userColor,
-            logStyle,
-        );
-
         const parentElement = this.getNodeElement(parentId);
         const childElement = this.getNodeElement(childId);
         const prevParentId = childElement.get('parent').value() as string;
@@ -367,12 +334,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
     public modifyNodeModel(nodeId: string, values: object)
     {
-        console.log(
-            `%c${logId}:%c🟩 modifyNodeModel() nodeId: ${nodeId} values: ${JSON.stringify(values)}`,
-            userColor,
-            logStyle,
-        );
-
         const nodeElement = this.getNodeElement(nodeId);
         const modelElement = nodeElement.get('model') as RealTimeObject;
 
@@ -394,12 +355,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
     public updateNodeCloneInfo(nodeId: string, cloneInfoSchema: CloneInfoSchema)
     {
-        console.log(
-            `%c${logId}:%c🟩 updateNodeCloneInfo() nodeId: ${nodeId} cloneInfoSchema: ${JSON.stringify(cloneInfoSchema)}`,
-            userColor,
-            logStyle,
-        );
-
         const nodeElement = this.getNodeElement(nodeId);
 
         nodeElement.get('cloneInfo').value(cloneInfoSchema);
@@ -464,13 +419,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         consolidateId(nodeId);
 
-        console.log(
-            `%c${logId}:%c🟦 onNodeCreated: nodeId: "${nodeId}" %c${JSON.stringify(nodeElement.toJSON())}`,
-            userColor,
-            logStyle,
-            'color:#999',
-        );
-
         this.registerExistingNode(nodeId, nodeElement);
 
         Events.datastore.node.remote.created.emit({ nodeId });
@@ -482,8 +430,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         const nodeId = event.key;
         const nodeElement = event.oldValue as RealTimeObject;
         const parentId = nodeElement.get('parent').value() as string | undefined;
-
-        console.log(`%c${logId}:%c🟦 onNodeRemoved: "${nodeId}"`, userColor, logStyle);
 
         this.unRegisterNode(nodeId);
 
@@ -498,12 +444,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         if (key === 'parent')
         {
             const parentId = event.value.value();
-            const oldParentId = event.oldValue.value();
-
-            console.log(
-                `%c${logId}:%c🟦 onNodeRootPropertySet["parent"]: parentId: "${parentId}" 
-                childId: "${nodeId}" oldParentId: "${oldParentId}"`, userColor, logStyle,
-            );
 
             Events.datastore.node.remote.setParent.emit({ parentId, nodeId });
         }
@@ -516,9 +456,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         const customKey = event.key;
         const element = event.value as RealTimeObject;
         const { type, value } = element.toJSON();
-        const info = JSON.stringify(element.toJSON());
-
-        console.log(`%c${logId}:%c🟦 onNodeDefinedCustomPropSet: nodeId: "${nodeId}" info: ${info}`, userColor, logStyle);
 
         Events.datastore.node.remote.customProp.defined.emit({ nodeId, customKey, type, value });
     };
@@ -528,12 +465,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         const { event, nodeElement } = asObjectSetEvent(e);
         const nodeId = (nodeElement.parent().parent() as RealTimeObject).get('id').value() as string;
         const customKey = event.key;
-
-        console.log(
-            `%c${logId}:%c🟦 onNodeDefinedCustomPropRemoved: nodeId: "${nodeId}" customKey: "${customKey}"`,
-            userColor,
-            logStyle,
-        );
 
         Events.datastore.node.remote.customProp.undefined.emit({ nodeId, customKey });
     };
@@ -545,12 +476,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         const modelKey = event.key;
         const customKey = event.value.value() as string;
 
-        console.log(
-            `%c${logId}:%c🟦 onNodeAssignedCustomPropSet: nodeId: "${nodeId}" modelKey: "${modelKey}->${customKey}"`,
-            userColor,
-            logStyle,
-        );
-
         Events.datastore.node.remote.customProp.assigned.emit({ nodeId, modelKey, customKey });
     };
 
@@ -559,11 +484,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         const { event, nodeElement } = asObjectSetEvent(e);
         const nodeId = (nodeElement.parent().parent() as RealTimeObject).get('id').value() as string;
         const modelKey = event.key;
-
-        console.log(`%c${logId}:%c🟦 onNodeAssignedCustomPropRemoved: nodeId: "${nodeId}" modelKey "${modelKey}"`,
-            userColor,
-            logStyle,
-        );
 
         Events.datastore.node.remote.customProp.unassigned.emit({ nodeId, modelKey });
     };
@@ -580,12 +500,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         if (value !== values[key])
         {
-            console.log(
-                `%c${logId}:%c🟦 onNodeModelPropertySet: nodeId: "${nodeId}" key: "${key}" value: "${value}"`,
-                userColor,
-                logStyle,
-            );
-
             Events.datastore.node.remote.modelModified.emit({ nodeId, key, value });
         }
     };
@@ -595,14 +509,12 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         const { event, nodeId } = asObjectSetEvent(e);
         const model = event.element.value() as object;
 
-        console.log(`%c${logId}:%c🟦 onNodeModelValueSet: nodeId: "${nodeId}" ${JSON.stringify(model)}`, userColor, logStyle);
-
         Events.datastore.node.remote.modelModified.emit({ nodeId, key: null, value: model });
     };
 
     public onRemoteNodeModelPropertyRemove = (e: IConvergenceEvent) =>
     {
-        throw new Error(`${logId}:Model REMOVED event not supported yet ${e.name}`);
+        throw new Error(`${userName}:Model REMOVED event not supported yet ${e.name}`);
     };
 
     public onRemoteNodeCloneInfoValueSet = (e: IConvergenceEvent) =>
@@ -610,12 +522,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         const { event, nodeElement } = asObjectSetEvent(e);
         const nodeId = (nodeElement.parent() as RealTimeObject).get('id').value() as string;
         const cloneInfo = event.element.value() as CloneInfoSchema;
-
-        console.log(
-            `%c${logId}:%c:🟦 onNodeCloneInfoValueSet: nodeId: "${nodeId}" ${JSON.stringify(cloneInfo)}`,
-            userColor,
-            logStyle,
-        );
 
         Events.datastore.node.remote.cloneInfoModified.emit({ nodeId, ...cloneInfo });
     };
@@ -670,7 +576,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         if (!nodeElement)
         {
-            throw new Error(`${logId}:Node "${id}" RealTimeObject not registered.`);
+            throw new Error(`${userName}:Node "${id}" RealTimeObject not registered.`);
         }
 
         return nodeElement;
@@ -685,7 +591,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
     {
         if (!this._domain)
         {
-            throw new Error(`${logId}:Domain not found`);
+            throw new Error(`${userName}:Domain not found`);
         }
 
         return this._domain;
@@ -695,7 +601,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
     {
         if (!this._model)
         {
-            throw new Error(`${logId}:Datastore model not initialised`);
+            throw new Error(`${userName}:Datastore model not initialised`);
         }
 
         return this._model;
@@ -738,12 +644,10 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
     {
         if (!this.nodeProxies.has(id))
         {
-            throw new Error(`${logId}:Cannot remove Node "${id}" as RealTimeObject is not registered.`);
+            throw new Error(`${userName}:Cannot remove Node "${id}" as RealTimeObject is not registered.`);
         }
 
         this.nodeProxies.delete(id);
-
-        console.log(`%c${logId}:%cUnregistered RealTimeObject "${id}"`, userColor, logStyle);
     }
 
     protected hydrateElement(nodeElement: RealTimeObject)
@@ -768,7 +672,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
             }
             else
             {
-                throw new Error(`${logId}:Could not find childElement "${childId}"`);
+                throw new Error(`${userName}:Could not find childElement "${childId}"`);
             }
         });
     }
@@ -777,13 +681,11 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
     {
         if (this.nodeProxies.has(nodeId))
         {
-            throw new Error(`${logId}:Node "${nodeId}" RealTimeObject already registered.`);
+            throw new Error(`${userName}:Node "${nodeId}" RealTimeObject already registered.`);
         }
 
         // store element
         this.nodeProxies.set(nodeId, nodeElement);
-
-        console.log(`%c${logId}:%cRegistered New RealTimeObject "${nodeId}"`, userColor, logStyle);
 
         // track remote events
         this.initNodeRemoteEvents(nodeId);
@@ -791,8 +693,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
     protected initNodeRemoteEvents(nodeId: string)
     {
-        console.log(`%c${logId}:%ctrack nodeElement: "${nodeId}"`, userColor, logStyle);
-
         const nodeElement = this.getNodeElement(nodeId);
 
         // track remote events on node property changes
@@ -830,8 +730,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
                 worldPermissions: ['join', 'view_state', 'set_state'],
             },
         });
-
-        console.log(`%c${logId}:%cJoined activity "${type}:${id}"`, userColor, logStyle);
     }
 
     public async createTexture(asset: TextureAsset)
@@ -845,7 +743,5 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
             size,
             properties,
         } as TextureAssetSchema);
-
-        console.log(`%c${logId}:%cCreate Asset "${id}"`, userColor, logStyle);
     }
 }

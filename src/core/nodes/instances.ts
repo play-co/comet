@@ -1,4 +1,4 @@
-import { getUserLogColor, getUserName } from '../../editor/sync/user';
+import { getUserName } from '../../editor/sync/user';
 
 type Instance = { id: string };
 
@@ -6,9 +6,6 @@ const instances: Map<string, Instance> = new Map();
 const idCounters: Map<string, number> = new Map();
 
 const userName = getUserName();
-const userColor = getUserLogColor(userName);
-const logStyle = 'color:SteelBlue';
-const logId = `${userName}`;
 
 export function peekNextIdCount(type: string)
 {
@@ -64,8 +61,6 @@ export function registerInstance(instance: Instance)
 
     instances.set(id, instance);
     consolidateId(id);
-
-    console.log(`%c${logId}:%cregistered instance "${id}"`, userColor, logStyle);
 }
 
 export function unregisterInstance(instance: Instance)
@@ -78,15 +73,13 @@ export function unregisterInstance(instance: Instance)
     }
 
     instances.delete(id);
-
-    console.log(`%c${logId}:%cunregistered instance "${id}"`, userColor, logStyle);
 }
 
 export function getInstance<T>(id: string): T
 {
     if (!instances.has(id))
     {
-        throw new Error(`${logId}:Cannot access unregistered instance "${id}"`);
+        throw new Error(`${userName}:Cannot access unregistered instance "${id}"`);
     }
 
     return instances.get(id) as unknown as T;

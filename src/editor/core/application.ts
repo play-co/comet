@@ -14,17 +14,11 @@ import Events from '../events';
 import { LocalStorageProvider } from '../storage/localStorageProvider';
 import { ConvergenceDatastore } from '../sync/convergenceDatastore';
 import { RemoteObjectSync } from '../sync/remoteObjectSync';
-import { getUserLogColor, getUserName } from '../sync/user';
 import { EditableViewport } from '../ui/components/viewport';
 import { getUrlParam } from '../util';
 import { initHistory, writeUndoStack } from './history';
 import { NodeSelection } from './selection';
 import UndoStack from './undoStack';
-
-const userName = getUserName();
-const userColor = getUserLogColor(userName);
-const logId = `${userName}`;
-const logStyle = 'color:LightCyan;';
 
 export type AppOptions = {};
 
@@ -191,8 +185,6 @@ export class Application
 
     public restoreNode(nodeId: string)
     {
-        console.log(`%c${logId}:%cRestore node "${nodeId}"`, userColor, logStyle);
-
         const node = getInstance<ClonableNode>(nodeId);
 
         const dependencies = node.getRestoreDependencies();

@@ -110,7 +110,6 @@
 
   const onAccept = (e: CustomEvent<string>) => {
     const color = Color(e.detail);
-    console.log("ACCEPT", color.rgbNumber());
     setValue(color, "full");
   };
 </script>

@@ -1,12 +1,6 @@
 import type { Command } from '../core/command';
 import Events from '../events';
-import { getUserLogColor, getUserName } from '../sync/user';
 import { writeCommandList, writeUndoStack } from './history';
-
-const userName = getUserName();
-const userColor = getUserLogColor(userName);
-const logId = `${userName}`;
-const logStyle = 'color:yellow;';
 
 export default class UndoStack
 {
@@ -35,14 +29,9 @@ export default class UndoStack
             writeUndoStack();
         }
 
-        console.group(`%c${logId}:%c🔔 ${command.name}.run()`, userColor, `font-weight:bold;${logStyle}`);
-        console.log(`%c${JSON.stringify(command.params)}`, 'color:#999');
-
         command.storeSelection();
 
         const result = command.run();
-
-        console.groupEnd();
 
         return result as unknown as R;
     }
