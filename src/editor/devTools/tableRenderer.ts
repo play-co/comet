@@ -169,15 +169,16 @@ export function renderTable(
     {
         const textInfo = measureText(cellStyle.text, fontSize);
 
+        const text = cellStyle.text.replace(/^"|"$/g, '').substring(0, 20);
+
         painter
             .fontColor(cellStyle.fontColor)
             .fontStyle(cellStyle.fontStyle)
-            .drawText(cellStyle.text, x + ((columnWidth - textInfo.width) * 0.5), y + ((rowHeight - textInfo.height) * 0.5) + (rowHeight * 0.35))
+            .drawText(text, x + ((columnWidth - textInfo.width) * 0.5), y + ((rowHeight - textInfo.height) * 0.5) + (rowHeight * 0.35))
             .line(x + columnWidth, y, x + columnWidth, y + rowHeight);
     };
 
     // render column headers
-
     columns.forEach((column) =>
     {
         const cellStyle: CellStyle = {
@@ -188,8 +189,8 @@ export function renderTable(
         };
 
         painter
-            .fontStyle('bold')
-            .strokeColor('#999')
+            .fontStyle(cellStyle.fontStyle)
+            .strokeColor(cellStyle.fontColor)
             .fillColor(cellStyle.fillColor)
             .fillRect(x + 1, y + 1, x + column.width - 2, y + rowHeight - 2);
 

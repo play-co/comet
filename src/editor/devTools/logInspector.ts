@@ -1,28 +1,40 @@
-import { Application } from '../core/application';
+import Color from 'color';
+
+import { type LogEntry, type LogSource, getLogEntries, onLog } from '../../core/log';
 import { DevInspector } from './devInspector';
-import type { CellStyle, Column, Row } from './tableRenderer';
+import { type CellStyle, type Column, type Row, tableIndexKey } from './tableRenderer';
 
-export interface DatastoreNodeDetail
-{
-    parent: string;
-    children: string;
-}
+const logSourceColor = new Map<LogSource, Color>();
 
-export class LogInspector extends DevInspector<DatastoreNodeDetail>
+logSourceColor.set('datastore', Color('cyan'));
+logSourceColor.set('nodeFactory', Color('blue'));
+
+export class LogInspector extends DevInspector<Omit<LogEntry, 'timestamp'>>
 {
+    protected init(): void
+    {
+        onLog(() =>
+        {
+            this.update();
+        });
+
+        this.update();
+    }
+
     protected getDetails()
     {
-        const datastore = Application.instance.datastore;
-        const details: Record<string, DatastoreNodeDetail> = {};
+        const logEntries = getLogEntries();
+        const details: Record<string, Omit<LogEntry, 'timestamp'>> = {};
 
-        const project = datastore.toProjectSchema();
-
-        for (const [nodeId, node] of Object.entries(project.nodes))
+        for (const logEntry of logEntries)
         {
-            details[nodeId] = {
-                parent: node.parent ? node.parent : '#empty#',
-                children: node.children.length === 0 ? '#empty#' : node.children.join(','),
+            const entry = {
+                source: logEntry.source,
+                eventName: logEntry.eventName,
+                data: logEntry.data,
             };
+
+            details[logEntry.timestamp] = entry;
         }
 
         return details;
@@ -32,23 +44,36 @@ export class LogInspector extends DevInspector<DatastoreNodeDetail>
     {
         const currentCell = this.getCell(column.id, row);
 
-        if (currentCell.value === '#empty#')
+        if (column.id === 'source')
         {
-            cellStyle.fontStyle = 'italic';
-            cellStyle.fontColor = '#aaa';
-            cellStyle.text = 'none';
+            cellStyle.fillColor = (logSourceColor.get(currentCell.value) as Color).darken(0.5).hex();
+        }
+        else if (column.id === 'eventName')
+        {
+            cellStyle.fontStyle = 'bold';
+        }
+
+        if (column.id === tableIndexKey)
+        {
+            const d = new Date(parseInt(currentCell.value, 10));
+
+            cellStyle.text = `${d.toTimeString().split(' ')[0]}.${d.getMilliseconds()}`;
+        }
+        else if (column.id === 'data')
+        {
+            cellStyle.text = currentCell.value.join(',');
         }
     };
 
     protected inspect()
     {
-        const datastore = Application.instance.datastore;
+        const logEntries = getLogEntries();
 
-        console.log(datastore.toProjectSchema());
+        console.log(logEntries);
     }
 
     protected indexColumnLabel()
     {
-        return 'id';
+        return 'time';
     }
 }

@@ -1,9 +1,13 @@
 import { Cache } from '../../core/cache';
+import { enableLog } from '../../core/log';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObject';
 import { ProjectNode } from '../../core/nodes/concrete/project';
+import { SceneNode } from '../../core/nodes/concrete/scene';
 import { clearInstances, getInstance } from '../../core/nodes/instances';
+import { createNodeSchema } from '../../core/nodes/schema';
 import { Actions } from '../actions';
+import { CreateNodeCommand } from '../commands/createNode';
 import { CreateTextureAssetCommand } from '../commands/createTextureAsset';
 import { RemoveNodeCommand } from '../commands/removeNode';
 import { DatastoreNodeInspector } from '../devTools/datastoreNodeInspector';
@@ -63,6 +67,8 @@ export class Application
         Application._instance = this;
 
         (window as any).app = this;
+
+        enableLog();
 
         const datastore = this.datastore = new ConvergenceDatastore();
 
@@ -151,7 +157,19 @@ export class Application
 
     protected initProject()
     {
-        this.viewport.setRoot(this.project.getChildAt(0));
+        let scene = this.project.getChildAt(0);
+
+        if (!scene)
+        {
+            const nodeSchema = createNodeSchema('Scene', { parent: this.project.id });
+            const { node } = new CreateNodeCommand({
+                nodeSchema,
+            }).run();
+
+            scene = node;
+        }
+
+        this.viewport.setRoot(scene.cast<DisplayObjectNode>());
 
         if (getUrlParam<number>('devtools') === 1)
         {
@@ -160,13 +178,14 @@ export class Application
             const undoStackInspector = new UndoStackInspector('UndoStack', 'purple');
             const logInspector = new LogInspector('Log', 'darkslategrey');
 
-            const height = Math.round(screen.availHeight * 0.75);
+            const mediumMaxHeight = Math.round(screen.availHeight * 0.3);
+            const shortMaxHeight = Math.round(screen.availHeight * 0.2);
             const container = document.body;
 
-            graphNodeInspector.setHeight(height);
-            datastoreNodeInspector.setHeight(height);
-            undoStackInspector.setHeight(height);
-            logInspector.setHeight(height);
+            graphNodeInspector.setHeight(mediumMaxHeight);
+            datastoreNodeInspector.setHeight(mediumMaxHeight);
+            undoStackInspector.setHeight(mediumMaxHeight);
+            logInspector.setHeight(shortMaxHeight);
 
             graphNodeInspector.mount(container);
             datastoreNodeInspector.mount(container);

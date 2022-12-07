@@ -8,6 +8,7 @@ import Convergence, {
 
 import { TextureAsset } from '../../core/assets/textureAsset';
 import { Cache } from '../../core/cache';
+import { log } from '../../core/log';
 import type { ModelValue } from '../../core/model/model';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { CustomPropertyType, CustomPropertyValueType } from '../../core/nodes/customProperties';
@@ -78,6 +79,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
             {
                 clearTimeout(timeout);
                 this._domain = domain;
+                log('datastore', 'connect.success');
                 resolve();
             }).catch(reject);
         });

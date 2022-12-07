@@ -1,4 +1,5 @@
 import { getUserName } from '../../editor/sync/user';
+import { log } from '../log';
 import type { ClonableNode, ClonableNodeConstructor, NewNodeOptions } from './abstract/clonableNode';
 import { registerInstance } from './instances';
 
@@ -28,6 +29,8 @@ export function createNode<T>(nodeType: string, options: NewNodeOptions<{}>): T
     }
 
     const node = new NodeClass(options) as ClonableNode;
+
+    log('nodeFactory', 'createNode', node.id);
 
     registerInstance(node);
 

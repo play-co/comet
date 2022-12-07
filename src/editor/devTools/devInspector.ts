@@ -108,7 +108,7 @@ export abstract class DevInspector<T extends Record<string, any> >
         const scrollHBox = this.scrollHBox = document.createElement('div');
         const resizeBox = this.resizeBox = document.createElement('div');
 
-        this.table = this.update();
+        this.table = this.createTable();
 
         scrollVTrack.style.cssText = `
             position: absolute;
@@ -284,15 +284,23 @@ export abstract class DevInspector<T extends Record<string, any> >
             });
         };
 
-        setInterval(() =>
+        setTimeout(() =>
         {
-            this.update();
-        }, 250);
+            this.init();
+        }, 0);
     }
 
     get localStorageKey()
     {
         return `comet:${user}:devtool:inspector:${this.id}`;
+    }
+
+    protected init()
+    {
+        setInterval(() =>
+        {
+            this.update();
+        }, 250);
     }
 
     protected storeState()
@@ -345,8 +353,11 @@ export abstract class DevInspector<T extends Record<string, any> >
 
     public setScrollPos(scrollLeft: number, scrollTop: number)
     {
+        const { table, painter: { canvas } } = this;
+        const maxScrollTop = (table.rows.length) - Math.round((canvas.offsetHeight - table.rowHeight) / table.rowHeight);
+
         this.scrollLeft = Math.max(0, Math.min(scrollLeft, 1));
-        this.scrollTop = Math.max(0, Math.min(this.table.rows.length - 1, scrollTop));
+        this.scrollTop = Math.max(0, Math.min(maxScrollTop, scrollTop));
 
         this.update();
 
@@ -362,8 +373,6 @@ export abstract class DevInspector<T extends Record<string, any> >
 
     protected update()
     {
-        const { container, scrollVTrack, scrollHTrack, scrollVBox, scrollHBox, scrollTop, scrollLeft, painter, resizeBox } = this;
-
         const table = this.table = this.createTable();
 
         const hOverflow = Math.round(this.table.width - this.container.offsetWidth + scrollBoxTrackSize);
@@ -375,14 +384,27 @@ export abstract class DevInspector<T extends Record<string, any> >
         else
         {
             renderTable(table, this.painter, this.onCellStyle, this.width, this.height, hOverflow * this.scrollLeft, this.scrollTop);
+
+            this.updateScrollBars();
         }
+
+        return table;
+    }
+
+    protected updateScrollBars()
+    {
+        const {
+            container, scrollVTrack, scrollHTrack, scrollVBox, scrollHBox, scrollTop, scrollLeft, painter, resizeBox, table,
+            painter: { canvas },
+        } = this;
+        const maxScrollTop = (table.rows.length) - Math.round((canvas.offsetHeight - table.rowHeight) / table.rowHeight);
 
         container.style.display = 'flex';
 
         const w = scrollHTrack.offsetWidth;
         const h = scrollVTrack.offsetHeight;
 
-        const top = (h - scrollBoxThumbSize) * (scrollTop / (this.table.rows.length - 1));
+        const top = (h - scrollBoxThumbSize) * (scrollTop / (maxScrollTop));
 
         const left = (w - scrollBoxThumbSize) * scrollLeft;
 
@@ -396,8 +418,6 @@ export abstract class DevInspector<T extends Record<string, any> >
         scrollHBox.style.left = `${left}px`;
 
         resizeBox.style.display = table.rows.length === 0 ? 'none' : 'block';
-
-        return table;
     }
 
     protected updateExpandedState()
