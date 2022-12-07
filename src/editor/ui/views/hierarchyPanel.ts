@@ -251,23 +251,10 @@ function createController()
     };
 
     // bind to global events
-    Events.viewport.rootChanged.bind(onViewportRootChanged);
-
-    Events.selection.add.bind(onSelectionChanged);
-    Events.selection.remove.bind(onSelectionChanged);
-    Events.selection.setSingle.bind(onSelectionChanged);
-    Events.selection.setMulti.bind(onSelectionChanged);
+    Events.$('selection.(add|remove|setSingle|setMulti)', onSelectionChanged);
+    Events.$('datastore.node|command', generateModel);
     Events.selection.deselect.bind(onDeselect);
-
-    Events.datastore.node.remote.setParent.bind(generateModel);
-    Events.datastore.node.remote.setChildren.bind(generateModel);
-    Events.datastore.node.local.created.bind(generateModel);
-    Events.datastore.node.local.cloaked.bind(generateModel);
-    Events.datastore.node.local.uncloaked.bind(generateModel);
-
-    Events.command.undo.bind(generateModel);
-    Events.command.redo.bind(generateModel);
-    Events.command.exec.bind(generateModel);
+    Events.viewport.rootChanged.bind(onViewportRootChanged);
 
     // init current model
     generateModel();

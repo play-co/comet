@@ -129,12 +129,9 @@ function createController()
         panels.value = [projectPanel, gridPanel];
     }
 
-    Events.selection.add.bind(update);
-    Events.selection.setSingle.bind(update);
-    Events.selection.setMulti.bind(update);
+    // bind to events
+    Events.$('selection.(add|remove|setSingle|setMulti)|datastore.node.local.cloaked', update);
     Events.selection.deselect.bind(clear);
-
-    Events.datastore.node.local.cloaked.bind(update);
 
     // start with unselected state
     clear();

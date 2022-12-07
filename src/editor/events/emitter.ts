@@ -42,27 +42,51 @@ export function Emit<T>()
     return new TypedEmitter<T>();
 }
 
-export function EventMap<T extends object>(events: T)
+type GlobalCallback = (eventName: string, ...args: any[]) => void;
+type Filter = {eventNameFilter: string; callback: GlobalCallback};
+
+export function EventMap<T extends object>(events: T): T & {
+    $: (eventNameFilter: string, callback: GlobalCallback) => void;
+}
 {
-    function walk(obj: object): void
+    const filters: Filter[] = [];
+
+    function walk(obj: object, path = ''): void
     {
         for (const [key, value] of Object.entries(obj))
         {
-            if (typeof value === 'object')
-            {
-                walk(value);
-            }
-            else if (value instanceof TypedEmitter)
-            {
-                const emitter = value as TypedEmitter<unknown>;
+            const keyPath = path.length === 0 ? key : `${path}.${key}`;
 
-                emitter.eventName = key;
+            if (value instanceof TypedEmitter)
+            {
+                const typedEmitter = (value as TypedEmitter<unknown>);
+
+                typedEmitter.eventName = keyPath;
+                typedEmitter.bind((...data: any[]) =>
+                {
+                    for (const filter of filters)
+                    {
+                        if (filter.eventNameFilter === '*' || RegExp(filter.eventNameFilter).exec(keyPath))
+                        {
+                            filter.callback(keyPath, ...data);
+                        }
+                    }
+                });
+            }
+            else
+            {
+                walk(value, keyPath);
             }
         }
     }
 
     walk(events);
 
-    return events;
+    return {
+        ...events,
+        $(eventNameFilter: string, callback: GlobalCallback)
+        {
+            filters.push({ eventNameFilter, callback });
+        },
+    };
 }
-
