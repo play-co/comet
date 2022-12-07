@@ -43,62 +43,21 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         const container = this.container = document.createElement('div');
 
-        container.style.cssText = `
-            display: flex;
-            flex-direction: column;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 100000;
-            cursor: move;
-            box-shadow: 5px 5px 13px 1px rgba(0,0,0,0.3);
-            box-sizing: border-box;
-            user-select: none;
-            display: none;
-        `;
+        container.setAttribute('class', 'dev-inspector');
 
         container.innerHTML = `
-        <label>
-            <span>${this.id}</span>
-            <div class="inspect"><a title="Inspect (Shift-click to clear console)">?</a></div>
-            <div class="toggle"><a title="Expand/Collapse">+</a></div>
-        </label>
-        `;
+            <label>
+                <span>${this.id}</span>
+                <div class="inspect"><a title="Inspect (Shift-click to clear console)">?</a></div>
+                <div class="toggle"><a title="Expand/Collapse">+</a></div>
+            </label>
+            `;
 
         const label = container.querySelector('label') as HTMLLabelElement;
-        const span = container.querySelector('span') as HTMLSpanElement;
         const inspectButton = container.querySelector('.inspect') as HTMLDivElement;
         const toggleButton = container.querySelector('.toggle') as HTMLDivElement;
 
-        label.style.cssText = `
-            display: flex;
-            cursor: inherit;
-            background-color: #333;
-            color: white;
-            font-size: 12px;
-            text-align: center;
-            font-weight: bold;
-            background: linear-gradient(180deg, #333 0, #000000 100%);
-            justify-content: space-between;
-            padding: 0 5px;
-            height: ${titleBarHeight}px;
-        `;
-
-        span.style.cssText = `
-            flex-grow: 1;
-        `;
-
-        inspectButton.style.cssText = `
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-        `;
-
-        toggleButton.style.cssText = `
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-        `;
+        label.style.height = `${titleBarHeight}px`;
 
         container.appendChild(canvas);
 
@@ -108,56 +67,41 @@ export abstract class DevInspector<T extends Record<string, any> >
         const scrollHBox = this.scrollHBox = document.createElement('div');
         const resizeBox = this.resizeBox = document.createElement('div');
 
+        scrollVTrack.setAttribute('class', 'scroll-v-track');
+        scrollVBox.setAttribute('class', 'scroll-v-box');
+        scrollHTrack.setAttribute('class', 'scroll-h-track');
+        scrollHBox.setAttribute('class', 'scroll-h-box');
+        resizeBox.setAttribute('class', 'resize-box');
+
         this.table = this.createTable();
 
         scrollVTrack.style.cssText = `
-            position: absolute;
             top: ${titleBarHeight + this.table.rowHeight}px;
-            right: 0;
             width: ${scrollBoxTrackSize}px;
             bottom: ${scrollBoxTrackSize}px;
-            background-color: rgba(0,0,0,0.5);
-            display: none;
         `;
 
         scrollVBox.style.cssText = `
             background-color: ${Color(this.painter.backgroundColor).lighten(0.5)};
-            position: absolute;
             width: ${scrollBoxTrackSize}px;
             height: ${scrollBoxThumbSize}px;
-            top: 0;
-            right: 0;
-            border: 1px outset #888;
         `;
 
         scrollHTrack.style.cssText = `
-            position: absolute;
-            left: 0;
-            bottom: 0;
             right: ${scrollBoxTrackSize}px;
             height: ${scrollBoxTrackSize}px;
-            background-color: rgba(0,0,0,0.5);
-            display: none;
         `;
 
         scrollHBox.style.cssText = `
             background-color: ${Color(this.painter.backgroundColor).lighten(0.5)};
-            position: absolute;
             height: ${scrollBoxTrackSize}px;
             width: ${scrollBoxThumbSize}px;
-            top: 0;
-            left: 0;
-            border: 1px outset #888;
         `;
 
         resizeBox.style.cssText = `
             background-color: ${Color(this.painter.backgroundColor).lighten(0.15)};
-            position: absolute;
             height: ${scrollBoxTrackSize}px;
             width: ${scrollBoxTrackSize}px;
-            bottom: 0;
-            right: 0;
-            border: 1px outset #888;
         `;
 
         container.appendChild(scrollVTrack);

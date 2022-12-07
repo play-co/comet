@@ -1,0 +1,78 @@
+.dev-inspector {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100000;
+    cursor: move;
+    box-shadow: 5px 5px 13px 1px rgba(0,0,0,0.3);
+    box-sizing: border-box;
+    user-select: none;
+    display: none; 
+}
+
+.dev-inspector > label {
+    display: flex;
+    cursor: inherit;
+    background-color: #333;
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    font-weight: bold;
+    background: linear-gradient(180deg, #333 0, #000000 100%);
+    justify-content: space-between;
+    padding: 0 5px;
+}
+
+.dev-inspector > label > span {
+    flex-grow: 1;
+}
+
+.dev-inspector .inspect {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.dev-inspector .toggle {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.scroll-v-track {
+    position: absolute;
+    right: 0;
+    background-color: rgba(0,0,0,0.5);
+    display: none;
+}
+
+.scroll-v-box {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 1px outset #888;
+}
+
+.scroll-h-track {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    display: none;
+}
+
+.scroll-h-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 1px outset #888;
+}
+
+.resize-box {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border: 1px outset #888;
+}

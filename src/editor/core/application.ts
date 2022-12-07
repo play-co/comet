@@ -3,7 +3,6 @@ import { enableLog } from '../../core/log';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObject';
 import { ProjectNode } from '../../core/nodes/concrete/project';
-import { SceneNode } from '../../core/nodes/concrete/scene';
 import { clearInstances, getInstance } from '../../core/nodes/instances';
 import { createNodeSchema } from '../../core/nodes/schema';
 import { Actions } from '../actions';

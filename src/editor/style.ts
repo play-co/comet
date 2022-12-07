@@ -1,5 +1,6 @@
 // common, global
 import './style/global.css';
+import './style/devInspector.css';
 // golden layout themes
 import './style/goldenlayout-base.css';
 import './style/goldenlayout-dark-theme.css';
