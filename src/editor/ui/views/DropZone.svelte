@@ -1,48 +1,24 @@
-<script lang="ts" context="module">
-  function preventDefaults(e: Event) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-  ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
-    document.body.addEventListener(eventName, preventDefaults, false);
+<script lang="ts">
+  import { onMount } from "svelte";
+
+  import { Application } from "../../core/application";
+  import { DropZone } from "./dropzone";
+
+  let element: HTMLElement;
+
+  onMount(() => {
+    const dropzone = new DropZone(element);
+
+    dropzone.on("drop", (e) => {
+      const files = e.dataTransfer.files;
+      if (files.length >= 1) {
+        Application.instance.createTexture(files[0]);
+      }
+    });
   });
 </script>
 
-<script lang="ts">
-  import { Application } from "../../core/application";
-
-  const onDragEnter = (e: DragEvent) => {
-    const { dataTransfer } = e;
-    if (dataTransfer) {
-      const d = dataTransfer.getData("application/x-moz-file");
-      dataTransfer.setData("application/x-moz-file", d);
-
-      dataTransfer.dropEffect = "move";
-
-      console.log("start", d);
-    }
-  };
-
-  const onDragLeave = (e: DragEvent) => {
-    console.log("leave", e);
-  };
-
-  const onDrop = (e: DragEvent) => {
-    const { dataTransfer } = e;
-    if (dataTransfer) {
-      var files = dataTransfer.files;
-      if (files.length >= 1) {
-        console.log("drop", files);
-        Application.instance.createTexture(files[0]);
-      }
-    }
-  };
-</script>
-
-<drop-zone
-  on:dragenter={onDragEnter}
-  on:dragleave={onDragLeave}
-  on:drop={onDrop}>
+<drop-zone bind:this={element}>
   <slot />
 </drop-zone>
 
