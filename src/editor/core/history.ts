@@ -1,5 +1,5 @@
-import { Application } from './application';
 import { getUserName } from '../sync/user';
+import { Application } from './application';
 import { createCommand } from './commandFactory';
 import { commandHistoryKey, undoHistoryKey } from './localStorage';
 

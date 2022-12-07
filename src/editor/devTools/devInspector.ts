@@ -353,12 +353,18 @@ export abstract class DevInspector<T extends Record<string, any> >
         return this;
     }
 
+    protected createTable()
+    {
+        const details = this.getDetails();
+
+        return createTable(details, this.indexColumnLabel(), this.painter.font.size);
+    }
+
     protected update()
     {
         const { container, scrollVTrack, scrollHTrack, scrollVBox, scrollHBox, scrollTop, scrollLeft, painter, resizeBox } = this;
-        const details = this.getDetails();
 
-        const table = this.table = createTable(details, this.indexColumnLabel(), this.painter.font.size);
+        const table = this.table = this.createTable();
 
         const hOverflow = Math.round(this.table.width - this.container.offsetWidth + scrollBoxTrackSize);
 

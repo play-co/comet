@@ -8,6 +8,7 @@ import { CreateTextureAssetCommand } from '../commands/createTextureAsset';
 import { RemoveNodeCommand } from '../commands/removeNode';
 import { DatastoreNodeInspector } from '../devTools/datastoreNodeInspector';
 import { GraphNodeInspector } from '../devTools/graphNodeInspector';
+import { LogInspector } from '../devTools/logInspector';
 import { UndoStackInspector } from '../devTools/undoStackInspector';
 import Events from '../events';
 import { LocalStorageProvider } from '../storage/localStorageProvider';
@@ -163,15 +164,20 @@ export class Application
             const graphNodeInspector = new GraphNodeInspector('Graph Nodes', 'blue');
             const datastoreNodeInspector = new DatastoreNodeInspector('Datastore Nodes', 'green');
             const undoStackInspector = new UndoStackInspector('UndoStack', 'purple');
-            const h = Math.round(screen.availHeight * 0.75);
+            const logInspector = new LogInspector('Log', 'darkslategrey');
 
-            graphNodeInspector.setHeight(h);
-            datastoreNodeInspector.setHeight(h);
-            undoStackInspector.setHeight(h);
+            const height = Math.round(screen.availHeight * 0.75);
+            const container = document.body;
 
-            graphNodeInspector.mount(document.body);
-            datastoreNodeInspector.mount(document.body);
-            undoStackInspector.mount(document.body);
+            graphNodeInspector.setHeight(height);
+            datastoreNodeInspector.setHeight(height);
+            undoStackInspector.setHeight(height);
+            logInspector.setHeight(height);
+
+            graphNodeInspector.mount(container);
+            datastoreNodeInspector.mount(container);
+            undoStackInspector.mount(container);
+            logInspector.mount(container);
         }
     }
 
