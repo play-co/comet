@@ -193,7 +193,6 @@
     background-color: #323030;
     font-size: 12px;
     padding: 3px 5px;
-    margin-bottom: 5px;
     border-radius: 3px;
     min-width: 50px;
   }

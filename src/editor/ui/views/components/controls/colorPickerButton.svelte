@@ -39,6 +39,7 @@
     height: 100%;
     display: flex;
     border-radius: 5px;
+    margin: 0 1px;
   }
 
   button {
