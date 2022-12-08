@@ -81,7 +81,7 @@ export class ContainerNode<
         if (parent)
         {
             const thisView = this.view;
-            const parentView = parent.cast<ClonableNode>().getView<Container>();
+            const parentView = parent.asClonableNode().getView<Container>();
 
             parentView.setChildIndex(thisView, parent.indexOf(this));
         }
@@ -92,7 +92,7 @@ export class ContainerNode<
         super.reorderChildren(childIds);
 
         this.children
-            .filter((node) => !node.cast<ClonableNode>().isCloaked)
+            .filter((node) => !node.asClonableNode().isCloaked)
             .forEach((node) => node.cast<ContainerNode>().updateViewIndex());
     }
 

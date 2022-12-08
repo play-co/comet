@@ -1,4 +1,3 @@
-import type { ClonableNode } from '../../core';
 import type { GraphNode } from '../../core/nodes/abstract/graphNode';
 import type { ContainerNode } from '../../core/nodes/concrete/container';
 import { type UpdateMode, Command } from '../core/command';
@@ -38,7 +37,7 @@ export class SetNodeIndexCommand
             if (updateMode === 'full')
             {
                 const childIds = parentNode.children
-                    .filter((node) => !node.cast<ClonableNode>().isCloaked)
+                    .filter((node) => !node.asClonableNode().isCloaked)
                     .map((node) => node.id);
 
                 datastore.setNodeChildren(parentId, childIds);
@@ -64,7 +63,7 @@ export class SetNodeIndexCommand
             if (updateMode === 'full')
             {
                 const childIds = cache.prevChildArray
-                    .filter((node) => !node.cast<ClonableNode>().isCloaked)
+                    .filter((node) => !node.asClonableNode().isCloaked)
                     .map((node) => node.id);
 
                 datastore.setNodeChildren(parentId, childIds);

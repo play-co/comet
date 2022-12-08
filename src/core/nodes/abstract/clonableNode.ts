@@ -222,7 +222,7 @@ export abstract class ClonableNode<
             return true;
         }
 
-        const node = refNode.cast<ClonableNode>();
+        const node = refNode.asClonableNode();
 
         // check original
         if (this.getOriginal() === node)
@@ -289,7 +289,7 @@ export abstract class ClonableNode<
 
         if (parent)
         {
-            this.addViewToParent(parent.cast<ClonableNode>());
+            this.addViewToParent(parent.cast());
         }
     }
 
@@ -297,7 +297,7 @@ export abstract class ClonableNode<
 
     protected onRemovedFromParent(oldParent: GraphNode): void
     {
-        this.removeViewFromParent(oldParent.cast<ClonableNode>());
+        this.removeViewFromParent(oldParent.cast());
     }
 
     protected abstract removeViewFromParent(parent: ClonableNode): void;
@@ -489,7 +489,7 @@ export abstract class ClonableNode<
         const nodes = this.getCloneAncestors();
         const array: ClonableNode[] = [];
 
-        nodes.splice(0, 0, this.cast<ClonableNode>());
+        nodes.splice(0, 0, this.cast());
         nodes.forEach((node) =>
         {
             const parents = node.getParents<ClonableNode>();
@@ -509,7 +509,7 @@ export abstract class ClonableNode<
      */
     public getDependants(): ClonableNode[]
     {
-        const array = getDependants(this.cast<ClonableNode>());
+        const array = getDependants(this.cast());
 
         array.sort(sortNodesByCreation);
 
@@ -522,7 +522,7 @@ export abstract class ClonableNode<
      */
     public getDependencies(): ClonableNode[]
     {
-        const array = getDependencies(this.cast<ClonableNode>());
+        const array = getDependencies(this.cast());
 
         array.sort(sortNodesByCreation);
 

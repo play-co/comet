@@ -101,7 +101,7 @@ export class BoxSelection extends Graphics
 
             if (bounds.intersects(selectionBounds))
             {
-                allNodes.push(node.cast<ClonableNode>());
+                allNodes.push(node.cast());
             }
         });
 

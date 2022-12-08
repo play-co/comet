@@ -28,9 +28,14 @@ export abstract class GraphNode
 
     public abstract nodeType(): string;
 
-    public cast<T extends GraphNode>()
+    public cast<T extends GraphNode = GraphNode>()
     {
         return this as unknown as T;
+    }
+
+    public asClonableNode()
+    {
+        return this.cast<ClonableNode>();
     }
 
     public dispose()
@@ -356,10 +361,5 @@ export abstract class GraphNode
     protected onRemovedFromParent(oldParent: GraphNode)
     {
         // subclasses
-    }
-
-    public asClonableNode()
-    {
-        return this as unknown as ClonableNode;
     }
 }

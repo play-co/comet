@@ -798,7 +798,7 @@ export class TransformGizmo extends Container
                     values.y = y + deltaY;
                 }
 
-                const prevValues = this.getCachedMatrix(node.cast<ClonableNode>()).ownValues;
+                const prevValues = this.getCachedMatrix(node.cast()).ownValues;
 
                 modifications.push({
                     nodeId: node.id,

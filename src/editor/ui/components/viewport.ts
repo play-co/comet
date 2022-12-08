@@ -280,7 +280,7 @@ export class EditableViewport
                    && node.model.getValue<boolean>('visible')
             )
             {
-                underCursor.push(node.cast<ClonableNode>());
+                underCursor.push(node.cast());
             }
         });
 
