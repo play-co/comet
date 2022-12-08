@@ -87,16 +87,11 @@ export class TransformGizmo extends Container
 
         this.initFrame();
 
-        Events.selection.setSingle.bind(this.updateSelection);
-        Events.selection.setMulti.bind(this.updateSelection);
-        Events.selection.add.bind(this.updateSelection);
-        Events.selection.remove.bind(this.updateSelection);
+        Events.$('command.(undo|redo)', this.updateSelection);
+        Events.$('datastore.node.remote.(created|removed)', this.updateSelection);
+        Events.$('editor.(propertyModified|nudge)', this.updateSelection);
+        Events.$('selection.(setSingle|setMulti|add|remove)', this.updateSelection);
         Events.selection.deselect.bind(this.onSelectionDeselect);
-        Events.command.undo.bind(this.updateSelection);
-        Events.command.redo.bind(this.updateSelection);
-        Events.datastore.node.remote.created.bind(this.updateSelection);
-        Events.datastore.node.remote.removed.bind(this.updateSelection);
-        Events.editor.propertyModified.bind(this.updateSelection);
     }
 
     get selection()

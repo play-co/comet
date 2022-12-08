@@ -3,4 +3,5 @@ import { Emit } from '../emitter';
 
 export default {
     propertyModified: Emit<PropertyBinding>(),
+    nudge: Emit<void>(),
 };

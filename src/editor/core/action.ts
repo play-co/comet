@@ -101,13 +101,13 @@ export abstract class Action<P, T>
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected triggerFromShortcut(event: KeyboardEvent, handler: HotkeysEvent)
     {
-        this.dispatch();
+        this.dispatch({}, event);
     }
 
-    public dispatch(options: Partial<P> = {}): T
+    public dispatch(options: Partial<P> = {}, event?: KeyboardEvent): T
     {
-        return this.exec(options);
+        return this.exec(options, event);
     }
 
-    protected abstract exec(options: Partial<P>): T;
+    protected abstract exec(options: Partial<P>, event?: KeyboardEvent): T;
 }

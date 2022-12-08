@@ -1,4 +1,6 @@
-import { Command } from '../core/command';
+import type { ClonableNode } from '../../core';
+import type { ModelBase } from '../../core/model/model';
+import { type UpdateMode, Command } from '../core/command';
 import { type ModifyModelCommandParams, ModifyModelCommand } from './modifyModel';
 
 export interface ModifyModelsCommandParams
@@ -15,6 +17,32 @@ export class ModifyModelsCommand
     extends Command<ModifyModelsCommandParams, void, ModifyModelsCommandCache>
 {
     public static commandName = 'ModifyModels';
+
+    public static modifyNodes<T extends ClonableNode, M extends ModelBase>(
+        nodes: T[],
+        updateMode: UpdateMode,
+        onNodeValuesCallback: (node: T, values: Partial<M>) => void,
+    )
+    {
+        const modifications: ModifyModelCommandParams<any>[] = [];
+
+        nodes.forEach((node) =>
+        {
+            const values: Partial<M> = {};
+
+            onNodeValuesCallback(node, values);
+
+            modifications.push({
+                nodeId: node.id,
+                values,
+                updateMode,
+            });
+        });
+
+        return new ModifyModelsCommand({
+            modifications,
+        });
+    }
 
     public apply(): void
     {

@@ -23,9 +23,9 @@ export interface NewNodeOptions<M>
 
 export abstract class ClonableNode<
     /** Model */
-    M extends ModelBase = ModelBase,
+    M extends ModelBase = any,
     /** View */
-    V extends object = object,
+    V extends object = any,
 > extends GraphNode implements Clonable
 {
     public model: Model<M> & M;
