@@ -1,8 +1,9 @@
 import Color from 'color';
 
-import { Application } from '../core/application';
-import { DevInspector } from './devInspector';
-import { type CellStyle, type Column, type Row, tableIndexKey } from './tableRenderer';
+import { Application } from '../../core/application';
+import Events from '../../events';
+import { DevInspector } from '../devInspector';
+import { type CellStyle, type Column, type Row, tableIndexKey } from '../tableRenderer';
 
 interface UndoStackDetail
 {
@@ -11,6 +12,20 @@ interface UndoStackDetail
 
 export class UndoStackInspector extends DevInspector<UndoStackDetail>
 {
+    protected init(): void
+    {
+        Events.command.exec.bind(this.onUpdate);
+        Events.command.undo.bind(this.onUpdate);
+        Events.command.redo.bind(this.onUpdate);
+
+        this.update();
+    }
+
+    protected onUpdate = () =>
+    {
+        this.scrollToEnd();
+    };
+
     protected getDetails()
     {
         const undoStack = Application.instance.undoStack;

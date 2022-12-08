@@ -99,7 +99,7 @@ export function createTable<T extends Record<string, any>>(
 
     // detect sizes
     const cellSize = measureText(tableIndexKey, fontSize);
-    const maxColumnWidth = Math.round(document.body.clientWidth * 0.5);
+    const maxColumnWidth = Math.round(document.body.clientWidth * 0.25);
 
     indexColumn.width = cellSize.width;
 

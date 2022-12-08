@@ -1,6 +1,7 @@
-import { Application } from '../core/application';
-import { DevInspector } from './devInspector';
-import type { CellStyle, Column, Row } from './tableRenderer';
+import { Application } from '../../core/application';
+import Events from '../../events';
+import { DevInspector } from '../devInspector';
+import type { CellStyle, Column, Row } from '../tableRenderer';
 
 export interface DatastoreNodeDetail
 {
@@ -10,6 +11,13 @@ export interface DatastoreNodeDetail
 
 export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
 {
+    protected init(): void
+    {
+        Events.$('datastore.node', () => this.scrollToEnd());
+
+        this.update();
+    }
+
     protected getDetails()
     {
         const datastore = Application.instance.datastore;

@@ -1,3 +1,4 @@
+import { log } from '../../core/log';
 import type { Command } from '../core/command';
 import Events from '../events';
 import { writeCommandList, writeUndoStack } from './history';
@@ -30,6 +31,10 @@ export default class UndoStack
         }
 
         command.storeSelection();
+
+        log('command', 'exec', command.toJSON());
+
+        Events.command.exec.emit(command);
 
         const result = command.run();
 

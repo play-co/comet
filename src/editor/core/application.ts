@@ -9,10 +9,10 @@ import { Actions } from '../actions';
 import { CreateNodeCommand } from '../commands/createNode';
 import { CreateTextureAssetCommand } from '../commands/createTextureAsset';
 import { RemoveNodeCommand } from '../commands/removeNode';
-import { DatastoreNodeInspector } from '../devTools/datastoreNodeInspector';
-import { GraphNodeInspector } from '../devTools/graphNodeInspector';
-import { LogInspector } from '../devTools/logInspector';
-import { UndoStackInspector } from '../devTools/undoStackInspector';
+import { DatastoreNodeInspector } from '../devTools/inspectors/datastoreNodeInspector';
+import { GraphNodeInspector } from '../devTools/inspectors/graphNodeInspector';
+import { LogInspector } from '../devTools/inspectors/logInspector';
+import { UndoStackInspector } from '../devTools/inspectors/undoStackInspector';
 import Events from '../events';
 import { LocalStorageProvider } from '../storage/localStorageProvider';
 import { ConvergenceDatastore } from '../sync/convergenceDatastore';
@@ -174,22 +174,22 @@ export class Application
         {
             const graphNodeInspector = new GraphNodeInspector('Graph Nodes', 'blue');
             const datastoreNodeInspector = new DatastoreNodeInspector('Datastore Nodes', 'green');
-            const undoStackInspector = new UndoStackInspector('UndoStack', 'purple');
             const logInspector = new LogInspector('Log', 'darkslategrey');
+            const undoStackInspector = new UndoStackInspector('UndoStack', 'purple');
 
             const mediumMaxHeight = Math.round(screen.availHeight * 0.3);
             const shortMaxHeight = Math.round(screen.availHeight * 0.2);
             const container = document.body;
 
-            graphNodeInspector.setHeight(mediumMaxHeight);
-            datastoreNodeInspector.setHeight(mediumMaxHeight);
-            undoStackInspector.setHeight(mediumMaxHeight);
-            logInspector.setHeight(shortMaxHeight);
+            graphNodeInspector.maxHeight = mediumMaxHeight;
+            datastoreNodeInspector.maxHeight = mediumMaxHeight;
+            logInspector.maxHeight = shortMaxHeight;
+            undoStackInspector.maxHeight = mediumMaxHeight;
 
             graphNodeInspector.mount(container);
             datastoreNodeInspector.mount(container);
-            undoStackInspector.mount(container);
             logInspector.mount(container);
+            undoStackInspector.mount(container);
         }
     }
 

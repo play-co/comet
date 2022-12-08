@@ -185,7 +185,6 @@
 <style>
   numeric-control {
     display: inline-block;
-    max-width: 50px;
   }
 
   input {
@@ -196,6 +195,7 @@
     padding: 3px 5px;
     margin-bottom: 5px;
     border-radius: 3px;
+    min-width: 50px;
   }
 
   input.mixed {

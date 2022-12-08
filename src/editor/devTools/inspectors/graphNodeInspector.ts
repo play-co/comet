@@ -1,9 +1,9 @@
 import Color from 'color';
 
-import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
-import { Application } from '../core/application';
-import { DevInspector } from './devInspector';
-import type { CellStyle, Column, Row } from './tableRenderer';
+import type { ClonableNode } from '../../../core';
+import { Application } from '../../core/application';
+import { DevInspector } from '../devInspector';
+import type { CellStyle, Column, Row } from '../tableRenderer';
 
 export interface GraphNodeDetail
 {
@@ -16,6 +16,14 @@ export interface GraphNodeDetail
 
 export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
 {
+    protected init(): void
+    {
+        setInterval(() =>
+        {
+            this.update();
+        }, 500);
+    }
+
     public onCellStyle = (row: Row, column: Column, cellStyle: CellStyle) =>
     {
         const currentCell = this.getCell(column.id, row);

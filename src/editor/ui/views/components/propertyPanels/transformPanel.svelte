@@ -2,8 +2,6 @@
   import type { PropertiesPanel } from "../../propertiesPanel";
   import { PropertyMap } from "./propertyMap";
   import PropertyPanel from "./panelGroup.svelte";
-  import PropertyPairControl from "./propertyPairControl.svelte";
-  import PropertyControl from "./propertyControl.svelte";
   import NumericControl from "../controls/numericPropertyControl.svelte";
 
   export let panel: PropertiesPanel;
@@ -16,70 +14,64 @@
 <PropertyPanel title="Transform">
   {#if properties.has("x", "y")}
     <!-- position: x,y -->
-    <PropertyPairControl label="Position">
-      <PropertyControl label="x" slot="prop1">
-        <NumericControl property={properties.get("x")} />
-      </PropertyControl>
-      <PropertyControl label="y" slot="prop2">
-        <NumericControl property={properties.get("y")} />
-      </PropertyControl>
-    </PropertyPairControl>
+    <property-category>Position</property-category>
+    <property-row>
+      <property-label>x</property-label>
+      <NumericControl property={properties.get("x")} />
+      <property-label>y</property-label>
+      <NumericControl property={properties.get("y")} />
+    </property-row>
   {/if}
 
   {#if properties.has("scaleX", "scaleY")}
     <!-- size: w,h -->
-    <PropertyPairControl label="Size">
-      <PropertyControl label="w" slot="prop1">
-        <NumericControl property={properties.get("scaleX")} mode={"width"} />
-      </PropertyControl>
-      <PropertyControl label="h" slot="prop2">
-        <NumericControl property={properties.get("scaleY")} mode={"height"} />
-      </PropertyControl>
-    </PropertyPairControl>
+    <property-category>Position</property-category>
+    <property-row>
+      <property-label>x</property-label>
+      <NumericControl property={properties.get("x")} mode="width" />
+      <property-label>y</property-label>
+      <NumericControl property={properties.get("y")} mode="height" />
+    </property-row>
 
     <!-- scale: x,y -->
-    <PropertyPairControl label="Scale">
-      <PropertyControl label="x" slot="prop1">
-        <NumericControl property={properties.get("scaleX")} />
-      </PropertyControl>
-      <PropertyControl label="y" slot="prop2">
-        <NumericControl property={properties.get("scaleY")} />
-      </PropertyControl>
-    </PropertyPairControl>
+    <property-category>Scale</property-category>
+    <property-row>
+      <property-label>x</property-label>
+      <NumericControl property={properties.get("scaleX")} />
+      <property-label>y</property-label>
+      <NumericControl property={properties.get("scaleY")} />
+    </property-row>
   {/if}
 
   {#if properties.has("angle")}
     <!-- angle -->
-    <div class="single">
-      <PropertyControl label="angle">
-        <NumericControl property={properties.get("angle")} />
-      </PropertyControl>
-      <div class="spacer" />
-    </div>
+    <property-category>Rotation</property-category>
+    <property-row>
+      <property-label>θ</property-label>
+      <NumericControl property={properties.get("angle")} />
+    </property-row>
   {/if}
 
   {#if properties.has("pivotX", "pivotY")}
     <!-- pivot: x,y -->
-    <PropertyPairControl label="Pivot">
-      <PropertyControl label="x" slot="prop1">
-        <NumericControl property={properties.get("pivotX")} />
-      </PropertyControl>
-      <PropertyControl label="y" slot="prop2">
-        <NumericControl property={properties.get("pivotY")} />
-      </PropertyControl>
-    </PropertyPairControl>
+    <property-category>Pivot</property-category>
+    <property-row>
+      <property-label>x</property-label>
+      <NumericControl property={properties.get("pivotX")} />
+      <property-label>y</property-label>
+      <NumericControl property={properties.get("pivotY")} />
+    </property-row>
   {/if}
 
   {#if properties.has("skewX", "skewY")}
     <!-- skew: x,y -->
-    <PropertyPairControl label="Skew">
-      <PropertyControl label="x" slot="prop1">
-        <NumericControl property={properties.get("skewX")} />
-      </PropertyControl>
-      <PropertyControl label="y" slot="prop2">
-        <NumericControl property={properties.get("skewY")} />
-      </PropertyControl>
-    </PropertyPairControl>
+    <property-category>Skew</property-category>
+    <property-row>
+      <property-label>x</property-label>
+      <NumericControl property={properties.get("skewX")} />
+      <property-label>y</property-label>
+      <NumericControl property={properties.get("skewY")} />
+    </property-row>
   {/if}
 </PropertyPanel>
 

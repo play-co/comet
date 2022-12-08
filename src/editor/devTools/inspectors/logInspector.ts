@@ -1,8 +1,8 @@
 import Color from 'color';
 
-import { type LogEntry, type LogSource, getLogEntries, onLog } from '../../core/log';
-import { DevInspector } from './devInspector';
-import { type CellStyle, type Column, type Row, tableIndexKey } from './tableRenderer';
+import { type LogEntry, type LogSource, getLogEntries, onLog } from '../../../core/log';
+import { DevInspector } from '../devInspector';
+import { type CellStyle, type Column, type Row, tableIndexKey } from '../tableRenderer';
 
 const logSourceColor = new Map<LogSource, Color>();
 

@@ -1,8 +1,6 @@
 <script lang="ts">
   import type { PropertiesPanel } from "../../propertiesPanel";
   import PropertyPanel from "./panelGroup.svelte";
-  import PropertyControl from "./propertyControl.svelte";
-  import PropertyPairControl from "./propertyPairControl.svelte";
   import ColorPickerControl from "../controls/colorPropertyControl.svelte";
   import CheckboxControl from "../controls/checkboxPropertyControl.svelte";
   import NumericControl from "../controls/numericPropertyControl.svelte";
@@ -16,33 +14,35 @@
 </script>
 
 <PropertyPanel title="Display">
-  {#if properties.has("alpha")}
-    <PropertyControl label={"alpha"}>
-      <NumericControl property={properties.get("alpha")} />
-    </PropertyControl>
+  {#if properties.has("tint")}
+    <property-row>
+      <property-label>tint</property-label>
+      <ColorPickerControl property={properties.get("tint")} />
+    </property-row>
   {/if}
 
-  {#if properties.has("tint")}
-    <PropertyControl label={"tint"}>
-      <ColorPickerControl property={properties.get("tint")} />
-    </PropertyControl>
+  {#if properties.has("alpha")}
+    <property-row>
+      <property-label>alpha</property-label>
+      <NumericControl property={properties.get("alpha")} />
+    </property-row>
   {/if}
 
   {#if properties.has("visible")}
-    <PropertyControl label={"visible"}>
+    <property-row>
+      <property-label>visible</property-label>
       <CheckboxControl property={properties.get("visible")} />
-    </PropertyControl>
+    </property-row>
   {/if}
 
   {#if properties.has("anchorX", "anchorY")}
     <!-- anchor: x,y -->
-    <PropertyPairControl label="Anchor">
-      <PropertyControl label="x" slot="prop1">
-        <NumericControl property={properties.get("anchorX")} />
-      </PropertyControl>
-      <PropertyControl label="y" slot="prop2">
-        <NumericControl property={properties.get("anchorY")} />
-      </PropertyControl>
-    </PropertyPairControl>
+    <property-category>Anchor</property-category>
+    <property-row>
+      <property-label>x</property-label>
+      <NumericControl property={properties.get("anchorX")} />
+      <property-label>y</property-label>
+      <NumericControl property={properties.get("anchorY")} />
+    </property-row>
   {/if}
 </PropertyPanel>

@@ -15,7 +15,7 @@
   };
 </script>
 
-<div>
+<color-picker-button>
   <button
     bind:this={button}
     on:click={onClick}
@@ -31,14 +31,21 @@
       on:accept
       on:close />
   {/if}
-</div>
+</color-picker-button>
 
 <style>
+  color-picker-button {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    border-radius: 5px;
+  }
+
   button {
-    width: 30px;
-    height: 20px;
     border: 1px outset #333;
     cursor: pointer;
+    flex-grow: 1;
+    border-radius: 5px;
   }
 
   button:hover {
