@@ -226,16 +226,14 @@ export abstract class DevInspector<T extends Record<string, any> >
             mouseDrag(e, (deltaX: number, deltaY: number) =>
             {
                 this.setSize(startWidth + deltaX, startHeight + deltaY);
+                this.render();
             }).then(() =>
             {
                 this.storeState();
             });
         };
 
-        setTimeout(() =>
-        {
-            this.init();
-        }, 0);
+        this.init();
     }
 
     get localStorageKey()
@@ -271,15 +269,33 @@ export abstract class DevInspector<T extends Record<string, any> >
         this.maxWidth = width;
         this.maxHeight = height;
 
+        if (width !== -1)
+        {
+            this.width = width;
+        }
+        if (height !== -1)
+        {
+            this.height = height;
+        }
+
         return this;
     }
 
     public setSize(width: number, height: number)
     {
-        this.width = Math.min(width, Math.min(this.table.width, this.maxWidth === -1 ? Number.MAX_VALUE : this.maxWidth));
-        this.height = Math.min(height, Math.min(this.table.height, this.maxHeight, height));
+        const { table, maxWidth, maxHeight } = this;
+        const desiredWidth = Math.min(maxWidth === -1 ? Number.MAX_VALUE : maxWidth, width);
+        const desiredHeight = Math.min(maxHeight === -1 ? Number.MAX_VALUE : maxHeight, height);
 
-        this.update();
+        if (width !== -1)
+        {
+            this.width = Math.min(desiredWidth, table.width);
+        }
+
+        if (height !== -1)
+        {
+            this.height = Math.min(desiredHeight, table.height);
+        }
 
         return this;
     }
@@ -292,7 +308,7 @@ export abstract class DevInspector<T extends Record<string, any> >
         this.scrollLeft = Math.max(0, Math.min(scrollLeft, 1));
         this.scrollTop = Math.max(0, Math.min(maxScrollTop, scrollTop));
 
-        this.update();
+        this.render();
 
         return this;
     }
@@ -306,7 +322,7 @@ export abstract class DevInspector<T extends Record<string, any> >
             return 0;
         }
 
-        const diffSpace = (table.height) - canvas.offsetHeight;
+        const diffSpace = table.height - canvas.offsetHeight;
 
         return Math.floor(diffSpace / table.rowHeight);
     }
@@ -314,7 +330,7 @@ export abstract class DevInspector<T extends Record<string, any> >
     public scrollToEnd()
     {
         this.scrollTop = this.maxScrollTop;
-        this.update();
+        this.render();
     }
 
     protected createTable()
@@ -324,11 +340,9 @@ export abstract class DevInspector<T extends Record<string, any> >
         return createTable(details, this.indexColumnLabel(), this.painter.font.size);
     }
 
-    protected update()
+    protected render()
     {
         const table = this.table = this.createTable();
-
-        const hOverflow = Math.round(this.table.width - this.container.offsetWidth + scrollBoxTrackSize);
 
         if (table.rows.length === 0)
         {
@@ -338,8 +352,11 @@ export abstract class DevInspector<T extends Record<string, any> >
         {
             if (this.isExpanded)
             {
+                const hOverflow = Math.round(this.table.width - this.container.offsetWidth + scrollBoxTrackSize);
+
                 renderTable(table, this.painter, this.onCellStyle, this.width, this.height, hOverflow * this.scrollLeft, this.scrollTop);
             }
+
             this.updateScrollBars();
         }
     }
@@ -382,7 +399,7 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         this.painter.canvas.style.display = this.isExpanded ? 'block' : 'none';
 
-        this.update();
+        this.render();
     }
 
     // @ts-ignore

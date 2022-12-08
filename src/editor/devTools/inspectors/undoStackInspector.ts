@@ -14,17 +14,14 @@ export class UndoStackInspector extends DevInspector<UndoStackDetail>
 {
     protected init(): void
     {
-        Events.command.exec.bind(this.onUpdate);
-        Events.command.undo.bind(this.onUpdate);
-        Events.command.redo.bind(this.onUpdate);
+        const onUpdate = () => this.scrollToEnd();
 
-        this.update();
+        Events.command.exec.bind(onUpdate);
+        Events.command.undo.bind(onUpdate);
+        Events.command.redo.bind(onUpdate);
+
+        this.render();
     }
-
-    protected onUpdate = () =>
-    {
-        this.scrollToEnd();
-    };
 
     protected getDetails()
     {

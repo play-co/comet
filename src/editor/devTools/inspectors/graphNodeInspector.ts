@@ -20,7 +20,7 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
     {
         setInterval(() =>
         {
-            this.update();
+            this.render();
         }, 500);
     }
 

@@ -181,10 +181,10 @@ export class Application
             const shortMaxHeight = Math.round(screen.availHeight * 0.2);
             const container = document.body;
 
-            graphNodeInspector.maxHeight = mediumMaxHeight;
-            datastoreNodeInspector.maxHeight = mediumMaxHeight;
-            logInspector.maxHeight = shortMaxHeight;
-            undoStackInspector.maxHeight = mediumMaxHeight;
+            graphNodeInspector.setMaxSize(-1, mediumMaxHeight);
+            datastoreNodeInspector.setMaxSize(-1, mediumMaxHeight);
+            logInspector.setMaxSize(-1, shortMaxHeight);
+            undoStackInspector.setMaxSize(-1, mediumMaxHeight);
 
             graphNodeInspector.mount(container);
             datastoreNodeInspector.mount(container);

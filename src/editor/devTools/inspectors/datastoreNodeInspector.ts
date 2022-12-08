@@ -15,7 +15,7 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
     {
         Events.$('datastore.node', () => this.scrollToEnd());
 
-        this.update();
+        this.render();
     }
 
     protected getDetails()

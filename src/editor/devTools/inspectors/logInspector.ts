@@ -16,10 +16,10 @@ export class LogInspector extends DevInspector<Omit<LogEntry, 'timestamp'>>
     {
         onLog(() =>
         {
-            this.update();
+            this.render();
         });
 
-        this.update();
+        setTimeout(() => this.render(), 0);
     }
 
     protected getDetails()
