@@ -1,4 +1,4 @@
-import type { ContainerNode } from '../../core/nodes/concrete/container';
+import type { ClonableNode } from '../../core';
 import { Command } from '../core/command';
 
 export interface AddSelectionCommandParams
@@ -15,7 +15,7 @@ export class AddSelectionCommand
     {
         const { app, params: { nodeId } } = this;
 
-        const node = this.getInstance<ContainerNode>(nodeId);
+        const node = this.getInstance<ClonableNode>(nodeId);
 
         app.selection.add(node);
     }
@@ -24,7 +24,7 @@ export class AddSelectionCommand
     {
         const { app, params: { nodeId } } = this;
 
-        const node = this.getInstance<ContainerNode>(nodeId);
+        const node = this.getInstance<ClonableNode>(nodeId);
 
         app.selection.remove(node);
     }

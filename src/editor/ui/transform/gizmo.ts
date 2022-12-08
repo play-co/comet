@@ -2,7 +2,8 @@ import type { SmoothGraphics } from '@pixi/graphics-smooth';
 import type { InteractionEvent } from 'pixi.js';
 import { Container, Graphics, Matrix, Transform } from 'pixi.js';
 
-import type { DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
+import type { ClonableNode } from '../../../core';
+import { type DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
 import { type Point, degToRad, radToDeg } from '../../../core/util/geom';
 import type { ModifyModelCommandParams } from '../../commands/modifyModel';
 import { ModifyModelsCommand } from '../../commands/modifyModels';
@@ -47,7 +48,7 @@ export class TransformGizmo extends Container
 
     public initialTransform: InitialGizmoTransform;
     public frame: TransformGizmoFrame;
-    public nodeCache: Map<DisplayObjectNode, CachedNode>;
+    public nodeCache: Map<ClonableNode, CachedNode>;
 
     public vertex: HandleVertex;
     public operation?: TransformOperation;
@@ -121,7 +122,13 @@ export class TransformGizmo extends Container
     {
         const { selection } = this;
 
-        selection.nodes.forEach((node) => (node.view.interactive = false));
+        selection.nodes.forEach((node) =>
+        {
+            if (node instanceof DisplayObjectNode)
+            {
+                node.view.interactive = false;
+            }
+        });
 
         this.nodeCache.clear();
 
@@ -135,7 +142,7 @@ export class TransformGizmo extends Container
         this.selectNode(nodes[0]);
     }
 
-    protected getCachedMatrix(node: DisplayObjectNode): CachedNode
+    protected getCachedMatrix(node: ClonableNode): CachedNode
     {
         return this.nodeCache.get(node) as CachedNode;
     }
@@ -162,7 +169,12 @@ export class TransformGizmo extends Container
 
         if (selection.length === 1)
         {
-            return selection.nodes[0].view.x;
+            const node = selection.nodes[0];
+
+            if (node instanceof DisplayObjectNode)
+            {
+                return node.cast<DisplayObjectNode>().view.x;
+            }
         }
 
         return this.x;
@@ -174,7 +186,12 @@ export class TransformGizmo extends Container
 
         if (selection.length === 1)
         {
-            return selection.nodes[0].view.y;
+            const node = selection.nodes[0];
+
+            if (node instanceof DisplayObjectNode)
+            {
+                return node.cast<DisplayObjectNode>().view.y;
+            }
         }
 
         return this.y;
@@ -601,14 +618,17 @@ export class TransformGizmo extends Container
         this.update();
     }
 
-    public selectNode<T extends DisplayObjectNode>(node: T)
+    public selectNode<T extends ClonableNode>(node: T)
     {
-        const initialTransform = getGizmoInitialTransformFromView(node.view, node.width, node.width, this.parent.worldTransform);
+        if (node instanceof DisplayObjectNode)
+        {
+            const initialTransform = getGizmoInitialTransformFromView(node.view, node.width, node.width, this.parent.worldTransform);
 
-        this.initNodes([node], initialTransform, bluePivot);
+            this.initNodes([node], initialTransform, bluePivot);
+        }
     }
 
-    public selectNodes<T extends DisplayObjectNode>(nodes: T[])
+    public selectNodes<T extends ClonableNode>(nodes: T[])
     {
         const rect = getTotalGlobalBounds(nodes);
 
@@ -633,7 +653,7 @@ export class TransformGizmo extends Container
         this.initNodes(nodes, initialTransform, yellowPivot);
     }
 
-    protected initNodes<T extends DisplayObjectNode>(nodes: T[], initialTransform: InitialGizmoTransform, pivotView: Graphics | SmoothGraphics)
+    protected initNodes<T extends ClonableNode>(nodes: T[], initialTransform: InitialGizmoTransform, pivotView: Graphics | SmoothGraphics)
     {
         this.initialTransform = initialTransform;
 
@@ -649,16 +669,19 @@ export class TransformGizmo extends Container
 
         nodes.forEach((node) =>
         {
-            const view = node.view;
+            if (node instanceof DisplayObjectNode)
+            {
+                const view = node.view;
 
-            view.updateTransform();
+                view.updateTransform();
 
-            view.interactive = true;
+                view.interactive = true;
 
-            this.nodeCache.set(node, {
-                worldTransform: view.worldTransform.clone(),
-                ownValues: { ...node.model.ownValues },
-            });
+                this.nodeCache.set(node, {
+                    worldTransform: view.worldTransform.clone(),
+                    ownValues: { ...node.model.ownValues },
+                });
+            }
         });
 
         this.setConfig({ pivotView });
@@ -673,24 +696,11 @@ export class TransformGizmo extends Container
         if (selection.length === 1)
         {
             const node = selection.nodes[0];
-            const view = node.getView();
             const cachedMatrix = this.getCachedMatrix(node);
 
-            const matrix = new Matrix();
-
-            matrix.append(view.parent.worldTransform.clone().invert());
-            matrix.append(cachedMatrix.worldTransform);
-            matrix.append(this.initialTransform.matrix.clone().invert());
-            matrix.append(this.worldTransform);
-
-            view.transform.setFromMatrix(matrix);
-        }
-        else
-        {
-            selection.forEach((node) =>
+            if (node instanceof DisplayObjectNode)
             {
-                const view = node.getView();
-                const cachedMatrix = this.getCachedMatrix(node);
+                const view = node.view;
 
                 const matrix = new Matrix();
 
@@ -700,6 +710,27 @@ export class TransformGizmo extends Container
                 matrix.append(cachedMatrix.worldTransform);
 
                 view.transform.setFromMatrix(matrix);
+            }
+        }
+        else
+        {
+            selection.forEach((node) =>
+            {
+                const cachedMatrix = this.getCachedMatrix(node);
+
+                if (node instanceof DisplayObjectNode)
+                {
+                    const view = node.cast<DisplayObjectNode>().getView();
+
+                    const matrix = new Matrix();
+
+                    matrix.append(view.parent.worldTransform.clone().invert());
+                    matrix.append(this.worldTransform);
+                    matrix.append(this.initialTransform.matrix.clone().invert());
+                    matrix.append(cachedMatrix.worldTransform);
+
+                    view.transform.setFromMatrix(matrix);
+                }
             });
         }
     }
@@ -711,68 +742,71 @@ export class TransformGizmo extends Container
 
         selection.forEach((node) =>
         {
-            const view = node.view;
-
-            view.updateTransform();
-
-            const pivotX = this.pivotX;
-            const pivotY = this.pivotY;
-
-            const x = view.x;
-            const y = view.y;
-            const scaleX = view.scale.x;
-            const scaleY = view.scale.y;
-
-            const matrix = view.worldTransform.clone();
-
-            if (view.parent)
+            if (node instanceof DisplayObjectNode)
             {
-                const parentMatrix = view.parent.worldTransform.clone();
+                const view = node.view;
 
-                parentMatrix.invert();
-                matrix.prepend(parentMatrix);
+                view.updateTransform();
+
+                const pivotX = this.pivotX;
+                const pivotY = this.pivotY;
+
+                const x = view.x;
+                const y = view.y;
+                const scaleX = view.scale.x;
+                const scaleY = view.scale.y;
+
+                const matrix = view.worldTransform.clone();
+
+                if (view.parent)
+                {
+                    const parentMatrix = view.parent.worldTransform.clone();
+
+                    parentMatrix.invert();
+                    matrix.prepend(parentMatrix);
+                }
+
+                const transform = new Transform();
+
+                decomposeTransform(transform, matrix, undefined, { x: pivotX, y: pivotY } as any);
+
+                const angle = radToDeg(transform.rotation);
+                const skewX = transform.skew.x;
+                const skewY = transform.skew.y;
+
+                const values: Partial<DisplayObjectModel> = {
+                    x,
+                    y,
+                    scaleX,
+                    scaleY,
+                    angle,
+                    skewX,
+                    skewY,
+                };
+
+                if (selection.length === 1)
+                {
+                    const p1 = matrix.apply({ x: view.pivot.x, y: view.pivot.y });
+                    const p2 = matrix.apply({ x: pivotX, y: pivotY });
+                    const deltaX = p2.x - p1.x;
+                    const deltaY = p2.y - p1.y;
+
+                    values.pivotX = pivotX;
+                    values.pivotY = pivotY;
+
+                    values.x = x + deltaX;
+                    values.y = y + deltaY;
+                }
+
+                const prevValues = this.getCachedMatrix(node.cast<ClonableNode>()).ownValues;
+
+                modifications.push({
+                    nodeId: node.id,
+                    values,
+                    updateMode,
+                    prevValues,
+                });
             }
-
-            const transform = new Transform();
-
-            decomposeTransform(transform, matrix, undefined, { x: pivotX, y: pivotY } as any);
-
-            const angle = radToDeg(transform.rotation);
-            const skewX = transform.skew.x;
-            const skewY = transform.skew.y;
-
-            const values: Partial<DisplayObjectModel> = {
-                x,
-                y,
-                scaleX,
-                scaleY,
-                angle,
-                skewX,
-                skewY,
-            };
-
-            if (selection.length === 1)
-            {
-                const p1 = matrix.apply({ x: view.pivot.x, y: view.pivot.y });
-                const p2 = matrix.apply({ x: pivotX, y: pivotY });
-                const deltaX = p2.x - p1.x;
-                const deltaY = p2.y - p1.y;
-
-                values.pivotX = pivotX;
-                values.pivotY = pivotY;
-
-                values.x = x + deltaX;
-                values.y = y + deltaY;
-            }
-
-            const prevValues = this.getCachedMatrix(node).ownValues;
-
-            modifications.push({
-                nodeId: node.id,
-                values,
-                updateMode,
-                prevValues,
-            });
         });
 
         if (updateMode === 'full')

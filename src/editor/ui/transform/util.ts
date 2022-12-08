@@ -2,7 +2,8 @@ import { SmoothGraphics as Graphics } from '@pixi/graphics-smooth';
 import type { Container, DisplayObject } from 'pixi.js';
 import { Matrix, Rectangle, Transform } from 'pixi.js';
 
-import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
+import type { ClonableNode } from '../../../core';
+import { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
 import { angleBetween } from '../../../core/util/geom';
 
 export interface InitialGizmoTransform
@@ -86,23 +87,26 @@ export function getGizmoInitialTransformFromView(
     };
 }
 
-export function getTotalGlobalBounds<T extends DisplayObjectNode>(nodes: T[])
+export function getTotalGlobalBounds<T extends ClonableNode>(nodes: T[])
 {
     let rect = Rectangle.EMPTY;
 
     nodes.forEach((node) =>
     {
-        node.view.updateTransform();
-
-        const bounds = node.getGlobalBounds();
-
-        if (rect.width === 0 && rect.height === 0 && rect.x === 0 && rect.y === 0)
+        if (node instanceof DisplayObjectNode)
         {
-            rect = bounds.clone();
-        }
-        else
-        {
-            rect.enlarge(bounds);
+            node.view.updateTransform();
+
+            const bounds = node.getGlobalBounds();
+
+            if (rect.width === 0 && rect.height === 0 && rect.x === 0 && rect.y === 0)
+            {
+                rect = bounds.clone();
+            }
+            else
+            {
+                rect.enlarge(bounds);
+            }
         }
     });
 

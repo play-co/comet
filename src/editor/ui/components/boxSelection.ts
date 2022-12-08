@@ -1,6 +1,7 @@
 import Color from 'color';
 import { type InteractionEvent, Graphics, Point, Rectangle } from 'pixi.js';
 
+import type { ClonableNode } from '../../../core';
 import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
 
 export class BoxSelection extends Graphics
@@ -85,8 +86,8 @@ export class BoxSelection extends Graphics
     {
         const { selectionBounds } = this;
 
-        const allNodes: DisplayObjectNode[] = [];
-        const selected: Set<DisplayObjectNode> = new Set();
+        const allNodes: ClonableNode[] = [];
+        const selected: Set<ClonableNode> = new Set();
 
         // get all nodes (will return node children)
         rootNode.walk<DisplayObjectNode>((node) =>
@@ -100,7 +101,7 @@ export class BoxSelection extends Graphics
 
             if (bounds.intersects(selectionBounds))
             {
-                allNodes.push(node);
+                allNodes.push(node.cast<ClonableNode>());
             }
         });
 

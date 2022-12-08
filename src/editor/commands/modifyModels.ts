@@ -18,10 +18,10 @@ export class ModifyModelsCommand
 {
     public static commandName = 'ModifyModels';
 
-    public static modifyNodes<T extends ClonableNode, M extends ModelBase>(
-        nodes: T[],
+    public static modifyNodes<M extends ModelBase>(
+        nodes: ClonableNode[],
         updateMode: UpdateMode,
-        onNodeValuesCallback: (node: T, values: Partial<M>) => void,
+        onNodeValuesCallback: (node: ClonableNode, values: Partial<M>) => void,
     )
     {
         const modifications: ModifyModelCommandParams<any>[] = [];

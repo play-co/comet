@@ -1,6 +1,6 @@
 import Color from 'color';
 
-import type { ContainerNode } from '../../core/nodes/concrete/container';
+import type { ClonableNode } from '../../core';
 import type { SpriteModel, SpriteNode } from '../../core/nodes/concrete/sprite';
 import { createNodeSchema } from '../../core/nodes/schema';
 import { type AddChildCommandReturn, AddChildCommand } from '../commands/addChild';
@@ -67,7 +67,7 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
 
         const node = nodes[0] as unknown as SpriteNode;
 
-        app.selection.set(node.cast<ContainerNode>());
+        app.selection.set(node.cast<ClonableNode>());
 
         return node;
     }

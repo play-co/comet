@@ -1,4 +1,4 @@
-import type { DisplayObjectModel, DisplayObjectNode } from '../../core/nodes/abstract/displayObject';
+import type { DisplayObjectModel } from '../../core/nodes/abstract/displayObject';
 import { ModifyModelsCommand } from '../commands/modifyModels';
 import { Action } from '../core/action';
 import { Application } from '../core/application';
@@ -20,7 +20,7 @@ export class NudgeAction extends Action<void, void>
         if (!selection.isEmpty)
         {
             const inc = event.shiftKey ? 10 : 1;
-            const command = ModifyModelsCommand.modifyNodes<DisplayObjectNode, DisplayObjectModel>(
+            const command = ModifyModelsCommand.modifyNodes<DisplayObjectModel>(
                 selection.nodes,
                 'full',
                 (node, values) =>

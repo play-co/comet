@@ -1,16 +1,16 @@
-import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObject';
+import type { ClonableNode } from '../../core';
 import Events from '../events';
 
 export class NodeSelection
 {
-    public readonly nodes: DisplayObjectNode[];
+    public readonly nodes: ClonableNode[];
 
     constructor()
     {
         this.nodes = [];
     }
 
-    public set(node: DisplayObjectNode | DisplayObjectNode[])
+    public set(node: ClonableNode | ClonableNode[])
     {
         if (!this.isEmpty)
         {
@@ -35,14 +35,14 @@ export class NodeSelection
         }
     }
 
-    public add(node: DisplayObjectNode)
+    public add(node: ClonableNode)
     {
         this.nodes.push(node);
 
         Events.selection.add.emit(node);
     }
 
-    public remove(node: DisplayObjectNode)
+    public remove(node: ClonableNode)
     {
         const index = this.nodes.indexOf(node);
 
@@ -68,18 +68,18 @@ export class NodeSelection
         this.nodes.length = 0;
     }
 
-    public shallowContains(node: DisplayObjectNode)
+    public shallowContains(node: ClonableNode)
     {
         return this.nodes.indexOf(node) > -1;
     }
 
-    public deepContains(node: DisplayObjectNode)
+    public deepContains(node: ClonableNode)
     {
-        const allNodes: Map<DisplayObjectNode, true> = new Map();
+        const allNodes: Map<ClonableNode, true> = new Map();
 
         this.nodes.forEach((selectedNode) =>
         {
-            selectedNode.walk<DisplayObjectNode>((node) =>
+            selectedNode.walk<ClonableNode>((node) =>
             {
                 allNodes.set(node, true);
             });
@@ -88,12 +88,12 @@ export class NodeSelection
         return allNodes.has(node);
     }
 
-    public onlyContains(node: DisplayObjectNode)
+    public onlyContains(node: ClonableNode)
     {
         return this.nodes.length === 1 && this.nodes[0] === node;
     }
 
-    public forEach(fn: (node: DisplayObjectNode, i: number) => void)
+    public forEach(fn: (node: ClonableNode, i: number) => void)
     {
         this.nodes.forEach(fn);
     }
@@ -118,7 +118,7 @@ export class NodeSelection
         return this.nodes.length > 1;
     }
 
-    public get firstNode(): DisplayObjectNode | undefined
+    public get firstNode(): ClonableNode | undefined
     {
         const { nodes } = this;
 
@@ -130,7 +130,7 @@ export class NodeSelection
         return nodes[0];
     }
 
-    public get lastNode(): DisplayObjectNode | undefined
+    public get lastNode(): ClonableNode | undefined
     {
         const { nodes } = this;
 

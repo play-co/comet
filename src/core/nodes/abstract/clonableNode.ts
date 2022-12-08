@@ -23,9 +23,9 @@ export interface NewNodeOptions<M>
 
 export abstract class ClonableNode<
     /** Model */
-    M extends ModelBase = any,
+    M extends ModelBase = ModelBase,
     /** View */
-    V extends object = any,
+    V extends object = object,
 > extends GraphNode implements Clonable
 {
     public model: Model<M> & M;
@@ -665,13 +665,13 @@ export abstract class ClonableNode<
 
     public getAssignedModelKeys(assignedCustomKey: string)
     {
-        const modelKeys: (keyof M)[] = [];
+        const modelKeys: string[] = [];
 
         this.assignedCustomProperties.forEach((customKey, modelKey) =>
         {
             if (customKey === assignedCustomKey)
             {
-                modelKeys.push(modelKey);
+                modelKeys.push(String(modelKey));
             }
         });
 

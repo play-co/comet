@@ -5,7 +5,11 @@ import { newId } from '../nodes/instances';
 import type { ModelSchema } from './schema';
 
 export type ModelValue = string | number | boolean | object | null;
-export type ModelBase = Record<string, ModelValue>;
+export interface ModelBase
+{
+    [key: string]: ModelValue;
+}
+
 export type ModelModifiedHandler = (key: string, value: ModelValue, oldValue: ModelValue) => void;
 
 export class Model<M> extends GraphNode

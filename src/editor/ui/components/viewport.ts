@@ -1,7 +1,8 @@
 import { type InteractionEvent, Application as PixiApplication, Container } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 
-import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
+import type { ClonableNode } from '../../../core';
+import { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
 import { Application } from '../../core/application';
 import Events from '../../events';
 import { TransformGizmo } from '../transform/gizmo';
@@ -127,8 +128,16 @@ export class EditableViewport
             {
                 if (selection.deepContains(topNode))
                 {
-                    // remove selection if a child of currently selected node
-                    selection.remove(topNode);
+                    if (selection.shallowContains(topNode))
+                    {
+                        // remove selection if a child of currently selected node is clicked and selected
+                        selection.remove(topNode);
+                    }
+                    else
+                    {
+                        // add new node to selection
+                        selection.add(topNode);
+                    }
                 }
                 else
                 {
@@ -186,7 +195,7 @@ export class EditableViewport
         }
         else
         {
-            const selectedNode = topNode.getCloneRoot().cast<DisplayObjectNode>();
+            const selectedNode = topNode.getCloneRoot();
 
             if (isAddKey)
             {
@@ -247,7 +256,7 @@ export class EditableViewport
         });
     };
 
-    protected selectWithDrag(selectedNode: DisplayObjectNode, e: InteractionEvent)
+    protected selectWithDrag(selectedNode: ClonableNode, e: InteractionEvent)
     {
         Application.instance.selection.set(selectedNode);
 
@@ -259,13 +268,19 @@ export class EditableViewport
 
     protected findNodesAtPoint(globalX: number, globalY: number)
     {
-        const underCursor: DisplayObjectNode[] = [];
+        const underCursor: ClonableNode[] = [];
 
         this.rootNode.walk<DisplayObjectNode>((node) =>
         {
-            if (node.containsPoint(globalX, globalY) && !node.isMetaNode && !node.isCloaked && node.model.getValue<boolean>('visible'))
+            if (
+                node instanceof DisplayObjectNode
+                 && node.containsPoint(globalX, globalY)
+                 && !node.isMetaNode
+                  && !node.isCloaked
+                   && node.model.getValue<boolean>('visible')
+            )
             {
-                underCursor.push(node);
+                underCursor.push(node.cast<ClonableNode>());
             }
         });
 

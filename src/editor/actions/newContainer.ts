@@ -1,3 +1,4 @@
+import type { ClonableNode } from '../../core';
 import type { ContainerModel } from '../../core/nodes/concrete/container';
 import { createNodeSchema } from '../../core/nodes/schema';
 import { type AddChildCommandReturn, AddChildCommand } from '../commands/addChild';
@@ -48,7 +49,7 @@ export class NewContainerAction extends Action<NewContainerOptions, EmptyNode>
 
         const node = nodes[0] as unknown as EmptyNode;
 
-        app.selection.set(node);
+        app.selection.set(node.cast<ClonableNode>());
 
         return node;
     }

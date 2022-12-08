@@ -4,6 +4,7 @@ import { EventEmitter } from 'eventemitter3';
 import type { DisplayObject, InteractionEvent } from 'pixi.js';
 import { Container, Rectangle } from 'pixi.js';
 
+import { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
 import { Application } from '../../core/application';
 import type { TransformGizmo } from './gizmo';
 import { type HandleVertexHorizontal, type HandleVertexVertical, TransformGizmoHandle } from './handle';
@@ -140,19 +141,22 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
 
         Application.instance.selection.forEach((node) =>
         {
-            const matrix = node.view.worldTransform;
-            const width = node.width;
-            const height = node.height;
-            const p1 = matrix.apply({ x: 0, y: 0 });
-            const p2 = matrix.apply({ x: width, y: 0 });
-            const p3 = matrix.apply({ x: width, y: height });
-            const p4 = matrix.apply({ x: 0, y: height });
+            if (node instanceof DisplayObjectNode)
+            {
+                const matrix = node.view.worldTransform;
+                const width = node.width;
+                const height = node.height;
+                const p1 = matrix.apply({ x: 0, y: 0 });
+                const p2 = matrix.apply({ x: width, y: 0 });
+                const p3 = matrix.apply({ x: width, y: height });
+                const p4 = matrix.apply({ x: 0, y: height });
 
-            border.lineStyle(2, Color('cyan').rgbNumber(), 1);
-            border.moveTo(p1.x, p1.y); border.lineTo(p2.x, p2.y);
-            border.moveTo(p2.x, p2.y); border.lineTo(p3.x, p3.y);
-            border.moveTo(p3.x, p3.y); border.lineTo(p4.x, p4.y);
-            border.moveTo(p4.x, p4.y); border.lineTo(p1.x, p1.y);
+                border.lineStyle(2, Color('cyan').rgbNumber(), 1);
+                border.moveTo(p1.x, p1.y); border.lineTo(p2.x, p2.y);
+                border.moveTo(p2.x, p2.y); border.lineTo(p3.x, p3.y);
+                border.moveTo(p3.x, p3.y); border.lineTo(p4.x, p4.y);
+                border.moveTo(p4.x, p4.y); border.lineTo(p1.x, p1.y);
+            }
         });
     }
 

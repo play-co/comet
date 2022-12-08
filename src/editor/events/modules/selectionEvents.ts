@@ -1,10 +1,10 @@
-import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
+import type { ClonableNode } from '../../../core';
 import { Emit } from '../emitter';
 
 export default {
-    setSingle: Emit<DisplayObjectNode>(),
-    setMulti: Emit<DisplayObjectNode[]>(),
-    add: Emit<DisplayObjectNode>(),
-    remove: Emit<DisplayObjectNode>(),
+    setSingle: Emit<ClonableNode>(),
+    setMulti: Emit<ClonableNode[]>(),
+    add: Emit<ClonableNode>(),
+    remove: Emit<ClonableNode>(),
     deselect: Emit<void>(),
 };

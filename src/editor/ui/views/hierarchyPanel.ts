@@ -1,3 +1,4 @@
+import type { ClonableNode } from '../../../core';
 import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
 import { SetNodeIndexCommand } from '../../commands/setNodeIndex';
 import { SetParentCommand } from '../../commands/setParent';
@@ -9,7 +10,7 @@ import { WritableStore } from './store';
 export interface ModelItem
 {
     depth: number;
-    node: DisplayObjectNode;
+    node: ClonableNode;
     isSelected: boolean;
     isExpanded: boolean;
     isVisible: boolean;
@@ -43,7 +44,7 @@ function createController()
 
                 options.data.model.push({
                     depth: options.depth,
-                    isSelected: selection.shallowContains(node),
+                    isSelected: selection.shallowContains(node.cast()),
                     isExpanded: true,
                     isVisible: true,
                     node,
