@@ -16,7 +16,7 @@ export class LogInspector extends DevInspector<Omit<LogEntry, 'timestamp'>>
     {
         onLog(() =>
         {
-            this.render();
+            this.scrollToEnd();
         });
 
         setTimeout(() => this.render(), 0);

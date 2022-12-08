@@ -210,7 +210,12 @@ export abstract class DevInspector<T extends Record<string, any> >
             return 0;
         }
 
-        const diffSpace = table.height - canvas.offsetHeight;
+        const diffSpace = (table.height - table.rowHeight) - (canvas.offsetHeight - titleBarHeight - table.rowHeight);
+
+        if (this.id === 'Log')
+        {
+            console.log(this.id, diffSpace);
+        }
 
         return Math.floor(diffSpace / table.rowHeight);
     }
@@ -218,6 +223,7 @@ export abstract class DevInspector<T extends Record<string, any> >
     public scrollToEnd()
     {
         this.scrollTop = this.maxScrollTop;
+
         this.render();
     }
 
