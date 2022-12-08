@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
 
   import { Application } from "../../core/application";
-  import { DropZone } from "./dropzone";
+  import { DropZone } from "../components/dropzone";
 
   let element: HTMLElement;
 

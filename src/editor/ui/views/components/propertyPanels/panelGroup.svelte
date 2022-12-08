@@ -19,6 +19,7 @@
   fieldset {
     border: 1px outset #666;
     padding: 10px;
+    padding-right: 15px;
     border-radius: 2px;
     background: #ffffff08;
     border-left: none;
