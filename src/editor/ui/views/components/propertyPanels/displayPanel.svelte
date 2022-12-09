@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { PropertiesPanel } from "../../propertiesPanel";
   import PropertyPanel from "./panelGroup.svelte";
-  import ColorPickerControl from "../controls/colorPropertyControl.svelte";
-  import CheckboxControl from "../controls/checkboxPropertyControl.svelte";
-  import NumericControl from "../controls/numericPropertyControl.svelte";
+  import ColorPickerControl from "../propertyControls/colorPropertyControl.svelte";
+  import CheckboxControl from "../propertyControls/checkboxPropertyControl.svelte";
+  import NumericControl from "../propertyControls/numericPropertyControl.svelte";
   import { PropertyMap } from "./propertyMap";
 
   export let panel: PropertiesPanel;

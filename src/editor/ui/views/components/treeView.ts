@@ -1,6 +1,6 @@
-import type { ItemSelection } from '../../core/itemSelection';
-import { mouseDrag } from '../components/dragger';
-import { WritableStore } from './store';
+import type { ItemSelection } from '../../../core/itemSelection';
+import { mouseDrag } from '../../components/dragger';
+import { WritableStore } from '../store';
 
 export interface TreeItem<T>
 {

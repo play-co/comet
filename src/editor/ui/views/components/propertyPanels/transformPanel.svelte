@@ -2,7 +2,7 @@
   import type { PropertiesPanel } from "../../propertiesPanel";
   import { PropertyMap } from "./propertyMap";
   import PropertyPanel from "./panelGroup.svelte";
-  import NumericControl from "../controls/numericPropertyControl.svelte";
+  import NumericControl from "../propertyControls/numericPropertyControl.svelte";
 
   export let panel: PropertiesPanel;
 

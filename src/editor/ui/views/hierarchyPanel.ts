@@ -1,6 +1,5 @@
 import type { DisplayObject } from 'pixi.js';
 
-import type { ClonableNode } from '../../../core';
 import type { DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
 import { SetNodeIndexCommand } from '../../commands/setNodeIndex';
 import { SetParentCommand } from '../../commands/setParent';
@@ -8,22 +7,7 @@ import { Application } from '../../core/application';
 import type { ItemSelection } from '../../core/itemSelection';
 import type { NodeSelection } from '../../core/nodeSelection';
 import Events from '../../events';
-import { type TreeItem, TreeViewModel } from './treeView';
-
-export interface ModelItem
-{
-    depth: number;
-    node: ClonableNode;
-    isSelected: boolean;
-    isExpanded: boolean;
-    isVisible: boolean;
-}
-
-export enum Operation
-    {
-    ReParent,
-    ReOrder,
-}
+import { type TreeItem, TreeViewModel } from './components/treeView';
 
 class DisplayNodeTree extends TreeViewModel<DisplayObjectNode>
 {

@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { createModel, Operation } from "./hierarchyPanel.js";
+  import { createModel } from "./hierarchyPanel.js";
   import Panel from "./components/panel.svelte";
+  import { Operation } from "./components/treeView.js";
 
   const tree = createModel();
   const { model, dragTarget, operation } = tree.store;
