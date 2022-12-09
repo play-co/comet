@@ -57,6 +57,7 @@ export abstract class TreeViewModel<T>
     protected abstract generateModel(): TreeItem<T>[];
 
     public abstract getId(obj: T): string;
+    public abstract getLabel(obj: T): string;
     public abstract getParent(obj: T): T | undefined;
     public abstract isSiblingOf(obj: T, other: T): boolean;
     public abstract hasChildren(obj: T): boolean;

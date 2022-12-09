@@ -48,6 +48,11 @@ class DisplayNodeTree extends TreeViewModel<DisplayObjectNode>
         ).model;
     }
 
+    public getLabel(obj: DisplayObjectNode)
+    {
+        return obj.id;
+    }
+
     public getId(obj: DisplayObjectNode)
     {
         return obj.id;

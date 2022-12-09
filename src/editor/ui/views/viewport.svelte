@@ -7,11 +7,7 @@
 
   let container: HTMLDivElement;
 
-  const subMenuA = new Menu([
-    { label: "Item 4" },
-    { label: "Item 5" },
-    { label: "Item 6" },
-  ]);
+  const subMenuA = new Menu([{ label: "Item 4" }, { label: "Item 5" }, { label: "Item 6" }]);
 
   const subMenuB = new Menu([
     { label: "Item 7" },
@@ -49,7 +45,7 @@
 </script>
 
 <view-port bind:this={container}>
-  <PopupMenu {menu} {event} target={container} />
+  <PopupMenu {menu} {event} target={container} on:select={(e) => console.log("!!!", e.detail)} />
 </view-port>
 
 <style>

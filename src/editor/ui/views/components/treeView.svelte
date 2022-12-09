@@ -10,26 +10,27 @@
   {#each $model as item (item.id)}
     <!-- svelte-ignore a11y-mouse-events-have-key-events -->
     <div
-      class={[
-        "tree-item",
-        item.isSelected ? "selected" : "",
-        item.isVisible ? "visible" : "hidden",
-        $dragTarget === item && !tree.doesSelectionContainItem(item)
-          ? "dragTargetRow"
-          : "",
-      ].join(" ")}
+      class="tree-item"
+      class:selected={item.isSelected}
+      class:visible={item.isVisible}
+      class:hidden={!item.isVisible}
+      class:dragTargetRow={$dragTarget === item && !tree.doesSelectionContainItem(item)}
       on:mousedown={(e) => tree.onRowMouseDown(e, item)}
-      on:mouseover={(e) => tree.onRowMouseOver(e, item)}>
+      on:mouseover={(e) => tree.onRowMouseOver(e, item)}
+    >
       <span class="indentation" style="width:{item.depth * 10}px" />
       {#if tree.hasChildren(item.data)}
-        <span class="arrow {item.isExpanded ? 'expanded' : 'collapsed'}" />
-      {:else}
         <span
-          class="arrow-filler"
-          on:click={(e) => tree.toggleItemExpanded(e, item)} />
+          class="arrow"
+          class:expanded={item.isExpanded}
+          class:collapsed={!item.isExpanded}
+          on:mousedown={(e) => tree.toggleItemExpanded(e, item)}
+        />
+      {:else}
+        <span class="arrow-filler" on:click={(e) => tree.toggleItemExpanded(e, item)} />
       {/if}
-      <span class="label {item.isSelected ? 'selected' : ''}">
-        {tree.getId(item)}
+      <span class="label" class:selected={item.isSelected}>
+        {tree.getLabel(item)}
         {#if tree.isItemReParentDragTarget(item, $dragTarget)}
           <div class="dragTargetIndicator reparent" />
         {/if}

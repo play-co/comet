@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount } from "svelte";
+  import { createEventDispatcher, onDestroy, onMount } from "svelte";
   import Events from "../../../events";
   import type { Menu, MenuItem } from "./menu";
 
@@ -8,11 +8,14 @@
   export let target: HTMLElement;
   export let isSubMenu = false;
 
+  const dispatcher = createEventDispatcher();
+
   let show = false;
   let container: HTMLElement;
   let x = 0;
   let y = 0;
   let active: MenuItem | undefined;
+  let style: string;
 
   $: {
     if (event) {
@@ -20,6 +23,8 @@
       y = event.clientY;
     }
   }
+
+  $: style = `left:${isSubMenu ? "100%" : `${x}px`};top:${isSubMenu ? 0 : y}px;`;
 
   $: {
     if (event && target) {
@@ -51,6 +56,11 @@
     event = undefined;
   };
 
+  const onMenuItemClick = (item: MenuItem) => {
+    Events.editor.contextMenuClose.emit();
+    dispatcher("select", item);
+  };
+
   onMount(() => {
     if (!isSubMenu) {
       window.addEventListener("mousedown", onMouseDown);
@@ -69,22 +79,17 @@
 </script>
 
 {#if (event && show) || isSubMenu}
-  <popup-menu
-    bind:this={container}
-    class:submenu={isSubMenu}
-    style={`left:${isSubMenu ? "100%" : `${x}px`};top:${isSubMenu ? 0 : y}px;`}>
+  <popup-menu bind:this={container} class:submenu={isSubMenu} {style}>
     {#each menu.items as item}
       <!-- svelte-ignore a11y-mouse-events-have-key-events -->
       <menu-item
         class:selected={item === active}
-        on:mouseover={() => (active = item)}>
+        on:mouseover={() => (active = item)}
+        on:click={() => onMenuItemClick(item)}
+      >
         {item.label}
         {#if item.menu && active === item}
-          <svelte:self
-            {event}
-            menu={item.menu}
-            target={container}
-            isSubMenu={true} />
+          <svelte:self on:select {event} menu={item.menu} target={container} isSubMenu={true} />
         {/if}
       </menu-item>
     {/each}
