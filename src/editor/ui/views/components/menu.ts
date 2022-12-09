@@ -1,6 +1,7 @@
 export interface MenuItem
 {
     label: string;
+    menu?: Menu;
 }
 
 export class Menu

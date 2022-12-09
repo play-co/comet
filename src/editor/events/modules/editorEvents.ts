@@ -4,5 +4,6 @@ import { Emit } from '../emitter';
 export default {
     propertyModified: Emit<PropertyBinding>(),
     nudge: Emit<void>(),
-    contextMenu: Emit<MouseEvent>(),
+    contextMenuOpen: Emit<MouseEvent>(),
+    contextMenuClose: Emit<void>(),
 };

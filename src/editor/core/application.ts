@@ -123,7 +123,7 @@ export class Application
         document.addEventListener('contextmenu', (event) =>
         {
             event.preventDefault();
-            Events.editor.contextMenu.emit(event);
+            Events.editor.contextMenuOpen.emit(event);
         });
     }
 

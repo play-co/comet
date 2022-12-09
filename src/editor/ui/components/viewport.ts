@@ -311,6 +311,11 @@ export class EditableViewport
         this.onResize();
     }
 
+    public unmount(container: HTMLElement)
+    {
+        container.removeChild(this.canvas);
+    }
+
     public setRoot(node: DisplayObjectNode)
     {
         this.nodeLayer.removeChild(this.rootNode.view);
