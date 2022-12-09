@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { Operation, type TreeViewModel } from "./treeView";
+  import type { TreeViewModel } from "./treeView";
 
   export let tree: TreeViewModel<any>;
 
-  const { model, dragTarget, operation } = tree.store;
+  const { model, dragTarget } = tree.store;
 </script>
 
 <tree-view>
@@ -28,10 +28,9 @@
             : 'collapsed'}" />{:else}<span class="arrow-filler" />{/if}
 
       <span class="label {item.isSelected ? 'selected' : ''}"
-        >{item.data
-          .id}{#if $dragTarget === item && !tree.doesSelectionContainItem(item) && $operation === Operation.ReParent}
+        >{item.data.id}{#if tree.isItemReParentDragTarget(item, $dragTarget)}
           <div class="dragTargetIndicator reparent" />{/if}</span>
-      {#if $dragTarget === item && !tree.doesSelectionContainItem(item) && $operation === Operation.ReOrder}
+      {#if tree.isItemReOrderDragTarget(item, $dragTarget)}
         <div class="dragTargetIndicator reorder" />{/if}
     </div>
   {/each}
@@ -45,7 +44,7 @@
   }
 
   .tree-item {
-    font-size: 14px;
+    font-size: 12px;
     display: flex;
     flex-direction: row;
     align-items: center;

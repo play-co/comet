@@ -19,17 +19,22 @@ export enum Operation
 
 export abstract class TreeViewModel<T>
 {
-    public model: WritableStore<TreeItem<T>[]>;
-    public isDragging: WritableStore<boolean>;
-    public dragTarget: WritableStore<TreeItem<T> | undefined>;
-    public operation: WritableStore<Operation>;
+    protected model: WritableStore<TreeItem<T>[]>;
+    protected dragTarget: WritableStore<TreeItem<T> | undefined>;
+    protected operation: WritableStore<Operation>;
+    protected isDragging: boolean;
+
+    public canReParent: boolean;
+    public canReOrder: boolean;
 
     constructor(public readonly selection: ItemSelection<T>)
     {
         this.model = new WritableStore<TreeItem<T>[]>([]);
-        this.isDragging = new WritableStore<boolean>(false);
         this.dragTarget = new WritableStore<TreeItem<T> | undefined>(undefined);
         this.operation = new WritableStore<Operation>(Operation.ReParent);
+        this.isDragging = false;
+        this.canReParent = true;
+        this.canReOrder = true;
     }
 
     public get store()
@@ -124,54 +129,59 @@ export abstract class TreeViewModel<T>
             return;
         }
 
-        const { selection, isDragging, operation, dragTarget } = this;
+        const { selection, operation, dragTarget, canReOrder, canReParent } = this;
 
-        isDragging.value = true;
+        this.isDragging = true;
         operation.value = Operation.ReParent;
 
-        mouseDrag(e).then(() =>
+        if (canReOrder || canReParent)
         {
-            if (isDragging.value && dragTarget.value)
+            mouseDrag(e).then(() =>
             {
-                const dragTargetObj = dragTarget.value.data;
-
-                selection.forEach((item) =>
+                if (dragTarget.value)
                 {
-                    const sourceObj = item;
+                    const dragTargetObj = dragTarget.value.data;
 
-                    if (operation.value === Operation.ReParent)
+                    selection.forEach((item) =>
                     {
-                        // re-parent
-                        const parentId = this.getId(dragTargetObj);
-                        const parent = this.getParent(sourceObj);
+                        const sourceObj = item;
 
-                        if (parent && parentId !== this.getId(parent))
+                        if (canReParent && (operation.value === Operation.ReParent))
                         {
-                            this.setParent(sourceObj, dragTargetObj);
+                            // re-parent
+                            const parentId = this.getId(dragTargetObj);
+                            const parent = this.getParent(sourceObj);
+
+                            if (parent && parentId !== this.getId(parent))
+                            {
+                                this.setParent(sourceObj, dragTargetObj);
+                            }
                         }
-                    }
-                    else
-                    {
-                        // re-order
-                        const sourceObj = selection.items[0];
-                        const targetObj = dragTargetObj;
+                        else if (canReOrder)
+                        {
+                            // re-order
+                            const sourceObj = selection.items[0];
+                            const targetObj = dragTargetObj;
 
-                        this.reorder(sourceObj, targetObj);
-                    }
+                            this.reorder(sourceObj, targetObj);
+                        }
 
-                    this.rebuildModel();
-                });
-            }
+                        this.rebuildModel();
+                    });
+                }
 
-            this.clearDrag();
-        });
+                // clear drag state
+                this.isDragging = false;
+                this.dragTarget.value = undefined;
+            });
+        }
     }
 
     public onRowMouseOver(e: MouseEvent, item: TreeItem<T>)
     {
-        const { isDragging, operation, dragTarget, selection } = this;
+        const { isDragging, operation, dragTarget, selection, canReParent, canReOrder } = this;
 
-        if (isDragging.value)
+        if (isDragging && (canReParent || canReOrder))
         {
             const targetElement = e.target as HTMLElement;
 
@@ -179,7 +189,7 @@ export abstract class TreeViewModel<T>
                 ? Operation.ReOrder
                 : Operation.ReParent;
 
-            if (operation.value === Operation.ReOrder)
+            if (canReOrder && (operation.value === Operation.ReOrder))
             {
                 // re-ordering
                 const isSibling = this.isSiblingOf(item.data, selection.items[0]);
@@ -188,7 +198,7 @@ export abstract class TreeViewModel<T>
                     ? dragTarget.value = item
                     : dragTarget.value = undefined;
             }
-            else
+            else if (canReParent)
             {
                 // re-parenting
                 selection.shallowContains(item.data)
@@ -198,14 +208,28 @@ export abstract class TreeViewModel<T>
         }
     }
 
-    protected clearDrag()
-    {
-        this.isDragging.value = false;
-        this.dragTarget.value = undefined;
-    }
-
     public doesSelectionContainItem(item: TreeItem<T>)
     {
         return this.selection.shallowContains(item.data);
+    }
+
+    public isItemReParentDragTarget(item: TreeItem<T>, dragTarget?: TreeItem<T>)
+    {
+        const { operation, canReParent } = this;
+
+        return canReParent
+            && dragTarget === item
+            && !this.doesSelectionContainItem(item)
+            && operation.value === Operation.ReParent;
+    }
+
+    public isItemReOrderDragTarget(item: TreeItem<T>, dragTarget?: TreeItem<T>)
+    {
+        const { operation, canReOrder } = this;
+
+        return canReOrder
+            && dragTarget === item
+            && !this.doesSelectionContainItem(item)
+            && operation.value === Operation.ReOrder;
     }
 }
