@@ -1,46 +1,40 @@
 <script lang="ts">
-  import { createController, Operation } from "./hierarchyPanel.js";
+  import { createModel, Operation } from "./hierarchyPanel.js";
   import Panel from "./components/panel.svelte";
 
-  const panel = createController();
-  const {
-    store: { model, dragTarget, operation },
-    doesSelectionContainItem,
-    onRowMouseDown,
-    onRowMouseOver,
-    toggleItemExpanded,
-  } = panel;
+  const tree = createModel();
+  const { model, dragTarget, operation } = tree.store;
 </script>
 
 <hierarchy-panel>
   <Panel>
     <table>
       <tbody>
-        {#each $model as item (item.node.id)}
+        {#each $model as item (item.data.id)}
           <tr>
             <!-- svelte-ignore a11y-mouse-events-have-key-events -->
             <td
               class={[
                 item.isSelected ? "selected" : "",
                 item.isVisible ? "visible" : "hidden",
-                $dragTarget === item && !doesSelectionContainItem(item)
+                $dragTarget === item && !tree.doesSelectionContainItem(item)
                   ? "dragTargetRow"
                   : "",
               ].join(" ")}
-              on:mousedown={(e) => onRowMouseDown(e, item)}
-              on:mouseover={(e) => onRowMouseOver(e, item)}
+              on:mousedown={(e) => tree.onRowMouseDown(e, item)}
+              on:mouseover={(e) => tree.onRowMouseOver(e, item)}
               ><span class="indentation" style="width:{item.depth * 10}px" />
-              {#if item.node.hasChildren}<span
-                  on:click={(e) => toggleItemExpanded(e, item)}
+              {#if item.data.hasChildren}<span
+                  on:click={(e) => tree.toggleItemExpanded(e, item)}
                   class="arrow {item.isExpanded
                     ? 'expanded'
                     : 'collapsed'}" />{:else}<span class="arrow-filler" />{/if}
 
               <span class="label {item.isSelected ? 'selected' : ''}"
-                >{item.node
-                  .id}{#if $dragTarget === item && !doesSelectionContainItem(item) && $operation === Operation.ReParent}
+                >{item.data
+                  .id}{#if $dragTarget === item && !tree.doesSelectionContainItem(item) && $operation === Operation.ReParent}
                   <div class="dragTargetIndicator reparent" />{/if}</span>
-              {#if $dragTarget === item && !doesSelectionContainItem(item) && $operation === Operation.ReOrder}
+              {#if $dragTarget === item && !tree.doesSelectionContainItem(item) && $operation === Operation.ReOrder}
                 <div class="dragTargetIndicator reorder" />{/if}
             </td>
           </tr>

@@ -17,13 +17,7 @@ export enum Operation
     ReOrder,
 }
 
-export type BasicNode<T> = {
-    id: string;
-    parent?: T;
-    isSiblingOf: (node: T) => boolean;
-};
-
-export abstract class TreeModel<T extends BasicNode<T>>
+export abstract class TreeViewModel<T>
 {
     public model: WritableStore<TreeItem<T>[]>;
     public isDragging: WritableStore<boolean>;
@@ -38,12 +32,26 @@ export abstract class TreeModel<T extends BasicNode<T>>
         this.operation = new WritableStore<Operation>(Operation.ReParent);
     }
 
-    protected rebuildModel()
+    public get store()
     {
-        this.model.value = this.generateModel();
+        return {
+            model: this.model.store,
+            dragTarget: this.dragTarget.store,
+            operation: this.operation.store,
+        };
     }
 
+    public rebuildModel = () =>
+    {
+        const model = this.generateModel();
+
+        this.model.value = model;
+    };
+
     protected abstract generateModel(): TreeItem<T>[];
+    protected abstract getId(obj: T): string;
+    protected abstract getParent(obj: T): T | undefined;
+    protected abstract isSiblingOf(obj: T, other: T): boolean;
 
     protected updateModel(fn: (item: TreeItem<T>) => void)
     {
@@ -134,9 +142,10 @@ export abstract class TreeModel<T extends BasicNode<T>>
                     if (operation.value === Operation.ReParent)
                     {
                         // re-parent
-                        const parentId = dragTargetObj.id;
+                        const parentId = this.getId(dragTargetObj);
+                        const parent = this.getParent(sourceObj);
 
-                        if (sourceObj.parent && parentId !== sourceObj.parent.id)
+                        if (parent && parentId !== this.getId(parent))
                         {
                             this.setParent(sourceObj, dragTargetObj);
                         }
@@ -173,7 +182,9 @@ export abstract class TreeModel<T extends BasicNode<T>>
             if (operation.value === Operation.ReOrder)
             {
                 // re-ordering
-                item.data.isSiblingOf(selection.items[0]) || item.data === selection.items[0].parent
+                const isSibling = this.isSiblingOf(item.data, selection.items[0]);
+
+                isSibling || item.data === this.getParent(selection.items[0])
                     ? dragTarget.value = item
                     : dragTarget.value = undefined;
             }

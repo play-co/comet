@@ -1,11 +1,14 @@
+import type { DisplayObject } from 'pixi.js';
+
 import type { ClonableNode } from '../../../core';
-import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
+import type { DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
 import { SetNodeIndexCommand } from '../../commands/setNodeIndex';
 import { SetParentCommand } from '../../commands/setParent';
 import { Application } from '../../core/application';
+import type { ItemSelection } from '../../core/itemSelection';
+import type { NodeSelection } from '../../core/nodeSelection';
 import Events from '../../events';
-import { mouseDrag } from '../components/dragger';
-import { WritableStore } from './store';
+import { type TreeItem, TreeViewModel } from './treeView';
 
 export interface ModelItem
 {
@@ -22,19 +25,21 @@ export enum Operation
     ReOrder,
 }
 
-function createController()
+class DisplayNodeTree extends TreeViewModel<DisplayObjectNode>
 {
-    const { selection, viewport } = Application.instance;
+    public root: DisplayObjectNode;
 
-    const model = new WritableStore<ModelItem[]>([]);
-    const root = new WritableStore<DisplayObjectNode>(viewport.rootNode);
-    const isDragging = new WritableStore<boolean>(false);
-    const dragTarget = new WritableStore<ModelItem | undefined>(undefined);
-    const operation = new WritableStore<Operation>(Operation.ReParent);
-
-    function generateModel()
+    constructor(root: DisplayObjectNode, selection: NodeSelection)
     {
-        const newModel = root.value.walk<DisplayObjectNode, { model: ModelItem[] }>(
+        super(selection as unknown as ItemSelection<DisplayObjectNode>);
+        this.root = root;
+    }
+
+    protected generateModel(): TreeItem<DisplayObjectNode>[]
+    {
+        const { selection } = this;
+
+        return this.root.walk<DisplayObjectNode, { model: TreeItem<DisplayObjectNode>[] }>(
             (node, options) =>
             {
                 if (node.isCloaked)
@@ -47,7 +52,7 @@ function createController()
                     isSelected: selection.shallowContains(node.cast()),
                     isExpanded: true,
                     isVisible: true,
-                    node,
+                    data: node,
                 });
             },
             {
@@ -56,222 +61,111 @@ function createController()
                 },
             },
         ).model;
-
-        model.value = newModel;
     }
 
-    function updateModel(fn: (item: ModelItem) => void)
+    protected getId(obj: DisplayObjectNode<DisplayObjectModel, DisplayObject>)
     {
-        model.value.forEach(fn);
-        model.value = [...model.value];
+        return obj.id;
     }
 
-    function toggleItemExpanded(e: MouseEvent, item: ModelItem)
+    protected getParent(obj: DisplayObjectNode<DisplayObjectModel, DisplayObject>)
     {
-        const index = model.value.indexOf(item);
-
-        item.isExpanded = !item.isExpanded;
-
-        for (let i = index + 1; i <= model.value.length - 1; i++)
-        {
-            const subItem = model.value[i];
-
-            if (subItem.depth > item.depth)
-            {
-                subItem.isVisible = item.isExpanded;
-            }
-            else if (subItem.depth <= item.depth)
-            {
-                break;
-            }
-        }
-
-        item.isVisible = true;
-
-        e.stopPropagation();
-
-        model.value = [...model.value];
+        return obj.parent as (DisplayObjectNode | undefined);
     }
 
-    function selectItem(e: MouseEvent, item: ModelItem): undefined | false
+    protected isSiblingOf(
+        obj: DisplayObjectNode<DisplayObjectModel, DisplayObject>,
+        other: DisplayObjectNode<DisplayObjectModel, DisplayObject>,
+    )
     {
-        const { node } = item;
-
-        if (e.shiftKey || e.metaKey)
-        {
-            if (selection.shallowContains(node))
-            {
-            // remove from selection
-                selection.remove(node);
-
-                return false;
-            }
-            // add to selection
-            selection.add(node);
-        }
-        else if (!selection.shallowContains(node))
-        {
-            // replace selection if not already selected
-            selection.set(node);
-        }
-
-        return undefined;
+        return obj.isSiblingOf(other);
     }
 
-    function onRowMouseDown(e: MouseEvent, item: ModelItem)
+    protected setParent(
+        sourceObj: DisplayObjectNode<DisplayObjectModel, DisplayObject>,
+        parentObj: DisplayObjectNode<DisplayObjectModel, DisplayObject>,
+    )
     {
-        if (selectItem(e, item) === false)
+        const nodeId = sourceObj.id;
+        const parentId = parentObj.id;
+
+        if (sourceObj.parent && parentId !== sourceObj.parent.id)
         {
-            // item was removed from selection, abort drag
-            return;
-        }
-
-        isDragging.value = true;
-        operation.value = Operation.ReParent;
-
-        mouseDrag(e).then(() =>
-        {
-            if (isDragging.value && dragTarget.value)
-            {
-                const dragTargetNode = dragTarget.value.node;
-
-                selection.forEach((node) =>
-                {
-                    const sourceNode = node;
-
-                    if (operation.value === Operation.ReParent)
-                    {
-                        // re-parent using command if different parent to existing
-                        const nodeId = sourceNode.id;
-                        const parentId = dragTargetNode.id;
-
-                        if (sourceNode.parent && parentId !== sourceNode.parent.id)
-                        {
-                            Application.instance.undoStack.exec(
-                                new SetParentCommand({
-                                    nodeId,
-                                    parentId,
-                                    updateMode: 'full',
-                                }),
-                            );
-                        }
-                    }
-                    else
-                    {
-                        // re-order using command if different index to current
-                        const sourceNode = selection.items[0];
-                        const parentNode = dragTargetNode === sourceNode.parent
-                            ? dragTargetNode
-                            : (dragTargetNode.parent as DisplayObjectNode);
-
-                        const index = dragTargetNode === sourceNode.parent
-                            ? 0
-                            : parentNode.indexOf(dragTargetNode, true) + 1;
-
-                        if (index !== sourceNode.index)
-                        {
-                            Application.instance.undoStack.exec(
-                                new SetNodeIndexCommand({
-                                    nodeId: sourceNode.id,
-                                    index,
-                                    updateMode: 'full',
-                                }),
-                            );
-                        }
-                    }
-
-                    generateModel();
-                });
-            }
-
-            clearDrag();
-        });
-    }
-
-    function onRowMouseOver(e: MouseEvent, item: ModelItem)
-    {
-        if (isDragging.value)
-        {
-            const targetElement = e.target as HTMLElement;
-
-            operation.value = e.currentTarget === e.target || targetElement.classList.contains('arrow')
-                ? Operation.ReOrder
-                : Operation.ReParent;
-
-            if (operation.value === Operation.ReOrder)
-            {
-                // re-ordering
-                item.node.isSiblingOf(selection.items[0]) || item.node === selection.items[0].parent
-                    ? dragTarget.value = item
-                    : dragTarget.value = undefined;
-            }
-            else
-            {
-                // re-parenting
-                selection.shallowContains(item.node)
-                    ? dragTarget.value = undefined
-                    : dragTarget.value = item;
-            }
+            Application.instance.undoStack.exec(
+                new SetParentCommand({
+                    nodeId,
+                    parentId,
+                    updateMode: 'full',
+                }),
+            );
         }
     }
 
-    function clearDrag()
+    protected reorder(
+        sourceObj: DisplayObjectNode<DisplayObjectModel, DisplayObject>,
+        targetObj: DisplayObjectNode<DisplayObjectModel, DisplayObject>,
+    )
     {
-        isDragging.value = false;
-        dragTarget.value = undefined;
+        const parentNode = targetObj === sourceObj.parent
+            ? targetObj
+            : (targetObj.parent as DisplayObjectNode);
+
+        const index = targetObj === sourceObj.parent
+            ? 0
+            : parentNode.indexOf(targetObj, true) + 1;
+
+        if (index !== sourceObj.index)
+        {
+            Application.instance.undoStack.exec(
+                new SetNodeIndexCommand({
+                    nodeId: sourceObj.id,
+                    index,
+                    updateMode: 'full',
+                }),
+            );
+        }
     }
 
-    function doesSelectionContainItem(item: ModelItem)
+    public onViewportRootChanged = (node: DisplayObjectNode) =>
     {
-        return selection.shallowContains(item.node);
-    }
-
-    // handlers
-    const onViewportRootChanged = (node: DisplayObjectNode) =>
-    {
-        root.value = node;
-        generateModel();
+        this.root = node;
+        this.rebuildModel();
     };
 
-    const onSelectionChanged = () =>
+    public onSelectionChanged = () =>
     {
-        updateModel((item) =>
+        this.updateModel((item) =>
         {
-            item.isSelected = selection.shallowContains(item.node);
+            item.isSelected = this.selection.shallowContains(item.data);
         });
     };
 
-    const onDeselect = () =>
+    public onDeselect = () =>
     {
-        updateModel((item) =>
+        this.updateModel((item) =>
         {
             item.isSelected = false;
         });
     };
-
-    // bind to global events
-    Events.$('selection.(add|remove|setSingle|setMulti)', onSelectionChanged);
-    Events.$('datastore.node|command', generateModel);
-    Events.selection.deselect.bind(onDeselect);
-    Events.viewport.rootChanged.bind(onViewportRootChanged);
-
-    // init current model
-    generateModel();
-
-    return {
-        store: {
-            model: model.store,
-            root: root.store,
-            isDragging: isDragging.store,
-            dragTarget: dragTarget.store,
-            operation: operation.store,
-        },
-        onRowMouseDown,
-        onRowMouseOver,
-        toggleItemExpanded,
-        doesSelectionContainItem,
-    };
 }
 
-export { createController };
+function createModel()
+{
+    const { viewport } = Application.instance;
+
+    const tree = new DisplayNodeTree(viewport.rootNode, Application.instance.selection);
+
+    // bind to global events
+    Events.$('selection.(add|remove|setSingle|setMulti)', tree.onSelectionChanged);
+    Events.$('datastore.node|command', tree.rebuildModel);
+    Events.selection.deselect.bind(tree.onDeselect);
+    Events.viewport.rootChanged.bind(tree.onViewportRootChanged);
+
+    // init current model
+    tree.rebuildModel();
+
+    return tree;
+}
+
+export { createModel };
 
