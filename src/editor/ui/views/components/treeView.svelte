@@ -21,19 +21,22 @@
       on:mousedown={(e) => tree.onRowMouseDown(e, item)}
       on:mouseover={(e) => tree.onRowMouseOver(e, item)}>
       <span class="indentation" style="width:{item.depth * 10}px" />
-      {#if tree.hasChildren(item.data)}<span
-          on:click={(e) => tree.toggleItemExpanded(e, item)}
-          class="arrow {item.isExpanded
-            ? 'expanded'
-            : 'collapsed'}" />{:else}<span class="arrow-filler" />{/if}
-
-      <span class="label {item.isSelected ? 'selected' : ''}"
-        >{tree.getId(
-          item
-        )}{#if tree.isItemReParentDragTarget(item, $dragTarget)}
-          <div class="dragTargetIndicator reparent" />{/if}</span>
+      {#if tree.hasChildren(item.data)}
+        <span class="arrow {item.isExpanded ? 'expanded' : 'collapsed'}" />
+      {:else}
+        <span
+          class="arrow-filler"
+          on:click={(e) => tree.toggleItemExpanded(e, item)} />
+      {/if}
+      <span class="label {item.isSelected ? 'selected' : ''}">
+        {tree.getId(item)}
+        {#if tree.isItemReParentDragTarget(item, $dragTarget)}
+          <div class="dragTargetIndicator reparent" />
+        {/if}
+      </span>
       {#if tree.isItemReOrderDragTarget(item, $dragTarget)}
-        <div class="dragTargetIndicator reorder" />{/if}
+        <div class="dragTargetIndicator reorder" />
+      {/if}
     </div>
   {/each}
 </tree-view>
