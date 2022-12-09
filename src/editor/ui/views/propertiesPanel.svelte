@@ -41,10 +41,10 @@
 
   :global(properties-panel property-row) {
     display: grid;
-    grid-template-columns: repeat(4, 19%);
+    grid-template-columns: 20% 15% 20% 15%;
     grid-gap: 10px;
     width: 100%;
-    height: 100%;
+    height: 26px;
     margin-bottom: 5px;
   }
 </style>

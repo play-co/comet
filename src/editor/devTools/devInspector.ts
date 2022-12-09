@@ -212,11 +212,6 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         const diffSpace = (table.height - table.rowHeight) - (canvas.offsetHeight - titleBarHeight - table.rowHeight);
 
-        if (this.id === 'Log')
-        {
-            console.log(this.id, diffSpace);
-        }
-
         return Math.floor(diffSpace / table.rowHeight);
     }
 
