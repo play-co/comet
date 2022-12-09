@@ -21,7 +21,7 @@ export class NudgeAction extends Action<void, void>
         {
             const inc = event.shiftKey ? 10 : 1;
             const command = ModifyModelsCommand.modifyNodes<DisplayObjectModel>(
-                selection.nodes,
+                selection.items,
                 'full',
                 (node, values) =>
                 {

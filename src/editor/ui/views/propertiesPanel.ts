@@ -71,7 +71,7 @@ function createController()
     {
         const categories: Map<PropertyCategory, Map<string, PropertyBinding>> = new Map();
 
-        selection.nodes.forEach((node) =>
+        selection.items.forEach((node) =>
         {
             for (const [propertyKey, propertyDescriptor] of Object.entries(node.model.schema.properties))
             {

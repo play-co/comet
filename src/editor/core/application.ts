@@ -20,7 +20,7 @@ import { RemoteObjectSync } from '../sync/remoteObjectSync';
 import { EditableViewport } from '../ui/components/viewport';
 import { getUrlParam } from '../util';
 import { initHistory, writeUndoStack } from './history';
-import { NodeSelection } from './selection';
+import { NodeSelection } from './nodeSelection';
 import UndoStack from './undoStack';
 
 export type AppOptions = {};

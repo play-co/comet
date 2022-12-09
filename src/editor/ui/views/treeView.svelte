@@ -3,13 +3,7 @@
   import Panel from "./components/panel.svelte";
 
   const panel = createController();
-  const {
-    store: { model, dragTarget, operation },
-    doesSelectionContainItem,
-    onRowMouseDown,
-    onRowMouseOver,
-    toggleItemExpanded,
-  } = panel;
+  const { model, dragTarget, operation } = panel.store;
 </script>
 
 <hierarchy-panel>
@@ -23,24 +17,24 @@
               class={[
                 item.isSelected ? "selected" : "",
                 item.isVisible ? "visible" : "hidden",
-                $dragTarget === item && !doesSelectionContainItem(item)
+                $dragTarget === item && !panel.doesSelectionContainItem(item)
                   ? "dragTargetRow"
                   : "",
               ].join(" ")}
-              on:mousedown={(e) => onRowMouseDown(e, item)}
-              on:mouseover={(e) => onRowMouseOver(e, item)}
+              on:mousedown={(e) => panel.onRowMouseDown(e, item)}
+              on:mouseover={(e) => panel.onRowMouseOver(e, item)}
               ><span class="indentation" style="width:{item.depth * 10}px" />
               {#if item.node.hasChildren}<span
-                  on:click={(e) => toggleItemExpanded(e, item)}
+                  on:click={(e) => panel.toggleItemExpanded(e, item)}
                   class="arrow {item.isExpanded
                     ? 'expanded'
                     : 'collapsed'}" />{:else}<span class="arrow-filler" />{/if}
 
               <span class="label {item.isSelected ? 'selected' : ''}"
                 >{item.node
-                  .id}{#if $dragTarget === item && !doesSelectionContainItem(item) && $operation === Operation.ReParent}
+                  .id}{#if $dragTarget === item && !panel.doesSelectionContainItem(item) && $operation === Operation.ReParent}
                   <div class="dragTargetIndicator reparent" />{/if}</span>
-              {#if $dragTarget === item && !doesSelectionContainItem(item) && $operation === Operation.ReOrder}
+              {#if $dragTarget === item && !panel.doesSelectionContainItem(item) && $operation === Operation.ReOrder}
                 <div class="dragTargetIndicator reorder" />{/if}
             </td>
           </tr>

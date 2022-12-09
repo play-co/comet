@@ -159,16 +159,14 @@ function createController()
                     else
                     {
                         // re-order using command if different index to current
-                        const sourceNode = selection.nodes[0];
-                        const parentNode
-                  = dragTargetNode === sourceNode.parent
-                      ? dragTargetNode
-                      : (dragTargetNode.parent as DisplayObjectNode);
+                        const sourceNode = selection.items[0];
+                        const parentNode = dragTargetNode === sourceNode.parent
+                            ? dragTargetNode
+                            : (dragTargetNode.parent as DisplayObjectNode);
 
-                        const index
-                  = dragTargetNode === sourceNode.parent
-                      ? 0
-                      : parentNode.indexOf(dragTargetNode, true) + 1;
+                        const index = dragTargetNode === sourceNode.parent
+                            ? 0
+                            : parentNode.indexOf(dragTargetNode, true) + 1;
 
                         if (index !== sourceNode.index)
                         {
@@ -203,7 +201,7 @@ function createController()
             if (operation.value === Operation.ReOrder)
             {
                 // re-ordering
-                item.node.isSiblingOf(selection.nodes[0]) || item.node === selection.nodes[0].parent
+                item.node.isSiblingOf(selection.items[0]) || item.node === selection.items[0].parent
                     ? dragTarget.value = item
                     : dragTarget.value = undefined;
             }

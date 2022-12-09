@@ -26,6 +26,11 @@ export abstract class GraphNode
         return this.parent ? this.parent.indexOf(this) : -1;
     }
 
+    public toString()
+    {
+        return this.id;
+    }
+
     public abstract nodeType(): string;
 
     public cast<T extends GraphNode = GraphNode>()

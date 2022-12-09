@@ -102,7 +102,7 @@ export class TransformGizmo extends Container
 
     protected updateSelection = () =>
     {
-        const { selection: { isSingle, isMulti, isEmpty, nodes } } = Application.instance;
+        const { selection: { isSingle, isMulti, isEmpty, items } } = Application.instance;
 
         if (isSingle)
         {
@@ -110,7 +110,7 @@ export class TransformGizmo extends Container
         }
         else if (isMulti)
         {
-            this.selectNodes(nodes);
+            this.selectNodes(items);
         }
         else if (isEmpty)
         {
@@ -122,7 +122,7 @@ export class TransformGizmo extends Container
     {
         const { selection } = this;
 
-        selection.nodes.forEach((node) =>
+        selection.items.forEach((node) =>
         {
             if (node instanceof DisplayObjectNode)
             {
@@ -137,9 +137,9 @@ export class TransformGizmo extends Container
 
     protected updateSingleSelectionNode()
     {
-        const { selection: { nodes } } = Application.instance;
+        const { selection: { items } } = Application.instance;
 
-        this.selectNode(nodes[0]);
+        this.selectNode(items[0]);
     }
 
     protected getCachedMatrix(node: ClonableNode): CachedNode
@@ -169,7 +169,7 @@ export class TransformGizmo extends Container
 
         if (selection.length === 1)
         {
-            const node = selection.nodes[0];
+            const node = selection.items[0];
 
             if (node instanceof DisplayObjectNode)
             {
@@ -186,7 +186,7 @@ export class TransformGizmo extends Container
 
         if (selection.length === 1)
         {
-            const node = selection.nodes[0];
+            const node = selection.items[0];
 
             if (node instanceof DisplayObjectNode)
             {
@@ -585,7 +585,7 @@ export class TransformGizmo extends Container
 
     public getContentGlobalBounds()
     {
-        return getTotalGlobalBounds(this.selection.nodes);
+        return getTotalGlobalBounds(this.selection.items);
     }
 
     public update()
@@ -695,7 +695,7 @@ export class TransformGizmo extends Container
 
         if (selection.length === 1)
         {
-            const node = selection.nodes[0];
+            const node = selection.items[0];
             const cachedMatrix = this.getCachedMatrix(node);
 
             if (node instanceof DisplayObjectNode)

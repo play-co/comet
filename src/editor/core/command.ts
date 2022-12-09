@@ -81,7 +81,7 @@ export abstract class Command<ParamsType extends {} = {}, ReturnType = void, Cac
 
     public storeSelection()
     {
-        this.selectedNodes = this.app.selection.nodes.map((node) => node.id);
+        this.selectedNodes = this.app.selection.items.map((node) => node.id);
     }
 
     public restoreSelection()
