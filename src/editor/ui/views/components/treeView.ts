@@ -126,7 +126,7 @@ export abstract class TreeViewModel<T>
 
     public onRowMouseDown(e: MouseEvent, item: TreeItem<T>)
     {
-        if (this.selectItem(e, item) === false)
+        if (e.button !== 0 || this.selectItem(e, item) === false)
         {
             // item was removed from selection, abort drag
             return;

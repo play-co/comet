@@ -119,6 +119,12 @@ export class Application
                 nodes.push(node);
             }
         });
+
+        document.addEventListener('contextmenu', (event) =>
+        {
+            event.preventDefault();
+            Events.editor.contextMenu.emit(event);
+        });
     }
 
     public async createProject(name: string, id: string)
