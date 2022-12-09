@@ -1,6 +1,4 @@
-import type { DisplayObject } from 'pixi.js';
-
-import type { DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
+import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
 import { SetNodeIndexCommand } from '../../commands/setNodeIndex';
 import { SetParentCommand } from '../../commands/setParent';
 import { Application } from '../../core/application';
@@ -31,13 +29,16 @@ class DisplayNodeTree extends TreeViewModel<DisplayObjectNode>
                     return;
                 }
 
-                options.data.model.push({
+                const item: TreeItem<DisplayObjectNode> = {
+                    id: node.id,
                     depth: options.depth,
                     isSelected: selection.shallowContains(node.cast()),
                     isExpanded: true,
                     isVisible: true,
                     data: node,
-                });
+                };
+
+                options.data.model.push(item);
             },
             {
                 data: {
@@ -47,27 +48,32 @@ class DisplayNodeTree extends TreeViewModel<DisplayObjectNode>
         ).model;
     }
 
-    protected getId(obj: DisplayObjectNode<DisplayObjectModel, DisplayObject>)
+    public getId(obj: DisplayObjectNode)
     {
         return obj.id;
     }
 
-    protected getParent(obj: DisplayObjectNode<DisplayObjectModel, DisplayObject>)
+    public getParent(obj: DisplayObjectNode)
     {
         return obj.parent as (DisplayObjectNode | undefined);
     }
 
-    protected isSiblingOf(
-        obj: DisplayObjectNode<DisplayObjectModel, DisplayObject>,
-        other: DisplayObjectNode<DisplayObjectModel, DisplayObject>,
+    public isSiblingOf(
+        obj: DisplayObjectNode,
+        other: DisplayObjectNode,
     )
     {
         return obj.isSiblingOf(other);
     }
 
+    public hasChildren(obj: DisplayObjectNode)
+    {
+        return obj.hasChildren;
+    }
+
     protected setParent(
-        sourceObj: DisplayObjectNode<DisplayObjectModel, DisplayObject>,
-        parentObj: DisplayObjectNode<DisplayObjectModel, DisplayObject>,
+        sourceObj: DisplayObjectNode,
+        parentObj: DisplayObjectNode,
     )
     {
         const nodeId = sourceObj.id;
@@ -86,8 +92,8 @@ class DisplayNodeTree extends TreeViewModel<DisplayObjectNode>
     }
 
     protected reorder(
-        sourceObj: DisplayObjectNode<DisplayObjectModel, DisplayObject>,
-        targetObj: DisplayObjectNode<DisplayObjectModel, DisplayObject>,
+        sourceObj: DisplayObjectNode,
+        targetObj: DisplayObjectNode,
     )
     {
         const parentNode = targetObj === sourceObj.parent

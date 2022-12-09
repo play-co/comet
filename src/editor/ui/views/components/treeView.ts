@@ -4,6 +4,7 @@ import { WritableStore } from '../store';
 
 export interface TreeItem<T>
 {
+    id: string;
     data: T;
     depth: number;
     isSelected: boolean;
@@ -54,9 +55,11 @@ export abstract class TreeViewModel<T>
     };
 
     protected abstract generateModel(): TreeItem<T>[];
-    protected abstract getId(obj: T): string;
-    protected abstract getParent(obj: T): T | undefined;
-    protected abstract isSiblingOf(obj: T, other: T): boolean;
+
+    public abstract getId(obj: T): string;
+    public abstract getParent(obj: T): T | undefined;
+    public abstract isSiblingOf(obj: T, other: T): boolean;
+    public abstract hasChildren(obj: T): boolean;
 
     protected updateModel(fn: (item: TreeItem<T>) => void)
     {
@@ -138,9 +141,11 @@ export abstract class TreeViewModel<T>
         {
             mouseDrag(e).then(() =>
             {
-                if (dragTarget.value)
+                const dragTargetValue = dragTarget.value;
+
+                if (dragTargetValue)
                 {
-                    const dragTargetObj = dragTarget.value.data;
+                    const dragTargetObj = dragTargetValue.data;
 
                     selection.forEach((item) =>
                     {
@@ -149,7 +154,7 @@ export abstract class TreeViewModel<T>
                         if (canReParent && (operation.value === Operation.ReParent))
                         {
                             // re-parent
-                            const parentId = this.getId(dragTargetObj);
+                            const parentId = dragTargetValue.id;
                             const parent = this.getParent(sourceObj);
 
                             if (parent && parentId !== this.getId(parent))
