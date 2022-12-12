@@ -10,7 +10,12 @@ import { newId } from './instances';
 
 export type id = string;
 
-export interface AssetSchema<T = {}>
+export interface AssetSchema
+{
+    name: string;
+}
+
+export interface StoredAssetSchema<T = {}> extends AssetSchema
 {
     storageKey: string;
     name: string;
@@ -19,7 +24,7 @@ export interface AssetSchema<T = {}>
     properties: T;
 }
 
-export type TextureAssetSchema = AssetSchema<{
+export type TextureAssetSchema = StoredAssetSchema<{
     width: number;
     height: number;
     mipmap: MIPMAP_MODES;
@@ -29,9 +34,19 @@ export type TextureAssetSchema = AssetSchema<{
     wrapMode: WRAP_MODES;
 }>;
 
+export interface NodeAssetSchema extends AssetSchema
+{
+    nodeId: string;
+}
+
+export type SceneAssetSchema = NodeAssetSchema;
+export type PrefabAssetSchema = NodeAssetSchema;
+
 export interface ProjectAssetsSchema
 {
     textures: Record<string, TextureAssetSchema>;
+    scenes: Record<string, SceneAssetSchema>;
+    prefabs: Record<string, PrefabAssetSchema>;
 }
 
 export type ProjectNodesSchema = Record<string, NodeSchema<any>>;
@@ -97,6 +112,8 @@ export function createProjectSchema(name: string): ProjectSchema
         root: project.id,
         assets: {
             textures: {},
+            scenes: {},
+            prefabs: {},
         },
     };
 }

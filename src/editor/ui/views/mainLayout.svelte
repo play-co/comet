@@ -23,16 +23,16 @@
           type: "stack",
           content: [
             {
-              title: "Hierarchy",
+              title: "Project",
               type: "component",
-              componentType: "Hierarchy",
+              componentType: "Project",
               size: "1fr",
               minWidth: 100,
             },
             {
-              title: "Project",
+              title: "Hierarchy",
               type: "component",
-              componentType: "Project",
+              componentType: "Hierarchy",
               size: "1fr",
               minWidth: 100,
             },

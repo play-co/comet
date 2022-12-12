@@ -17,7 +17,7 @@
   }
 
   fieldset {
-    border: 1px outset #666;
+    border: 1px outset #666a;
     padding: 10px;
     padding-right: 15px;
     border-radius: 2px;

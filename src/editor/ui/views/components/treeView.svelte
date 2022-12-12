@@ -47,6 +47,10 @@
     width: 100%;
     height: 100%;
     user-select: none;
+    padding: 5px;
+    display: block;
+    border: 1px outset #666a;
+    border-radius: 5px;
   }
 
   .tree-item {
