@@ -165,8 +165,8 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         // catch events for assets
         this.textures
-            .on(RealTimeObject.Events.SET, this.onTextureCreated)
-            .on(RealTimeObject.Events.REMOVE, this.onTextureRemoved);
+            .on(RealTimeObject.Events.SET, this.onRemoteTextureCreated)
+            .on(RealTimeObject.Events.REMOVE, this.onRemoteTextureRemoved);
 
         return this.hydrate();
     }
@@ -530,7 +530,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public onTextureCreated = (e: IConvergenceEvent) =>
+    public onRemoteTextureCreated = (e: IConvergenceEvent) =>
     {
         const { event } = asObjectSetEvent(e);
         const id = event.key;
@@ -538,14 +538,14 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         consolidateId(id);
 
-        const texture = TextureAsset.withIdFromSchema(id, schema);
+        const texture = TextureAsset.fromSchema(schema);
 
         Cache.textures.add(texture);
     };
 
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public onTextureRemoved = (event: IConvergenceEvent) =>
+    public onRemoteTextureRemoved = (event: IConvergenceEvent) =>
     {
         //
     };

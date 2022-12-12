@@ -12,6 +12,7 @@ export type id = string;
 
 export interface AssetSchema
 {
+    id: string;
     name: string;
 }
 

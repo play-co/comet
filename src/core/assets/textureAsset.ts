@@ -3,7 +3,7 @@ import { MIPMAP_MODES, MSAA_QUALITY, SCALE_MODES, WRAP_MODES } from 'pixi.js';
 import { Cache } from '../cache';
 import type { TextureAssetSchema } from '../nodes/schema';
 import { blobToBas64, loadImage } from '../util/file';
-import { Asset } from './asset';
+import { StoredAsset } from './storedAsset';
 
 export interface TextureAssetProperties
 {
@@ -26,13 +26,13 @@ export const defaultTextureAssetProperties: TextureAssetProperties = {
     wrapMode: WRAP_MODES.CLAMP,
 };
 
-export class TextureAsset extends Asset<TextureAssetProperties, HTMLImageElement>
+export class TextureAsset extends StoredAsset<TextureAssetProperties, HTMLImageElement>
 {
-    public static withIdFromSchema(id: string, schema: TextureAssetSchema)
+    public static fromSchema(schema: TextureAssetSchema)
     {
-        const { mimeType, name, properties, size, storageKey } = schema;
+        const { id, mimeType, name, properties, size, storageKey } = schema;
 
-        const texture = new TextureAsset(id, storageKey, name, mimeType, size);
+        const texture = new TextureAsset(id, name, storageKey, mimeType, size);
 
         texture.properties = properties;
 

@@ -23,6 +23,7 @@ export default {
             modified: Emit<EventData & { values: Partial<Record<string, ModelValue>> }>(),
             cloaked: Emit<ClonableNode>(),
             uncloaked: Emit<ClonableNode>(),
+            textureCreated: Emit<EventData & { textureId: string }>(),
         },
         remote: {
             created: Emit<EventData>(),
