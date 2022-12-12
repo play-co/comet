@@ -1,6 +1,6 @@
-import { ClonableNode } from '../nodes/abstract/clonableNode';
-import { getInstance } from '../nodes/instances';
-import type { NodeAssetSchema } from '../nodes/schema';
+import { ClonableNode } from '../../abstract/clonableNode';
+import { getInstance } from '../../instances';
+import type { NodeAssetSchema } from '../../schema';
 import { NodeAsset } from './nodeAsset';
 
 export class PrefabAsset extends NodeAsset<ClonableNode>

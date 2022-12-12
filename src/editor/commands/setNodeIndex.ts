@@ -1,5 +1,5 @@
 import type { GraphNode } from '../../core/nodes/abstract/graphNode';
-import type { ContainerNode } from '../../core/nodes/concrete/container';
+import type { ContainerNode } from '../../core/nodes/concrete/display/containerNode';
 import { type UpdateMode, Command } from '../core/command';
 
 export interface SetNodeIndexCommandParams

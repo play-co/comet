@@ -1,6 +1,4 @@
-import { newId } from '../nodes/instances';
-
-export type AssetCacheKey = 'textures';
+import { newId } from '../../instances';
 
 export abstract class Asset
 {
@@ -15,3 +13,4 @@ export abstract class Asset
         this.name = name;
     }
 }
+

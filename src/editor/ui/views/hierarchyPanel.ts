@@ -1,4 +1,4 @@
-import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
+import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
 import { SetNodeIndexCommand } from '../../commands/setNodeIndex';
 import { SetParentCommand } from '../../commands/setParent';
 import { Application } from '../../core/application';

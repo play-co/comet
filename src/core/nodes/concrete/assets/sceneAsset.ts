@@ -1,6 +1,6 @@
-import { SceneNode } from '../nodes/concrete/scene';
-import { getInstance } from '../nodes/instances';
-import type { NodeAssetSchema } from '../nodes/schema';
+import { SceneNode } from '../sceneNode';
+import { getInstance } from '../../instances';
+import type { NodeAssetSchema } from '../../schema';
 import { NodeAsset } from './nodeAsset';
 
 export class SceneAsset extends NodeAsset<SceneNode>

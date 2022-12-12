@@ -1,7 +1,7 @@
-import { TextureAsset } from '../../core/assets/textureAsset';
 import { Cache } from '../../core/cache';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { GraphNode } from '../../core/nodes/abstract/graphNode';
+import { TextureAsset } from '../../core/nodes/concrete/assets/textureAsset';
 import { getInstance, hasInstance } from '../../core/nodes/instances';
 import { AssignCustomPropCommand } from '../commands/assignCustomProp';
 import { CreateNodeCommand } from '../commands/createNode';

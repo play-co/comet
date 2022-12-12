@@ -1,5 +1,5 @@
-import type { NodeAsset } from '../../../core/assets/nodeAsset';
-import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
+import type { NodeAsset } from '../../../core/nodes/concrete/assets/nodeAsset';
+import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
 import { SetNodeIndexCommand } from '../../commands/setNodeIndex';
 import { SetParentCommand } from '../../commands/setParent';
 import { Application } from '../../core/application';

@@ -1,9 +1,9 @@
 import { Container } from 'pixi.js';
 
-import { ModelSchema } from '../../model/schema';
-import type { ClonableNode } from '../abstract/clonableNode';
-import type { DisplayObjectModel } from '../abstract/displayObject';
-import { DisplayObjectNode, displayObjectSchema } from '../abstract/displayObject';
+import { ModelSchema } from '../../../model/schema';
+import type { ClonableNode } from '../../abstract/clonableNode';
+import type { DisplayObjectModel } from '../../abstract/displayObjectNode';
+import { DisplayObjectNode, displayObjectSchema } from '../../abstract/displayObjectNode';
 
 export type ContainerModel = DisplayObjectModel;
 
@@ -42,11 +42,6 @@ export class ContainerNode<
     protected initView()
     {
         (this.view as any).id = this.id;
-    }
-
-    protected initModel(): void
-    {
-        //
     }
 
     public reParentTransform()

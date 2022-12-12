@@ -11,7 +11,7 @@
   } from "../../../components/filters";
   import { isKeyPressed } from "../../../components/keyboardListener";
   import { Actions } from "../../../../actions";
-  import type { DisplayObjectNode } from "../../../../../core/nodes/abstract/displayObject";
+  import type { DisplayObjectNode } from "../../../../../core/nodes/abstract/displayObjectNode";
   import Events from "../../../../events";
 
   // component props
@@ -96,9 +96,7 @@
       });
     });
 
-    Application.instance.undoStack.exec(
-      new ModifyModelsCommand({ modifications })
-    );
+    Application.instance.undoStack.exec(new ModifyModelsCommand({ modifications }));
 
     Events.editor.propertyModified.emit(property);
   }
@@ -130,8 +128,7 @@
     const { key } = e;
     const element = e.target as HTMLInputElement;
     const value = parseFloat(element.value);
-    const isMinusKeyAtNonZeroIndex =
-      key === "-" && element.selectionStart !== 0;
+    const isMinusKeyAtNonZeroIndex = key === "-" && element.selectionStart !== 0;
     let isValidKey =
       isNumericInput(key) ||
       isDeleteKey(key) ||
@@ -179,7 +176,8 @@
     {value}
     on:focus={onFocus}
     on:keydown={onKeyDown}
-    on:change={onChange} />
+    on:change={onChange}
+  />
 </numeric-control>
 
 <style>

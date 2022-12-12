@@ -1,4 +1,4 @@
-import { TextureAsset } from '../../core/assets/textureAsset';
+import { TextureAsset } from '../../core/nodes/concrete/assets/textureAsset';
 import { Cache } from '../../core/cache';
 import { registerInstance } from '../../core/nodes/instances';
 import { Command } from '../core/command';

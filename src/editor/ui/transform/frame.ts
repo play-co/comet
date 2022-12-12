@@ -4,7 +4,7 @@ import { EventEmitter } from 'eventemitter3';
 import type { DisplayObject, InteractionEvent } from 'pixi.js';
 import { Container, Rectangle } from 'pixi.js';
 
-import { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
+import { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
 import { Application } from '../../core/application';
 import type { TransformGizmo } from './gizmo';
 import { type HandleVertexHorizontal, type HandleVertexVertical, TransformGizmoHandle } from './handle';

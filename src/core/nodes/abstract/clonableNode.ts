@@ -14,20 +14,25 @@ export type ClonableNodeConstructor = {
     new (options: NewNodeOptions<any>): ClonableNode<any, any>;
 };
 
+export type ClonableNodeModel = ModelBase;
+
 export interface NewNodeOptions<M>
 {
     id?: string;
+    name?: string;
     model?: Partial<M>;
     cloneInfo?: CloneInfo;
 }
 
 export abstract class ClonableNode<
     /** Model */
-    M extends ModelBase = ModelBase,
+    M extends ClonableNodeModel = ClonableNodeModel,
     /** View */
     V extends object = object,
 > extends GraphNode implements Clonable
 {
+    public name: string;
+
     public model: Model<M> & M;
     public view: V;
 
@@ -42,7 +47,9 @@ export abstract class ClonableNode<
     {
         super(options.id);
 
-        const { model = {}, cloneInfo = new CloneInfo() } = options;
+        const { name, model = {}, cloneInfo = new CloneInfo() } = options;
+
+        this.name = name ?? this.nodeType();
 
         this.cloneInfo = cloneInfo;
 
@@ -70,7 +77,6 @@ export abstract class ClonableNode<
         (this.view as any).__node_id = this.id;
         this.initView();
 
-        this.initModel();
         this.model.bind(this.onModelModified);
 
         this.initCloning();
@@ -79,8 +85,6 @@ export abstract class ClonableNode<
     }
 
     protected abstract initView(): void;
-
-    protected abstract initModel(): void;
 
     protected initCloning()
     {
@@ -136,6 +140,7 @@ export abstract class ClonableNode<
         const node = new Ctor(
             {
                 cloneInfo,
+                name: this.name,
             },
         );
 
@@ -189,7 +194,6 @@ export abstract class ClonableNode<
 
                 this.model = cloner.model.clone() as unknown as Model<M> & M;
                 this.model.setValues(values);
-                this.initModel();
             }
             else
             {

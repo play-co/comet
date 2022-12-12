@@ -1,4 +1,4 @@
-import type { NodeAsset } from '../../core/assets/nodeAsset';
+import type { NodeAsset } from '../../core/nodes/concrete/assets/nodeAsset';
 import Events from '../events';
 import { ItemSelection } from './itemSelection';
 

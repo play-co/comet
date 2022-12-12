@@ -1,8 +1,8 @@
 import { Cache } from '../../core/cache';
 import { enableLog } from '../../core/log';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
-import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObject';
-import { ProjectNode } from '../../core/nodes/concrete/project';
+import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObjectNode';
+import { ProjectNode } from '../../core/nodes/concrete/projectNode';
 import { clearInstances, getInstance } from '../../core/nodes/instances';
 import { createNodeSchema } from '../../core/nodes/schema';
 import { Actions } from '../actions';

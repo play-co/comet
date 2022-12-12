@@ -1,4 +1,4 @@
-import type { DisplayObjectModel } from '../../core/nodes/abstract/displayObject';
+import type { DisplayObjectModel } from '../../core/nodes/abstract/displayObjectNode';
 import { ModifyModelsCommand } from '../commands/modifyModels';
 import { Action } from '../core/action';
 import { Application } from '../core/application';

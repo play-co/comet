@@ -2,7 +2,7 @@ import { type InteractionEvent, Application as PixiApplication, Container } from
 import { Viewport } from 'pixi-viewport';
 
 import type { ClonableNode } from '../../../core';
-import { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
+import { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
 import { Application } from '../../core/application';
 import Events from '../../events';
 import { TransformGizmo } from '../transform/gizmo';

@@ -3,7 +3,7 @@ import type { InteractionEvent } from 'pixi.js';
 import { Container, Graphics, Matrix, Transform } from 'pixi.js';
 
 import type { ClonableNode } from '../../../core';
-import { type DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
+import { type DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
 import { type Point, degToRad, radToDeg } from '../../../core/util/geom';
 import type { ModifyModelCommandParams } from '../../commands/modifyModel';
 import { ModifyModelsCommand } from '../../commands/modifyModels';

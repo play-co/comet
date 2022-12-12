@@ -6,17 +6,17 @@ import Convergence, {
     RealTimeObject,
 } from '@convergence/convergence';
 
-import { TextureAsset } from '../../core/assets/textureAsset';
 import { Cache } from '../../core/cache';
 import { log } from '../../core/log';
 import type { ModelValue } from '../../core/model/model';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
+import { TextureAsset } from '../../core/nodes/concrete/assets/textureAsset';
 import type { CustomPropertyType, CustomPropertyValueType } from '../../core/nodes/customProperties';
 import { consolidateId, getInstance } from '../../core/nodes/instances';
 import type {
     CloneInfoSchema,
     NodeSchema,
-    ProjectSchema,
+    ProjectFileSchema,
     TextureAssetSchema,
 } from '../../core/nodes/schema';
 import { createProjectSchema } from '../../core/nodes/schema';
@@ -251,7 +251,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
     public toProjectSchema()
     {
-        return this.model.root().toJSON() as ProjectSchema;
+        return this.model.root().toJSON() as ProjectFileSchema;
     }
 
     // command API

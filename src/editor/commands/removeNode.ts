@@ -1,5 +1,5 @@
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
-import { DisplayObjectNode } from '../../core/nodes/abstract/displayObject';
+import { DisplayObjectNode } from '../../core/nodes/abstract/displayObjectNode';
 import { getInstance } from '../../core/nodes/instances';
 import { getNodeSchema } from '../../core/nodes/schema';
 import { Command } from '../core/command';

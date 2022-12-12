@@ -3,7 +3,7 @@ import type { Container, DisplayObject } from 'pixi.js';
 import { Matrix, Rectangle, Transform } from 'pixi.js';
 
 import type { ClonableNode } from '../../../core';
-import { DisplayObjectNode } from '../../../core/nodes/abstract/displayObject';
+import { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
 import { angleBetween } from '../../../core/util/geom';
 
 export interface InitialGizmoTransform

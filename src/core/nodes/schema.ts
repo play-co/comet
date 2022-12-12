@@ -1,7 +1,6 @@
 import type { MIPMAP_MODES, MSAA_QUALITY, SCALE_MODES, WRAP_MODES } from 'pixi.js';
 
 import { version } from '../../../package.json';
-import { getUserName } from '../../editor/sync/user';
 import type { ModelBase } from '../model/model';
 import type { ClonableNode } from './abstract/clonableNode';
 import { CloneMode } from './cloneInfo';
@@ -9,48 +8,6 @@ import type { CustomProperty } from './customProperties';
 import { newId } from './instances';
 
 export type id = string;
-
-export interface AssetSchema
-{
-    id: string;
-    name: string;
-}
-
-export interface StoredAssetSchema<T = {}> extends AssetSchema
-{
-    storageKey: string;
-    name: string;
-    mimeType: string;
-    size: number;
-    properties: T;
-}
-
-export type TextureAssetSchema = StoredAssetSchema<{
-    width: number;
-    height: number;
-    mipmap: MIPMAP_MODES;
-    multisample: MSAA_QUALITY;
-    resolution: number;
-    scaleMode: SCALE_MODES;
-    wrapMode: WRAP_MODES;
-}>;
-
-export interface NodeAssetSchema extends AssetSchema
-{
-    nodeId: string;
-}
-
-export type SceneAssetSchema = NodeAssetSchema;
-export type PrefabAssetSchema = NodeAssetSchema;
-
-export interface ProjectAssetsSchema
-{
-    textures: Record<string, TextureAssetSchema>;
-    scenes: Record<string, SceneAssetSchema>;
-    prefabs: Record<string, PrefabAssetSchema>;
-}
-
-export type ProjectNodesSchema = Record<string, NodeSchema<any>>;
 
 export interface CustomPropsSchema
 {
@@ -68,6 +25,7 @@ export interface CloneInfoSchema
 export interface NodeSchema<M extends ModelBase = {}>
 {
     id: string;
+    name: string;
     created: number;
     type: string;
     parent?: string;
@@ -77,54 +35,73 @@ export interface NodeSchema<M extends ModelBase = {}>
     customProperties: CustomPropsSchema;
 }
 
-export interface ProjectSchema
+export type AssetSchema<M extends ModelBase = {}> = NodeSchema<M>;
+
+export type StoredAssetSchema<M extends ModelBase = {}> = AssetSchema<M & {
+    storageKey: string;
+    mimeType: string;
+    size: number;
+}>;
+
+export type TextureAssetSchema = StoredAssetSchema<{
+    width: number;
+    height: number;
+    mipmap: MIPMAP_MODES;
+    multisample: MSAA_QUALITY;
+    resolution: number;
+    scaleMode: SCALE_MODES;
+    wrapMode: WRAP_MODES;
+}>;
+
+export interface ProjectFileSchema
 {
-    name: string;
     version: string;
-    createdBy: string;
+    nodes: Record<string, NodeSchema<any>>;
     root: id;
-    nodes: ProjectNodesSchema;
-    assets: ProjectAssetsSchema;
 }
 
 export interface NodeOptionsSchema<M extends ModelBase>
 {
     id?: string;
+    name?: string;
     model?: Partial<M>;
     cloneInfo?: CloneInfoSchema;
     parent?: string;
 }
 
-export function createProjectSchema(name: string): ProjectSchema
+export function createProjectSchema(name: string): ProjectFileSchema
 {
-    const project = createNodeSchema('Project');
+    const project = createNodeSchema('Project', { model: { name } });
     const scene = createNodeSchema('Scene', { parent: project.id });
+
+    const texturesFolder = createNodeSchema('NodeFolder', { parent: project.id });
+    const scenesFolder = createNodeSchema('NodeFolder', { parent: project.id });
+    const prefabsFolder = createNodeSchema('NodeFolder', { parent: project.id });
+
+    project.children.push(texturesFolder.id, scenesFolder.id, prefabsFolder.id);
 
     project.children.push(scene.id);
 
     return {
-        name,
         version,
-        createdBy: getUserName(),
         nodes: {
             [project.id]: project,
             [scene.id]: scene,
+            [texturesFolder.id]: texturesFolder,
+            [scenesFolder.id]: scenesFolder,
+            [prefabsFolder.id]: prefabsFolder,
         },
         root: project.id,
-        assets: {
-            textures: {},
-            scenes: {},
-            prefabs: {},
-        },
     };
 }
 
 export function createNodeSchema<M extends ModelBase>(type: string, nodeOptions: NodeOptionsSchema<M> = {}): NodeSchema<M>
 {
-    const { id, model, cloneInfo: { cloner, cloneMode, cloned } = {}, parent } = nodeOptions;
+    const { id, name, model, cloneInfo: { cloner, cloneMode, cloned } = {}, parent } = nodeOptions;
 
     return {
         id: id ?? newId(type),
+        name: name ?? type,
         created: Date.now(),
         type,
         parent,
@@ -146,6 +123,7 @@ export function getNodeSchema(node: ClonableNode, includeParent = true, includeC
 {
     const nodeSchema = createNodeSchema(node.nodeType(), {
         id: node.id,
+        name: node.name,
         model: node.model.ownValues,
         cloneInfo: getCloneInfoSchema(node),
     });

@@ -1,5 +1,5 @@
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
-import { ContainerNode } from '../../core/nodes/concrete/container';
+import { ContainerNode } from '../../core/nodes/concrete/display/containerNode';
 import { type UpdateMode, Command } from '../core/command';
 
 export interface SetParentCommandParams

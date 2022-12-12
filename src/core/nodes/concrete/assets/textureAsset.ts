@@ -1,8 +1,8 @@
 import { MIPMAP_MODES, MSAA_QUALITY, SCALE_MODES, WRAP_MODES } from 'pixi.js';
 
-import { Cache } from '../cache';
-import type { TextureAssetSchema } from '../nodes/schema';
-import { blobToBas64, loadImage } from '../util/file';
+import { Cache } from '../../../cache';
+import type { TextureAssetSchema } from '../../schema';
+import { blobToBas64, loadImage } from '../../../util/file';
 import { StoredAsset } from './storedAsset';
 
 export interface TextureAssetProperties

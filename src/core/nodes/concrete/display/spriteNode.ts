@@ -1,10 +1,9 @@
 import { Graphics, Sprite, Texture } from 'pixi.js';
 
-import type { TextureAsset } from '../../assets/textureAsset';
-import { Cache } from '../../cache';
-import { ModelSchema } from '../../model/schema';
-import { delay } from '../../util';
-import { type ContainerModel, ContainerNode, containerSchema } from './container';
+import { ModelSchema } from '../../../model/schema';
+import { delay } from '../../../util';
+import type { TextureAsset } from '../assets/textureAsset';
+import { type ContainerModel, ContainerNode, containerSchema } from './containerNode';
 
 export interface SpriteModel extends ContainerModel
 {

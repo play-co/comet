@@ -1,4 +1,4 @@
-import type { GraphNode } from '../nodes/abstract/graphNode';
+import type { GraphNode } from '../../abstract/graphNode';
 import { Asset } from './asset';
 
 export abstract class NodeAsset<NodeType extends GraphNode = GraphNode> extends Asset
