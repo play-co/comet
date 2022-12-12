@@ -1,7 +1,8 @@
 import type { ModelBase } from '../../model/model';
-import { type ClonableNodeModel, type NewNodeOptions, ClonableNode } from './clonableNode';
+import type { ModelSchema } from '../../model/schema';
+import { type ClonableNodeModel, type NewNodeOptions, ClonableNode, clonableNodeSchema } from './clonableNode';
 
-export abstract class MetaNode<M extends ClonableNodeModel> extends ClonableNode<M, {}>
+export abstract class MetaNode<M extends ClonableNodeModel = ClonableNodeModel> extends ClonableNode<M, {}>
 {
     constructor(
         options: NewNodeOptions<M> = {},
@@ -12,7 +13,7 @@ export abstract class MetaNode<M extends ClonableNodeModel> extends ClonableNode
 
     protected initView(): void
     {
-        throw new Error('Method not implemented.');
+        //
     }
 
     // @ts-ignore
@@ -46,6 +47,11 @@ export abstract class MetaNode<M extends ClonableNodeModel> extends ClonableNode
     public get isMetaNode()
     {
         return true;
+    }
+
+    public modelSchema(): ModelSchema<M>
+    {
+        return clonableNodeSchema as unknown as ModelSchema<M>;
     }
 }
 

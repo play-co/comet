@@ -2,7 +2,7 @@ import { Cache } from '../../core/cache';
 import { enableLog } from '../../core/log';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObjectNode';
-import { ProjectNode } from '../../core/nodes/concrete/projectNode';
+import { ProjectNode } from '../../core/nodes/concrete/meta/projectNode';
 import { clearInstances, getInstance } from '../../core/nodes/instances';
 import { createNodeSchema } from '../../core/nodes/schema';
 import { Actions } from '../actions';
@@ -79,7 +79,7 @@ export class Application
         this.project = new ProjectNode();
         this.selection = new NodeSelection();
         this.nodeUpdater = new RemoteObjectSync(datastore);
-        this.viewport = new EditableViewport(this.project);
+        this.viewport = new EditableViewport();
         this.undoStack = new UndoStack();
 
         Cache.textures.fetchProvider = (storageKey: string) =>
@@ -107,18 +107,8 @@ export class Application
         }
         else
         {
-            await this.createProject('Test', 'test');
+            await this.createProject('Test');
         }
-
-        const nodes: DisplayObjectNode[] = [];
-
-        this.project.walk<DisplayObjectNode>((node) =>
-        {
-            if (!node.isMetaNode)
-            {
-                nodes.push(node);
-            }
-        });
 
         document.addEventListener('contextmenu', (event) =>
         {
@@ -127,7 +117,7 @@ export class Application
         });
     }
 
-    public async createProject(name: string, id: string)
+    public async createProject(name: string)
     {
         const { datastore } = this;
 
@@ -135,13 +125,24 @@ export class Application
 
         this.clear();
 
-        if (await datastore.hasProject(name))
+        try
         {
-            await datastore.deleteProject(id);
-        }
+            const lastProjectId = localStorage.getItem('comet:lastProjectId');
 
-        this.project = await datastore.createProject(name, id) as unknown as ProjectNode;
-        this.initProject();
+            if (lastProjectId && await datastore.hasProject(lastProjectId))
+            {
+                await datastore.deleteProject(lastProjectId);
+            }
+
+            this.project = await datastore.createProject(name);
+
+            this.initProject();
+        }
+        catch (e)
+        {
+            console.error('CREATE PROJECT ERROR:', e);
+            Events.project.create.error.emit(e as Error);
+        }
 
         Events.project.create.success.emit();
         Events.project.ready.emit();
@@ -153,7 +154,7 @@ export class Application
 
         this.clear();
 
-        this.project = await this.datastore.openProject(id) as unknown as ProjectNode;
+        this.project = await this.datastore.openProject(id);
         this.initProject();
 
         Events.project.open.success.emit();
@@ -162,17 +163,7 @@ export class Application
 
     protected initProject()
     {
-        let scene = this.project.getChildAt(0);
-
-        if (!scene)
-        {
-            const nodeSchema = createNodeSchema('Scene', { parent: this.project.id });
-            const { node } = new CreateNodeCommand({
-                nodeSchema,
-            }).run();
-
-            scene = node;
-        }
+        const scene = this.project.getFolder('Scenes').getChildAt(0);
 
         this.viewport.setRoot(scene.cast<DisplayObjectNode>());
 
@@ -219,17 +210,18 @@ export class Application
 
     public createTexture(file: File)
     {
-        const { promise } = new CreateTextureAssetCommand({ file }).run();
+        // const { promise } = new CreateTextureAssetCommand({ file }).run();
 
-        promise.then((texture) =>
-        {
-            Actions.newSprite.dispatch({
-                addToSelected: false,
-                model: {
-                    textureAssetId: texture.id,
-                    tint: 0xffffff,
-                },
-            });
-        });
+        // promise.then((texture) =>
+        // {
+        //     Actions.newSprite.dispatch({
+        //         addToSelected: false,
+        //         model: {
+        //             textureAssetId: texture.id,
+        //             tint: 0xffffff,
+        //         },
+        //     });
+        // });
+        debugger;
     }
 }

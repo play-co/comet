@@ -1,8 +1,9 @@
 // core
 import { ContainerNode } from './concrete/display/containerNode';
-import { ProjectNode } from './concrete/projectNode';
-import { SceneNode } from './concrete/sceneNode';
-import { SpriteNode } from './concrete/sprite';
+import { SpriteNode } from './concrete/display/spriteNode';
+import { FolderNode } from './concrete/meta/folderNode';
+import { ProjectNode } from './concrete/meta/projectNode';
+import { SceneNode } from './concrete/meta/sceneNode';
 // helper
 import { registerNodeType } from './nodeFactory';
 
@@ -10,4 +11,5 @@ import { registerNodeType } from './nodeFactory';
 registerNodeType(ContainerNode);
 registerNodeType(ProjectNode);
 registerNodeType(SceneNode);
+registerNodeType(FolderNode);
 registerNodeType(SpriteNode);

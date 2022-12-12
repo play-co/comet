@@ -1,6 +1,6 @@
 import type { Container } from 'pixi.js';
 
-import { type ContainerModel, ContainerNode } from './display/containerNode';
+import { type ContainerModel, ContainerNode } from '../display/containerNode';
 
 export class SceneNode extends ContainerNode<ContainerModel, Container>
 {

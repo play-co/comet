@@ -58,7 +58,10 @@ export class ContainerNode<
         const thisView = this.view;
         const parentView = parent.getView<Container>();
 
-        parentView.addChildAt(thisView, parent.indexOf(this));
+        if (parentView)
+        {
+            parentView.addChildAt(thisView, parent.indexOf(this));
+        }
     }
 
     protected removeViewFromParent(parent: ClonableNode): void
@@ -66,7 +69,10 @@ export class ContainerNode<
         const thisView = this.view;
         const parentView = parent.getView<Container>();
 
-        parentView.removeChild(thisView);
+        if (parentView)
+        {
+            parentView.removeChild(thisView);
+        }
     }
 
     public updateViewIndex()

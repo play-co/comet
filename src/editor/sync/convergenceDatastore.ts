@@ -10,7 +10,8 @@ import { Cache } from '../../core/cache';
 import { log } from '../../core/log';
 import type { ModelValue } from '../../core/model/model';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
-import { TextureAsset } from '../../core/nodes/concrete/assets/textureAsset';
+import type { ProjectNode } from '../../core/nodes/concrete/meta/projectNode';
+// import type { TextureAsset } from '../../core/nodes/concrete/assets/textureAssetNode';
 import type { CustomPropertyType, CustomPropertyValueType } from '../../core/nodes/customProperties';
 import { consolidateId, getInstance } from '../../core/nodes/instances';
 import type {
@@ -137,26 +138,31 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         return nodeElement.toJSON() as NodeSchema;
     }
 
-    public async createProject(name: string, id?: string)
+    public async createProject(name: string)
     {
         const data = createProjectSchema(name);
 
         const model = await this.domain.models().openAutoCreate({
             ...defaultProjectModelSettings,
-            id,
             data,
         });
 
-        return await this.openProject(model.modelId());
+        const id = model.modelId();
+
+        model.root().set('id', id);
+
+        localStorage.setItem('comet:lastProjectId', id);
+
+        return await this.openProject(id);
     }
 
-    public async openProject(id: string): Promise<ClonableNode>
+    public async openProject(id: string): Promise<ProjectNode>
     {
         const model = await this.domain.models().open(id);
 
         this._model = model;
 
-        await this.joinActivity('editProject', model.modelId());
+        // TODO catch all meta nodes and folders too...
 
         // catch events when a remote user adds or removes a node...
         this.nodes
@@ -164,17 +170,21 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
             .on(RealTimeObject.Events.REMOVE, this.onRemoteNodeRemoved);
 
         // catch events for assets
-        this.textures
-            .on(RealTimeObject.Events.SET, this.onRemoteTextureCreated)
-            .on(RealTimeObject.Events.REMOVE, this.onRemoteTextureRemoved);
+        // this.textures
+        //     .on(RealTimeObject.Events.SET, this.onRemoteTextureCreated)
+        //     .on(RealTimeObject.Events.REMOVE, this.onRemoteTextureRemoved);
 
-        return this.hydrate();
+        const project = this.hydrate();
+
+        await this.joinActivity('editProject', model.modelId());
+
+        return project;
     }
 
-    public async hasProject(name: string)
+    public async hasProject(id: string)
     {
         const results = await this.domain.models()
-            .query(`SELECT * FROM projects WHERE name = '${name}'`);
+            .query(`SELECT * FROM projects WHERE id = '${id}'`);
 
         if (results.totalResults > 0)
         {
@@ -200,7 +210,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
     public hydrate()
     {
-        const { nodes, textures } = this;
+        const { nodes } = this;
 
         // index all nodeElements
         nodes.keys().forEach((id) =>
@@ -217,19 +227,19 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         if (projectNode)
         {
             // hydrate textures
-            textures.keys().forEach((id) =>
-            {
-                const textureElement = textures.get(id) as RealTimeObject;
+            // textures.keys().forEach((id) =>
+            // {
+            //     const textureElement = textures.get(id) as RealTimeObject;
 
-                const schema = {
-                    id,
-                    ...textureElement.toJSON(),
-                };
+            //     const schema = {
+            //         id,
+            //         ...textureElement.toJSON(),
+            //     };
 
-                consolidateId(id);
+            //     consolidateId(id);
 
-                Events.datastore.texture.created.emit(schema);
-            });
+            //     Events.datastore.texture.created.emit(schema);
+            // });
 
             // start hydrating from the root node (Project)
             this.hydrateElement(projectNode);
@@ -239,7 +249,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
             throw new Error(`${userName}:Could not find project node`);
         }
 
-        return getInstance<ClonableNode>(rootId);
+        return getInstance<ProjectNode>(rootId);
     }
 
     public reset()
@@ -538,9 +548,10 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         consolidateId(id);
 
-        const texture = TextureAsset.fromSchema(schema);
+        // const texture = TextureAsset.fromSchema(schema);
 
-        Cache.textures.add(texture);
+        // Cache.textures.add(texture);
+        debugger;
     };
 
     // @ts-ignore
@@ -736,14 +747,16 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
     public async createTexture(asset: TextureAsset)
     {
-        const { id, storageKey, name, mimeType: type, size, properties } = asset;
+        // const { id, storageKey, name, mimeType: type, size, properties } = asset;
 
-        this.textures.set(id, {
-            storageKey,
-            name,
-            mimeType: type,
-            size,
-            properties,
-        } as TextureAssetSchema);
+        // this.textures.set(id, {
+        //     storageKey,
+        //     name,
+        //     mimeType: type,
+        //     size,
+        //     properties,
+        // } as TextureAssetSchema);
+
+        debugger;
     }
 }

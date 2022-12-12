@@ -1,4 +1,4 @@
-import type { NodeAsset } from '../../../core/nodes/concrete/assets/nodeAsset';
+import type { NodeAsset } from '../../../core/nodes/concrete/meta/assets/nodeAsset';
 import { Emit } from '../emitter';
 
 export default {

@@ -7,6 +7,7 @@ import type { ModelSchema } from './schema';
 export type ModelValue = string | number | boolean | object | null;
 export interface ModelBase
 {
+    name: string;
     [key: string]: ModelValue;
 }
 

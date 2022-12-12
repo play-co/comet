@@ -22,10 +22,9 @@ export interface CloneInfoSchema
     cloned: id[];
 }
 
-export interface NodeSchema<M extends ModelBase = {}>
+export interface NodeSchema<M extends ModelBase = ModelBase>
 {
     id: string;
-    name: string;
     created: number;
     type: string;
     parent?: string;
@@ -35,13 +34,13 @@ export interface NodeSchema<M extends ModelBase = {}>
     customProperties: CustomPropsSchema;
 }
 
-export type AssetSchema<M extends ModelBase = {}> = NodeSchema<M>;
+export type AssetSchema<M> = NodeSchema<ModelBase & M>;
 
-export type StoredAssetSchema<M extends ModelBase = {}> = AssetSchema<M & {
+export type StoredAssetSchema<M> = AssetSchema<{
     storageKey: string;
     mimeType: string;
     size: number;
-}>;
+} & M>;
 
 export type TextureAssetSchema = StoredAssetSchema<{
     width: number;
@@ -55,6 +54,7 @@ export type TextureAssetSchema = StoredAssetSchema<{
 
 export interface ProjectFileSchema
 {
+    id: string;
     version: string;
     nodes: Record<string, NodeSchema<any>>;
     root: id;
@@ -69,39 +69,12 @@ export interface NodeOptionsSchema<M extends ModelBase>
     parent?: string;
 }
 
-export function createProjectSchema(name: string): ProjectFileSchema
-{
-    const project = createNodeSchema('Project', { model: { name } });
-    const scene = createNodeSchema('Scene', { parent: project.id });
-
-    const texturesFolder = createNodeSchema('NodeFolder', { parent: project.id });
-    const scenesFolder = createNodeSchema('NodeFolder', { parent: project.id });
-    const prefabsFolder = createNodeSchema('NodeFolder', { parent: project.id });
-
-    project.children.push(texturesFolder.id, scenesFolder.id, prefabsFolder.id);
-
-    project.children.push(scene.id);
-
-    return {
-        version,
-        nodes: {
-            [project.id]: project,
-            [scene.id]: scene,
-            [texturesFolder.id]: texturesFolder,
-            [scenesFolder.id]: scenesFolder,
-            [prefabsFolder.id]: prefabsFolder,
-        },
-        root: project.id,
-    };
-}
-
 export function createNodeSchema<M extends ModelBase>(type: string, nodeOptions: NodeOptionsSchema<M> = {}): NodeSchema<M>
 {
-    const { id, name, model, cloneInfo: { cloner, cloneMode, cloned } = {}, parent } = nodeOptions;
+    const { id, model, cloneInfo: { cloner, cloneMode, cloned } = {}, parent } = nodeOptions;
 
     return {
         id: id ?? newId(type),
-        name: name ?? type,
         created: Date.now(),
         type,
         parent,
@@ -119,11 +92,37 @@ export function createNodeSchema<M extends ModelBase>(type: string, nodeOptions:
     };
 }
 
+export function createProjectSchema(name: string): ProjectFileSchema
+{
+    const project = createNodeSchema('Project', { model: { name } });
+
+    const texturesFolder = createNodeSchema('Folder', { parent: project.id, model: { name: 'Textures' } });
+    const scenesFolder = createNodeSchema('Folder', { parent: project.id, model: { name: 'Scenes' } });
+    const prefabsFolder = createNodeSchema('Folder', { parent: project.id, model: { name: 'Prefabs' } });
+
+    const scene = createNodeSchema('Scene', { parent: scenesFolder.id, model: { name: 'Scene1' } });
+
+    project.children.push(texturesFolder.id, scenesFolder.id, prefabsFolder.id);
+    scenesFolder.children.push(scene.id);
+
+    return {
+        id: name,
+        version,
+        nodes: {
+            [project.id]: project,
+            [scene.id]: scene,
+            [texturesFolder.id]: texturesFolder,
+            [scenesFolder.id]: scenesFolder,
+            [prefabsFolder.id]: prefabsFolder,
+        },
+        root: project.id,
+    };
+}
+
 export function getNodeSchema(node: ClonableNode, includeParent = true, includeChildren = true)
 {
     const nodeSchema = createNodeSchema(node.nodeType(), {
         id: node.id,
-        name: node.name,
         model: node.model.ownValues,
         cloneInfo: getCloneInfoSchema(node),
     });

@@ -1,5 +1,5 @@
-import { TextureAsset } from '../../core/nodes/concrete/assets/textureAsset';
 import { Cache } from '../../core/cache';
+import type { TextureAssetNode } from '../../core/nodes/concrete/meta/assets/textureAssetNode';
 import { registerInstance } from '../../core/nodes/instances';
 import { Command } from '../core/command';
 
@@ -10,7 +10,7 @@ export interface CreateTextureAssetCommandParams
 
 export interface CreateTextureAssetCommandReturn
 {
-    promise: Promise<TextureAsset>;
+    promise: Promise<TextureAssetNode>;
 }
 
 export class CreateTextureAssetCommand extends Command<CreateTextureAssetCommandParams, CreateTextureAssetCommandReturn>
@@ -19,31 +19,32 @@ export class CreateTextureAssetCommand extends Command<CreateTextureAssetCommand
 
     protected async upload(file: File)
     {
-        const { app, datastore } = this;
+        // const { app, datastore } = this;
 
-        const storageKey = await app.storageProvider.upload(file);
-        const asset = new TextureAsset(undefined, file.name, storageKey, file.type, file.size, file);
-        const imageElement = await asset.getResource();
+        // const storageKey = await app.storageProvider.upload(file);
+        // const asset = new TextureAssetNode(undefined, file.name, storageKey, file.type, file.size, file);
+        // const imageElement = await asset.getResource();
 
-        asset.properties.width = imageElement.naturalWidth;
-        asset.properties.height = imageElement.naturalHeight;
+        // asset.properties.width = imageElement.naturalWidth;
+        // asset.properties.height = imageElement.naturalHeight;
 
-        registerInstance(asset);
+        // registerInstance(asset);
 
-        await datastore.createTexture(asset);
+        // await datastore.createTexture(asset);
 
-        Cache.textures.add(asset);
+        // Cache.textures.add(asset);
 
-        return asset;
+        // return asset;
+
     }
 
     public apply(): CreateTextureAssetCommandReturn
     {
-        const { params: { file } } = this;
+        // const { params: { file } } = this;
 
-        const promise = this.upload(file);
+        // const promise = this.upload(file);
 
-        return { promise };
+        // return { promise };
     }
 
     public undo(): void

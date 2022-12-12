@@ -3,6 +3,7 @@ import { Viewport } from 'pixi-viewport';
 
 import type { ClonableNode } from '../../../core';
 import { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
+import { ContainerNode } from '../../../core/nodes/concrete/display/containerNode';
 import { Application } from '../../core/application';
 import Events from '../../events';
 import { TransformGizmo } from '../transform/gizmo';
@@ -22,9 +23,9 @@ export class EditableViewport
     public grid: Grid;
     public boxSelection: BoxSelection;
 
-    constructor(rootNode: DisplayObjectNode)
+    constructor()
     {
-        this.rootNode = rootNode;
+        this.rootNode = new ContainerNode();
 
         const pixi = this.pixi = new PixiApplication({
             backgroundColor: 0x111111,
@@ -52,7 +53,7 @@ export class EditableViewport
         viewport.addChild(gizmo);
         pixi.stage.addChild(editLayer);
 
-        nodeLayer.addChild(rootNode.view);
+        nodeLayer.addChild(this.rootNode.view);
         editLayer.addChild(gizmo.frame.container);
 
         const boxSelection = this.boxSelection = new BoxSelection();

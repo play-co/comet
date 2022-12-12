@@ -1,11 +1,10 @@
 import { type DisplayObject, Rectangle } from 'pixi.js';
 
 import { NumericRangeLimitConstraint, ReferenceConstraint } from '../../model/constraints';
-import type { ModelBase } from '../../model/model';
 import { ModelSchema } from '../../model/schema';
-import { ClonableNode } from './clonableNode';
+import { type ClonableNodeModel, ClonableNode, clonableNodeSchema } from './clonableNode';
 
-export interface DisplayObjectModel extends ModelBase
+export interface DisplayObjectModel extends ClonableNodeModel
 {
     x: number;
     y: number;
@@ -21,6 +20,7 @@ export interface DisplayObjectModel extends ModelBase
 }
 
 export const displayObjectSchema = new ModelSchema<DisplayObjectModel>({
+    ...clonableNodeSchema.properties,
     x: {
         defaultValue: 0,
         category: 'transform',

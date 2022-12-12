@@ -1,8 +1,10 @@
 import type { ModelConstraint } from './constraints';
 
 export type PropertyCategory =
+| 'node'
 | 'transform'
 | 'display'
+| 'asset'
 | 'texture'
 | 'text';
 

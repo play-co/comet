@@ -1,4 +1,4 @@
-import type { TextureAsset } from '../../core/nodes/concrete/assets/textureAsset';
+import type { TextureAsset } from '../../core/nodes/concrete/meta/assets/textureAssetNode';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { CustomPropertyType, CustomPropertyValueType } from '../../core/nodes/customProperties';
 import type { CloneInfoSchema, NodeSchema, ProjectFileSchema } from '../../core/nodes/schema';

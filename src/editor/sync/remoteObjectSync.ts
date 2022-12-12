@@ -1,7 +1,7 @@
 import { Cache } from '../../core/cache';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { GraphNode } from '../../core/nodes/abstract/graphNode';
-import { TextureAsset } from '../../core/nodes/concrete/assets/textureAsset';
+// import { TextureAsset } from '../../core/nodes/concrete/meta/assets/textureAssetNode';
 import { getInstance, hasInstance } from '../../core/nodes/instances';
 import { AssignCustomPropCommand } from '../commands/assignCustomProp';
 import { CreateNodeCommand } from '../commands/createNode';
@@ -152,8 +152,8 @@ export class RemoteObjectSync
 
     protected onTextureCreated = (event: typeof Events.datastore.texture.created.type) =>
     {
-        const texture = TextureAsset.withIdFromSchema(event.id, event);
+        // const texture = TextureAsset.withIdFromSchema(event.id, event);
 
-        Cache.textures.add(texture);
+        // Cache.textures.add(texture);
     };
 }

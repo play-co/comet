@@ -1,5 +1,5 @@
 import { type Model, type ModelBase, createModel } from '../../model/model';
-import type { ModelSchema } from '../../model/schema';
+import { ModelSchema } from '../../model/schema';
 import { type Clonable, CloneInfo, CloneMode } from '../cloneInfo';
 import { getAllCloned, getDependants, getDependencies, getRestoreDependencies } from '../cloneUtils';
 import { sortNodesByCreation } from '../const';
@@ -16,10 +16,16 @@ export type ClonableNodeConstructor = {
 
 export type ClonableNodeModel = ModelBase;
 
+export const clonableNodeSchema = new ModelSchema<ClonableNodeModel>({
+    name: {
+        defaultValue: '',
+        category: 'node',
+    },
+});
+
 export interface NewNodeOptions<M>
 {
     id?: string;
-    name?: string;
     model?: Partial<M>;
     cloneInfo?: CloneInfo;
 }
@@ -31,8 +37,6 @@ export abstract class ClonableNode<
     V extends object = object,
 > extends GraphNode implements Clonable
 {
-    public name: string;
-
     public model: Model<M> & M;
     public view: V;
 
@@ -47,9 +51,7 @@ export abstract class ClonableNode<
     {
         super(options.id);
 
-        const { name, model = {}, cloneInfo = new CloneInfo() } = options;
-
-        this.name = name ?? this.nodeType();
+        const { model = {}, cloneInfo = new CloneInfo() } = options;
 
         this.cloneInfo = cloneInfo;
 
@@ -73,8 +75,11 @@ export abstract class ClonableNode<
         this.assignedCustomProperties = new Map();
 
         this.view = this.createView();
-        // eslint-disable-next-line camelcase
-        (this.view as any).__node_id = this.id;
+        if (this.view)
+        {
+            // eslint-disable-next-line camelcase
+            (this.view as any).__node_id = this.id;
+        }
         this.initView();
 
         this.model.bind(this.onModelModified);
@@ -140,7 +145,6 @@ export abstract class ClonableNode<
         const node = new Ctor(
             {
                 cloneInfo,
-                name: this.name,
             },
         );
 
