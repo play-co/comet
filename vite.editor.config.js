@@ -9,6 +9,7 @@ export default defineConfig(({ command, mode }) => {
     // loadEnv(mode, process.cwd(), '')
     return {
         plugins: [svelte()], 
+        publicDir: './public',
         server: {
             hmr: false,
         },

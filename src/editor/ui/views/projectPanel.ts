@@ -7,6 +7,7 @@ import { Application } from '../../core/application';
 import { ProjectNodeSelection } from '../../core/projectNodeSelection';
 import Events from '../../events';
 import { type TreeItem, TreeViewModel } from './components/treeView';
+import { Icons } from './icons';
 
 class ProjectTree extends TreeViewModel<MetaNode>
 {
@@ -50,10 +51,8 @@ class ProjectTree extends TreeViewModel<MetaNode>
                     isExpanded: true,
                     isVisible: true,
                     data: node,
-                    icon: './assets/vite.svg',
+                    icon: Icons[node.nodeType()],
                 };
-
-                console.log(item);
 
                 options.data.model.push(item);
             },
@@ -90,6 +89,11 @@ class ProjectTree extends TreeViewModel<MetaNode>
 
     public hasChildren(obj: MetaNode)
     {
+        if (obj.nodeType() === 'Scene')
+        {
+            return false;
+        }
+
         return obj.hasChildren;
     }
 

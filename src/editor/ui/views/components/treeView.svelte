@@ -4,6 +4,11 @@
   export let tree: TreeViewModel<any>;
 
   const { model, dragTarget } = tree.store;
+
+  const onImageLoad = (e: Event) => {
+    const img = e.currentTarget as HTMLImageElement;
+    img.src = `${img.src}?${Math.random()}`;
+  };
 </script>
 
 <tree-view>
@@ -32,7 +37,7 @@
       {/if}
 
       {#if item.icon}
-        <img class="icon" src={item.icon} alt={tree.getLabel(item.data)} />
+        <img class="icon" src={item.icon} alt={tree.getLabel(item.data)} on:load={onImageLoad} />
       {/if}
 
       <span class="label" class:selected={item.isSelected}>
@@ -87,7 +92,7 @@
 
   .arrow-filler {
     display: inline-block;
-    width: 10px;
+    width: 13px;
     height: 5px;
   }
 
@@ -101,14 +106,14 @@
 
   .arrow.collapsed {
     border-left: 8px solid #ccc;
-    margin-right: 2px;
+    margin-right: 0;
   }
 
   .arrow.expanded {
     border-top: 8px solid #ccc;
     position: relative;
     top: 2px;
-    margin-right: 5px;
+    margin-right: 3px;
   }
 
   .dragTargetIndicator {

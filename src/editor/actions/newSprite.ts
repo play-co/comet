@@ -1,6 +1,6 @@
 import Color from 'color';
 
-import type { SpriteModel, SpriteNode } from '../../core/nodes/concrete/sprite';
+import type { SpriteModel, SpriteNode } from '../../core/nodes/concrete/display/spriteNode';
 import { createNodeSchema } from '../../core/nodes/schema';
 import { type AddChildCommandReturn, AddChildCommand } from '../commands/addChild';
 import { Action } from '../core/action';

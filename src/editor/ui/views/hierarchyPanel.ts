@@ -6,6 +6,7 @@ import type { ItemSelection } from '../../core/itemSelection';
 import type { NodeSelection } from '../../core/nodeSelection';
 import Events from '../../events';
 import { type TreeItem, TreeViewModel } from './components/treeView';
+import { Icons } from './icons';
 
 class DisplayNodeTree extends TreeViewModel<DisplayObjectNode>
 {
@@ -38,7 +39,7 @@ class DisplayNodeTree extends TreeViewModel<DisplayObjectNode>
                     isExpanded: true,
                     isVisible: true,
                     data: node,
-                    icon: './assets/vite.svg',
+                    icon: Icons[node.nodeType()],
                 };
 
                 options.data.model.push(item);

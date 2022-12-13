@@ -44,3 +44,9 @@ h2{
   padding: 0;
   list-style-type:none;
 }
+
+#preload {
+  opacity: 0.00001;
+  position: absolute;
+  pointer-events: none;
+}

@@ -72,14 +72,15 @@ export interface NodeOptionsSchema<M extends ModelBase>
 export function createNodeSchema<M extends ModelBase>(type: string, nodeOptions: NodeOptionsSchema<M> = {}): NodeSchema<M>
 {
     const { id, model, cloneInfo: { cloner, cloneMode, cloned } = {}, parent } = nodeOptions;
+    const nodeId = id ?? newId(type);
 
-    return {
-        id: id ?? newId(type),
+    const schema = {
+        id: nodeId,
         created: Date.now(),
         type,
         parent,
         children: [],
-        model: model ?? {},
+        model: model ?? {} as M,
         cloneInfo: {
             cloner,
             cloneMode: cloneMode ?? CloneMode.Original,
@@ -90,6 +91,13 @@ export function createNodeSchema<M extends ModelBase>(type: string, nodeOptions:
             assigned: {},
         },
     };
+
+    if (!schema.model.name)
+    {
+        schema.model.name = nodeId;
+    }
+
+    return schema;
 }
 
 export function createProjectSchema(name: string): ProjectFileSchema

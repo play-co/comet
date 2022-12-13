@@ -73,13 +73,21 @@
 
 <main-layout>
   <DropZone>
-    <Tools />
-    <DockablePanelLayout {layoutConfig} {factoryTypes} />
+    <div class="main-layout">
+      <Tools />
+      <DockablePanelLayout {layoutConfig} {factoryTypes} />
+    </div>
   </DropZone>
 </main-layout>
 
 <style>
   main-layout {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  main-layout :global(.main-layout) {
     position: absolute;
     display: flex;
     flex-direction: row;
