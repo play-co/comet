@@ -3,6 +3,7 @@
   import Panel from "./components/panel.svelte";
   import TreeView from "./components/treeView.svelte";
   import ButtonBar, { type ButtonBarItem } from "./components/buttonBar.svelte";
+  import { Actions } from "../../actions/index.js";
 
   const tree = createModel();
 
@@ -12,7 +13,7 @@
       label: "New Scene",
       icon: "/assets/scene.ico",
       onClick: () => {
-        console.log("new scene");
+        Actions.newScene.dispatch();
       },
     },
   ];

@@ -2,6 +2,7 @@ import { DeleteNodeAction } from './deleteNode';
 import { DeselectAction } from './deselect';
 import { InspectAction } from './inspect';
 import { NewContainerAction } from './newContainer';
+import { NewSceneAction } from './newScene';
 import { NewSpriteAction } from './newSprite';
 import { NudgeAction } from './nudge';
 import { RedoAction } from './redo';
@@ -9,6 +10,7 @@ import { SelectAllAction } from './selectAll';
 import { UndoAction } from './undo';
 
 export const Actions = {
+    newScene: new NewSceneAction(),
     newSprite: new NewSpriteAction(),
     newContainer: new NewContainerAction(),
     undo: new UndoAction(),

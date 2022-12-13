@@ -157,6 +157,18 @@ class ProjectTree extends TreeViewModel<MetaNode>
             item.isSelected = false;
         });
     };
+
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected onDblClick(e: MouseEvent, item: TreeItem<T>)
+    {
+        const node = item.data as MetaNode;
+
+        if (node.nodeType() === 'Scene')
+        {
+            Application.instance.edit(node.cast<DisplayObjectNode>());
+        }
+    }
 }
 
 function createModel()

@@ -9,6 +9,7 @@
   import type { ComponentContainer, LayoutConfig } from "golden-layout";
   import { GoldenLayout } from "golden-layout";
   import Events from "../../events";
+  import { Application } from "../../core/application";
 
   export let layoutConfig: LayoutConfig;
   export let factoryTypes: FactoryTypes;
@@ -21,13 +22,12 @@
     layout.resizeWithContainerAutomatically = true;
 
     for (const [name, Ctor] of Object.entries(factoryTypes)) {
-      layout.registerComponentFactoryFunction(
-        name,
-        (container: ComponentContainer) => {
-          new Ctor({ target: container.element });
-        }
-      );
+      layout.registerComponentFactoryFunction(name, (container: ComponentContainer) => {
+        new Ctor({ target: container.element });
+      });
     }
+
+    Application.instance.layout = layout;
 
     layout.loadLayout(layoutConfig);
     layout.on("stateChanged", () => {

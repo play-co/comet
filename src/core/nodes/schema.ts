@@ -108,7 +108,7 @@ export function createProjectSchema(name: string): ProjectFileSchema
     const scenesFolder = createNodeSchema('Folder', { parent: project.id, model: { name: 'Scenes', isReadOnly: true } });
     const prefabsFolder = createNodeSchema('Folder', { parent: project.id, model: { name: 'Prefabs', isReadOnly: true } });
 
-    const scene = createNodeSchema('Scene', { parent: scenesFolder.id, model: { name: 'Scene1' } });
+    const scene = createNodeSchema('Scene', { parent: scenesFolder.id });
 
     project.children.push(texturesFolder.id, scenesFolder.id, prefabsFolder.id);
     scenesFolder.children.push(scene.id);

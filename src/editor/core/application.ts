@@ -1,3 +1,5 @@
+import type { GoldenLayout } from 'golden-layout';
+
 import { enableLog } from '../../core/log';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObjectNode';
@@ -45,6 +47,7 @@ export class Application
     public project: ProjectNode;
     public selection: NodeSelection;
     public gridSettings: GridSettings;
+    public layout?: GoldenLayout;
 
     private static _instance: Application;
 
@@ -258,5 +261,24 @@ export class Application
 
             preload.appendChild(img);
         });
+    }
+
+    public focusPanel(id: string)
+    {
+        const { layout } = this;
+
+        if (layout)
+        {
+            const item = layout.findFirstComponentItemById(id);
+
+            item && layout?.focusComponent(item);
+        }
+    }
+
+    public edit(node: DisplayObjectNode)
+    {
+        this.selection.deselect();
+        this.viewport.setRoot(node);
+        this.focusPanel('hierarchy');
     }
 }

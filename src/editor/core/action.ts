@@ -19,7 +19,7 @@ export const defaultActionOptions: Omit<ActionOptions, 'hotkey'> = {
 
 export type ActionConstructorOptions = Partial<ActionOptions> & { hotkey: string };
 
-export abstract class Action<P, T>
+export abstract class Action<OptionsType, ReturnType>
 {
     public id: string;
     public isEnabled: boolean;
@@ -104,10 +104,10 @@ export abstract class Action<P, T>
         this.dispatch({}, event);
     }
 
-    public dispatch(options: Partial<P> = {}, event?: KeyboardEvent): T
+    public dispatch(options: Partial<OptionsType> = {}, event?: KeyboardEvent): ReturnType
     {
         return this.exec(options, event);
     }
 
-    protected abstract exec(options: Partial<P>, event?: KeyboardEvent): T;
+    protected abstract exec(options: Partial<OptionsType>, event?: KeyboardEvent): ReturnType;
 }

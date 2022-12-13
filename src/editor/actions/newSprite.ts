@@ -39,7 +39,7 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
         const app = Application.instance;
         const selectedNode = app.selection.lastNode;
 
-        let parentId = 'Scene:1';
+        let parentId = app.viewport.rootNode.id;
 
         if (selectedNode && actionOptions.addToSelected)
         {

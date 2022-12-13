@@ -24,6 +24,7 @@
           type: "stack",
           content: [
             {
+              id: "project",
               title: "Project",
               type: "component",
               componentType: "Project",
@@ -31,6 +32,7 @@
               minWidth: 100,
             },
             {
+              id: "hierarchy",
               title: "Hierarchy",
               type: "component",
               componentType: "Hierarchy",

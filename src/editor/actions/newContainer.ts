@@ -27,7 +27,7 @@ export class NewContainerAction extends Action<NewContainerOptions, EmptyNode>
         const app = Application.instance;
         const selectedNode = app.selection.lastNode;
 
-        let parentId = 'Scene:1';
+        let parentId = app.viewport.rootNode.id;
 
         if (selectedNode && options.addToSelected)
         {
