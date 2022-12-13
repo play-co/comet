@@ -27,6 +27,8 @@ export abstract class TreeViewModel<T>
     protected operation: WritableStore<Operation>;
     protected isDragging: boolean;
 
+    protected lastClick: number;
+
     public canReParent: boolean;
     public canReOrder: boolean;
     public allowMultiSelect: boolean;
@@ -37,6 +39,9 @@ export abstract class TreeViewModel<T>
         this.dragTarget = new WritableStore<TreeItem<T> | undefined>(undefined);
         this.operation = new WritableStore<Operation>(Operation.ReParent);
         this.isDragging = false;
+
+        this.lastClick = -1;
+
         this.canReParent = true;
         this.canReOrder = true;
         this.allowMultiSelect = true;
@@ -70,6 +75,13 @@ export abstract class TreeViewModel<T>
     public abstract getParent(obj: T): T | undefined;
     public abstract isSiblingOf(obj: T, other: T): boolean;
     public abstract hasChildren(obj: T): boolean;
+
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected onDblClick(e: MouseEvent, item: TreeItem<T>)
+    {
+        // for subclasses...
+    }
 
     protected updateModel(fn: (item: TreeItem<T>) => void)
     {
@@ -188,6 +200,13 @@ export abstract class TreeViewModel<T>
                 // clear drag state
                 this.isDragging = false;
                 this.dragTarget.value = undefined;
+
+                if (this.lastClick > -1 && (Date.now() - this.lastClick) < 300)
+                {
+                    this.onDblClick(e, item);
+                }
+
+                this.lastClick = Date.now();
             });
         }
     }

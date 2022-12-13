@@ -64,6 +64,8 @@ export class Application
 
         (window as any).app = this;
 
+        this.preloadAssets();
+
         enableLog();
 
         const datastore = this.datastore = new ConvergenceDatastore();
@@ -235,5 +237,26 @@ export class Application
             logInspector.mount(container);
             undoStackInspector.mount(container);
         }
+    }
+
+    protected preloadAssets()
+    {
+        const preload = document.getElementById('preload') as HTMLDivElement;
+
+        [
+            '/assets/scene.ico',
+            '/assets/folder.ico',
+            '/assets/sprite.ico',
+            '/assets/texture.ico',
+            '/assets/container.ico',
+        ].forEach((path) =>
+        {
+            const img = new Image();
+
+            img.classList.add('preload');
+            img.src = path;
+
+            preload.appendChild(img);
+        });
     }
 }

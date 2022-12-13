@@ -37,8 +37,8 @@ export class NewContainerAction extends Action<NewContainerOptions, EmptyNode>
         const nodeSchema = createNodeSchema('Empty', {
             parent: parentId,
             model: {
-                x: 50,
-                y: 50,
+                x: 10,
+                y: 10,
                 tint: Math.round(Math.random() * 100000),
                 ...options.model,
             },
