@@ -46,7 +46,14 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
         {
             const depth = this.getCell('depth', row).value as number;
 
-            cellStyle.text = `${'+'.repeat(depth)}${currentCell.value}`;
+            let pad = '';
+
+            if (depth > 0)
+            {
+                pad = `${'│'.repeat(depth - 1)}└`;
+            }
+
+            cellStyle.text = `${pad}${currentCell.value}`;
         }
     };
 
