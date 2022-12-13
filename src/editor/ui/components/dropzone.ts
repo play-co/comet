@@ -6,16 +6,20 @@ function preventDefaults(e: Event)
     e.stopPropagation();
 }
 
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) =>
+{
+    document.body.addEventListener(eventName, preventDefaults, false);
+});
+
 export class DropZone extends EventEmitter<'drop'>
 {
+    public isEnabled: boolean;
+
     constructor(public readonly container: HTMLElement)
     {
         super();
 
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) =>
-        {
-            document.body.addEventListener(eventName, preventDefaults, false);
-        });
+        this.isEnabled = true;
 
         container.addEventListener('dragenter', this.onDragEnter);
         container.addEventListener('drop', this.onDrop);
@@ -43,7 +47,7 @@ export class DropZone extends EventEmitter<'drop'>
         {
             const files = dataTransfer.files;
 
-            if (files.length >= 1)
+            if (files.length >= 1 && this.isEnabled)
             {
                 this.emit('drop', files);
             }
