@@ -283,10 +283,10 @@ export abstract class GraphNode
         }, { direction: 'up', includeSelf: false }).hasParent === true;
     }
 
-    public walk<T extends GraphNode, R extends WalkReturnData = {}>(
-        fn: (node: T, options: WalkOptions) => void,
+    public walk<NodeType extends GraphNode, ReturnType extends WalkReturnData = {}>(
+        fn: (node: NodeType, options: WalkOptions) => void,
         options: Partial<WalkOptions> = {},
-    ): R
+    ): ReturnType
     {
         const currentOptions = {
             ...defaultWalkOptions,
@@ -299,18 +299,18 @@ export abstract class GraphNode
         // prevent traversing deeper
         if (cancel)
         {
-            return currentOptions.data as R;
+            return currentOptions.data as ReturnType;
         }
 
         if (includeSelf)
         {
-            fn(this as unknown as T, currentOptions);
+            fn(this as unknown as NodeType, currentOptions);
         }
 
         // cancel if current call requested
         if (currentOptions.cancel)
         {
-            return currentOptions.data as R;
+            return currentOptions.data as ReturnType;
         }
 
         if (direction === 'down')
@@ -335,7 +335,7 @@ export abstract class GraphNode
             });
         }
 
-        return currentOptions.data as R;
+        return currentOptions.data as ReturnType;
     }
 
     public containsChild<T extends GraphNode>(node: T)

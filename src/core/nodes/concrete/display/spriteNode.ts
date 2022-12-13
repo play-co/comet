@@ -1,8 +1,9 @@
 import { Graphics, Sprite, Texture } from 'pixi.js';
 
+import { Application } from '../../../../editor/core/application';
 import { ModelSchema } from '../../../model/schema';
 import { delay } from '../../../util';
-import type { TextureAsset } from '../meta/assets/textureAssetNode';
+import type { TextureAssetNode } from '../meta/assets/textureAssetNode';
 import { type ContainerModel, ContainerNode, containerSchema } from './containerNode';
 
 export interface SpriteModel extends ContainerModel
@@ -54,7 +55,7 @@ export class SpriteNode<M extends SpriteModel = SpriteModel, V extends Sprite = 
 
     public updateView(): void
     {
-        const { view, values: { anchorX, anchorY, tint, textureAssetId } } = this;
+        const { view, values: { anchorX, anchorY, tint } } = this;
 
         super.updateView();
 
@@ -62,48 +63,60 @@ export class SpriteNode<M extends SpriteModel = SpriteModel, V extends Sprite = 
         view.anchor.y = anchorY;
         view.tint = tint;
 
-        if (textureAssetId !== null)
+        const textureAsset = this.getTextureAsset();
+
+        if (textureAsset)
         {
-            if (Cache.textures.has(textureAssetId))
+            // texture is loaded
+            if (textureAsset.isResourceReady)
             {
-                // texture is loaded
-                const textureAsset = Cache.textures.get(textureAssetId);
-
-                if (textureAsset.isResourceReady)
-                {
-                    this.setTexture(textureAsset);
-                }
-                else
-                {
-                    // show a random gray texture at the correct size until texture is loaded
-                    const placeHolder = this.placeHolder = new Graphics();
-
-                    placeHolder.beginFill(0xffffff, 0.5);
-                    placeHolder.drawRect(0, 0, textureAsset.properties.width, textureAsset.properties.height);
-
-                    view.texture = Texture.EMPTY;
-                    view.addChild(placeHolder);
-
-                    textureAsset.getResource().then(() =>
-                    {
-                        delay(2000).then(() =>
-                        {
-                            this.setTexture(textureAsset);
-                        });
-                    });
-                }
+                this.setTexture(textureAsset);
             }
             else
             {
-                throw new Error(`Texture "${textureAssetId}" was not loaded correctly in cache`);
+                // show a random gray texture at the correct size until texture is loaded
+                const placeHolder = this.placeHolder = new Graphics();
+                const width = textureAsset.model.width;
+                const height = textureAsset.model.height;
+
+                placeHolder.beginFill(0xffffff, 0.5);
+                placeHolder.drawRect(0, 0, width, height);
+
+                view.texture = Texture.EMPTY;
+                view.addChild(placeHolder);
+
+                textureAsset.getResource().then(() =>
+                {
+                    delay(2000).then(() =>
+                    {
+                        this.setTexture(textureAsset);
+                    });
+                });
             }
         }
     }
 
-    protected setTexture(textureAsset: TextureAsset)
+    protected getTextureAsset()
     {
-        const { id, properties, resource } = textureAsset;
-        const { width, height, mipmap, multisample, resolution, scaleMode, wrapMode } = properties;
+        const { values: { textureAssetId } } = this;
+
+        if (textureAssetId)
+        {
+            const asset = Application.instance.project.getAsset(textureAssetId);
+
+            if (asset)
+            {
+                return asset.cast<TextureAssetNode>();
+            }
+        }
+
+        return undefined;
+    }
+
+    protected setTexture(textureAsset: TextureAssetNode)
+    {
+        const { id, resource } = textureAsset;
+        const { width, height, mipmap, multisample, resolution, scaleMode, wrapMode } = textureAsset.model;
         const { view } = this;
 
         if (!resource)
@@ -132,16 +145,20 @@ export class SpriteNode<M extends SpriteModel = SpriteModel, V extends Sprite = 
 
     public get width(): number
     {
-        const { view, values: { textureAssetId } } = this;
+        const { view } = this;
 
-        return textureAssetId ? Cache.textures.get(textureAssetId).properties.width : view.texture.width;
+        const textureAsset = this.getTextureAsset();
+
+        return textureAsset ? textureAsset.model.width : view.texture.width;
     }
 
     public get height(): number
     {
-        const { view, values: { textureAssetId } } = this;
+        const { view } = this;
 
-        return textureAssetId ? Cache.textures.get(textureAssetId).properties.height : view.texture.height;
+        const textureAsset = this.getTextureAsset();
+
+        return textureAsset ? textureAsset.model.height : view.texture.height;
     }
 }
 

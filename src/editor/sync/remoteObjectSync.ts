@@ -1,7 +1,5 @@
-import { Cache } from '../../core/cache';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { GraphNode } from '../../core/nodes/abstract/graphNode';
-// import { TextureAsset } from '../../core/nodes/concrete/meta/assets/textureAssetNode';
 import { getInstance, hasInstance } from '../../core/nodes/instances';
 import { AssignCustomPropCommand } from '../commands/assignCustomProp';
 import { CreateNodeCommand } from '../commands/createNode';
@@ -17,8 +15,8 @@ export class RemoteObjectSync
 {
     constructor(public readonly datastore: DatastoreBase<any, any>)
     {
-        Events.datastore.node.remote.created.bind(this.onNodeCreated);
         Events.datastore.node.local.hydrated.bind(this.onNodeCreated);
+        Events.datastore.node.remote.created.bind(this.onNodeCreated);
         Events.datastore.node.remote.removed.bind(this.onRemoteNodeRemoved);
         Events.datastore.node.remote.setParent.bind(this.onRemoteNodeParentSet);
         Events.datastore.node.remote.customProp.defined.bind(this.onRemoteNodeCustomPropDefined);
@@ -28,7 +26,6 @@ export class RemoteObjectSync
         Events.datastore.node.remote.modelModified.bind(this.onRemoteNodeModelModified);
         Events.datastore.node.remote.cloneInfoModified.bind(this.onRemoteNodeCloneInfoModified);
         Events.datastore.node.remote.setChildren.bind(this.onRemoteNodeChildrenSet);
-        Events.datastore.texture.created.bind(this.onTextureCreated);
     }
 
     protected onNodeCreated = (event: typeof Events.datastore.node.remote.created.type) =>
@@ -148,12 +145,5 @@ export class RemoteObjectSync
         const node = getInstance<GraphNode>(nodeId);
 
         node.reorderChildren(childIds);
-    };
-
-    protected onTextureCreated = (event: typeof Events.datastore.texture.created.type) =>
-    {
-        // const texture = TextureAsset.withIdFromSchema(event.id, event);
-
-        // Cache.textures.add(texture);
     };
 }

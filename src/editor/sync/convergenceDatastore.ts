@@ -6,20 +6,16 @@ import Convergence, {
     RealTimeObject,
 } from '@convergence/convergence';
 
-import { Cache } from '../../core/cache';
 import { log } from '../../core/log';
 import type { ModelValue } from '../../core/model/model';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
-import type { TextureAssetNode } from '../../core/nodes/concrete/meta/assets/textureAssetNode';
 import type { ProjectNode } from '../../core/nodes/concrete/meta/projectNode';
-// import type { TextureAsset } from '../../core/nodes/concrete/assets/textureAssetNode';
 import type { CustomPropertyType, CustomPropertyValueType } from '../../core/nodes/customProperties';
 import { consolidateId, getInstance } from '../../core/nodes/instances';
 import type {
     CloneInfoSchema,
     NodeSchema,
     ProjectFileSchema,
-    TextureAssetSchema,
 } from '../../core/nodes/schema';
 import { createProjectSchema } from '../../core/nodes/schema';
 import { Application } from '../core/application';
@@ -555,29 +551,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         const cloneInfo = event.element.value() as CloneInfoSchema;
 
         Events.datastore.node.remote.cloneInfoModified.emit({ nodeId, ...cloneInfo });
-    };
-
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public onRemoteTextureCreated = (e: IConvergenceEvent) =>
-    {
-        const { event } = asObjectSetEvent(e);
-        const id = event.key;
-        const schema = (event.element.value())[id] as TextureAssetSchema;
-
-        consolidateId(id);
-
-        // const texture = TextureAsset.fromSchema(schema);
-
-        // Cache.textures.add(texture);
-        debugger;
-    };
-
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public onRemoteTextureRemoved = (event: IConvergenceEvent) =>
-    {
-        //
     };
 
     // @ts-ignore

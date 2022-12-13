@@ -24,5 +24,19 @@ export class ProjectNode extends MetaNode
 
         return folder;
     }
+
+    public getAsset(id: string)
+    {
+        return this.walk<MetaNode, {node: MetaNode | undefined}>((node, options) =>
+        {
+            if (node.id === id)
+            {
+                options.data.node = node;
+                options.cancel = true;
+            }
+        }, {
+            includeSelf: false,
+        }).node;
+    }
 }
 

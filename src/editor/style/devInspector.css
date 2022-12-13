@@ -14,7 +14,6 @@
 .dev-inspector > label {
     display: flex;
     cursor: inherit;
-    background-color: #333;
     color: white;
     font-size: 12px;
     text-align: center;
@@ -22,6 +21,8 @@
     background: linear-gradient(180deg, #333 0, #000000 100%);
     justify-content: space-between;
     padding: 0 5px;
+    position: relative;
+    top: 1px;
 }
 
 .dev-inspector > label > span {

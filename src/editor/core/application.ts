@@ -1,4 +1,3 @@
-import { Cache } from '../../core/cache';
 import { enableLog } from '../../core/log';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObjectNode';
@@ -80,9 +79,6 @@ export class Application
         this.viewport = new EditableViewport();
         this.undoStack = new UndoStack();
 
-        Cache.textures.fetchProvider = (storageKey: string) =>
-            this.storageProvider.download(storageKey);
-
         Events.datastore.node.remote.removed.bind(writeUndoStack);
 
         initHistory();
@@ -99,31 +95,13 @@ export class Application
 
     public async init()
     {
-        if (getUrlParam<number>('devtools') === 1)
+        this.initDevInspectors();
+
+        const lastProjectId = localStorage.getItem('comet:lastProjectId');
+
+        if (getUrlParam<number>('open') === 1 && lastProjectId)
         {
-            const graphNodeInspector = new GraphNodeInspector('Graph Nodes', 'blue');
-            const datastoreNodeInspector = new DatastoreNodeInspector('Datastore Nodes', 'green');
-            const logInspector = new LogInspector('Log', 'darkslategrey');
-            const undoStackInspector = new UndoStackInspector('UndoStack', 'purple');
-
-            const mediumMaxHeight = Math.round(screen.availHeight * 0.3);
-            const shortMaxHeight = Math.round(screen.availHeight * 0.2);
-            const container = document.body;
-
-            graphNodeInspector.maxHeight = mediumMaxHeight;
-            datastoreNodeInspector.maxHeight = mediumMaxHeight;
-            logInspector.maxHeight = shortMaxHeight;
-            undoStackInspector.maxHeight = mediumMaxHeight;
-
-            graphNodeInspector.mount(container);
-            datastoreNodeInspector.mount(container);
-            logInspector.mount(container);
-            undoStackInspector.mount(container);
-        }
-
-        if (getUrlParam<number>('open') === 1)
-        {
-            await this.openProject('test');
+            await this.openProject(lastProjectId);
         }
         else
         {
@@ -131,22 +109,6 @@ export class Application
         }
 
         this.initEvents();
-    }
-
-    protected initEvents()
-    {
-        // context menu
-        document.addEventListener('contextmenu', (event) =>
-        {
-            event.preventDefault();
-            Events.editor.contextMenuOpen.emit(event);
-        });
-
-        // dropped files
-        Events.file.local.dropped.bind((files: FileList) =>
-        {
-            this.createTexture(files[0]);
-        });
     }
 
     public async createProject(name: string)
@@ -198,6 +160,8 @@ export class Application
         const scene = this.project.getRootFolder('Scenes').getChildAt(0);
 
         this.viewport.setRoot(scene.cast<DisplayObjectNode>());
+
+        this.project.updateRecursive();
     }
 
     protected clear()
@@ -218,19 +182,57 @@ export class Application
             .forEach((node) => new RemoveNodeCommand({ nodeId: node.id }).undo());
     }
 
-    public createTexture(file: File)
+    protected initEvents()
     {
-        const { promise } = new CreateTextureAssetCommand({ file }).run();
-
-        promise.then((texture) =>
+        // context menu
+        document.addEventListener('contextmenu', (event) =>
         {
-            Actions.newSprite.dispatch({
-                addToSelected: false,
-                model: {
-                    textureAssetId: texture.id,
-                    tint: 0xffffff,
-                },
+            event.preventDefault();
+            Events.editor.contextMenuOpen.emit(event);
+        });
+
+        // dropped files
+        Events.file.local.dropped.bind((files: FileList) =>
+        {
+            const file = files[0];
+
+            const { promise } = new CreateTextureAssetCommand({ file }).run();
+
+            promise.then((texture) =>
+            {
+                Actions.newSprite.dispatch({
+                    addToSelected: false,
+                    model: {
+                        textureAssetId: texture.id,
+                        tint: 0xffffff,
+                    },
+                });
             });
         });
+    }
+
+    protected initDevInspectors()
+    {
+        if (getUrlParam<number>('devtools') === 1)
+        {
+            const graphNodeInspector = new GraphNodeInspector('Graph Nodes', 'blue');
+            const datastoreNodeInspector = new DatastoreNodeInspector('Datastore Nodes', 'green');
+            const logInspector = new LogInspector('Log', 'darkslategrey');
+            const undoStackInspector = new UndoStackInspector('UndoStack', 'purple');
+
+            const mediumMaxHeight = Math.round(screen.availHeight * 0.3);
+            const shortMaxHeight = Math.round(screen.availHeight * 0.2);
+            const container = document.body;
+
+            graphNodeInspector.maxHeight = mediumMaxHeight;
+            datastoreNodeInspector.maxHeight = mediumMaxHeight;
+            logInspector.maxHeight = shortMaxHeight;
+            undoStackInspector.maxHeight = mediumMaxHeight;
+
+            graphNodeInspector.mount(container);
+            datastoreNodeInspector.mount(container);
+            logInspector.mount(container);
+            undoStackInspector.mount(container);
+        }
     }
 }

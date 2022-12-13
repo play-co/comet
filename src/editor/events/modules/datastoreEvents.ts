@@ -1,7 +1,7 @@
 import type { ClonableNode } from '../../../core';
 import type { ModelValue } from '../../../core/model/model';
 import type { CustomPropertyType, CustomPropertyValueType } from '../../../core/nodes/customProperties';
-import type { CloneInfoSchema, TextureAssetSchema } from '../../../core/nodes/schema';
+import type { CloneInfoSchema } from '../../../core/nodes/schema';
 import { Emit } from '../emitter';
 
 interface EventData
@@ -42,8 +42,5 @@ export default {
             }>(),
             cloneInfoModified: Emit<EventData & CloneInfoSchema>(),
         },
-    },
-    texture: {
-        created: Emit<{id: string} & TextureAssetSchema>(),
     },
 };

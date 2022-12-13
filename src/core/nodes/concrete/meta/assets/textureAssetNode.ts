@@ -1,6 +1,6 @@
 import { MIPMAP_MODES, MSAA_QUALITY, SCALE_MODES, WRAP_MODES } from 'pixi.js';
 
-import { Cache } from '../../../../cache';
+import { Application } from '../../../../../editor/core/application';
 import { ModelSchema } from '../../../../model/schema';
 import { blobToBas64, loadImage } from '../../../../util/file';
 import { type StoredAssetNodeModel, StoredAssetNode } from './storedAssetNode';
@@ -75,7 +75,7 @@ export class TextureAssetNode extends StoredAssetNode<TextureAssetNodeModel, HTM
         {
             const storageKey = this.model.getValue<string>('storageKey');
 
-            this.blob = await Cache.textures.fetch(storageKey);
+            this.blob = await Application.instance.storageProvider.download(storageKey);
         }
 
         const dataURI = await blobToBas64(this.blob);

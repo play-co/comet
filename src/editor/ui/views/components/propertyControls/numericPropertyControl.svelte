@@ -25,12 +25,13 @@
   // component view state
   let value: string;
   let prevValue: string;
+  let timeout: number | undefined = undefined;
 
   $: (value = getValue()), property;
 
   // component functions
   function format(value: number) {
-    return value.toFixed(1).replace(/\.0+$/, "");
+    return value.toFixed(2).replace(/\.0+$/, "");
   }
 
   function getValue() {
@@ -136,7 +137,11 @@
       isArrowKey(key) ||
       key === "Tab";
 
-    if (key === "." && element.value.indexOf(".") > -1) {
+    if (isAcceptKey(key)) {
+      if (!isNaN(value)) {
+        setValue(value);
+      }
+    } else if (key === "." && element.value.indexOf(".") > -1) {
       isValidKey = false;
     }
 
@@ -166,6 +171,23 @@
     return false;
   };
 
+  const onKeyUp = (e: KeyboardEvent) => {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+
+    timeout = setTimeout(() => {
+      const { key } = e;
+      const element = e.target as HTMLInputElement;
+      const value = parseFloat(element.value);
+      const isValidKey = isNumericInput(key) || key === ".";
+
+      if (isValidKey && !isNaN(value)) {
+        setValue(value);
+      }
+    }, 1000) as unknown as number;
+  };
+
   Events.datastore.node.local.modified.bind(onUpdate);
 </script>
 
@@ -176,6 +198,7 @@
     {value}
     on:focus={onFocus}
     on:keydown={onKeyDown}
+    on:keyup={onKeyUp}
     on:change={onChange}
   />
 </numeric-control>

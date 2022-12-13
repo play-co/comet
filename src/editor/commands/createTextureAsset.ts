@@ -2,6 +2,7 @@ import type { TextureAssetNode } from '../../core/nodes/concrete/meta/assets/tex
 import { createNodeSchema } from '../../core/nodes/schema';
 import { Command } from '../core/command';
 import { type CreateNodeCommandReturn, CreateNodeCommand } from './createNode';
+import { ModifyModelCommand } from './modifyModel';
 
 export interface CreateTextureAssetCommandParams
 {
@@ -41,10 +42,14 @@ export class CreateTextureAssetCommand extends Command<CreateTextureAssetCommand
         const asset = node.cast<TextureAssetNode>();
         const imageElement = await asset.getResource();
 
-        asset.model.setValues({
-            width: imageElement.naturalWidth,
-            height: imageElement.naturalHeight,
-        });
+        new ModifyModelCommand({
+            nodeId: asset.id,
+            values: {
+                width: imageElement.naturalWidth,
+                height: imageElement.naturalHeight,
+            },
+            updateMode: 'full',
+        }).run();
 
         asset.setBlob(file);
 
