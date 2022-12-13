@@ -3,7 +3,7 @@ import Color from 'color';
 import type { ClonableNode } from '../../../core';
 import { Application } from '../../core/application';
 import { DevInspector } from '../devInspector';
-import type { CellStyle, Column, Row } from '../tableRenderer';
+import { type CellStyle, type Column, type Row, tableIndexKey } from '../tableRenderer';
 
 export interface GraphNodeDetail
 {
@@ -40,6 +40,13 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
             cellStyle.fontStyle = 'italic';
             cellStyle.fontColor = '#aaa';
             cellStyle.text = 'none';
+        }
+
+        if (column.id === tableIndexKey)
+        {
+            const depth = this.getCell('depth', row).value as number;
+
+            cellStyle.text = `${'+'.repeat(depth)}${currentCell.value}`;
         }
     };
 
