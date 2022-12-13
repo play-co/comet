@@ -36,6 +36,7 @@ class DisplayNodeTree extends TreeViewModel<DisplayObjectNode>
                     isExpanded: true,
                     isVisible: true,
                     data: node,
+                    icon: './assets/vite.svg',
                 };
 
                 options.data.model.push(item);

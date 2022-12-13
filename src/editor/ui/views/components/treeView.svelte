@@ -19,6 +19,7 @@
       on:mouseover={(e) => tree.onRowMouseOver(e, item)}
     >
       <span class="indentation" style="width:{item.depth * 10}px" />
+
       {#if tree.hasChildren(item.data)}
         <span
           class="arrow"
@@ -29,12 +30,18 @@
       {:else}
         <span class="arrow-filler" on:click={(e) => tree.toggleItemExpanded(e, item)} />
       {/if}
+
+      {#if item.icon}
+        <img class="icon" src={item.icon} alt={tree.getLabel(item)} />
+      {/if}
+
       <span class="label" class:selected={item.isSelected}>
         {tree.getLabel(item)}
         {#if tree.isItemReParentDragTarget(item, $dragTarget)}
           <div class="dragTargetIndicator reparent" />
         {/if}
       </span>
+
       {#if tree.isItemReOrderDragTarget(item, $dragTarget)}
         <div class="dragTargetIndicator reorder" />
       {/if}
@@ -122,5 +129,11 @@
 
   .dragTargetRow {
     background-color: #00a7ff24;
+  }
+
+  .icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
   }
 </style>

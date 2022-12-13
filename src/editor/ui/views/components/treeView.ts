@@ -10,6 +10,7 @@ export interface TreeItem<T>
     isSelected: boolean;
     isExpanded: boolean;
     isVisible: boolean;
+    icon?: string;
 }
 
 export enum Operation
