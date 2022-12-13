@@ -1,3 +1,4 @@
+import { Application } from '../../../core/application';
 import type { ItemSelection } from '../../../core/itemSelection';
 import { mouseDrag } from '../../components/dragger';
 import { WritableStore } from '../store';
@@ -28,6 +29,7 @@ export abstract class TreeViewModel<T>
 
     public canReParent: boolean;
     public canReOrder: boolean;
+    public allowMultiSelect: boolean;
 
     constructor(public readonly selection: ItemSelection<T>)
     {
@@ -37,6 +39,7 @@ export abstract class TreeViewModel<T>
         this.isDragging = false;
         this.canReParent = true;
         this.canReOrder = true;
+        this.allowMultiSelect = true;
     }
 
     public get store()
@@ -50,6 +53,11 @@ export abstract class TreeViewModel<T>
 
     public rebuildModel = () =>
     {
+        if (!Application.instance.project.isReady)
+        {
+            return;
+        }
+
         const model = this.generateModel();
 
         this.model.value = model;
@@ -99,10 +107,10 @@ export abstract class TreeViewModel<T>
 
     protected selectItem(e: MouseEvent, item: TreeItem<T>): undefined | false
     {
-        const { selection } = this;
+        const { selection, allowMultiSelect } = this;
         const { data } = item;
 
-        if (e.shiftKey || e.metaKey)
+        if ((e.shiftKey || e.metaKey) && allowMultiSelect)
         {
             if (selection.shallowContains(data))
             {

@@ -1,32 +1,35 @@
-import type { NodeAsset } from '../../core/nodes/concrete/meta/assets/nodeAsset';
+import type { MetaNode } from '../../core/nodes/abstract/metaNode';
 import Events from '../events';
 import { ItemSelection } from './itemSelection';
 
-export class ProjectNodeSelection extends ItemSelection<NodeAsset>
+export class ProjectNodeSelection extends ItemSelection<MetaNode>
 {
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public deepContains(node: NodeAsset)
+    public deepContains(node: MetaNode)
     {
+        // TODO...
+        debugger;
+
         return false;
     }
 
-    protected onSetSingle(item: NodeAsset): void
+    protected onSetSingle(item: MetaNode): void
     {
         Events.projectPanel.selection.setSingle.emit(item);
     }
 
-    protected onSetMulti(items: NodeAsset[]): void
+    protected onSetMulti(items: MetaNode[]): void
     {
         Events.projectPanel.selection.setMulti.emit(items);
     }
 
-    protected onAdd(item: NodeAsset): void
+    protected onAdd(item: MetaNode): void
     {
         Events.projectPanel.selection.add.emit(item);
     }
 
-    protected onRemove(item: NodeAsset): void
+    protected onRemove(item: MetaNode): void
     {
         Events.projectPanel.selection.remove.emit(item);
     }

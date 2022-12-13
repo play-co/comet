@@ -32,11 +32,11 @@
       {/if}
 
       {#if item.icon}
-        <img class="icon" src={item.icon} alt={tree.getLabel(item)} />
+        <img class="icon" src={item.icon} alt={tree.getLabel(item.data)} />
       {/if}
 
       <span class="label" class:selected={item.isSelected}>
-        {tree.getLabel(item)}
+        {tree.getLabel(item.data)}
         {#if tree.isItemReParentDragTarget(item, $dragTarget)}
           <div class="dragTargetIndicator reparent" />
         {/if}

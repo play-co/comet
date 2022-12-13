@@ -1,5 +1,6 @@
-import type { NodeAsset } from '../../../core/nodes/concrete/meta/assets/nodeAsset';
 import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
+import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
+import type { FolderNode } from '../../../core/nodes/concrete/meta/folderNode';
 import { SetNodeIndexCommand } from '../../commands/setNodeIndex';
 import { SetParentCommand } from '../../commands/setParent';
 import { Application } from '../../core/application';
@@ -7,33 +8,52 @@ import { ProjectNodeSelection } from '../../core/projectNodeSelection';
 import Events from '../../events';
 import { type TreeItem, TreeViewModel } from './components/treeView';
 
-class ProjectTree extends TreeViewModel<NodeAsset>
+class ProjectTree extends TreeViewModel<MetaNode>
 {
     constructor()
     {
         super(new ProjectNodeSelection());
     }
 
-    protected generateModel(): TreeItem<DisplayObjectNode>[]
+    protected generateModel()
+    {
+        const { project } = Application.instance;
+
+        const folders = project.getAssetFolders();
+        const model: TreeItem<MetaNode>[] = [];
+
+        model.push(...this.getModelItems(folders.Textures));
+        model.push(...this.getModelItems(folders.Scenes));
+        model.push(...this.getModelItems(folders.Prefabs));
+
+        return model;
+    }
+
+    protected getModelItems(rootFolder: FolderNode)
     {
         const { selection } = this;
 
-        return this.root.walk<DisplayObjectNode, { model: TreeItem<DisplayObjectNode>[] }>(
+        return rootFolder.walk<MetaNode, { model: TreeItem<MetaNode>[] }>(
             (node, options) =>
             {
-                if (node.isCloaked)
+                if (node.isCloaked || !node.isMetaNode)
                 {
+                    options.cancel = true;
+
                     return;
                 }
 
-                const item: TreeItem<DisplayObjectNode> = {
+                const item: TreeItem<MetaNode> = {
                     id: node.id,
                     depth: options.depth,
                     isSelected: selection.shallowContains(node.cast()),
                     isExpanded: true,
                     isVisible: true,
                     data: node,
+                    icon: './assets/vite.svg',
                 };
+
+                console.log(item);
 
                 options.data.model.push(item);
             },
@@ -45,37 +65,37 @@ class ProjectTree extends TreeViewModel<NodeAsset>
         ).model;
     }
 
-    public getLabel(obj: DisplayObjectNode)
+    public getLabel(obj: MetaNode)
+    {
+        return obj.model.getValue<string>('name');
+    }
+
+    public getId(obj: MetaNode)
     {
         return obj.id;
     }
 
-    public getId(obj: DisplayObjectNode)
+    public getParent(obj: MetaNode)
     {
-        return obj.id;
-    }
-
-    public getParent(obj: DisplayObjectNode)
-    {
-        return obj.parent as (DisplayObjectNode | undefined);
+        return obj.parent as (MetaNode | undefined);
     }
 
     public isSiblingOf(
-        obj: DisplayObjectNode,
-        other: DisplayObjectNode,
+        obj: MetaNode,
+        other: MetaNode,
     )
     {
         return obj.isSiblingOf(other);
     }
 
-    public hasChildren(obj: DisplayObjectNode)
+    public hasChildren(obj: MetaNode)
     {
         return obj.hasChildren;
     }
 
     protected setParent(
-        sourceObj: DisplayObjectNode,
-        parentObj: DisplayObjectNode,
+        sourceObj: MetaNode,
+        parentObj: MetaNode,
     )
     {
         const nodeId = sourceObj.id;
@@ -94,8 +114,8 @@ class ProjectTree extends TreeViewModel<NodeAsset>
     }
 
     protected reorder(
-        sourceObj: DisplayObjectNode,
-        targetObj: DisplayObjectNode,
+        sourceObj: MetaNode,
+        targetObj: MetaNode,
     )
     {
         const parentNode = targetObj === sourceObj.parent
@@ -118,12 +138,6 @@ class ProjectTree extends TreeViewModel<NodeAsset>
         }
     }
 
-    public onViewportRootChanged = (node: DisplayObjectNode) =>
-    {
-        this.root = node;
-        this.rebuildModel();
-    };
-
     public onSelectionChanged = () =>
     {
         this.updateModel((item) =>
@@ -143,15 +157,15 @@ class ProjectTree extends TreeViewModel<NodeAsset>
 
 function createModel()
 {
-    const { viewport } = Application.instance;
-
     const tree = new ProjectTree();
+
+    tree.allowMultiSelect = false;
 
     // bind to global events
     Events.$('selection.(add|remove|setSingle|setMulti)', tree.onSelectionChanged);
     Events.$('datastore.node|command', tree.rebuildModel);
+    Events.project.ready.bind(tree.rebuildModel);
     Events.selection.deselect.bind(tree.onDeselect);
-    Events.viewport.rootChanged.bind(tree.onViewportRootChanged);
 
     // init current model
     tree.rebuildModel();

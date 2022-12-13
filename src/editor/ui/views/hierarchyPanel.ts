@@ -17,7 +17,7 @@ class DisplayNodeTree extends TreeViewModel<DisplayObjectNode>
         this.root = root;
     }
 
-    protected generateModel(): TreeItem<DisplayObjectNode>[]
+    protected generateModel()
     {
         const { selection } = this;
 
@@ -26,6 +26,8 @@ class DisplayNodeTree extends TreeViewModel<DisplayObjectNode>
             {
                 if (node.isCloaked)
                 {
+                    options.cancel = true;
+
                     return;
                 }
 
@@ -51,7 +53,7 @@ class DisplayNodeTree extends TreeViewModel<DisplayObjectNode>
 
     public getLabel(obj: DisplayObjectNode)
     {
-        return obj.id;
+        return obj.model.getValue<string>('name');
     }
 
     public getId(obj: DisplayObjectNode)
@@ -154,6 +156,7 @@ function createModel()
     // bind to global events
     Events.$('selection.(add|remove|setSingle|setMulti)', tree.onSelectionChanged);
     Events.$('datastore.node|command', tree.rebuildModel);
+    Events.project.ready.bind(tree.rebuildModel);
     Events.selection.deselect.bind(tree.onDeselect);
     Events.viewport.rootChanged.bind(tree.onViewportRootChanged);
 

@@ -28,3 +28,9 @@
 
 # WIP TODO:
 
+Clean-up:
+* Ensure all Nodes inherit ClonableNode model schema (to get "name")
+* Reuse TreeViewModel between Hierarchy and Project panel models
+
+Try:
+* Replace Interface with Type definitions for models, may loosen generic polymorphism

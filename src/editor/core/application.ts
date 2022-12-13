@@ -109,6 +109,9 @@ export class Application
         }
 
         this.initEvents();
+
+        this.project.isReady = true;
+        Events.project.ready.emit();
     }
 
     public async createProject(name: string)
@@ -139,7 +142,6 @@ export class Application
         }
 
         Events.project.create.success.emit();
-        Events.project.ready.emit();
     }
 
     public async openProject(id: string)
@@ -152,7 +154,6 @@ export class Application
         this.initProject();
 
         Events.project.open.success.emit();
-        Events.project.ready.emit();
     }
 
     protected initProject()

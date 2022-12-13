@@ -237,27 +237,11 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         // get the root
         const rootId = this.model.root().get('root').value() as string;
-        const projectNode = nodes.get(rootId) as RealTimeObject;
+        const rootNode = nodes.get(rootId) as RealTimeObject;
 
-        if (projectNode)
+        if (rootNode)
         {
-            // hydrate textures
-            // textures.keys().forEach((id) =>
-            // {
-            //     const textureElement = textures.get(id) as RealTimeObject;
-
-            //     const schema = {
-            //         id,
-            //         ...textureElement.toJSON(),
-            //     };
-
-            //     consolidateId(id);
-
-            //     Events.datastore.texture.created.emit(schema);
-            // });
-
-            // start hydrating from the root node (Project)
-            this.hydrateElement(projectNode);
+            this.hydrateElement(rootNode);
         }
         else
         {

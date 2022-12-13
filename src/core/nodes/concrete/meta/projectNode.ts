@@ -8,6 +8,8 @@ export type ProjectFolderName =
 
 export class ProjectNode extends MetaNode
 {
+    public isReady = false;
+
     public nodeType()
     {
         return 'Project';
@@ -22,10 +24,10 @@ export class ProjectNode extends MetaNode
             throw new Error(`Project folder "${name}" not found`);
         }
 
-        return folder;
+        return folder.cast<FolderNode>();
     }
 
-    public getAsset(id: string)
+    public findAssetById(id: string)
     {
         return this.walk<MetaNode, {node: MetaNode | undefined}>((node, options) =>
         {
@@ -37,6 +39,17 @@ export class ProjectNode extends MetaNode
         }, {
             includeSelf: false,
         }).node;
+    }
+
+    public getAssetFolders(): Record<ProjectFolderName, FolderNode>
+    {
+        const folders: Record<ProjectFolderName, FolderNode> = {
+            Textures: this.getRootFolder('Textures'),
+            Scenes: this.getRootFolder('Scenes'),
+            Prefabs: this.getRootFolder('Prefabs'),
+        };
+
+        return folders;
     }
 }
 

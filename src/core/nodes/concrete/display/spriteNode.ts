@@ -102,7 +102,7 @@ export class SpriteNode<M extends SpriteModel = SpriteModel, V extends Sprite = 
 
         if (textureAssetId)
         {
-            const asset = Application.instance.project.getAsset(textureAssetId);
+            const asset = Application.instance.project.findAssetById(textureAssetId);
 
             if (asset)
             {
