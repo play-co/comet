@@ -19,7 +19,7 @@ export default class UndoStack
         return this.stack.length;
     }
 
-    public exec<R = unknown>(command: Command): R
+    public exec<CommandReturnType = unknown>(command: Command): CommandReturnType
     {
         writeCommandList(command.name);
 
@@ -38,7 +38,7 @@ export default class UndoStack
 
         const result = command.run();
 
-        return result as unknown as R;
+        return result as unknown as CommandReturnType;
     }
 
     public indexOf(command: Command)

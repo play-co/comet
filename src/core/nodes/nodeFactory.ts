@@ -25,7 +25,7 @@ export function createNode<T>(nodeType: string, options: NewNodeOptions<{}>): T
 
     if (!NodeClass)
     {
-        throw new Error(`${userName}:Node type "${nodeType}" is unregistered.`);
+        throw new Error(`${userName}:Node type "${nodeType}" is unregistered. Did you register it in the nodeRegistry?`);
     }
 
     const node = new NodeClass(options) as ClonableNode;

@@ -1,5 +1,4 @@
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
-import type { TextureAssetNode } from '../../core/nodes/concrete/meta/assets/textureAssetNode';
 import type { CustomPropertyType, CustomPropertyValueType } from '../../core/nodes/customProperties';
 import type { CloneInfoSchema, NodeSchema, ProjectFileSchema } from '../../core/nodes/schema';
 
@@ -34,7 +33,6 @@ export interface DatastoreCommandProvider
     removeCustomProperty: (nodeId: string, customKey: string) => void;
     assignCustomProperty: (nodeId: string, modelKey: string, customKey: string) => void;
     unassignCustomProperty: (nodeId: string, modelKey: string) => void;
-    createTexture: (asset: TextureAssetNode) => Promise<void>;
     setNodeChildren: (nodeId: string, childIds: string[]) => void;
 }
 
@@ -92,7 +90,6 @@ implements Datastore, DatastoreCommandProvider, DatastoreChangeEventHandler<Remo
     public abstract removeCustomProperty(nodeId: string, customKey: string): void;
     public abstract assignCustomProperty(nodeId: string, modelKey: string, customKey: string): void;
     public abstract unassignCustomProperty(nodeId: string, modelKey: string): void;
-    public abstract createTexture(asset: TextureAssetNode): Promise<void>;
     public abstract setNodeChildren(nodeId: string, childIds: string[]): void;
 
     // remote change event handles

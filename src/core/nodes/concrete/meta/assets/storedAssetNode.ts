@@ -44,5 +44,10 @@ export abstract class StoredAssetNode<M extends StoredAssetNodeModel, ResourceTy
         return !!this.resource;
     }
 
+    public setBlob(blob: Blob)
+    {
+        this.blob = blob;
+    }
+
     public abstract getResource(): Promise<ResourceType>;
 }

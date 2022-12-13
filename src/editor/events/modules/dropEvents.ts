@@ -2,6 +2,6 @@ import { Emit } from '../emitter';
 
 export default {
     local: {
-        dropped: Emit<File[]>(),
+        dropped: Emit<FileList>(),
     },
 };

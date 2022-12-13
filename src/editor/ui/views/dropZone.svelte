@@ -9,12 +9,8 @@
   onMount(() => {
     const dropzone = new DropZone(element);
 
-    dropzone.on("drop", (e) => {
-      const files = e.dataTransfer.files;
-
-      if (files.length > 0) {
-        Events.file.local.dropped.emit(files);
-      }
+    dropzone.on("drop", (files: FileList) => {
+      Events.file.local.dropped.emit(files);
     });
   });
 </script>

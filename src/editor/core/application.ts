@@ -143,7 +143,7 @@ export class Application
         });
 
         // dropped files
-        Events.file.local.dropped.bind((files: File[]) =>
+        Events.file.local.dropped.bind((files: FileList) =>
         {
             this.createTexture(files[0]);
         });

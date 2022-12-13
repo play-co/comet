@@ -10,6 +10,7 @@ import { Cache } from '../../core/cache';
 import { log } from '../../core/log';
 import type { ModelValue } from '../../core/model/model';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
+import type { TextureAssetNode } from '../../core/nodes/concrete/meta/assets/textureAssetNode';
 import type { ProjectNode } from '../../core/nodes/concrete/meta/projectNode';
 // import type { TextureAsset } from '../../core/nodes/concrete/assets/textureAssetNode';
 import type { CustomPropertyType, CustomPropertyValueType } from '../../core/nodes/customProperties';
@@ -763,20 +764,5 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
                 worldPermissions: ['join', 'view_state', 'set_state'],
             },
         });
-    }
-
-    public async createTexture(asset: TextureAsset)
-    {
-        // const { id, storageKey, name, mimeType: type, size, properties } = asset;
-
-        // this.textures.set(id, {
-        //     storageKey,
-        //     name,
-        //     mimeType: type,
-        //     size,
-        //     properties,
-        // } as TextureAssetSchema);
-
-        debugger;
     }
 }
