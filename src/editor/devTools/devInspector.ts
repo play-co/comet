@@ -19,8 +19,10 @@ export abstract class DevInspector<T extends Record<string, any> >
     public container: HTMLDivElement;
     public scrollVTrack: HTMLDivElement;
     public scrollVBox: HTMLDivElement;
+    public label: HTMLSpanElement;
     public maxHeight: number;
     public scrollTop: number;
+    public zIndex: number;
 
     protected isExpanded: boolean;
 
@@ -31,6 +33,7 @@ export abstract class DevInspector<T extends Record<string, any> >
         this.isExpanded = true;
         this.maxHeight = -1;
         this.scrollTop = 0;
+        this.zIndex = 100000;
 
         const canvas = this.painter.canvas;
 
@@ -49,6 +52,8 @@ export abstract class DevInspector<T extends Record<string, any> >
         const label = container.querySelector('label') as HTMLLabelElement;
         const inspectButton = container.querySelector('.inspect') as HTMLDivElement;
         const toggleButton = container.querySelector('.toggle') as HTMLDivElement;
+
+        this.label = label.querySelector('span') as HTMLSpanElement;
 
         label.style.height = `${titleBarHeight}px`;
 
@@ -97,6 +102,10 @@ export abstract class DevInspector<T extends Record<string, any> >
         {
             const startX = container.offsetLeft;
             const startY = container.offsetTop;
+
+            this.zIndex++;
+
+            container.style.zIndex = `${this.zIndex}`;
 
             mouseDrag(e, (deltaX: number, deltaY: number) =>
             {
@@ -248,6 +257,8 @@ export abstract class DevInspector<T extends Record<string, any> >
                     : Math.min(table.height, maxHeight + titleBarHeight + scrollBoxTrackSize);
 
                 renderTable(table, this.painter, this.onCellStyle, table.width, height, 0, this.scrollTop);
+
+                this.label.innerHTML = `${this.id} (${this.table.rows.length})`;
             }
 
             this.updateScrollBars();

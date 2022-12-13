@@ -1,6 +1,18 @@
-import type { ModelSchema } from '../../../model/schema';
-import { type ClonableNodeModel, clonableNodeSchema } from '../../abstract/clonableNode';
+import { ModelSchema } from '../../../model/schema';
+import type { ClonableNodeModel } from '../../abstract/clonableNode';
 import { MetaNode } from '../../abstract/metaNode';
+
+export interface FolderNodeModel extends ClonableNodeModel
+{
+    isReadOnly: boolean;
+}
+
+export const folderNodeModelSchema = new ModelSchema<FolderNodeModel>({
+    isReadOnly: {
+        defaultValue: false,
+        category: 'node',
+    },
+});
 
 export class FolderNode<M extends ClonableNodeModel = ClonableNodeModel> extends MetaNode<M>
 {
@@ -11,6 +23,6 @@ export class FolderNode<M extends ClonableNodeModel = ClonableNodeModel> extends
 
     public modelSchema(): ModelSchema<M>
     {
-        return clonableNodeSchema as unknown as ModelSchema<M>;
+        return folderNodeModelSchema as unknown as ModelSchema<M>;
     }
 }

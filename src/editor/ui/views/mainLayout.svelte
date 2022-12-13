@@ -7,6 +7,7 @@
   import ProjectPanel from "./projectPanel.svelte";
   import PropertiesPanel from "./propertiesPanel.svelte";
   import Viewport from "./viewport.svelte";
+  import DropZone from "./dropZone.svelte";
 
   const factoryTypes: FactoryTypes = {
     Hierarchy: HierarchyPanel,
@@ -71,8 +72,10 @@
 </script>
 
 <main-layout>
-  <Tools />
-  <DockablePanelLayout {layoutConfig} {factoryTypes} />
+  <DropZone>
+    <Tools />
+    <DockablePanelLayout {layoutConfig} {factoryTypes} />
+  </DropZone>
 </main-layout>
 
 <style>

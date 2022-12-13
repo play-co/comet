@@ -23,6 +23,11 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
         const datastore = Application.instance.datastore;
         const details: Record<string, DatastoreNodeDetail> = {};
 
+        if (!datastore.isConnected())
+        {
+            return {};
+        }
+
         const project = datastore.toProjectSchema();
 
         for (const [nodeId, node] of Object.entries(project.nodes))

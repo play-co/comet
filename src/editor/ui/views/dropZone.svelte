@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  import { Application } from "../../core/application";
+  import Events from "../../events";
   import { DropZone } from "../components/dropzone";
 
   let element: HTMLElement;
@@ -11,8 +11,9 @@
 
     dropzone.on("drop", (e) => {
       const files = e.dataTransfer.files;
-      if (files.length >= 1) {
-        Application.instance.createTexture(files[0]);
+
+      if (files.length > 0) {
+        Events.file.local.dropped.emit(files);
       }
     });
   });

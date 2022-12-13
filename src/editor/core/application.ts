@@ -4,9 +4,7 @@ import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObjectNode';
 import { ProjectNode } from '../../core/nodes/concrete/meta/projectNode';
 import { clearInstances, getInstance } from '../../core/nodes/instances';
-import { createNodeSchema } from '../../core/nodes/schema';
 import { Actions } from '../actions';
-import { CreateNodeCommand } from '../commands/createNode';
 import { CreateTextureAssetCommand } from '../commands/createTextureAsset';
 import { RemoveNodeCommand } from '../commands/removeNode';
 import { DatastoreNodeInspector } from '../devTools/inspectors/datastoreNodeInspector';
@@ -101,6 +99,28 @@ export class Application
 
     public async init()
     {
+        if (getUrlParam<number>('devtools') === 1)
+        {
+            const graphNodeInspector = new GraphNodeInspector('Graph Nodes', 'blue');
+            const datastoreNodeInspector = new DatastoreNodeInspector('Datastore Nodes', 'green');
+            const logInspector = new LogInspector('Log', 'darkslategrey');
+            const undoStackInspector = new UndoStackInspector('UndoStack', 'purple');
+
+            const mediumMaxHeight = Math.round(screen.availHeight * 0.3);
+            const shortMaxHeight = Math.round(screen.availHeight * 0.2);
+            const container = document.body;
+
+            graphNodeInspector.maxHeight = mediumMaxHeight;
+            datastoreNodeInspector.maxHeight = mediumMaxHeight;
+            logInspector.maxHeight = shortMaxHeight;
+            undoStackInspector.maxHeight = mediumMaxHeight;
+
+            graphNodeInspector.mount(container);
+            datastoreNodeInspector.mount(container);
+            logInspector.mount(container);
+            undoStackInspector.mount(container);
+        }
+
         if (getUrlParam<number>('open') === 1)
         {
             await this.openProject('test');
@@ -110,10 +130,22 @@ export class Application
             await this.createProject('Test');
         }
 
+        this.initEvents();
+    }
+
+    protected initEvents()
+    {
+        // context menu
         document.addEventListener('contextmenu', (event) =>
         {
             event.preventDefault();
             Events.editor.contextMenuOpen.emit(event);
+        });
+
+        // dropped files
+        Events.file.local.dropped.bind((files: File[]) =>
+        {
+            this.createTexture(files[0]);
         });
     }
 
@@ -163,31 +195,9 @@ export class Application
 
     protected initProject()
     {
-        const scene = this.project.getFolder('Scenes').getChildAt(0);
+        const scene = this.project.getRootFolder('Scenes').getChildAt(0);
 
         this.viewport.setRoot(scene.cast<DisplayObjectNode>());
-
-        if (getUrlParam<number>('devtools') === 1)
-        {
-            const graphNodeInspector = new GraphNodeInspector('Graph Nodes', 'blue');
-            const datastoreNodeInspector = new DatastoreNodeInspector('Datastore Nodes', 'green');
-            const logInspector = new LogInspector('Log', 'darkslategrey');
-            const undoStackInspector = new UndoStackInspector('UndoStack', 'purple');
-
-            const mediumMaxHeight = Math.round(screen.availHeight * 0.3);
-            const shortMaxHeight = Math.round(screen.availHeight * 0.2);
-            const container = document.body;
-
-            graphNodeInspector.maxHeight = mediumMaxHeight;
-            datastoreNodeInspector.maxHeight = mediumMaxHeight;
-            logInspector.maxHeight = shortMaxHeight;
-            undoStackInspector.maxHeight = mediumMaxHeight;
-
-            graphNodeInspector.mount(container);
-            datastoreNodeInspector.mount(container);
-            logInspector.mount(container);
-            undoStackInspector.mount(container);
-        }
     }
 
     protected clear()
@@ -210,18 +220,17 @@ export class Application
 
     public createTexture(file: File)
     {
-        // const { promise } = new CreateTextureAssetCommand({ file }).run();
+        const { promise } = new CreateTextureAssetCommand({ file }).run();
 
-        // promise.then((texture) =>
-        // {
-        //     Actions.newSprite.dispatch({
-        //         addToSelected: false,
-        //         model: {
-        //             textureAssetId: texture.id,
-        //             tint: 0xffffff,
-        //         },
-        //     });
-        // });
-        debugger;
+        promise.then((texture) =>
+        {
+            Actions.newSprite.dispatch({
+                addToSelected: false,
+                model: {
+                    textureAssetId: texture.id,
+                    tint: 0xffffff,
+                },
+            });
+        });
     }
 }

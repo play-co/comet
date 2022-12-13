@@ -6,7 +6,7 @@ import { type CellStyle, type Column, type Row, tableIndexKey } from '../tableRe
 
 const logSourceColor = new Map<LogSource, Color>();
 
-logSourceColor.set('datastore', Color('cyan'));
+logSourceColor.set('datastore', Color('green'));
 logSourceColor.set('nodeFactory', Color('blue'));
 logSourceColor.set('command', Color('green'));
 
@@ -47,7 +47,7 @@ export class LogInspector extends DevInspector<Omit<LogEntry, 'timestamp'>>
 
         if (column.id === 'source')
         {
-            cellStyle.fillColor = (logSourceColor.get(currentCell.value) as Color).darken(0.5).hex();
+            cellStyle.fillColor = (logSourceColor.get(currentCell.value) as Color).hex();
         }
         else if (column.id === 'eventName')
         {
@@ -62,7 +62,7 @@ export class LogInspector extends DevInspector<Omit<LogEntry, 'timestamp'>>
         }
         else if (column.id === 'data')
         {
-            cellStyle.text = JSON.stringify(currentCell.value);
+            cellStyle.text = JSON.stringify(currentCell.value).replace(/^\[|\]$/g, '');
         }
     };
 

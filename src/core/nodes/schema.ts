@@ -96,9 +96,9 @@ export function createProjectSchema(name: string): ProjectFileSchema
 {
     const project = createNodeSchema('Project', { model: { name } });
 
-    const texturesFolder = createNodeSchema('Folder', { parent: project.id, model: { name: 'Textures' } });
-    const scenesFolder = createNodeSchema('Folder', { parent: project.id, model: { name: 'Scenes' } });
-    const prefabsFolder = createNodeSchema('Folder', { parent: project.id, model: { name: 'Prefabs' } });
+    const texturesFolder = createNodeSchema('Folder', { parent: project.id, model: { name: 'Textures', isReadOnly: true } });
+    const scenesFolder = createNodeSchema('Folder', { parent: project.id, model: { name: 'Scenes', isReadOnly: true } });
+    const prefabsFolder = createNodeSchema('Folder', { parent: project.id, model: { name: 'Prefabs', isReadOnly: true } });
 
     const scene = createNodeSchema('Scene', { parent: scenesFolder.id, model: { name: 'Scene1' } });
 

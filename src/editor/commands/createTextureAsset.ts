@@ -1,5 +1,5 @@
 import { Cache } from '../../core/cache';
-import type { TextureAssetNode } from '../../core/nodes/concrete/meta/assets/textureAssetNode';
+import { TextureAssetNode } from '../../core/nodes/concrete/meta/assets/textureAssetNode';
 import { registerInstance } from '../../core/nodes/instances';
 import { Command } from '../core/command';
 
@@ -19,23 +19,30 @@ export class CreateTextureAssetCommand extends Command<CreateTextureAssetCommand
 
     protected async upload(file: File)
     {
-        // const { app, datastore } = this;
+        const { app, datastore } = this;
 
-        // const storageKey = await app.storageProvider.upload(file);
-        // const asset = new TextureAssetNode(undefined, file.name, storageKey, file.type, file.size, file);
-        // const imageElement = await asset.getResource();
+        const storageKey = await app.storageProvider.upload(file);
+        const asset = new TextureAssetNode({
+            model: {
+                name: file.name,
+                storageKey,
+                mimeType: file.type,
+                size: file.size,
+            },
 
-        // asset.properties.width = imageElement.naturalWidth;
-        // asset.properties.height = imageElement.naturalHeight;
+        }, file);
+        const imageElement = await asset.getResource();
 
-        // registerInstance(asset);
+        asset.properties.width = imageElement.naturalWidth;
+        asset.properties.height = imageElement.naturalHeight;
 
-        // await datastore.createTexture(asset);
+        registerInstance(asset);
 
-        // Cache.textures.add(asset);
+        await datastore.createTexture(asset);
 
-        // return asset;
+        Cache.textures.add(asset);
 
+        return asset;
     }
 
     public apply(): CreateTextureAssetCommandReturn

@@ -1,5 +1,5 @@
 import { ModelSchema } from '../../../../model/schema';
-import type { ClonableNodeModel } from '../../../abstract/clonableNode';
+import type { ClonableNodeModel, NewNodeOptions } from '../../../abstract/clonableNode';
 import { MetaNode } from '../../../abstract/metaNode';
 
 export interface StoredAssetNodeModel extends ClonableNodeModel
@@ -28,6 +28,16 @@ export abstract class StoredAssetNode<M extends StoredAssetNodeModel, ResourceTy
 {
     public blob?: Blob;
     public resource?: ResourceType;
+
+    constructor(
+        options: NewNodeOptions<M> = {},
+        blob?: Blob,
+    )
+    {
+        super(options);
+
+        this.blob = blob;
+    }
 
     get isResourceReady()
     {

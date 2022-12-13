@@ -54,6 +54,18 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
     // general public API
 
+    public isConnected()
+    {
+        const { _domain, _model } = this;
+
+        if (_domain && _model)
+        {
+            return _domain.isConnected() ?? _model.isOpen();
+        }
+
+        return false;
+    }
+
     public connect(): Promise<void>
     {
         return new Promise((resolve, reject) =>
@@ -140,6 +152,8 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
     public async createProject(name: string)
     {
+        log('datastore', 'createProject', name);
+
         const data = createProjectSchema(name);
 
         const model = await this.domain.models().openAutoCreate({
@@ -158,6 +172,8 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
     public async openProject(id: string): Promise<ProjectNode>
     {
+        log('datastore', 'openProject', id);
+
         const model = await this.domain.models().open(id);
 
         this._model = model;
@@ -205,6 +221,8 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
     public async deleteProject(id: string)
     {
+        log('datastore', 'deleteProject', id);
+
         await this.domain.models().remove(id);
     }
 
@@ -666,6 +684,8 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
     protected hydrateElement(nodeElement: RealTimeObject)
     {
         const id = nodeElement.get('id').value() as string;
+
+        log('datastore', 'Hydrating node', id);
 
         // ensure local ids don't clash with hydrating ids
         consolidateId(id);

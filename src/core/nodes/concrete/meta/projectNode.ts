@@ -13,7 +13,7 @@ export class ProjectNode extends MetaNode
         return 'Project';
     }
 
-    public getFolder(name: ProjectFolderName)
+    public getRootFolder(name: ProjectFolderName)
     {
         const folder = this.children.find((child) => child.cast<FolderNode>().model.getValue('name') === name);
 

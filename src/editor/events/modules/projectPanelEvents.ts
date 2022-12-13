@@ -1,12 +1,12 @@
-import type { NodeAsset } from '../../../core/nodes/concrete/meta/assets/nodeAsset';
+import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
 import { Emit } from '../emitter';
 
 export default {
     selection: {
-        setSingle: Emit<NodeAsset>(),
-        setMulti: Emit<NodeAsset[]>(),
-        add: Emit<NodeAsset>(),
-        remove: Emit<NodeAsset>(),
+        setSingle: Emit<MetaNode>(),
+        setMulti: Emit<MetaNode[]>(),
+        add: Emit<MetaNode>(),
+        remove: Emit<MetaNode>(),
         deselect: Emit<void>(),
     },
 };

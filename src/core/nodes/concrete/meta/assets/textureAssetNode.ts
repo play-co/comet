@@ -47,7 +47,7 @@ export const textureAssetNodeModelSchema = new ModelSchema<TextureAssetNodeModel
     },
 });
 
-export abstract class TextureAssetNode extends StoredAssetNode<TextureAssetNodeModel, HTMLImageElement>
+export class TextureAssetNode extends StoredAssetNode<TextureAssetNodeModel, HTMLImageElement>
 {
     get isResourceReady()
     {

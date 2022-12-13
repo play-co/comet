@@ -1,6 +1,7 @@
 import { EventMap } from './emitter';
 import commandEvents from './modules/commandEvents';
 import datastoreEvents from './modules/datastoreEvents';
+import fileDropEvents from './modules/dropEvents';
 import editorEvents from './modules/editorEvents';
 import keyboardEvents from './modules/keyboardEvents';
 import projectEvents from './modules/projectEvents';
@@ -19,6 +20,7 @@ const Events = EventMap({
     transform: transformEvents,
     viewport: viewportEvents,
     projectPanel: projectPanelEvents,
+    file: fileDropEvents,
 });
 
 export default Events;
