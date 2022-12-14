@@ -16,7 +16,7 @@
     icon: "/assets/folder.ico",
     isEnabled: false,
     onClick: () => {
-      console.log("!");
+      Actions.newFolder.dispatch();
     },
   };
 

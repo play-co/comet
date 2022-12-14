@@ -29,7 +29,7 @@ export abstract class Action<OptionsType, ReturnType>
 
     public static actions: Map<string, Action<any, any>> = new Map();
 
-    constructor(id: string, options: ActionConstructorOptions)
+    constructor(id: string, options: ActionConstructorOptions = {} as ActionConstructorOptions)
     {
         if (Action.actions.has(id))
         {

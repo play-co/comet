@@ -71,6 +71,16 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
         ).model;
     }
 
+    public hasChildren(obj: MetaNode)
+    {
+        if (obj.nodeType() === 'Scene')
+        {
+            return false;
+        }
+
+        return obj.hasChildren;
+    }
+
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected onDblClick(e: MouseEvent, item: TreeItem<T>)

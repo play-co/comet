@@ -8,9 +8,7 @@ export class NewSceneAction extends Action<void, SceneNode>
 {
     constructor()
     {
-        super('newScene', {
-            hotkey: 'Ctrl+Alt+N',
-        });
+        super('newScene');
     }
 
     protected exec(): SceneNode

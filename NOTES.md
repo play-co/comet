@@ -29,8 +29,11 @@
 # WIP TODO:
 
 Clean-up:
-* Ensure all Nodes inherit ClonableNode model schema (to get "name")
-* Reuse TreeViewModel between Hierarchy and Project panel models
+* Create separate dropzone for project panel and viewport
+    - enhance with border highlight on dragenter
+    - refactor dropevents
+    - if drop on project, just add to Textures folder
+    - if drop on viewport, add to viewport at local mousepoint
 
 Try:
 * Replace Interface with Type definitions for models, may loosen generic polymorphism

@@ -37,13 +37,13 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
             ...options,
         };
         const app = Application.instance;
-        const selectedNode = app.selection.hierarchy.lastNode;
+        const { selection: { hierarchy: selection } } = app;
 
         let parentId = app.viewport.rootNode.id;
 
-        if (selectedNode && actionOptions.addToSelected)
+        if (actionOptions.addToSelected && selection.hasSelection)
         {
-            parentId = selectedNode.id;
+            parentId = selection.lastNode.id;
         }
 
         const tint = Color.rgb(this.rnd255(), this.rnd255(), this.rnd255());

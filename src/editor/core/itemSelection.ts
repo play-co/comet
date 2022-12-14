@@ -106,6 +106,11 @@ export abstract class ItemSelection<T>
         return this.items.length === 0;
     }
 
+    public get hasSelection()
+    {
+        return this.items.length > 0;
+    }
+
     public get isSingle()
     {
         return this.items.length === 1;
@@ -116,25 +121,25 @@ export abstract class ItemSelection<T>
         return this.items.length > 1;
     }
 
-    public get firstNode(): T | undefined
+    public get firstNode(): T
     {
         const { items } = this;
 
         if (items.length === 0)
         {
-            return undefined;
+            throw new Error('Cannot get first node, selection is empty');
         }
 
         return items[0];
     }
 
-    public get lastNode(): T | undefined
+    public get lastNode(): T
     {
         const { items } = this;
 
         if (items.length === 0)
         {
-            return undefined;
+            throw new Error('Cannot get last node, selection is empty');
         }
 
         return items[items.length - 1];

@@ -25,13 +25,13 @@ export class NewContainerAction extends Action<NewContainerOptions, EmptyNode>
     }): EmptyNode
     {
         const app = Application.instance;
-        const selectedNode = app.selection.hierarchy.lastNode;
+        const { selection: { hierarchy: selection } } = app;
 
         let parentId = app.viewport.rootNode.id;
 
-        if (selectedNode && options.addToSelected)
+        if (options.addToSelected && selection.hasSelection)
         {
-            parentId = selectedNode.id;
+            parentId = selection.lastNode.id;
         }
 
         const nodeSchema = createNodeSchema('Empty', {
