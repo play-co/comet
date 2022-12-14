@@ -20,31 +20,51 @@ export enum Operation
     ReOrder,
 }
 
+export interface TreeViewModelOptions
+{
+    canReParent: boolean;
+    canReOrder: boolean;
+    canEdit: boolean;
+    allowMultiSelect: boolean;
+}
+
+export const defaultOptions: TreeViewModelOptions = {
+    canReParent: true,
+    canReOrder: true,
+    canEdit: true,
+    allowMultiSelect: true,
+};
+
+export const dblClickTimeout = 300;
+export const indentationWidth = 10;
+
 export abstract class TreeViewModel<T>
 {
     protected model: WritableStore<TreeItem<T>[]>;
     protected dragTarget: WritableStore<TreeItem<T> | undefined>;
     protected operation: WritableStore<Operation>;
+    protected isEditing: WritableStore<boolean>;
+
     protected isDragging: boolean;
-
     protected lastClick: number;
+    protected edit?: {
+        element: HTMLSpanElement;
+        item: TreeItem<T>;
+        originalValue: string;
+    };
 
-    public canReParent: boolean;
-    public canReOrder: boolean;
-    public allowMultiSelect: boolean;
-
-    constructor(public readonly selection: ItemSelection<T>)
+    constructor(
+        public readonly selection: ItemSelection<T>,
+        public readonly options: TreeViewModelOptions = { ...defaultOptions },
+    )
     {
         this.model = new WritableStore<TreeItem<T>[]>([]);
         this.dragTarget = new WritableStore<TreeItem<T> | undefined>(undefined);
-        this.operation = new WritableStore<Operation>(Operation.ReParent);
+        this.operation = new WritableStore(Operation.ReParent);
+        this.isEditing = new WritableStore(false);
+
         this.isDragging = false;
-
         this.lastClick = -1;
-
-        this.canReParent = true;
-        this.canReOrder = true;
-        this.allowMultiSelect = true;
     }
 
     public get store()
@@ -53,6 +73,7 @@ export abstract class TreeViewModel<T>
             model: this.model.store,
             dragTarget: this.dragTarget.store,
             operation: this.operation.store,
+            isEditing: this.isEditing.store,
         };
     }
 
@@ -76,9 +97,100 @@ export abstract class TreeViewModel<T>
     public abstract isSiblingOf(obj: T, other: T): boolean;
     public abstract hasChildren(obj: T): boolean;
 
+    protected getSelectedIds()
+    {
+        return this.selection.items.map((item) => this.getId(item));
+    }
+
+    protected hasSelectedIds(ids: string[])
+    {
+        return this.getSelectedIds().some((id) => ids.includes(id));
+    }
+
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected onDblClick(e: MouseEvent, item: TreeItem<T>)
+    {
+        // for subclasses...
+    }
+
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected onEdit(e: MouseEvent, item: TreeItem<T>)
+    {
+        const element = e.target as HTMLElement;
+
+        if (element.getAttribute('data-id') !== 'tree-view-label-edit')
+        {
+            return;
+        }
+
+        const span = element as HTMLSpanElement;
+        const originalValue = span.innerText;
+
+        this.edit = {
+            element: span,
+            item,
+            originalValue,
+        };
+        this.isEditing.value = true;
+
+        span.addEventListener('keydown', this.onEditKeyDown);
+        span.addEventListener('blur', this.onEditBlur);
+
+        span.style.maxWidth = `calc(100% - ${45 + (item.depth * indentationWidth)}px)`;
+
+        setTimeout(() =>
+        {
+            span.focus();
+        }, 0);
+    }
+
+    protected onEditKeyDown = (e: KeyboardEvent) =>
+    {
+        const { key } = e;
+
+        if (this.edit)
+        {
+            const { edit: { element, item, originalValue } } = this;
+
+            if (key === 'Enter')
+            {
+                const value = element.innerText;
+
+                this.onEditAccept(value, item);
+                this.onEditClose();
+            }
+            else if (key === 'Escape')
+            {
+                element.innerText = originalValue;
+                this.onEditClose();
+            }
+        }
+    };
+
+    protected onEditBlur = () =>
+    {
+        this.onEditClose();
+    };
+
+    protected onEditClose()
+    {
+        if (this.edit)
+        {
+            const { edit: { element } } = this;
+
+            delete this.edit;
+            this.isEditing.value = false;
+
+            element.removeEventListener('keydown', this.onEditKeyDown);
+            element.blur();
+        }
+    }
+
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected onEditAccept(value: string, item: TreeItem<T>)
     {
         // for subclasses...
     }
@@ -117,9 +229,9 @@ export abstract class TreeViewModel<T>
         model.value = [...model.value];
     }
 
-    protected selectItem(e: MouseEvent, item: TreeItem<T>): undefined | false
+    protected selectItem(e: MouseEvent, item: TreeItem<T>): boolean
     {
-        const { selection, allowMultiSelect } = this;
+        const { selection, options: { allowMultiSelect } } = this;
         const { data } = item;
 
         if ((e.shiftKey || e.metaKey) && allowMultiSelect)
@@ -140,7 +252,7 @@ export abstract class TreeViewModel<T>
             selection.set(data);
         }
 
-        return undefined;
+        return true;
     }
 
     protected abstract setParent(sourceObj: T, parentObj: T): void;
@@ -148,20 +260,21 @@ export abstract class TreeViewModel<T>
 
     public onRowMouseDown(event: MouseEvent, item: TreeItem<T>)
     {
-        if (event.button !== 0 || this.selectItem(event, item) === false)
+        const { selection, operation, dragTarget, options: { canReOrder, canReParent } } = this;
+        const existingSelection = this.getSelectedIds();
+
+        if (event.button !== 0 || !this.selectItem(event, item))
         {
             // item was removed from selection, abort drag
             return;
         }
-
-        const { selection, operation, dragTarget, canReOrder, canReParent } = this;
 
         this.isDragging = true;
         operation.value = Operation.ReParent;
 
         if (canReOrder || canReParent)
         {
-            mouseDrag({ event }).then(() =>
+            mouseDrag({ event }).then(({ event, deltaX, deltaY }) =>
             {
                 const dragTargetValue = dragTarget.value;
 
@@ -196,12 +309,17 @@ export abstract class TreeViewModel<T>
                         this.rebuildModel();
                     });
                 }
+                else
+                if (deltaX === 0 && deltaY === 0 && this.hasSelectedIds(existingSelection))
+                {
+                    this.onEdit(event, item);
+                }
 
                 // clear drag state
                 this.isDragging = false;
                 this.dragTarget.value = undefined;
 
-                if (this.lastClick > -1 && (Date.now() - this.lastClick) < 300)
+                if (this.lastClick > -1 && (Date.now() - this.lastClick) < dblClickTimeout && !this.isEditing.value)
                 {
                     this.onDblClick(event, item);
                 }
@@ -213,7 +331,7 @@ export abstract class TreeViewModel<T>
 
     public onRowMouseOver(e: MouseEvent, item: TreeItem<T>)
     {
-        const { isDragging, operation, dragTarget, selection, canReParent, canReOrder } = this;
+        const { isDragging, operation, dragTarget, selection, options: { canReParent, canReOrder } } = this;
 
         if (isDragging && (canReParent || canReOrder))
         {
@@ -249,7 +367,7 @@ export abstract class TreeViewModel<T>
 
     public isItemReParentDragTarget(item: TreeItem<T>, dragTarget?: TreeItem<T>)
     {
-        const { operation, canReParent } = this;
+        const { operation, options: { canReParent } } = this;
 
         return canReParent
             && dragTarget === item
@@ -259,7 +377,7 @@ export abstract class TreeViewModel<T>
 
     public isItemReOrderDragTarget(item: TreeItem<T>, dragTarget?: TreeItem<T>)
     {
-        const { operation, canReOrder } = this;
+        const { operation, options: { canReOrder } } = this;
 
         return canReOrder
             && dragTarget === item

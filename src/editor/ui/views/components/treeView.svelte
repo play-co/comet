@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { TreeViewModel } from "./treeView";
+  import { type TreeViewModel, indentationWidth } from "./treeView";
 
   export let tree: TreeViewModel<any>;
 
-  const { model, dragTarget } = tree.store;
+  const { model, dragTarget, isEditing } = tree.store;
 </script>
 
 <tree-view>
@@ -18,7 +18,7 @@
       on:mousedown={(e) => tree.onRowMouseDown(e, item)}
       on:mouseover={(e) => tree.onRowMouseOver(e, item)}
     >
-      <span class="indentation" style="width:{item.depth * 10}px" />
+      <span class="indentation" style="width:{item.depth * indentationWidth}px" />
 
       {#if tree.hasChildren(item.data)}
         <span
@@ -35,7 +35,12 @@
         <img class="icon" src={item.icon} alt={tree.getLabel(item.data)} />
       {/if}
 
-      <span class="label" class:selected={item.isSelected}>
+      <span
+        class="label"
+        class:selected={item.isSelected}
+        contenteditable={$isEditing}
+        data-id="tree-view-label-edit"
+      >
         {tree.getLabel(item.data)}
         {#if tree.isItemReParentDragTarget(item, $dragTarget)}
           <div class="dragTargetIndicator reparent" />
@@ -78,6 +83,12 @@
 
   .tree-item span {
     display: inline-block;
+  }
+
+  .label {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   .label.selected {

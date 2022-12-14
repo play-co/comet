@@ -7,6 +7,7 @@ export interface MouseDragInitialiser
 
 export interface MouseDragUpdate
 {
+    event: MouseEvent;
     currentX: number;
     currentY: number;
     deltaX: number;
@@ -30,7 +31,7 @@ export function mouseDrag(
 
             if (onMove)
             {
-                onMove({ currentX: (startX ?? 0) + deltaX, currentY: (startY ?? 0) + deltaY, deltaX, deltaY });
+                onMove({ event: e, currentX: (startX ?? 0) + deltaX, currentY: (startY ?? 0) + deltaY, deltaX, deltaY });
             }
         };
 
@@ -42,7 +43,7 @@ export function mouseDrag(
             const deltaX = e.clientX - startClientX;
             const deltaY = e.clientY - startClientY;
 
-            resolve({ currentX: (startX ?? 0) + deltaX, currentY: (startY ?? 0) + deltaY, deltaX, deltaY });
+            resolve({ event: e, currentX: (startX ?? 0) + deltaX, currentY: (startY ?? 0) + deltaY, deltaX, deltaY });
         };
 
         window.addEventListener('mousemove', onMouseMove);
