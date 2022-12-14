@@ -4,9 +4,9 @@ import type { FolderNode } from '../../../core/nodes/concrete/meta/folderNode';
 import { Application } from '../../core/application';
 import type { ProjectSelection } from '../../core/projectSelection';
 import Events from '../../events';
+import { NodeTreeModel } from './components/nodeTreeModel';
 import type { TreeItem } from './components/treeModel';
 import { Icons } from './icons';
-import { NodeTreeModel } from './components/nodeTreeModel';
 
 export class ProjectTree extends NodeTreeModel<ProjectSelection>
 {
@@ -20,7 +20,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
         Events.$('selection.project.(add|remove|setSingle|setMulti)', this.onSelectionChanged);
         Events.$('datastore.node|command', this.rebuildModel);
         Events.project.ready.bind(this.rebuildModel);
-        Events.selection.hierarchy.deselect.bind(this.onDeselect);
+        Events.selection.project.deselect.bind(this.onDeselect);
     }
 
     protected generateModel()

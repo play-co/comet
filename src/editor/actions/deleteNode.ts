@@ -29,6 +29,9 @@ export class DeleteNodeAction extends Action<DeleteNodeOptions, void>
             nodeIds.push(...app.selection.hierarchy.items.map((node) => node.id));
         }
 
-        app.undoStack.exec(new RemoveNodesCommand({ nodeIds }));
+        if (nodeIds.length)
+        {
+            app.undoStack.exec(new RemoveNodesCommand({ nodeIds }));
+        }
     }
 }
