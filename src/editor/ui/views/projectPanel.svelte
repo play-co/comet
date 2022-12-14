@@ -9,9 +9,11 @@
   import type { FolderNode } from "../../../core/nodes/concrete/meta/folderNode.js";
   import { onMount } from "svelte";
   import { DropZone } from "../components/dropzone";
+  import { Menu } from "./components/menu.js";
 
-  let container: HTMLElement;
   let dropZone = new DropZone();
+  let container: HTMLDivElement;
+  const tree = new ProjectTree();
 
   $: isDragOver = dropZone.isDragOver.store;
 
@@ -20,8 +22,6 @@
       Application.instance.importLocalTextures(files, false);
     });
   });
-
-  const tree = new ProjectTree();
 
   const newFolderButton: ButtonBarItem = {
     id: "newFolder",
@@ -59,6 +59,8 @@
       callback(buttons);
     });
   };
+
+  const treeMenu = new Menu([{ label: "Delete", isEnabled: false }]);
 </script>
 
 <project-panel class:isDragOver={$isDragOver}>
@@ -66,7 +68,7 @@
     <div class="container" bind:this={container}>
       <div class="tree">
         <ButtonBar size="small" items={buttons} update={onButtonUpdater} />
-        <TreeView {tree} />
+        <TreeView {tree} menu={treeMenu} />
       </div>
       <div class="content">content</div>
     </div>

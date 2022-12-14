@@ -1,6 +1,7 @@
 export interface MenuItem
 {
     label: string;
+    isEnabled?: boolean;
     menu?: Menu;
 }
 

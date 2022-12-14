@@ -291,7 +291,7 @@ export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSe
         const { selection, operation, dragTarget, options: { canReOrder, canReParent } } = this;
         const existingSelection = this.getSelectedIds();
 
-        if (event.button !== 0 || !this.selectItem(event, item))
+        if (!this.selectItem(event, item))
         {
             // item was removed from selection, abort drag
             return;

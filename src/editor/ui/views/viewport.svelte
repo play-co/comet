@@ -30,7 +30,7 @@
 </script>
 
 <view-port bind:this={container}>
-  <ContextMenu {menu} {container} on:select={(e) => console.log("!!!", e)} />
+  <ContextMenu {menu} {container} on:select={(e) => console.log("!!!", e.detail)} />
 </view-port>
 
 <style>

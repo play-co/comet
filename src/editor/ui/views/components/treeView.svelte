@@ -1,12 +1,17 @@
 <script lang="ts">
+  import type { Menu } from "./menu";
   import { type TreeViewModel, indentationWidth } from "./treeModel";
+  import ContextMenu from "./contextMenu.svelte";
 
   export let tree: TreeViewModel;
+  export let menu: Menu | undefined = undefined;
+
+  let container: HTMLElement;
 
   const { model, dragTarget, isEditing } = tree.store;
 </script>
 
-<tree-view>
+<tree-view bind:this={container}>
   {#each $model as item (item.id)}
     <!-- svelte-ignore a11y-mouse-events-have-key-events -->
     <div
@@ -52,6 +57,9 @@
       {/if}
     </div>
   {/each}
+  {#if menu}
+    <ContextMenu {menu} {container} on:select={(e) => console.log("tree!!!", e.detail)} />
+  {/if}
 </tree-view>
 
 <style>

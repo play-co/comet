@@ -24,7 +24,7 @@
     }
   }
 
-  $: style = `left:${isSubMenu ? "100%" : `${x}px`};top:${isSubMenu ? 0 : y}px;`;
+  $: style = `left:${isSubMenu ? "calc(100% + 2px)" : `${x}px`};top:${isSubMenu ? 0 : y}px;`;
 
   $: {
     if (event && target) {
@@ -57,8 +57,10 @@
   };
 
   const onMenuItemClick = (item: MenuItem) => {
-    Events.editor.contextMenuClose.emit();
-    dispatcher("select", item);
+    if (!item.menu && item.isEnabled !== false) {
+      Events.editor.contextMenuClose.emit();
+      dispatcher("select", item);
+    }
   };
 
   onMount(() => {
@@ -84,6 +86,7 @@
       <!-- svelte-ignore a11y-mouse-events-have-key-events -->
       <menu-item
         class:selected={item === active}
+        class:disabled={item.isEnabled === false}
         on:mouseover={() => (active = item)}
         on:click={() => onMenuItemClick(item)}
       >
@@ -120,6 +123,7 @@
     font-size: 12px;
     cursor: default;
     color: #d3d3d3;
+    user-select: none;
   }
 
   menu-item:hover,
@@ -127,5 +131,10 @@
     background: #696868;
     border: 1px outset #a4a4a4;
     color: white;
+  }
+
+  menu-item.disabled {
+    font-style: italic;
+    color: #bcbcbc;
   }
 </style>
