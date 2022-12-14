@@ -28,15 +28,12 @@
 
 # WIP TODO:
 
-* delete assets (with undo)
+* context-menu on-fly update callback to filter items (don't show if no items filtered)
+* delete assets (with undo) via context-menu
+* add dropzone to viewport, create sprite at local mouse point
+* drag drop texture from project panel onto viewport to create sprite at mouse point
 * select texture via properties panel
-
-Clean-up:
-* Create separate dropzone for project panel and viewport
-    - enhance with border highlight on dragenter
-    - refactor dropevents
-    - if drop on project, just add to Textures folder
-    - if drop on viewport, add to viewport at local mousepoint
+* rewrite project panel grid with fixed proportions based on resize event
 
 Try:
 * Replace Interface with Type definitions for models, may loosen generic polymorphism
