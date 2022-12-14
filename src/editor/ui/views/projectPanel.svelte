@@ -4,6 +4,7 @@
   import TreeView from "./components/treeView.svelte";
   import ButtonBar, { type ButtonBarItem } from "./components/buttonBar.svelte";
   import { Actions } from "../../actions/index.js";
+  import Events from "../../events/index.js";
 
   const tree = new ProjectTree();
 
@@ -27,7 +28,12 @@
     },
   ];
 
-  const onUpdate = (callback: () => void) => {};
+  const onUpdate = (callback: (items: ButtonBarItem[]) => void) => {
+    Events.selection.project.setSingle.bind(() => {
+      buttons[0].isEnabled = !buttons[0].isEnabled;
+      callback(buttons);
+    });
+  };
 </script>
 
 <project-panel>

@@ -11,11 +11,10 @@
 <script lang="ts">
   export let items: ButtonBarItem[];
   export let size: "small" | "large";
-  export let update: ((callback: () => void) => void) | undefined = undefined;
+  export let update: ((callback: (items: ButtonBarItem[]) => void) => void) | undefined = undefined;
 
-  const onUpdate = () => {
-    console.log("onUpdate");
-    items = [...items];
+  const onUpdate = (updatedItems: ButtonBarItem[]) => {
+    items = [...updatedItems];
   };
 
   update && update(onUpdate);
