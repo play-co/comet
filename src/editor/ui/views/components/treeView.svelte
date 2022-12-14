@@ -1,7 +1,7 @@
 <script lang="ts">
   import { type TreeViewModel, indentationWidth } from "./treeView";
 
-  export let tree: TreeViewModel<any>;
+  export let tree: TreeViewModel;
 
   const { model, dragTarget, isEditing } = tree.store;
 </script>

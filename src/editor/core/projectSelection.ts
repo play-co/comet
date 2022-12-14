@@ -2,40 +2,40 @@ import type { MetaNode } from '../../core/nodes/abstract/metaNode';
 import Events from '../events';
 import { ItemSelection } from './itemSelection';
 
-export class ProjectNodeSelection extends ItemSelection<MetaNode>
+export class ProjectSelection extends ItemSelection<MetaNode>
 {
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public deepContains(node: MetaNode)
     {
         // TODO...
-        debugger;
+        console.log('@!@#!#!@#');
 
         return false;
     }
 
     protected onSetSingle(item: MetaNode): void
     {
-        Events.projectPanel.selection.setSingle.emit(item);
+        Events.selection.project.setSingle.emit(item);
     }
 
     protected onSetMulti(items: MetaNode[]): void
     {
-        Events.projectPanel.selection.setMulti.emit(items);
+        Events.selection.project.setMulti.emit(items);
     }
 
     protected onAdd(item: MetaNode): void
     {
-        Events.projectPanel.selection.add.emit(item);
+        Events.selection.project.add.emit(item);
     }
 
     protected onRemove(item: MetaNode): void
     {
-        Events.projectPanel.selection.remove.emit(item);
+        Events.selection.project.remove.emit(item);
     }
 
     protected onDeselect(): void
     {
-        Events.projectPanel.selection.deselect.emit();
+        Events.selection.project.deselect.emit();
     }
 }

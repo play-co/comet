@@ -21,6 +21,6 @@ export class SelectAllAction extends Action<void, void>
             nodes.add(node);
         });
 
-        app.selection.set([...nodes]);
+        app.selection.hierarchy.set([...nodes]);
     }
 }

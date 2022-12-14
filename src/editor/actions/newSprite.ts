@@ -37,7 +37,7 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
             ...options,
         };
         const app = Application.instance;
-        const selectedNode = app.selection.lastNode;
+        const selectedNode = app.selection.hierarchy.lastNode;
 
         let parentId = app.viewport.rootNode.id;
 
@@ -66,7 +66,7 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
 
         const node = nodes[0] as unknown as SpriteNode;
 
-        app.selection.set(node.asClonableNode());
+        app.selection.hierarchy.set(node.asClonableNode());
 
         return node;
     }

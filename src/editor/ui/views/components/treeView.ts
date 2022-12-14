@@ -38,10 +38,10 @@ export const defaultOptions: TreeViewModelOptions = {
 export const dblClickTimeout = 300;
 export const indentationWidth = 10;
 
-export abstract class TreeViewModel<T, S extends ItemSelection<T>>
+export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSelection<ItemType> = ItemSelection<ItemType>>
 {
-    protected model: WritableStore<TreeItem<T>[]>;
-    protected dragTarget: WritableStore<TreeItem<T> | undefined>;
+    protected model: WritableStore<TreeItem<ItemType>[]>;
+    protected dragTarget: WritableStore<TreeItem<ItemType> | undefined>;
     protected operation: WritableStore<Operation>;
     protected isEditing: WritableStore<boolean>;
 
@@ -51,12 +51,12 @@ export abstract class TreeViewModel<T, S extends ItemSelection<T>>
     protected lastClick: number;
     protected edit?: {
         element: HTMLSpanElement;
-        item: TreeItem<T>;
+        item: TreeItem<ItemType>;
         originalValue: string;
     };
 
     constructor(
-        public readonly selection: S,
+        public readonly selection: SelectionType,
         options: Partial<TreeViewModelOptions> = {},
     )
     {
@@ -65,8 +65,8 @@ export abstract class TreeViewModel<T, S extends ItemSelection<T>>
             ...options,
         };
 
-        this.model = new WritableStore<TreeItem<T>[]>([]);
-        this.dragTarget = new WritableStore<TreeItem<T> | undefined>(undefined);
+        this.model = new WritableStore<TreeItem<ItemType>[]>([]);
+        this.dragTarget = new WritableStore<TreeItem<ItemType> | undefined>(undefined);
         this.operation = new WritableStore(Operation.ReParent);
         this.isEditing = new WritableStore(false);
 
@@ -98,13 +98,13 @@ export abstract class TreeViewModel<T, S extends ItemSelection<T>>
         this.model.value = model;
     };
 
-    protected abstract generateModel(): TreeItem<T>[];
+    protected abstract generateModel(): TreeItem<ItemType>[];
 
-    public abstract getId(obj: T): string;
-    public abstract getLabel(obj: T): string;
-    public abstract getParent(obj: T): T | undefined;
-    public abstract isSiblingOf(obj: T, other: T): boolean;
-    public abstract hasChildren(obj: T): boolean;
+    public abstract getId(obj: ItemType): string;
+    public abstract getLabel(obj: ItemType): string;
+    public abstract getParent(obj: ItemType): ItemType | undefined;
+    public abstract isSiblingOf(obj: ItemType, other: ItemType): boolean;
+    public abstract hasChildren(obj: ItemType): boolean;
 
     protected getSelectedIds()
     {
@@ -118,14 +118,14 @@ export abstract class TreeViewModel<T, S extends ItemSelection<T>>
 
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected onDblClick(e: MouseEvent, item: TreeItem<T>)
+    protected onDblClick(e: MouseEvent, item: TreeItem<ItemType>)
     {
         // for subclasses...
     }
 
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected onEdit(e: MouseEvent, item: TreeItem<T>)
+    protected onEdit(e: MouseEvent, item: TreeItem<ItemType>)
     {
         const element = e.target as HTMLElement;
 
@@ -199,18 +199,18 @@ export abstract class TreeViewModel<T, S extends ItemSelection<T>>
 
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected onEditAccept(value: string, item: TreeItem<T>)
+    protected onEditAccept(value: string, item: TreeItem<ItemType>)
     {
         // for subclasses...
     }
 
-    protected updateModel(fn: (item: TreeItem<T>) => void)
+    protected updateModel(fn: (item: TreeItem<ItemType>) => void)
     {
         this.model.value.forEach(fn);
         this.model.value = [...this.model.value];
     }
 
-    public toggleItemExpanded(e: MouseEvent, item: TreeItem<T>)
+    public toggleItemExpanded(e: MouseEvent, item: TreeItem<ItemType>)
     {
         const { model } = this;
         const index = model.value.indexOf(item);
@@ -238,7 +238,7 @@ export abstract class TreeViewModel<T, S extends ItemSelection<T>>
         model.value = [...model.value];
     }
 
-    protected selectItem(e: MouseEvent, item: TreeItem<T>): boolean
+    protected selectItem(e: MouseEvent, item: TreeItem<ItemType>): boolean
     {
         const { selection, options: { allowMultiSelect } } = this;
         const { data } = item;
@@ -266,19 +266,19 @@ export abstract class TreeViewModel<T, S extends ItemSelection<T>>
 
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected setParent(sourceObj: T, parentObj: T)
+    protected setParent(sourceObj: ItemType, parentObj: ItemType)
     {
         // subclasses...
     }
 
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected reorder(sourceObj: T, targetObj: T)
+    protected reorder(sourceObj: ItemType, targetObj: ItemType)
     {
     // subclasses...
     }
 
-    public onRowMouseDown(event: MouseEvent, item: TreeItem<T>)
+    public onRowMouseDown(event: MouseEvent, item: TreeItem<ItemType>)
     {
         const { selection, operation, dragTarget, options: { canReOrder, canReParent } } = this;
         const existingSelection = this.getSelectedIds();
@@ -349,7 +349,7 @@ export abstract class TreeViewModel<T, S extends ItemSelection<T>>
         }
     }
 
-    public onRowMouseOver(e: MouseEvent, item: TreeItem<T>)
+    public onRowMouseOver(e: MouseEvent, item: TreeItem<ItemType>)
     {
         const { isDragging, operation, dragTarget, selection, options: { canReParent, canReOrder } } = this;
 
@@ -380,12 +380,12 @@ export abstract class TreeViewModel<T, S extends ItemSelection<T>>
         }
     }
 
-    public doesSelectionContainItem(item: TreeItem<T>)
+    public doesSelectionContainItem(item: TreeItem<ItemType>)
     {
         return this.selection.shallowContains(item.data);
     }
 
-    public isItemReParentDragTarget(item: TreeItem<T>, dragTarget?: TreeItem<T>)
+    public isItemReParentDragTarget(item: TreeItem<ItemType>, dragTarget?: TreeItem<ItemType>)
     {
         const { operation, options: { canReParent } } = this;
 
@@ -395,7 +395,7 @@ export abstract class TreeViewModel<T, S extends ItemSelection<T>>
             && operation.value === Operation.ReParent;
     }
 
-    public isItemReOrderDragTarget(item: TreeItem<T>, dragTarget?: TreeItem<T>)
+    public isItemReOrderDragTarget(item: TreeItem<ItemType>, dragTarget?: TreeItem<ItemType>)
     {
         const { operation, options: { canReOrder } } = this;
 

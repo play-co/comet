@@ -91,18 +91,18 @@ export class TransformGizmo extends Container
         Events.$('command.(undo|redo)', this.updateSelection);
         Events.$('datastore.node.remote.(created|removed)', this.updateSelection);
         Events.$('editor.(propertyModified|nudge)', this.updateSelection);
-        Events.$('selection.(setSingle|setMulti|add|remove)', this.updateSelection);
-        Events.selection.deselect.bind(this.onSelectionDeselect);
+        Events.$('selection.hierarchy.(setSingle|setMulti|add|remove)', this.updateSelection);
+        Events.selection.hierarchy.deselect.bind(this.onSelectionDeselect);
     }
 
     get selection()
     {
-        return Application.instance.selection;
+        return Application.instance.selection.hierarchy;
     }
 
     protected updateSelection = () =>
     {
-        const { selection: { isSingle, isMulti, isEmpty, items } } = Application.instance;
+        const { hierarchy: { isSingle, isMulti, isEmpty, items } } = Application.instance.selection;
 
         if (isSingle)
         {
@@ -137,7 +137,7 @@ export class TransformGizmo extends Container
 
     protected updateSingleSelectionNode()
     {
-        const { selection: { items } } = Application.instance;
+        const { hierarchy: { items } } = Application.instance.selection;
 
         this.selectNode(items[0]);
     }

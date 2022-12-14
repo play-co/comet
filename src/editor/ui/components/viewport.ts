@@ -119,7 +119,7 @@ export class EditableViewport
         const isAddKey = isShiftKeyPressed || isMetaKeyPressed;
         const globalX = e.data.global.x;
         const globalY = e.data.global.y;
-        const { selection } = Application.instance;
+        const { hierarchy: selection } = Application.instance.selection;
         const underCursor = this.findNodesAtPoint(globalX, globalY);
         const topNode = underCursor[0];
 
@@ -157,7 +157,7 @@ export class EditableViewport
     {
         const globalX = e.data.global.x;
         const globalY = e.data.global.y;
-        const { selection } = Application.instance;
+        const { hierarchy: selection } = Application.instance.selection;
         const underCursor = this.findNodesAtPoint(globalX, globalY).filter((node) => !selection.deepContains(node));
         const topNode = underCursor[0];
         const isSpacePressed = this.isSpaceKeyDown;
@@ -225,7 +225,7 @@ export class EditableViewport
 
         if (boxSelection.isSelecting)
         {
-            const { selection } = Application.instance;
+            const { hierarchy: selection } = Application.instance.selection;
             const nodes = boxSelection.selectWithinRootNode(this.rootNode);
 
             selection.deselect();
@@ -259,7 +259,7 @@ export class EditableViewport
 
     protected selectWithDrag(selectedNode: ClonableNode, e: InteractionEvent)
     {
-        Application.instance.selection.set(selectedNode);
+        Application.instance.selection.hierarchy.set(selectedNode);
 
         if (this.transformGizmo.config.enableTranslation)
         {

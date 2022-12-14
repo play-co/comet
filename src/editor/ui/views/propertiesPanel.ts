@@ -63,7 +63,7 @@ const gridPanel = new PropertiesPanel('grid', [], GridPanel);
 
 function createController()
 {
-    const { selection } = Application.instance;
+    const { hierarchy: selection } = Application.instance.selection;
 
     const panels = new WritableStore<PropertiesPanel[]>([]);
 
@@ -130,8 +130,8 @@ function createController()
     }
 
     // bind to events
-    Events.$('selection.(add|remove|setSingle|setMulti)|datastore.node.local.cloaked', update);
-    Events.selection.deselect.bind(clear);
+    Events.$('selection.hierarchy.(add|remove|setSingle|setMulti)|datastore.node.local.cloaked', update);
+    Events.selection.hierarchy.deselect.bind(clear);
 
     // start with unselected state
     clear();

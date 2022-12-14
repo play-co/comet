@@ -18,8 +18,9 @@ import { ConvergenceDatastore } from '../sync/convergenceDatastore';
 import { RemoteObjectSync } from '../sync/remoteObjectSync';
 import { EditableViewport } from '../ui/components/viewport';
 import { getUrlParam } from '../util';
+import { HierarchySelection } from './hierarchySelection';
 import { initHistory, writeUndoStack } from './history';
-import { NodeSelection } from './nodeSelection';
+import { ProjectSelection } from './projectSelection';
 import UndoStack from './undoStack';
 
 export type AppOptions = {};
@@ -45,7 +46,11 @@ export class Application
     public viewport: EditableViewport;
     public storageProvider: LocalStorageProvider;
     public project: ProjectNode;
-    public selection: NodeSelection;
+    public selection: {
+        hierarchy: HierarchySelection;
+        project: ProjectSelection;
+    };
+
     public gridSettings: GridSettings;
     public layout?: GoldenLayout;
 
@@ -79,7 +84,10 @@ export class Application
 
         this.storageProvider = new LocalStorageProvider();
         this.project = new ProjectNode();
-        this.selection = new NodeSelection();
+        this.selection = {
+            hierarchy: new HierarchySelection(),
+            project: new ProjectSelection(),
+        };
         this.nodeUpdater = new RemoteObjectSync(datastore);
         this.viewport = new EditableViewport();
         this.undoStack = new UndoStack();
@@ -277,7 +285,7 @@ export class Application
 
     public edit(node: DisplayObjectNode)
     {
-        this.selection.deselect();
+        this.selection.hierarchy.deselect();
         this.viewport.setRoot(node);
         this.focusPanel('hierarchy');
     }

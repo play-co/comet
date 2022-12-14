@@ -17,7 +17,7 @@ export class AddSelectionCommand
 
         const node = this.getInstance<ClonableNode>(nodeId);
 
-        app.selection.add(node);
+        app.selection.hierarchy.add(node);
     }
 
     public undo(): void
@@ -26,6 +26,6 @@ export class AddSelectionCommand
 
         const node = this.getInstance<ClonableNode>(nodeId);
 
-        app.selection.remove(node);
+        app.selection.hierarchy.remove(node);
     }
 }

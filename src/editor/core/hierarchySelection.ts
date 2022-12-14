@@ -3,7 +3,7 @@ import type { ModelBase } from '../../core/model/model';
 import Events from '../events';
 import { ItemSelection } from './itemSelection';
 
-export class NodeSelection extends ItemSelection<ClonableNode>
+export class HierarchySelection extends ItemSelection<ClonableNode>
 {
     public deepContains(node: ClonableNode)
     {
@@ -22,26 +22,26 @@ export class NodeSelection extends ItemSelection<ClonableNode>
 
     protected onSetSingle(item: ClonableNode<ModelBase, object>): void
     {
-        Events.selection.setSingle.emit(item);
+        Events.selection.hierarchy.setSingle.emit(item);
     }
 
     protected onSetMulti(items: ClonableNode<ModelBase, object>[]): void
     {
-        Events.selection.setMulti.emit(items);
+        Events.selection.hierarchy.setMulti.emit(items);
     }
 
     protected onAdd(item: ClonableNode<ModelBase, object>): void
     {
-        Events.selection.add.emit(item);
+        Events.selection.hierarchy.add.emit(item);
     }
 
     protected onRemove(item: ClonableNode<ModelBase, object>): void
     {
-        Events.selection.remove.emit(item);
+        Events.selection.hierarchy.remove.emit(item);
     }
 
     protected onDeselect(): void
     {
-        Events.selection.deselect.emit();
+        Events.selection.hierarchy.deselect.emit();
     }
 }

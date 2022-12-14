@@ -114,7 +114,7 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
     {
         const { gizmo, matrix } = this;
 
-        if (Application.instance.selection.length === 0)
+        if (Application.instance.selection.hierarchy.length === 0)
         {
             return Rectangle.EMPTY;
         }
@@ -139,7 +139,7 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
     {
         const { border } = this;
 
-        Application.instance.selection.forEach((node) =>
+        Application.instance.selection.hierarchy.forEach((node) =>
         {
             if (node instanceof DisplayObjectNode)
             {

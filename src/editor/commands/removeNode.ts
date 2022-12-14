@@ -45,13 +45,13 @@ export class RemoveNodeCommand
 
         node.cloak();
 
-        if (node instanceof DisplayObjectNode && app.selection.deepContains(node.cast()))
+        if (node instanceof DisplayObjectNode && app.selection.hierarchy.deepContains(node.cast()))
         {
             cache.wasSelected = true;
 
-            if (app.selection.shallowContains(node.cast()))
+            if (app.selection.hierarchy.shallowContains(node.cast()))
             {
-                app.selection.remove(node.cast());
+                app.selection.hierarchy.remove(node.cast());
             }
         }
 
@@ -76,7 +76,7 @@ export class RemoveNodeCommand
 
         if (node instanceof DisplayObjectNode && cache.wasSelected)
         {
-            app.selection.set(node.asClonableNode());
+            app.selection.hierarchy.set(node.asClonableNode());
         }
 
         Events.datastore.node.local.uncloaked.emit(node.cast());

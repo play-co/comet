@@ -3,29 +3,29 @@ import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObje
 import { SetNodeIndexCommand } from '../../commands/setNodeIndex';
 import { SetParentCommand } from '../../commands/setParent';
 import { Application } from '../../core/application';
-import type { NodeSelection } from '../../core/nodeSelection';
+import type { HierarchySelection } from '../../core/hierarchySelection';
 import Events from '../../events';
 import type { TreeItem } from './components/treeView';
 import { Icons } from './icons';
 import { NodeTreeModel } from './nodeTreeModel';
 
-export class HierarchyTree extends NodeTreeModel<NodeSelection>
+export class HierarchyTree extends NodeTreeModel<HierarchySelection>
 {
     public root: ClonableNode;
 
     constructor()
     {
-        super(Application.instance.selection);
+        super(Application.instance.selection.hierarchy);
 
         const { viewport } = Application.instance;
 
         this.root = viewport.rootNode.cast();
 
         // bind to global events
-        Events.$('selection.(add|remove|setSingle|setMulti)', this.onSelectionChanged);
+        Events.$('selection.hierarchy.(add|remove|setSingle|setMulti)', this.onSelectionChanged);
         Events.$('datastore.node|command', this.rebuildModel);
         Events.project.ready.bind(this.rebuildModel);
-        Events.selection.deselect.bind(this.onDeselect);
+        Events.selection.hierarchy.deselect.bind(this.onDeselect);
         Events.viewport.rootChanged.bind(this.onViewportRootChanged);
     }
 

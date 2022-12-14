@@ -14,6 +14,6 @@ export class DeselectAction extends Action<void, void>
     {
         const app = Application.instance;
 
-        app.selection.deselect();
+        app.selection.hierarchy.deselect();
     }
 }

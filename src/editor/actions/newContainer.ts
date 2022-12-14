@@ -25,7 +25,7 @@ export class NewContainerAction extends Action<NewContainerOptions, EmptyNode>
     }): EmptyNode
     {
         const app = Application.instance;
-        const selectedNode = app.selection.lastNode;
+        const selectedNode = app.selection.hierarchy.lastNode;
 
         let parentId = app.viewport.rootNode.id;
 
@@ -48,7 +48,7 @@ export class NewContainerAction extends Action<NewContainerOptions, EmptyNode>
 
         const node = nodes[0] as unknown as EmptyNode;
 
-        app.selection.set(node.asClonableNode());
+        app.selection.hierarchy.set(node.asClonableNode());
 
         return node;
     }

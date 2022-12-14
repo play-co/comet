@@ -81,12 +81,12 @@ export abstract class Command<ParamsType extends {} = {}, ReturnType = void, Cac
 
     public storeSelection()
     {
-        this.selectedNodes = this.app.selection.items.map((node) => node.id);
+        this.selectedNodes = this.app.selection.hierarchy.items.map((node) => node.id);
     }
 
     public restoreSelection()
     {
-        this.app.selection.set(this.selectedNodes.map((nodeId) => this.getInstance(nodeId)));
+        this.app.selection.hierarchy.set(this.selectedNodes.map((nodeId) => this.getInstance(nodeId)));
     }
 
     public toJSON(): CommandSchema

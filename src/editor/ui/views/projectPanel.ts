@@ -2,25 +2,25 @@ import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObje
 import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
 import type { FolderNode } from '../../../core/nodes/concrete/meta/folderNode';
 import { Application } from '../../core/application';
-import { ProjectNodeSelection } from '../../core/projectNodeSelection';
+import type { ProjectSelection } from '../../core/projectSelection';
 import Events from '../../events';
 import type { TreeItem } from './components/treeView';
 import { Icons } from './icons';
 import { NodeTreeModel } from './nodeTreeModel';
 
-export class ProjectTree extends NodeTreeModel<ProjectNodeSelection>
+export class ProjectTree extends NodeTreeModel<ProjectSelection>
 {
     constructor()
     {
-        super(new ProjectNodeSelection(), {
+        super(Application.instance.selection.project, {
             allowMultiSelect: false,
         });
 
         // bind to global events
-        Events.$('selection.(add|remove|setSingle|setMulti)', this.onSelectionChanged);
+        Events.$('selection.project.(add|remove|setSingle|setMulti)', this.onSelectionChanged);
         Events.$('datastore.node|command', this.rebuildModel);
         Events.project.ready.bind(this.rebuildModel);
-        Events.selection.deselect.bind(this.onDeselect);
+        Events.selection.hierarchy.deselect.bind(this.onDeselect);
     }
 
     protected generateModel()

@@ -15,7 +15,7 @@ export class NudgeAction extends Action<void, void>
 
     protected exec(_options: void, event: KeyboardEvent)
     {
-        const { selection } = Application.instance;
+        const { hierarchy: selection } = Application.instance.selection;
 
         if (!selection.isEmpty)
         {
