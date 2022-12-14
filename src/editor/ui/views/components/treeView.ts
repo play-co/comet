@@ -38,12 +38,14 @@ export const defaultOptions: TreeViewModelOptions = {
 export const dblClickTimeout = 300;
 export const indentationWidth = 10;
 
-export abstract class TreeViewModel<T>
+export abstract class TreeViewModel<T, S extends ItemSelection<T>>
 {
     protected model: WritableStore<TreeItem<T>[]>;
     protected dragTarget: WritableStore<TreeItem<T> | undefined>;
     protected operation: WritableStore<Operation>;
     protected isEditing: WritableStore<boolean>;
+
+    protected options: TreeViewModelOptions = { ...defaultOptions };
 
     protected isDragging: boolean;
     protected lastClick: number;
@@ -54,10 +56,15 @@ export abstract class TreeViewModel<T>
     };
 
     constructor(
-        public readonly selection: ItemSelection<T>,
-        public readonly options: TreeViewModelOptions = { ...defaultOptions },
+        public readonly selection: S,
+        options: Partial<TreeViewModelOptions> = {},
     )
     {
+        this.options = {
+            ...this.options,
+            ...options,
+        };
+
         this.model = new WritableStore<TreeItem<T>[]>([]);
         this.dragTarget = new WritableStore<TreeItem<T> | undefined>(undefined);
         this.operation = new WritableStore(Operation.ReParent);
@@ -65,6 +72,8 @@ export abstract class TreeViewModel<T>
 
         this.isDragging = false;
         this.lastClick = -1;
+
+        this.rebuildModel();
     }
 
     public get store()
@@ -255,8 +264,19 @@ export abstract class TreeViewModel<T>
         return true;
     }
 
-    protected abstract setParent(sourceObj: T, parentObj: T): void;
-    protected abstract reorder(sourceObj: T, targetObj: T): void;
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected setParent(sourceObj: T, parentObj: T)
+    {
+        // subclasses...
+    }
+
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected reorder(sourceObj: T, targetObj: T)
+    {
+    // subclasses...
+    }
 
     public onRowMouseDown(event: MouseEvent, item: TreeItem<T>)
     {

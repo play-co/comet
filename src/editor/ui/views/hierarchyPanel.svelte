@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { createModel } from "./hierarchyPanel.js";
+  import { HierarchyTree } from "./hierarchyPanel.js";
   import Panel from "./components/panel.svelte";
   import TreeView from "./components/treeView.svelte";
   import ButtonBar, { type ButtonBarItem } from "./components/buttonBar.svelte";
   import { Actions } from "../../actions/index.js";
 
-  const tree = createModel();
+  const tree = new HierarchyTree();
 
   const buttons: ButtonBarItem[] = [
     {

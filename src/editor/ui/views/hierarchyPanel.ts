@@ -1,28 +1,39 @@
+import type { ClonableNode } from '../../../core/nodes/abstract/clonableNode';
 import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
 import { SetNodeIndexCommand } from '../../commands/setNodeIndex';
 import { SetParentCommand } from '../../commands/setParent';
 import { Application } from '../../core/application';
-import type { ItemSelection } from '../../core/itemSelection';
 import type { NodeSelection } from '../../core/nodeSelection';
 import Events from '../../events';
-import { type TreeItem, TreeViewModel } from './components/treeView';
+import type { TreeItem } from './components/treeView';
 import { Icons } from './icons';
+import { NodeTreeModel } from './nodeTreeModel';
 
-class DisplayNodeTree extends TreeViewModel<DisplayObjectNode>
+export class HierarchyTree extends NodeTreeModel<NodeSelection>
 {
-    public root: DisplayObjectNode;
+    public root: ClonableNode;
 
-    constructor(root: DisplayObjectNode, selection: NodeSelection)
+    constructor()
     {
-        super(selection as unknown as ItemSelection<DisplayObjectNode>);
-        this.root = root;
+        super(Application.instance.selection);
+
+        const { viewport } = Application.instance;
+
+        this.root = viewport.rootNode.cast();
+
+        // bind to global events
+        Events.$('selection.(add|remove|setSingle|setMulti)', this.onSelectionChanged);
+        Events.$('datastore.node|command', this.rebuildModel);
+        Events.project.ready.bind(this.rebuildModel);
+        Events.selection.deselect.bind(this.onDeselect);
+        Events.viewport.rootChanged.bind(this.onViewportRootChanged);
     }
 
     protected generateModel()
     {
         const { selection } = this;
 
-        return this.root.walk<DisplayObjectNode, { model: TreeItem<DisplayObjectNode>[] }>(
+        return this.root.walk<ClonableNode, { model: TreeItem<ClonableNode>[] }>(
             (node, options) =>
             {
                 if (node.isCloaked)
@@ -32,7 +43,7 @@ class DisplayNodeTree extends TreeViewModel<DisplayObjectNode>
                     return;
                 }
 
-                const item: TreeItem<DisplayObjectNode> = {
+                const item: TreeItem<ClonableNode> = {
                     id: node.id,
                     depth: options.depth,
                     isSelected: selection.shallowContains(node.cast()),
@@ -52,37 +63,9 @@ class DisplayNodeTree extends TreeViewModel<DisplayObjectNode>
         ).model;
     }
 
-    public getLabel(obj: DisplayObjectNode)
-    {
-        return obj.model.getValue<string>('name');
-    }
-
-    public getId(obj: DisplayObjectNode)
-    {
-        return obj.id;
-    }
-
-    public getParent(obj: DisplayObjectNode)
-    {
-        return obj.parent as (DisplayObjectNode | undefined);
-    }
-
-    public isSiblingOf(
-        obj: DisplayObjectNode,
-        other: DisplayObjectNode,
-    )
-    {
-        return obj.isSiblingOf(other);
-    }
-
-    public hasChildren(obj: DisplayObjectNode)
-    {
-        return obj.hasChildren;
-    }
-
     protected setParent(
-        sourceObj: DisplayObjectNode,
-        parentObj: DisplayObjectNode,
+        sourceObj: ClonableNode,
+        parentObj: ClonableNode,
     )
     {
         const nodeId = sourceObj.id;
@@ -101,13 +84,13 @@ class DisplayNodeTree extends TreeViewModel<DisplayObjectNode>
     }
 
     protected reorder(
-        sourceObj: DisplayObjectNode,
-        targetObj: DisplayObjectNode,
+        sourceObj: ClonableNode,
+        targetObj: ClonableNode,
     )
     {
         const parentNode = targetObj === sourceObj.parent
             ? targetObj
-            : (targetObj.parent as DisplayObjectNode);
+            : (targetObj.parent as ClonableNode);
 
         const index = targetObj === sourceObj.parent
             ? 0
@@ -127,45 +110,8 @@ class DisplayNodeTree extends TreeViewModel<DisplayObjectNode>
 
     public onViewportRootChanged = (node: DisplayObjectNode) =>
     {
-        this.root = node;
+        this.root = node.cast();
         this.rebuildModel();
     };
-
-    public onSelectionChanged = () =>
-    {
-        this.updateModel((item) =>
-        {
-            item.isSelected = this.selection.shallowContains(item.data);
-        });
-    };
-
-    public onDeselect = () =>
-    {
-        this.updateModel((item) =>
-        {
-            item.isSelected = false;
-        });
-    };
 }
-
-function createModel()
-{
-    const { viewport } = Application.instance;
-
-    const tree = new DisplayNodeTree(viewport.rootNode, Application.instance.selection);
-
-    // bind to global events
-    Events.$('selection.(add|remove|setSingle|setMulti)', tree.onSelectionChanged);
-    Events.$('datastore.node|command', tree.rebuildModel);
-    Events.project.ready.bind(tree.rebuildModel);
-    Events.selection.deselect.bind(tree.onDeselect);
-    Events.viewport.rootChanged.bind(tree.onViewportRootChanged);
-
-    // init current model
-    tree.rebuildModel();
-
-    return tree;
-}
-
-export { createModel };
 
