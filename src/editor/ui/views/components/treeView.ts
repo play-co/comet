@@ -146,9 +146,9 @@ export abstract class TreeViewModel<T>
     protected abstract setParent(sourceObj: T, parentObj: T): void;
     protected abstract reorder(sourceObj: T, targetObj: T): void;
 
-    public onRowMouseDown(e: MouseEvent, item: TreeItem<T>)
+    public onRowMouseDown(event: MouseEvent, item: TreeItem<T>)
     {
-        if (e.button !== 0 || this.selectItem(e, item) === false)
+        if (event.button !== 0 || this.selectItem(event, item) === false)
         {
             // item was removed from selection, abort drag
             return;
@@ -161,7 +161,7 @@ export abstract class TreeViewModel<T>
 
         if (canReOrder || canReParent)
         {
-            mouseDrag(e).then(() =>
+            mouseDrag({ event }).then(() =>
             {
                 const dragTargetValue = dragTarget.value;
 
@@ -203,7 +203,7 @@ export abstract class TreeViewModel<T>
 
                 if (this.lastClick > -1 && (Date.now() - this.lastClick) < 300)
                 {
-                    this.onDblClick(e, item);
+                    this.onDblClick(event, item);
                 }
 
                 this.lastClick = Date.now();

@@ -6,12 +6,7 @@
   import { Actions } from "../../../../actions";
   import Events from "../../../../events";
   import { mouseDrag } from "../../../components/dragger";
-  import {
-    isAcceptKey,
-    isArrowKey,
-    isDeleteKey,
-    isNumeric,
-  } from "../../../components/filters";
+  import { isAcceptKey, isArrowKey, isDeleteKey, isNumeric } from "../../../components/filters";
 
   export let color: string;
   // export declare function createEventDispatcher<EventMap extends {} = any>()
@@ -66,27 +61,26 @@
     dispatch("close");
   }
 
-  const onMouseDown = (e: MouseEvent) => {
-    const startLeft = left;
-    const startTop = top;
+  const onMouseDown = (event: MouseEvent) => {
+    event.stopPropagation();
 
-    e.stopPropagation();
-
-    mouseDrag(e, (deltaX, deltaY) => {
-      left = startLeft + deltaX;
-      top = startTop + deltaY;
-    });
+    mouseDrag(
+      {
+        startX: left,
+        startY: top,
+        event,
+      },
+      ({ currentX, currentY }) => {
+        left = currentX;
+        top = currentY;
+      }
+    );
   };
 
   const onMouseUp = (e: MouseEvent) => {
     const bounds = mouseArea.getBoundingClientRect();
     const { clientX, clientY } = e;
-    const rect = new Rectangle(
-      bounds.left,
-      bounds.top,
-      bounds.width,
-      bounds.height
-    );
+    const rect = new Rectangle(bounds.left, bounds.top, bounds.width, bounds.height);
 
     if (rect.contains(clientX, clientY)) {
       dispatch("accept", picker.hex8);
@@ -146,20 +140,17 @@
   style={`left:${left}px;top:${top}px`}
   on:keydown={onKeyUp}
   on:mouseover={onMouseOver}
-  on:mouseout={onMouseOut}>
+  on:mouseout={onMouseOut}
+>
   <div bind:this={titleBar} class="titlebar">
     <button class="close" on:click={onCloseClick}>x</button>
   </div>
   <div class="picker">
-    <toolcool-color-picker
-      bind:this={picker}
-      color="#e76ff1"
-      button-padding="1px" />
+    <toolcool-color-picker bind:this={picker} color="#e76ff1" button-padding="1px" />
   </div>
-  <button
-    bind:this={colorBox}
-    class="color"
-    on:mousedown={(e) => e.stopPropagation()}>&nbsp;</button>
+  <button bind:this={colorBox} class="color" on:mousedown={(e) => e.stopPropagation()}
+    >&nbsp;</button
+  >
   <div bind:this={mouseArea} class="mousearea" />
 </color-picker-dialog>
 

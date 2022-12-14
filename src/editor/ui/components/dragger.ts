@@ -1,21 +1,36 @@
+export interface MouseDragInitialiser
+{
+    event: MouseEvent;
+    startX?: number;
+    startY?: number;
+}
+
+export interface MouseDragUpdate
+{
+    currentX: number;
+    currentY: number;
+    deltaX: number;
+    deltaY: number;
+}
+
 export function mouseDrag(
-    e: MouseEvent,
-    onMove?: (deltaX: number, deltaY: number, startX: number, startY: number) => void,
-): Promise<{deltaX: number; deltaY: number}>
+    initialiser: MouseDragInitialiser,
+    onMove?: (update: MouseDragUpdate) => void,
+): Promise<MouseDragUpdate>
 {
     return new Promise((resolve) =>
     {
-        const startX = e.clientX;
-        const startY = e.clientY;
+        const { startX, startY, event } = initialiser;
+        const { clientX: startClientX, clientY: startClientY } = event;
 
         const onMouseMove = (e: MouseEvent) =>
         {
-            const deltaX = e.clientX - startX;
-            const deltaY = e.clientY - startY;
+            const deltaX = e.clientX - startClientX;
+            const deltaY = e.clientY - startClientY;
 
             if (onMove)
             {
-                onMove(deltaX, deltaY, startX, startY);
+                onMove({ currentX: (startX ?? 0) + deltaX, currentY: (startY ?? 0) + deltaY, deltaX, deltaY });
             }
         };
 
@@ -24,10 +39,10 @@ export function mouseDrag(
             window.removeEventListener('mouseup', onMouseUp);
             window.removeEventListener('mousemove', onMouseMove);
 
-            const deltaX = e.clientX - startX;
-            const deltaY = e.clientY - startY;
+            const deltaX = e.clientX - startClientX;
+            const deltaY = e.clientY - startClientY;
 
-            resolve({ deltaX, deltaY });
+            resolve({ currentX: (startX ?? 0) + deltaX, currentY: (startY ?? 0) + deltaY, deltaX, deltaY });
         };
 
         window.addEventListener('mousemove', onMouseMove);

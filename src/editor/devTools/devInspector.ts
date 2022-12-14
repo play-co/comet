@@ -98,19 +98,21 @@ export abstract class DevInspector<T extends Record<string, any> >
             this.updateExpandedState();
         }
 
-        container.onmousedown = (e: MouseEvent) =>
+        container.onmousedown = (event: MouseEvent) =>
         {
-            const startX = container.offsetLeft;
-            const startY = container.offsetTop;
-
             this.zIndex++;
 
             container.style.zIndex = `${this.zIndex}`;
 
-            mouseDrag(e, (deltaX: number, deltaY: number) =>
+            mouseDrag({
+                startX: container.offsetLeft,
+                startY: container.offsetTop,
+                event,
+            },
+            ({ currentX, currentY }) =>
             {
-                container.style.left = `${startX + deltaX}px`;
-                container.style.top = `${startY + deltaY}px`;
+                container.style.left = `${currentX}px`;
+                container.style.top = `${currentY}px`;
             }).then(() =>
             {
                 this.storeState();
@@ -153,16 +155,20 @@ export abstract class DevInspector<T extends Record<string, any> >
             this.setScrollTop(st);
         };
 
-        scrollVBox.onmousedown = (e) =>
+        scrollVBox.onmousedown = (event: MouseEvent) =>
         {
             const startY = parseFloat(scrollVBox.style.top);
             const h = scrollVTrack.offsetHeight - scrollBoxThumbSize;
 
-            e.stopPropagation();
+            event.stopPropagation();
 
-            mouseDrag(e, (_deltaX: number, deltaY: number) =>
+            mouseDrag({
+                startY,
+                event,
+            },
+            ({ currentY }) =>
             {
-                const top = Math.max(0, Math.min(startY + deltaY, h));
+                const top = Math.max(0, Math.min(currentY, h));
                 const t = top / h;
 
                 this.setScrollTop(Math.round(this.table.rows.length * t));
