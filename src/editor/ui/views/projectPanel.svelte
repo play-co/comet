@@ -5,32 +5,44 @@
   import ButtonBar, { type ButtonBarItem } from "./components/buttonBar.svelte";
   import { Actions } from "../../actions/index.js";
   import Events from "../../events/index.js";
+  import { Application } from "../../core/application.js";
+  import type { FolderNode } from "../../../core/nodes/concrete/meta/folderNode.js";
 
   const tree = new ProjectTree();
 
-  const buttons: ButtonBarItem[] = [
-    {
-      id: "newFolder",
-      label: "New Folder",
-      icon: "/assets/folder.ico",
-      isEnabled: false,
-      onClick: () => {
-        console.log("!");
-      },
+  const newFolderButton: ButtonBarItem = {
+    id: "newFolder",
+    label: "New Folder",
+    icon: "/assets/folder.ico",
+    isEnabled: false,
+    onClick: () => {
+      console.log("!");
     },
-    {
-      id: "newScene",
-      label: "New Scene",
-      icon: "/assets/scene.ico",
-      onClick: () => {
-        Actions.newScene.dispatch();
-      },
-    },
-  ];
+  };
 
-  const onUpdate = (callback: (items: ButtonBarItem[]) => void) => {
+  const newSceneButton: ButtonBarItem = {
+    id: "newScene",
+    label: "New Scene",
+    icon: "/assets/scene.ico",
+    isEnabled: false,
+    onClick: () => {
+      Actions.newScene.dispatch();
+    },
+  };
+
+  const buttons: ButtonBarItem[] = [newFolderButton, newSceneButton];
+
+  const onButtonUpdater = (callback: (items: ButtonBarItem[]) => void) => {
+    const { project: selection } = Application.instance.selection;
+
     Events.selection.project.setSingle.bind(() => {
-      buttons[0].isEnabled = !buttons[0].isEnabled;
+      const node = selection.items[0];
+      const nodeType = node.nodeType();
+      const isFolder = nodeType === "Folder";
+
+      newFolderButton.isEnabled = isFolder;
+      newSceneButton.isEnabled = isFolder && node.cast<FolderNode>().isRootFolder("Scenes");
+
       callback(buttons);
     });
   };
@@ -40,7 +52,7 @@
   <Panel>
     <div class="container">
       <div class="tree">
-        <ButtonBar size="small" items={buttons} update={onUpdate} />
+        <ButtonBar size="small" items={buttons} update={onButtonUpdater} />
         <TreeView {tree} />
       </div>
       <div class="content">content</div>
