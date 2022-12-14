@@ -63,4 +63,9 @@ export class FolderNode<M extends ClonableNodeModel = ClonableNodeModel> extends
             direction: 'up',
         }).node;
     }
+
+    public isWithinRootFolder(name: ProjectFolderName)
+    {
+        return this.getRootFolder().model.getValue('name') === name;
+    }
 }

@@ -3,6 +3,7 @@ import type { GoldenLayout } from 'golden-layout';
 import { enableLog } from '../../core/log';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObjectNode';
+import type { FolderNode } from '../../core/nodes/concrete/meta/folderNode';
 import { ProjectNode } from '../../core/nodes/concrete/meta/projectNode';
 import { clearInstances, getInstance } from '../../core/nodes/instances';
 import { Actions } from '../actions';
@@ -204,25 +205,6 @@ export class Application
             event.preventDefault();
             Events.editor.contextMenuOpen.emit(event);
         });
-
-        // dropped files
-        Events.file.local.dropped.bind((files: FileList) =>
-        {
-            const file = files[0];
-
-            const { promise } = new CreateTextureAssetCommand({ file }).run();
-
-            promise.then((texture) =>
-            {
-                Actions.newSprite.dispatch({
-                    addToSelected: false,
-                    model: {
-                        textureAssetId: texture.id,
-                        tint: 0xffffff,
-                    },
-                });
-            });
-        });
     }
 
     protected initDevInspectors()
@@ -288,5 +270,35 @@ export class Application
         this.selection.hierarchy.deselect();
         this.viewport.setRoot(node);
         this.focusPanel('hierarchy');
+    }
+
+    public importLocalTextures(files: FileList, createSprite = true)
+    {
+        const { project: selection } = this.selection;
+        const file = files[0];
+
+        let folderParentId: string | undefined;
+
+        if (selection.hasSelection
+            && selection.firstNode.nodeType() === 'Folder'
+            && selection.firstNode.cast<FolderNode>().isWithinRootFolder('Textures'))
+        {
+            folderParentId = selection.firstNode.id;
+        }
+        const { promise } = new CreateTextureAssetCommand({ folderParentId, file }).run();
+
+        promise.then((texture) =>
+        {
+            if (createSprite)
+            {
+                Actions.newSprite.dispatch({
+                    addToSelected: false,
+                    model: {
+                        textureAssetId: texture.id,
+                        tint: 0xffffff,
+                    },
+                });
+            }
+        });
     }
 }

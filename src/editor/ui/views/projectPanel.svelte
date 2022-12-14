@@ -7,6 +7,24 @@
   import Events from "../../events/index.js";
   import { Application } from "../../core/application.js";
   import type { FolderNode } from "../../../core/nodes/concrete/meta/folderNode.js";
+  import { onMount } from "svelte";
+  import { DropZone } from "../components/dropzone";
+
+  let container: HTMLElement;
+  let isDragOver = false;
+
+  onMount(() => {
+    new DropZone(container)
+      .on("enter", () => {
+        isDragOver = true;
+      })
+      .on("leave", () => {
+        isDragOver = false;
+      })
+      .on("drop", (files: FileList) => {
+        Application.instance.importLocalTextures(files, false);
+      });
+  });
 
   const tree = new ProjectTree();
 
@@ -48,9 +66,9 @@
   };
 </script>
 
-<project-panel>
+<project-panel class:isDragOver>
   <Panel>
-    <div class="container">
+    <div class="container" bind:this={container}>
       <div class="tree">
         <ButtonBar size="small" items={buttons} update={onButtonUpdater} />
         <TreeView {tree} />
@@ -64,6 +82,12 @@
   project-panel {
     width: 100%;
     height: 100%;
+    display: block;
+    border: 1px solid transparent;
+  }
+
+  project-panel.isDragOver {
+    border: 1px solid cyan;
   }
 
   .container {

@@ -29,6 +29,7 @@
 # WIP TODO:
 
 * delete assets (with undo)
+* select texture via properties panel
 
 Clean-up:
 * Create separate dropzone for project panel and viewport
