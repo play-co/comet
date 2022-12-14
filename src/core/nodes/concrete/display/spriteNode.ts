@@ -2,7 +2,7 @@ import { Graphics, Sprite, Texture } from 'pixi.js';
 
 import { Application } from '../../../../editor/core/application';
 import { ModelSchema } from '../../../model/schema';
-import { delay } from '../../../util';
+// import { delay } from '../../../util';
 import type { TextureAssetNode } from '../meta/assets/textureAssetNode';
 import { type ContainerModel, ContainerNode, containerSchema } from './containerNode';
 
@@ -87,10 +87,10 @@ export class SpriteNode<M extends SpriteModel = SpriteModel, V extends Sprite = 
 
                 textureAsset.getResource().then(() =>
                 {
-                    delay(2000).then(() =>
-                    {
-                        this.setTexture(textureAsset);
-                    });
+                    // delay(2000).then(() =>
+                    // {
+                    this.setTexture(textureAsset);
+                    // });
                 });
             }
         }
