@@ -28,6 +28,8 @@
 
 # WIP TODO:
 
+* delete assets (with undo)
+
 Clean-up:
 * Create separate dropzone for project panel and viewport
     - enhance with border highlight on dragenter
