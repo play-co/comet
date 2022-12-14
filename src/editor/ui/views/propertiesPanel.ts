@@ -4,10 +4,10 @@ import type { ClonableNode } from '../../../core';
 import type { PropertyCategory } from '../../../core/model/schema';
 import { Application } from '../../core/application';
 import Events from '../../events';
-import DisplayPanel from './components/propertyPanels/displayPanel.svelte';
-import GridPanel from './components/propertyPanels/gridPanel.svelte';
-import ProjectPanel from './components/propertyPanels/projectPanel.svelte';
-import TransformPanel from './components/propertyPanels/transformPanel.svelte';
+import DisplayPanel from './components/propertyPanels/displayProperties.svelte';
+import GridPanel from './components/propertyPanels/gridProperties.svelte';
+import ProjectPanel from './components/propertyPanels/projectProperties.svelte';
+import TransformPanel from './components/propertyPanels/transformProperties.svelte';
 import { WritableStore } from './store';
 
 type PanelCategory = PropertyCategory | 'project' | 'grid';

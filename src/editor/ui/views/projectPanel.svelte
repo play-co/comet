@@ -79,6 +79,7 @@
     height: 100%;
     display: block;
     border: 1px solid transparent;
+    transition: border 250ms ease-in-out;
   }
 
   project-panel.isDragOver {

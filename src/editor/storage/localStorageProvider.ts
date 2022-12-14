@@ -12,44 +12,18 @@ export class LocalStorageProvider extends StorageProvider
 
     protected localStorageKey(key: string)
     {
-        return `${storageKeyPrefix}:${key}`;
-    }
-
-    protected newRandomId()
-    {
-        const { idKey } = this;
-        const idStr = localStorage.getItem(idKey);
-
-        if (idStr)
-        {
-            const idNum = parseFloat(idStr) + 1;
-            const id = `${idNum}`;
-
-            localStorage.setItem(idKey, id);
-
-            return id;
-        }
-
-        throw new Error('Could not create new localStorage id');
+        return `${storageKeyPrefix}${key}`;
     }
 
     public init(): Promise<void>
     {
-        const key = this.localStorageKey('id');
-
-        if (!localStorage.getItem(key))
-        {
-            localStorage.setItem(key, '0');
-        }
-
         return Promise.resolve();
     }
 
     public async upload(blob: Blob)
     {
         const base64 = await blobToBas64(blob);
-        // const id = this.newRandomId();
-        const id = 'image';
+        const id = this.localStorageKey(String(Math.random()));
 
         localStorage.setItem(this.localStorageKey(id), base64);
 

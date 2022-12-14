@@ -113,10 +113,12 @@ export function loadImage(src: string): Promise<HTMLImageElement>
         const img = new Image();
 
         img.src = src;
+
         img.onload = () =>
         {
             resolve(img);
         };
+
         img.onerror = reject;
     });
 }

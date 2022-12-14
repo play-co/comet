@@ -98,12 +98,10 @@
 
 <style>
   popup-menu {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
-    background: #666;
-    color: white;
-    z-index: 1000;
+    background: #454343;
     display: flex;
     flex-direction: column;
     white-space: nowrap;
@@ -121,11 +119,13 @@
     padding: 0 10px;
     font-size: 12px;
     cursor: default;
+    color: #d3d3d3;
   }
 
   menu-item:hover,
   menu-item.selected {
-    background: #8f8f8f;
-    border: 1px solid #828282;
+    background: #696868;
+    border: 1px outset #a4a4a4;
+    color: white;
   }
 </style>

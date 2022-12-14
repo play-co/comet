@@ -1,9 +1,8 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
   import { Application } from "../../core/application";
-  import Events from "../../events";
   import { Menu } from "./components/menu";
-  import PopupMenu from "./components/popupMenu.svelte";
+  import ContextMenu from "./components/contextMenu.svelte";
 
   let container: HTMLDivElement;
 
@@ -21,31 +20,17 @@
     { label: "Item 3" },
   ]);
 
-  let event: MouseEvent | undefined;
-
-  const onContextMenuShow = (e: MouseEvent) => {
-    event = e;
-  };
-
-  const onContextMenuHide = () => {
-    event = undefined;
-  };
-
   onMount(() => {
     Application.instance.viewport.mount(container);
-    Events.editor.contextMenuOpen.bind(onContextMenuShow);
-    Events.editor.contextMenuClose.bind(onContextMenuHide);
   });
 
   onDestroy(() => {
     Application.instance.viewport.unmount(container);
-    Events.editor.contextMenuOpen.unbind(onContextMenuShow);
-    Events.editor.contextMenuClose.unbind(onContextMenuHide);
   });
 </script>
 
 <view-port bind:this={container}>
-  <PopupMenu {menu} {event} target={container} on:select={(e) => console.log("!!!", e.detail)} />
+  <ContextMenu {menu} {container} on:select={(e) => console.log("!!!", e)} />
 </view-port>
 
 <style>

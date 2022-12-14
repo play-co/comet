@@ -244,6 +244,7 @@ export class Application
             '/assets/container.ico',
         ].forEach((path) =>
         {
+            // todo: use loadImage?
             const img = new Image();
 
             img.classList.add('preload');
