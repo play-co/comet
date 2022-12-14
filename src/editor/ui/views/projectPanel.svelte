@@ -11,19 +11,14 @@
   import { DropZone } from "../components/dropzone";
 
   let container: HTMLElement;
-  let isDragOver = false;
+  let dropZone = new DropZone();
+
+  $: isDragOver = dropZone.isDragOver.store;
 
   onMount(() => {
-    new DropZone(container)
-      .on("enter", () => {
-        isDragOver = true;
-      })
-      .on("leave", () => {
-        isDragOver = false;
-      })
-      .on("drop", (files: FileList) => {
-        Application.instance.importLocalTextures(files, false);
-      });
+    dropZone.bind(container).on("drop", (files: FileList) => {
+      Application.instance.importLocalTextures(files, false);
+    });
   });
 
   const tree = new ProjectTree();
@@ -66,7 +61,7 @@
   };
 </script>
 
-<project-panel class:isDragOver>
+<project-panel class:isDragOver={$isDragOver}>
   <Panel>
     <div class="container" bind:this={container}>
       <div class="tree">

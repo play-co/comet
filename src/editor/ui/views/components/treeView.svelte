@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { type TreeViewModel, indentationWidth } from "./treeView";
+  import { type TreeViewModel, indentationWidth } from "./treeModel";
 
   export let tree: TreeViewModel;
 

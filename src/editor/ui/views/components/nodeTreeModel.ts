@@ -1,9 +1,10 @@
-import type { ClonableNode } from '../../../core';
-import { SetNodeIndexCommand } from '../../commands/setNodeIndex';
-import { SetParentCommand } from '../../commands/setParent';
-import { Application } from '../../core/application';
-import type { ItemSelection } from '../../core/itemSelection';
-import { type TreeItem, TreeViewModel } from './components/treeView';
+import type { ClonableNode } from '../../../../core';
+import { ModifyModelCommand } from '../../../commands/modifyModel';
+import { SetNodeIndexCommand } from '../../../commands/setNodeIndex';
+import { SetParentCommand } from '../../../commands/setParent';
+import { Application } from '../../../core/application';
+import type { ItemSelection } from '../../../core/itemSelection';
+import { type TreeItem, TreeViewModel } from './treeModel';
 
 export abstract class NodeTreeModel<
     NodeSelectionType extends ItemSelection<ClonableNode>,
@@ -107,5 +108,18 @@ export abstract class NodeTreeModel<
             && !sourceNode.contains(targetNode);
 
         return false;
+    }
+
+    protected onEditAccept(value: string, item: TreeItem<ClonableNode>)
+    {
+        Application.instance.undoStack.exec(
+            new ModifyModelCommand({
+                nodeId: item.data.id,
+                values: {
+                    name: value,
+                },
+                updateMode: 'full',
+            }),
+        );
     }
 }

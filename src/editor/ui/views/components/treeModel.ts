@@ -125,7 +125,7 @@ export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSe
 
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected onEdit(e: MouseEvent, item: TreeItem<ItemType>)
+    protected onEditOpen(e: MouseEvent, item: TreeItem<ItemType>)
     {
         const element = e.target as HTMLElement;
 
@@ -136,6 +136,14 @@ export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSe
 
         const span = element as HTMLSpanElement;
         const originalValue = span.innerText;
+
+        const range = document.createRange();
+
+        range.selectNodeContents(span);
+        const sel = window.getSelection() as Selection;
+
+        sel.removeAllRanges();
+        sel.addRange(range);
 
         this.edit = {
             element: span,
@@ -332,7 +340,7 @@ export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSe
                 else
                 if (deltaX === 0 && deltaY === 0 && this.hasSelectedIds(existingSelection))
                 {
-                    this.onEdit(event, item);
+                    this.onEditOpen(event, item);
                 }
 
                 // clear drag state

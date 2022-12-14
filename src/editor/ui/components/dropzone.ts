@@ -1,5 +1,7 @@
 import EventEmitter from 'eventemitter3';
 
+import { WritableStore } from '../views/store';
+
 function preventDefaults(e: Event)
 {
     e.preventDefault();
@@ -14,33 +16,33 @@ function preventDefaults(e: Event)
 export class DropZone extends EventEmitter<'enter' | 'leave' | 'drop'>
 {
     public isEnabled: boolean;
+    public isDragOver: WritableStore<boolean>;
     private counter = 0;
 
-    constructor(public readonly container: HTMLElement)
+    constructor()
     {
         super();
 
         this.isEnabled = true;
-
-        this.bind();
+        this.isDragOver = new WritableStore(false);
     }
 
-    public bind()
+    public bind(container: HTMLElement)
     {
-        const { container } = this;
-
         container.addEventListener('dragenter', this.onDragEnter);
         container.addEventListener('dragleave', this.onDragLeave);
         container.addEventListener('drop', this.onDrop);
+
+        return this;
     }
 
-    public unbind()
+    public unbind(container: HTMLElement)
     {
-        const { container } = this;
-
         container.removeEventListener('dragenter', this.onDragEnter);
         container.removeEventListener('dragleave', this.onDragLeave);
         container.removeEventListener('drop', this.onDrop);
+
+        return this;
     }
 
     public onDragEnter = (e: DragEvent) =>
@@ -57,6 +59,8 @@ export class DropZone extends EventEmitter<'enter' | 'leave' | 'drop'>
 
             dataTransfer.dropEffect = 'copy';
 
+            this.isDragOver.value = true;
+
             this.emit('enter');
         }
     };
@@ -69,6 +73,8 @@ export class DropZone extends EventEmitter<'enter' | 'leave' | 'drop'>
 
         if (dataTransfer && this.counter === 0)
         {
+            this.isDragOver.value = false;
+
             this.emit('leave');
         }
     };
@@ -85,6 +91,8 @@ export class DropZone extends EventEmitter<'enter' | 'leave' | 'drop'>
             {
                 this.emit('drop', files);
             }
+
+            this.isDragOver.value = false;
         }
     };
 }

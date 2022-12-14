@@ -4,9 +4,9 @@ import type { FolderNode } from '../../../core/nodes/concrete/meta/folderNode';
 import { Application } from '../../core/application';
 import type { ProjectSelection } from '../../core/projectSelection';
 import Events from '../../events';
-import type { TreeItem } from './components/treeView';
+import type { TreeItem } from './components/treeModel';
 import { Icons } from './icons';
-import { NodeTreeModel } from './nodeTreeModel';
+import { NodeTreeModel } from './components/nodeTreeModel';
 
 export class ProjectTree extends NodeTreeModel<ProjectSelection>
 {
