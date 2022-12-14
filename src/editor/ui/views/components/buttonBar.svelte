@@ -3,6 +3,7 @@
     id: string;
     label: string;
     icon?: string;
+    isEnabled?: boolean;
     onClick: (e: MouseEvent) => void;
   }
 </script>
@@ -10,12 +11,24 @@
 <script lang="ts">
   export let items: ButtonBarItem[];
   export let size: "small" | "large";
+  export let update: ((callback: () => void) => void) | undefined = undefined;
+
+  const onUpdate = () => {
+    console.log("onUpdate");
+    items = [...items];
+  };
+
+  update && update(onUpdate);
 </script>
 
 <button-bar class:large={size === "large"} class:small={size === "small"}>
   {#each items as item (item.id)}
     <!-- svelte-ignore a11y-missing-attribute -->
-    <a title={item.label} on:click={(e) => item.onClick(e)}>
+    <a
+      title={item.label}
+      class:disabled={item.isEnabled === false}
+      on:click={(e) => item.isEnabled !== false && item.onClick(e)}
+    >
       {#if item.icon}
         <img src={item.icon} alt={item.label} class="icon" />
       {/if}
@@ -28,6 +41,7 @@
 
 <style>
   button-bar {
+    user-select: none;
     display: flex;
     flex-direction: row;
     height: 40px;
@@ -67,6 +81,10 @@
 
   a:hover {
     background-color: #383737;
+  }
+
+  a.disabled {
+    opacity: 0.2;
   }
 
   a:active {

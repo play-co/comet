@@ -9,6 +9,15 @@
 
   const buttons: ButtonBarItem[] = [
     {
+      id: "newFolder",
+      label: "New Folder",
+      icon: "/assets/folder.ico",
+      isEnabled: false,
+      onClick: () => {
+        console.log("!");
+      },
+    },
+    {
       id: "newScene",
       label: "New Scene",
       icon: "/assets/scene.ico",
@@ -17,13 +26,15 @@
       },
     },
   ];
+
+  const onUpdate = (callback: () => void) => {};
 </script>
 
 <project-panel>
   <Panel>
     <div class="container">
       <div class="tree">
-        <ButtonBar size="small" items={buttons} />
+        <ButtonBar size="small" items={buttons} update={onUpdate} />
         <TreeView {tree} />
       </div>
       <div class="content">content</div>
