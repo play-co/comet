@@ -83,13 +83,27 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
 
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected onDblClick(e: MouseEvent, item: TreeItem<T>)
+    protected onDblClick(e: MouseEvent, item: TreeItem<MetaNode>)
     {
-        const node = item.data as MetaNode;
+        const node = item.data;
 
         if (node.nodeType() === 'Scene')
         {
             Application.instance.edit(node.cast<DisplayObjectNode>());
         }
+    }
+
+    protected canReParentTarget(target: TreeItem<MetaNode>)
+    {
+        const sourceNode = this.selection.firstNode;
+        const targetNode = target.data;
+
+        if (targetNode.nodeType() === 'Folder')
+        {
+            return super.canReParentTarget(target)
+                && targetNode.cast<FolderNode>().getRootFolder().contains(sourceNode);
+        }
+
+        return false;
     }
 }

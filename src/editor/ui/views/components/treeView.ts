@@ -364,18 +364,32 @@ export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSe
             if (canReOrder && (operation.value === Operation.ReOrder))
             {
                 // re-ordering
-                const isSibling = this.isSiblingOf(item.data, selection.items[0]);
+                const isSibling = this.isSiblingOf(item.data, selection.firstNode);
 
-                isSibling || item.data === this.getParent(selection.items[0])
-                    ? dragTarget.value = item
-                    : dragTarget.value = undefined;
+                let target = isSibling || item.data === this.getParent(selection.firstNode)
+                    ? item
+                    : undefined;
+
+                if (target && !this.canReOrderTarget(target))
+                {
+                    target = undefined;
+                }
+
+                dragTarget.value = target;
             }
             else if (canReParent)
             {
                 // re-parenting
-                selection.shallowContains(item.data)
-                    ? dragTarget.value = undefined
-                    : dragTarget.value = item;
+                let target =  selection.shallowContains(item.data)
+                    ? undefined
+                    : item;
+
+                if (target && !this.canReParentTarget(target))
+                {
+                    target = undefined;
+                }
+
+                dragTarget.value = target;
             }
         }
     }
@@ -403,5 +417,19 @@ export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSe
             && dragTarget === item
             && !this.doesSelectionContainItem(item)
             && operation.value === Operation.ReOrder;
+    }
+
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected canReParentTarget(target: TreeItem<ItemType>)
+    {
+        return true;
+    }
+
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected canReOrderTarget(target: TreeItem<ItemType>)
+    {
+        return true;
     }
 }

@@ -42,4 +42,25 @@ export class FolderNode<M extends ClonableNodeModel = ClonableNodeModel> extends
 
         return true;
     }
+
+    public getRootFolder(): FolderNode
+    {
+        if (this.isRootFolder())
+        {
+            return this.cast<FolderNode>();
+        }
+
+        return this.walk<FolderNode, {node: FolderNode}>((node, options) =>
+        {
+            if (node.isRootFolder())
+            {
+                options.data.node = node;
+
+                options.cancel = true;
+            }
+        }, {
+            includeSelf: false,
+            direction: 'up',
+        }).node;
+    }
 }
