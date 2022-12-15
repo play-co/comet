@@ -2,7 +2,7 @@
   import type { ModifyModelCommandParams } from "../../../../commands/modifyModel";
   import { ModifyModelsCommand } from "../../../../commands/modifyModels";
   import { Application } from "../../../../core/application";
-  import { mixedToken, type PropertyBinding } from "../../propertiesPanel";
+  import type { PropertyBinding } from "../../propertiesPanel";
   import {
     isNumericInput,
     isDeleteKey,
@@ -24,10 +24,12 @@
 
   // component view state
   let value: string;
+  let mixedValue = false;
   let prevValue: string;
   let timeout: number | undefined = undefined;
 
   $: (value = getValue()), property;
+  $: mixed = mixedValue && value.length === 0;
 
   // component functions
   function format(value: number) {
@@ -37,6 +39,8 @@
   function getValue() {
     const { nodes } = property;
     const propValue = nodes[0].model.getValue<number>(property.key);
+
+    mixedValue = false;
 
     if (nodes.length === 1) {
       if (mode === "normal") {
@@ -70,7 +74,8 @@
 
         return String(firstValue);
       } else {
-        return mixedToken;
+        mixedValue = true;
+        return "";
       }
     }
   }
@@ -137,6 +142,8 @@
       isArrowKey(key) ||
       key === "Tab";
 
+    mixedValue = element.value.length > 0;
+
     if (isAcceptKey(key)) {
       if (!isNaN(value)) {
         setValue(value);
@@ -194,7 +201,8 @@
 <numeric-control>
   <input
     type="text"
-    class={value === mixedToken ? "mixed" : "normal"}
+    class:mixed
+    placeholder={mixed ? "mixed" : undefined}
     {value}
     on:focus={onFocus}
     on:keydown={onKeyDown}
@@ -217,11 +225,5 @@
     border-radius: 3px;
     min-width: 50px;
     box-shadow: inset 3px 3px 2px #04040459;
-  }
-
-  input.mixed {
-    color: #777;
-    font-style: italic;
-    text-align: center;
   }
 </style>

@@ -30,7 +30,6 @@
 # WIP TODO:
 
 * select texture via properties panel
-* rewrite project panel grid with fixed proportions based on resize event
 
 Try:
 * Replace Interface with Type definitions for models, may loosen generic polymorphism

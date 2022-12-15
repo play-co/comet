@@ -50,3 +50,20 @@ h2{
   position: absolute;
   pointer-events: none;
 }
+
+input {
+  width: 100%;
+  border: 1px solid #4f4f4f;
+  background-color: #323030;
+  font-size: 12px;
+  padding: 3px 5px;
+  border-radius: 3px;
+  min-width: 50px;
+  box-shadow: inset 3px 3px 2px #04040459;
+}
+
+input.mixed {
+  color: #777;
+  font-style: italic;
+  text-align: center;
+}

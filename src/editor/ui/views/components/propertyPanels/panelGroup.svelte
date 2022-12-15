@@ -14,12 +14,12 @@
     display: grid;
     grid-template-columns: 1fr;
     border-radius: 10px;
+    overflow: auto;
   }
 
   fieldset {
     border: 1px outset #666a;
-    padding: 10px;
-    padding-right: 15px;
+    padding: 5px;
     border-radius: 2px;
     background: #ffffff08;
     border-left: none;

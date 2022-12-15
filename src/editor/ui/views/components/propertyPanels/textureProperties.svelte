@@ -13,8 +13,8 @@
 
 <PropertyPanel title="Texture">
   {#if properties.has("textureAssetId")}
-    <property-row>
-      <property-label>texture</property-label>
+    <property-row class="single">
+      <property-label>id</property-label>
       <SelectControl property={properties.get("textureAssetId")} />
     </property-row>
   {/if}

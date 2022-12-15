@@ -314,3 +314,8 @@ export class Application
         });
     }
 }
+
+export function getApp()
+{
+    return Application.instance;
+}
