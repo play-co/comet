@@ -31,7 +31,7 @@
 
     Events.editor.resize.bind(() => {
       const bounds = container.getBoundingClientRect();
-      orientation = bounds.width > 300 ? "horizontal" : "vertical";
+      orientation = bounds.width > 400 ? "horizontal" : "vertical";
     });
   });
 

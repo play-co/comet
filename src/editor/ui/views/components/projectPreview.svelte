@@ -5,6 +5,9 @@
 
 <style>
   project-preview {
+    font-style: italic;
+    color: #666;
+
     background-color: #2f2f2f;
     width: 100%;
     height: 100%;
