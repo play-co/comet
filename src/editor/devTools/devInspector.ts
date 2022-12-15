@@ -257,12 +257,12 @@ export abstract class DevInspector<T extends Record<string, any> >
             if (this.isExpanded)
             {
                 const { maxHeight } = this;
-
+                const width = table.width;
                 const height = maxHeight === -1
                     ? table.height
                     : Math.min(table.height, maxHeight + titleBarHeight + scrollBoxTrackSize);
 
-                renderTable(table, this.painter, this.onCellStyle, table.width, height, 0, this.scrollTop);
+                renderTable(table, this.painter, this.onCellStyle, width, height, 0, this.scrollTop);
 
                 this.label.innerHTML = `${this.id} (${this.table.rows.length})`;
             }

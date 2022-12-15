@@ -9,6 +9,7 @@
     box-sizing: border-box;
     user-select: none;
     display: none; 
+    z-index: 10000;
 }
 
 .dev-inspector > label {
@@ -45,7 +46,7 @@
     position: absolute;
     right: 0;
     bottom: 0;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0,0,0,0.1);
     display: none;
 }
 

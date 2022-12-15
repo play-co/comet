@@ -3,9 +3,9 @@ import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObje
 import { Application } from '../../core/application';
 import type { HierarchySelection } from '../../core/hierarchySelection';
 import Events from '../../events';
+import { NodeTreeModel } from './components/nodeTreeModel';
 import type { TreeItem } from './components/treeModel';
 import { Icons } from './icons';
-import { NodeTreeModel } from './components/nodeTreeModel';
 
 export class HierarchyTree extends NodeTreeModel<HierarchySelection>
 {

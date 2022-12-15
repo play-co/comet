@@ -175,7 +175,6 @@ export class EditableViewport
 
             return;
         }
-
         if (gizmoFrameBounds.contains(globalX, globalY) && isAddKey)
         {
             // click inside transform gizmo area remove from selection if shift down
@@ -292,7 +291,7 @@ export class EditableViewport
 
     public onResize = () =>
     {
-        const { canvas, pixi, grid } = this;
+        const { canvas, pixi, grid, viewport } = this;
         const container = canvas.parentElement as HTMLDivElement;
 
         if (container)
@@ -301,6 +300,7 @@ export class EditableViewport
             const height = container.clientHeight;
 
             pixi.renderer.resize(width, height);
+            viewport.resize(width, height);
 
             grid.draw();
         }
@@ -338,5 +338,15 @@ export class EditableViewport
     public getLocalPoint(globalX: number, globalY: number)
     {
         return this.viewport.toLocal({ x: globalX, y: globalY });
+    }
+
+    public getGlobalPoint(localX: number, localY: number)
+    {
+        return this.viewport.toGlobal({ x: localX, y: localY });
+    }
+
+    public getVisibleBounds()
+    {
+        return this.viewport.getVisibleBounds();
     }
 }

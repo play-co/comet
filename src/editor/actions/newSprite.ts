@@ -38,12 +38,17 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
         };
         const app = Application.instance;
         const { selection: { hierarchy: selection } } = app;
+        const visibleBounds = app.viewport.getVisibleBounds();
+        let x = visibleBounds.left + (visibleBounds.width / 2);
+        let y = visibleBounds.top + (visibleBounds.height / 2);
 
         let parentId = app.viewport.rootNode.id;
 
         if (actionOptions.addToSelected && selection.hasSelection)
         {
             parentId = selection.lastNode.id;
+            x = 10;
+            y = 10;
         }
 
         const tint = Color.rgb(this.rnd255(), this.rnd255(), this.rnd255());
@@ -53,8 +58,8 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
         const nodeSchema = createNodeSchema('Sprite', {
             parent: parentId,
             model: {
-                x: 10,
-                y: 10,
+                x,
+                y,
                 scaleX: 1,
                 scaleY: 1,
                 tint: tint.rgbNumber(),

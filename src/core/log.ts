@@ -1,7 +1,18 @@
-export type LogSource =
-| 'datastore'
-| 'nodeFactory'
-| 'command';
+import Color from 'color';
+
+export const logSources: Record<string, Color> = {
+    app: Color('purple'),
+    datastore: Color('green'),
+    nodeFactory: Color('blue'),
+    command: Color('green'),
+} as const;
+
+export type LogSource = keyof typeof logSources;
+
+export function logColor(source: LogSource)
+{
+    return logSources[source];
+}
 
 export interface LogEntry
 {

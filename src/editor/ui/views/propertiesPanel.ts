@@ -22,8 +22,8 @@ export const PropertyPanelComponents: Partial<Record<PropertyCategory, Component
 export const PropertyCategoryOrder: PropertyCategory[] = [
     'transform',
     'display',
-    'text',
     'texture',
+    'text',
 ];
 
 export class PropertyBinding
@@ -104,7 +104,6 @@ function createController()
 
             if (!component)
             {
-                // throw new Error(`Property panel "${category}" not found`);
                 continue;
             }
 

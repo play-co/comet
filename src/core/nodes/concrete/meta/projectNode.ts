@@ -10,7 +10,7 @@ export class ProjectNode extends MetaNode
 {
     public isReady = false;
 
-    public replicate(other: ProjectNode)
+    public copy(other: ProjectNode)
     {
         this.children = other.children;
         this.model = other.model;

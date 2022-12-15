@@ -147,7 +147,7 @@ export class Application
 
             const project = await datastore.createProject(name);
 
-            this.project.replicate(project);
+            this.project.copy(project);
 
             this.initProject();
         }
@@ -168,7 +168,8 @@ export class Application
 
         const project = await this.datastore.openProject(id);
 
-        this.project.replicate(project);
+        this.project.copy(project);
+
         this.initProject();
 
         Events.project.open.success.emit();

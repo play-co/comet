@@ -1,14 +1,6 @@
-import Color from 'color';
-
-import { type LogEntry, type LogSource, getLogEntries, onLog } from '../../../core/log';
+import { type LogEntry, type LogSource, getLogEntries, logColor, onLog } from '../../../core/log';
 import { DevInspector } from '../devInspector';
 import { type CellStyle, type Column, type Row, tableIndexKey } from '../tableRenderer';
-
-const logSourceColor = new Map<LogSource, Color>();
-
-logSourceColor.set('datastore', Color('green'));
-logSourceColor.set('nodeFactory', Color('blue'));
-logSourceColor.set('command', Color('green'));
 
 export class LogInspector extends DevInspector<Omit<LogEntry, 'timestamp'>>
 {
@@ -47,7 +39,7 @@ export class LogInspector extends DevInspector<Omit<LogEntry, 'timestamp'>>
 
         if (column.id === 'source')
         {
-            cellStyle.fillColor = (logSourceColor.get(currentCell.value) as Color).hex();
+            cellStyle.fillColor = (logColor(currentCell.value as LogSource)).hex();
         }
         else if (column.id === 'eventName')
         {

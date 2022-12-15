@@ -149,8 +149,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
     public async createProject(name: string)
     {
-        log('datastore', 'createProject', name);
-
         const data = createProjectSchema(name);
 
         const model = await this.domain.models().openAutoCreate({
@@ -163,6 +161,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         model.root().set('id', id);
 
         localStorage.setItem('comet:lastProjectId', id);
+        log('datastore', 'createProject', name, id);
 
         return await this.openProject(id);
     }
@@ -175,17 +174,10 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         this._model = model;
 
-        // TODO catch all meta nodes and folders too...
-
         // catch events when a remote user adds or removes a node...
         this.nodes
             .on(RealTimeObject.Events.SET, this.onRemoteNodeCreated)
             .on(RealTimeObject.Events.REMOVE, this.onRemoteNodeRemoved);
-
-        // catch events for assets
-        // this.textures
-        //     .on(RealTimeObject.Events.SET, this.onRemoteTextureCreated)
-        //     .on(RealTimeObject.Events.REMOVE, this.onRemoteTextureRemoved);
 
         const project = this.hydrate();
 
@@ -214,6 +206,11 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
             await this._model.close();
             delete this._model;
         }
+    }
+
+    public getProjectId()
+    {
+        return this.model.modelId();
     }
 
     public async deleteProject(id: string)
