@@ -56,7 +56,7 @@
       const isFolder = selection.isSelected(FolderNode);
 
       newFolderButton.isEnabled = isFolder;
-      newSceneButton.isEnabled = isFolder && node.cast<FolderNode>().isRootFolder("Scenes");
+      newSceneButton.isEnabled = isFolder && node.cast<FolderNode>().isWithinRootFolder("Scenes");
 
       callback(buttons);
     });

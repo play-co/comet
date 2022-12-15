@@ -28,8 +28,6 @@
 
 # WIP TODO:
 
-* context-menu on-fly update callback to filter items (don't show if no items filtered)
-* delete assets (with undo) via context-menu
 * add dropzone to viewport, create sprite at local mouse point
 * drag drop texture from project panel onto viewport to create sprite at mouse point
 * select texture via properties panel
