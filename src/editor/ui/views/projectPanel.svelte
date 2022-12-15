@@ -12,19 +12,19 @@
   import { Menu } from "./components/menu.js";
   import { SceneNode } from "../../../core/nodes/concrete/meta/sceneNode.js";
 
-  let dropZone = new DropZone();
-  let container: HTMLDivElement;
-
-  const tree = new ProjectTree();
   const app = Application.instance;
+  const dropZone = new DropZone();
+  const tree = new ProjectTree();
   const selection = app.selection.project;
   const project = app.project;
+
+  let container: HTMLDivElement;
 
   $: isDragOver = dropZone.isDragOver.store;
 
   onMount(() => {
     dropZone.bind(container).on("drop", (files: FileList) => {
-      Application.instance.importLocalTextures(files, false);
+      app.importLocalTextures(files);
     });
   });
 

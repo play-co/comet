@@ -277,7 +277,7 @@ export class Application
         this.focusPanel('hierarchy');
     }
 
-    public importLocalTextures(files: FileList, createSprite = true)
+    public importLocalTextures(files: FileList, createSpriteAtPoint?: {x: number; y: number})
     {
         const { project: selection } = this.selection;
         const file = files[0];
@@ -294,11 +294,13 @@ export class Application
 
         promise.then((texture) =>
         {
-            if (createSprite)
+            if (createSpriteAtPoint)
             {
                 Actions.newSprite.dispatch({
                     addToSelected: false,
                     model: {
+                        x: createSpriteAtPoint.x,
+                        y: createSpriteAtPoint.y,
                         textureAssetId: texture.id,
                         tint: 0xffffff,
                     },

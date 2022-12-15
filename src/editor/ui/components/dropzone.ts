@@ -89,7 +89,7 @@ export class DropZone extends EventEmitter<'enter' | 'leave' | 'drop'>
 
             if (files.length >= 1 && this.isEnabled)
             {
-                this.emit('drop', files);
+                this.emit('drop', files, e);
             }
 
             this.isDragOver.value = false;

@@ -20,10 +20,10 @@ export class LocalStorageProvider extends StorageProvider
         return Promise.resolve();
     }
 
-    public async upload(blob: Blob)
+    public async upload(file: File)
     {
-        const base64 = await blobToBas64(blob);
-        const id = this.localStorageKey(String(Math.random()));
+        const base64 = await blobToBas64(file);
+        const id = this.localStorageKey(file.name);
 
         localStorage.setItem(this.localStorageKey(id), base64);
 

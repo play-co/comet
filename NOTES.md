@@ -28,8 +28,6 @@
 
 # WIP TODO:
 
-* add dropzone to viewport, create sprite at local mouse point
-* drag drop texture from project panel onto viewport to create sprite at mouse point
 * select texture via properties panel
 * rewrite project panel grid with fixed proportions based on resize event
 

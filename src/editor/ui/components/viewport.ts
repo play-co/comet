@@ -325,4 +325,18 @@ export class EditableViewport
 
         Events.viewport.rootChanged.emit(node);
     }
+
+    public getMousePos(clientX: number, clientY: number)
+    {
+        const rect = this.canvas.getBoundingClientRect();
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
+
+        return { x, y };
+    }
+
+    public getLocalPoint(globalX: number, globalY: number)
+    {
+        return this.viewport.toLocal({ x: globalX, y: globalY });
+    }
 }
