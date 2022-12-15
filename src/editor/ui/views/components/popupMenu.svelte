@@ -84,8 +84,8 @@
   });
 
   afterUpdate(() => {
-    const maxX = 678;
-    const maxY = 700;
+    const maxX = document.body.clientWidth;
+    const maxY = document.body.clientHeight;
 
     if (container) {
       const bounds = container.getBoundingClientRect();

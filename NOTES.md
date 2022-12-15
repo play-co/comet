@@ -11,6 +11,7 @@
 # Enhancements
 
 * Box Selection could white border highlight nodes as they are being dragged over and out
+* UI Layout, Tree State, Current Scene, Current Selection could be saved to localStorage to preserve user workspace
 
 # Known General Issues
 

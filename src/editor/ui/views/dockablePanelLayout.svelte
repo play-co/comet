@@ -40,7 +40,7 @@
     layout.on("stateChanged", () => {
       // const config = layout.saveLayout();
       // localStorage.setItem("comet:layout", JSON.stringify(config));
-      Events.viewport.resize.emit();
+      Events.editor.resize.emit();
     });
   });
 </script>

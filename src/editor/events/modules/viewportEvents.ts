@@ -2,6 +2,5 @@ import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObje
 import { Emit } from '../emitter';
 
 export default {
-    resize: Emit<void>(),
     rootChanged: Emit<DisplayObjectNode>(),
 };

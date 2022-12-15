@@ -71,7 +71,7 @@
     display: block;
     border: 1px outset #666a;
     border-radius: 5px;
-    overflow: hidden;
+    overflow: auto;
   }
 
   .tree-item {

@@ -3,6 +3,7 @@
   import Panel from "./components/panel.svelte";
   import TreeView from "./components/treeView.svelte";
   import ButtonBar, { type ButtonBarItem } from "./components/buttonBar.svelte";
+  import ProjectPreview from "./components/projectPreview.svelte";
   import { Actions } from "../../actions/index.js";
   import Events from "../../events/index.js";
   import { Application } from "../../core/application.js";
@@ -17,6 +18,7 @@
   const tree = new ProjectTree();
   const selection = app.selection.project;
   const project = app.project;
+  let orientation: "horizontal" | "vertical" = "vertical";
 
   let container: HTMLDivElement;
 
@@ -25,6 +27,11 @@
   onMount(() => {
     dropZone.bind(container).on("drop", (files: FileList) => {
       app.importLocalTextures(files);
+    });
+
+    Events.editor.resize.bind(() => {
+      const bounds = container.getBoundingClientRect();
+      orientation = bounds.width > 300 ? "horizontal" : "vertical";
     });
   });
 
@@ -90,12 +97,14 @@
 
 <project-panel class:isDragOver={$isDragOver}>
   <Panel>
-    <div class="container" bind:this={container}>
+    <div class="container" class:horizontal={orientation === "horizontal"} bind:this={container}>
       <div class="tree">
         <ButtonBar size="small" items={buttons} update={onButtonUpdater} />
         <TreeView {tree} menu={treeMenu} />
       </div>
-      <div class="content">content</div>
+      <div class="preview">
+        <ProjectPreview />
+      </div>
     </div>
   </Panel>
 </project-panel>
@@ -114,18 +123,32 @@
   }
 
   .container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    grid-gap: 1em;
-    height: 100%;
-  }
-
-  .tree {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: 100%;
   }
 
-  .content {
-    background-color: green;
+  .container.horizontal {
+    flex-direction: row;
+  }
+
+  .tree {
+    flex-grow: 1;
+  }
+
+  .container.horizontal .tree {
+    height: calc(100% - 25px);
+  }
+
+  .preview {
+    flex-grow: 1;
+    margin-top: 30px;
+  }
+
+  .container.horizontal .preview {
+    margin-top: 0;
+    margin-left: 5px;
+    flex-grow: 3;
   }
 </style>

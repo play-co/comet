@@ -83,7 +83,7 @@ export class EditableViewport
 
         Events.key.down.bind(this.onKeyDown);
         Events.key.up.bind(this.onKeyUp);
-        Events.viewport.resize.bind(this.onResize);
+        Events.editor.resize.bind(this.onResize);
         Events.datastore.node.local.cloaked.bind(this.onNodeCloaked);
     }
 

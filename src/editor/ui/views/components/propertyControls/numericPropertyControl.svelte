@@ -18,7 +18,7 @@
   export let property: PropertyBinding;
   export let mode: "normal" | "width" | "height" = "normal";
 
-  // consts
+  // const
   const smallInc = 1;
   const largeInc = 10;
 
