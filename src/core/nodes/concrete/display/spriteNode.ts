@@ -6,6 +6,9 @@ import { ModelSchema } from '../../../model/schema';
 import type { TextureAssetNode } from '../meta/assets/textureAssetNode';
 import { type ContainerModel, ContainerNode, containerSchema } from './containerNode';
 
+export const defaultSpriteWidth = 16;
+export const defaultSpriteHeight = 16;
+
 export interface SpriteModel extends ContainerModel
 {
     anchorX: number;

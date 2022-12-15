@@ -52,6 +52,7 @@ export class CreateTextureAssetCommand extends Command<CreateTextureAssetCommand
         }).run();
 
         asset.setBlob(file);
+        asset.resource = imageElement;
 
         return asset;
     }

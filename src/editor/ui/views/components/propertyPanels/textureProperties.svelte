@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { PropertiesPanel } from "../../propertiesPanel";
   import PropertyPanel from "./panelGroup.svelte";
-  import NumericControl from "../propertyControls/numericPropertyControl.svelte";
   import { PropertyMap } from "./propertyMap";
 
   export let panel: PropertiesPanel;
@@ -11,11 +10,11 @@
   $: properties = new PropertyMap(panel.properties);
 </script>
 
-<PropertyPanel title="Display">
-  {#if properties.has("alpha")}
+<PropertyPanel title="Texture">
+  {#if properties.has("textureAssetId")}
     <property-row>
-      <property-label>alpha</property-label>
-      <NumericControl property={properties.get("alpha")} />
+      <property-label>texture</property-label>
+      Ctrl
     </property-row>
   {/if}
 </PropertyPanel>

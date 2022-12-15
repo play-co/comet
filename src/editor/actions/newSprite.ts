@@ -1,6 +1,6 @@
 import Color from 'color';
 
-import type { SpriteModel, SpriteNode } from '../../core/nodes/concrete/display/spriteNode';
+import { type SpriteModel, type SpriteNode, defaultSpriteHeight, defaultSpriteWidth } from '../../core/nodes/concrete/display/spriteNode';
 import { createNodeSchema } from '../../core/nodes/schema';
 import { type AddChildCommandReturn, AddChildCommand } from '../commands/addChild';
 import { Action } from '../core/action';
@@ -39,8 +39,8 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
         const app = Application.instance;
         const { selection: { hierarchy: selection } } = app;
         const visibleBounds = app.viewport.getVisibleBounds();
-        let x = visibleBounds.left + (visibleBounds.width / 2);
-        let y = visibleBounds.top + (visibleBounds.height / 2);
+        let x = visibleBounds.left + (visibleBounds.width / 2) - (defaultSpriteWidth / 2);
+        let y = visibleBounds.top + (visibleBounds.height / 2) - (defaultSpriteHeight / 2);
 
         let parentId = app.viewport.rootNode.id;
 

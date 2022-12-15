@@ -297,11 +297,13 @@ export class Application
         {
             if (createSpriteAtPoint)
             {
+                const img = texture.resource as HTMLImageElement;
+
                 Actions.newSprite.dispatch({
                     addToSelected: false,
                     model: {
-                        x: createSpriteAtPoint.x,
-                        y: createSpriteAtPoint.y,
+                        x: createSpriteAtPoint.x - (img.width / 2),
+                        y: createSpriteAtPoint.y - (img.height / 2),
                         textureAssetId: texture.id,
                         tint: 0xffffff,
                     },

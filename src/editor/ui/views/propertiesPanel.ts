@@ -7,6 +7,7 @@ import Events from '../../events';
 import DisplayPanel from './components/propertyPanels/displayProperties.svelte';
 import GridPanel from './components/propertyPanels/gridProperties.svelte';
 import ProjectPanel from './components/propertyPanels/projectProperties.svelte';
+import TexturePanel from './components/propertyPanels/textureProperties.svelte';
 import TransformPanel from './components/propertyPanels/transformProperties.svelte';
 import { WritableStore } from './store';
 
@@ -17,6 +18,7 @@ export const mixedToken = 'mixed';
 export const PropertyPanelComponents: Partial<Record<PropertyCategory, ComponentType>> = {
     transform: TransformPanel,
     display: DisplayPanel,
+    texture: TexturePanel,
 };
 
 export const PropertyCategoryOrder: PropertyCategory[] = [
@@ -129,7 +131,8 @@ function createController()
     }
 
     // bind to events
-    Events.$('selection.hierarchy.(add|remove|setSingle|setMulti)|datastore.node.local.cloaked', update);
+    Events.$('selection.hierarchy.(add|remove|setSingle|setMulti)', update);
+    Events.$('datastore.node.local.cloaked', update);
     Events.selection.hierarchy.deselect.bind(clear);
 
     // start with unselected state
