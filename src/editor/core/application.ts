@@ -1,3 +1,5 @@
+import '../ui/components/mouseListener';
+
 import type { GoldenLayout } from 'golden-layout';
 
 import { enableLog } from '../../core/log';

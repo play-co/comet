@@ -4,12 +4,15 @@ import { Viewport } from 'pixi-viewport';
 import type { ClonableNode } from '../../../core';
 import { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
 import { ContainerNode } from '../../../core/nodes/concrete/display/containerNode';
+import { SceneNode } from '../../../core/nodes/concrete/meta/sceneNode';
 import { Application } from '../../core/application';
 import Events from '../../events';
 import { TransformGizmo } from '../transform/gizmo';
 import { BoxSelection } from './boxSelection';
 import { Grid } from './grid';
 import { isKeyPressed } from './keyboardListener';
+
+const blankNode = new ContainerNode();
 
 export class EditableViewport
 {
@@ -25,7 +28,7 @@ export class EditableViewport
 
     constructor()
     {
-        this.rootNode = new ContainerNode();
+        this.rootNode = blankNode;
 
         const pixi = this.pixi = new PixiApplication({
             backgroundColor: 0x111111,
@@ -81,6 +84,7 @@ export class EditableViewport
         Events.key.down.bind(this.onKeyDown);
         Events.key.up.bind(this.onKeyUp);
         Events.viewport.resize.bind(this.onResize);
+        Events.datastore.node.local.cloaked.bind(this.onNodeCloaked);
     }
 
     get stage()
@@ -303,6 +307,20 @@ export class EditableViewport
             viewport.resize(width, height);
 
             grid.draw();
+        }
+    };
+
+    public onNodeCloaked = (node: ClonableNode) =>
+    {
+        if (node.id === this.rootNode.id)
+        {
+            const app = Application.instance;
+
+            app.selection.hierarchy.deselect();
+            const sceneFolder = app.project.getRootFolder('Scenes');
+            const scenes = sceneFolder.getAllChildrenByType(SceneNode);
+
+            this.setRoot(scenes[scenes.length - 1].cast<SceneNode>());
         }
     };
 

@@ -68,4 +68,9 @@ export class FolderNode<M extends ClonableNodeModel = ClonableNodeModel> extends
     {
         return this.getRootFolder().model.getValue('name') === name;
     }
+
+    public getAllChildrenByType(ctor: Function)
+    {
+        return this.filterWalk<MetaNode>((node) => node.is(ctor) && !node.isCloaked);
+    }
 }

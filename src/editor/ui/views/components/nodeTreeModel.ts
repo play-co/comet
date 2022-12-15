@@ -35,7 +35,7 @@ export abstract class NodeTreeModel<
 
     public hasChildren(obj: ClonableNode)
     {
-        return obj.hasChildren;
+        return obj.getChildren<ClonableNode>().filter((node) => !node.isCloaked).length > 0;
     }
 
     public onSelectionChanged = () =>

@@ -8,9 +8,9 @@
   const app = Application.instance;
   const viewport = app.viewport;
   const dropZone = new DropZone();
-  const subMenuA = new Menu([{ label: "Item 4" }, { label: "Item 5" }, { label: "Item 6" }]);
+  const subMenuA = new Menu([{ label: "Item Sub 4" }, { label: "Item 5" }, { label: "Item 6" }]);
   const subMenuB = new Menu([
-    { label: "Item 7" },
+    { label: "Item Longer 7" },
     { label: "Item 8" },
     { label: "Item 9", menu: subMenuA },
   ]);

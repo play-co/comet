@@ -79,7 +79,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
             return false;
         }
 
-        return node.hasChildren;
+        return super.hasChildren(node);
     }
 
     // @ts-ignore

@@ -31,6 +31,11 @@ export abstract class GraphNode
         return this.parent ? this.parent.indexOf(this) : -1;
     }
 
+    public getChildren<T extends GraphNode = GraphNode>()
+    {
+        return this.children as unknown as T[];
+    }
+
     public toString()
     {
         return this.id;
@@ -355,15 +360,27 @@ export abstract class GraphNode
 
     public getAllChildren<T extends GraphNode>(): T[]
     {
-        return this.walk<T, {nodes: T[]}>((node, options) =>
+        return this.walk<T, T[]>((node, options) =>
         {
-            options.data.nodes.push(node);
+            options.data.push(node);
         }, {
-            data: {
-                nodes: [],
-            },
             includeSelf: false,
-        }).nodes;
+            data: [],
+        });
+    }
+
+    public filterWalk<T extends GraphNode>(fn: (node: T) => boolean): T[]
+    {
+        return this.walk<T, T[]>((node, options) =>
+        {
+            if (fn(node))
+            {
+                options.data.push(node);
+            }
+        }, {
+            includeSelf: false,
+            data: [],
+        });
     }
 
     protected onAddedToParent(): void

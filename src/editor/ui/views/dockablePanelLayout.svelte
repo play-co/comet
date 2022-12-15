@@ -29,8 +29,17 @@
 
     Application.instance.layout = layout;
 
+    // const savedConfig = localStorage.getItem("comet:layout");
+    // if (savedConfig) {
+    //   const data = JSON.parse(savedConfig);
+    //   layout.loadLayout(data);
+    // } else {
     layout.loadLayout(layoutConfig);
+    // }
+
     layout.on("stateChanged", () => {
+      // const config = layout.saveLayout();
+      // localStorage.setItem("comet:layout", JSON.stringify(config));
       Events.viewport.resize.emit();
     });
   });

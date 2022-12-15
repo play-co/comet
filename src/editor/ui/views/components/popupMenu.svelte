@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount } from "svelte";
+  import { onDestroy, onMount, afterUpdate } from "svelte";
   import Events from "../../../events";
   import type { Menu, MenuItem } from "./menu";
 
@@ -10,10 +10,12 @@
 
   let show = false;
   let container: HTMLElement;
-  let x = 0;
-  let y = 0;
-  let active: MenuItem | undefined;
-  let style: string;
+
+  $: x = 0;
+  $: y = 0;
+  $: active = undefined as MenuItem | undefined;
+  $: overflowX = false;
+  $: overflowY = false;
 
   $: {
     if (event) {
@@ -22,7 +24,11 @@
     }
   }
 
-  $: style = `left:${isSubMenu ? "calc(100% + 2px)" : `${x}px`};top:${isSubMenu ? 0 : y}px;`;
+  $: subMenuLeft = `left:${overflowX ? `-2px;transform:translateX(-100%)` : "calc(100% + 2px)"}`;
+  $: subMenuTop = `top:${overflowY ? `100%;transform:translateY(-100%)` : "0"}`;
+  $: left = isSubMenu ? subMenuLeft : `left:${x}px`;
+  $: top = isSubMenu ? subMenuTop : `top:${y}px`;
+  $: style = `${left};${top}`;
 
   $: {
     if (event && target) {
@@ -76,6 +82,23 @@
     }
     Events.editor.contextMenuClose.unbind(onContextMenuClose);
   });
+
+  afterUpdate(() => {
+    const maxX = 678;
+    const maxY = 700;
+
+    if (container) {
+      const bounds = container.getBoundingClientRect();
+
+      if (bounds.right > maxX) {
+        overflowX = true;
+      }
+
+      if (bounds.bottom > maxY) {
+        overflowY = true;
+      }
+    }
+  });
 </script>
 
 {#if (event && show) || isSubMenu}
@@ -114,6 +137,8 @@
     display: flex;
     flex-direction: column;
     white-space: nowrap;
+    z-index: 100000;
+    box-shadow: 5px 5px 5px #00000045;
   }
 
   popup-menu.submenu {

@@ -7,6 +7,8 @@ window.addEventListener('mousemove', (e: MouseEvent) =>
 {
     mousePos.clientX = e.clientX;
     mousePos.clientY = e.clientY;
+
+    // console.log(mousePos);
 });
 
 export function mouseClientPos()

@@ -1,3 +1,4 @@
+import { FolderNode } from '../../core/nodes/concrete/meta/folderNode';
 import type { SceneNode } from '../../core/nodes/concrete/meta/sceneNode';
 import { createNodeSchema } from '../../core/nodes/schema';
 import { type CreateNodeCommandReturn, CreateNodeCommand } from '../commands/createNode';
@@ -14,9 +15,16 @@ export class NewSceneAction extends Action<void, SceneNode>
     protected exec(): SceneNode
     {
         const app = Application.instance;
+        const selection = app.selection.project;
+        let parentId = app.project.getRootFolder('Scenes').id;
+
+        if (selection.hasSelection && selection.firstNode.is(FolderNode) && selection.firstNode.cast<FolderNode>().isWithinRootFolder('Scenes'))
+        {
+            parentId = selection.firstNode.cast<FolderNode>().id;
+        }
 
         const nodeSchema = createNodeSchema('Scene', {
-            parent: app.project.getRootFolder('Scenes').id,
+            parent: parentId,
         });
 
         const { node } = app.undoStack.exec<CreateNodeCommandReturn>(new CreateNodeCommand({ nodeSchema }));

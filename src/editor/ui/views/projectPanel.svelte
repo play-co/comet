@@ -77,7 +77,8 @@
         const node = selection.firstNode;
         if (
           (node.is(FolderNode) && node.cast<FolderNode>().isRootFolder()) ||
-          (node.is(SceneNode) && project.getRootFolder("Scenes").childCount === 1)
+          (node.is(SceneNode) &&
+            project.getRootFolder("Scenes").getAllChildrenByType(SceneNode).length === 1)
         ) {
           // hide if root folder or last scene
           item.isHidden = true;
