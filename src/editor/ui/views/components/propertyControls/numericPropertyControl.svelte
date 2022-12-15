@@ -216,6 +216,7 @@
     padding: 3px 5px;
     border-radius: 3px;
     min-width: 50px;
+    box-shadow: inset 3px 3px 2px #04040459;
   }
 
   input.mixed {

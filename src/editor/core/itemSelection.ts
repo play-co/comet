@@ -144,4 +144,9 @@ export abstract class ItemSelection<T>
 
         return items[items.length - 1];
     }
+
+    public isSelected(ctor: Function)
+    {
+        return this.items.some((item) => item instanceof ctor);
+    }
 }

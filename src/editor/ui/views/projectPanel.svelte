@@ -6,14 +6,19 @@
   import { Actions } from "../../actions/index.js";
   import Events from "../../events/index.js";
   import { Application } from "../../core/application.js";
-  import type { FolderNode } from "../../../core/nodes/concrete/meta/folderNode.js";
+  import { FolderNode } from "../../../core/nodes/concrete/meta/folderNode.js";
   import { onMount } from "svelte";
   import { DropZone } from "../components/dropzone";
   import { Menu } from "./components/menu.js";
+  import { SceneNode } from "../../../core/nodes/concrete/meta/sceneNode.js";
 
   let dropZone = new DropZone();
   let container: HTMLDivElement;
+
   const tree = new ProjectTree();
+  const app = Application.instance;
+  const selection = app.selection.project;
+  const project = app.project;
 
   $: isDragOver = dropZone.isDragOver.store;
 
@@ -46,12 +51,9 @@
   const buttons: ButtonBarItem[] = [newFolderButton, newSceneButton];
 
   const onButtonUpdater = (callback: (items: ButtonBarItem[]) => void) => {
-    const { project: selection } = Application.instance.selection;
-
     Events.selection.project.setSingle.bind(() => {
-      const node = selection.items[0];
-      const nodeType = node.nodeType();
-      const isFolder = nodeType === "Folder";
+      const node = selection.firstNode;
+      const isFolder = selection.isSelected(FolderNode);
 
       newFolderButton.isEnabled = isFolder;
       newSceneButton.isEnabled = isFolder && node.cast<FolderNode>().isRootFolder("Scenes");
@@ -60,7 +62,29 @@
     });
   };
 
-  const treeMenu = new Menu([{ label: "Delete", isEnabled: false }]);
+  const onDeleteAssetNode = () => {
+    const node = selection.firstNode;
+
+    Actions.deleteNode.dispatch({ nodeId: node.id });
+  };
+
+  const treeMenu = new Menu([{ label: "Delete", onClick: onDeleteAssetNode }], (item) => {
+    if (item.label === "Delete") {
+      item.isHidden = false;
+      if (!selection.hasSelection) {
+        item.isHidden = true;
+      } else {
+        const node = selection.firstNode;
+        if (
+          (node.is(FolderNode) && node.cast<FolderNode>().isRootFolder()) ||
+          (node.is(SceneNode) && project.getRootFolder("Scenes").childCount === 1)
+        ) {
+          // hide if root folder or last scene
+          item.isHidden = true;
+        }
+      }
+    }
+  });
 </script>
 
 <project-panel class:isDragOver={$isDragOver}>

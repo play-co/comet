@@ -10,6 +10,15 @@ export class ProjectNode extends MetaNode
 {
     public isReady = false;
 
+    public replicate(other: ProjectNode)
+    {
+        this.children = other.children;
+        this.model = other.model;
+        this.view = other.view;
+        this.defineCustomProperties = other.defineCustomProperties;
+        this.assignCustomProperty = other.assignCustomProperty;
+    }
+
     public nodeType()
     {
         return 'Project';

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher, onDestroy, onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import Events from "../../../events";
   import type { Menu, MenuItem } from "./menu";
 
@@ -7,8 +7,6 @@
   export let event: MouseEvent | undefined;
   export let target: HTMLElement;
   export let isSubMenu = false;
-
-  const dispatcher = createEventDispatcher();
 
   let show = false;
   let container: HTMLElement;
@@ -58,8 +56,8 @@
 
   const onMenuItemClick = (item: MenuItem) => {
     if (!item.menu && item.isEnabled !== false) {
+      item.onClick && item.onClick(item);
       Events.editor.contextMenuClose.emit();
-      dispatcher("select", item);
     }
   };
 
@@ -81,8 +79,16 @@
 </script>
 
 {#if (event && show) || isSubMenu}
-  <popup-menu bind:this={container} class:submenu={isSubMenu} {style}>
-    {#each menu.items as item}
+  <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+  <popup-menu
+    bind:this={container}
+    class:submenu={isSubMenu}
+    {style}
+    on:mouseout={() => {
+      if (active && active.menu === undefined) active = undefined;
+    }}
+  >
+    {#each menu.getItems() as item}
       <!-- svelte-ignore a11y-mouse-events-have-key-events -->
       <menu-item
         class:selected={item === active}

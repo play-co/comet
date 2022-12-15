@@ -21,6 +21,11 @@ export abstract class GraphNode
         return this.children.length > 0;
     }
 
+    get childCount()
+    {
+        return this.children.length;
+    }
+
     get index()
     {
         return this.parent ? this.parent.indexOf(this) : -1;
@@ -36,6 +41,11 @@ export abstract class GraphNode
     public cast<T extends GraphNode = GraphNode>()
     {
         return this as unknown as T;
+    }
+
+    public is(ctor: Function)
+    {
+        return this instanceof ctor;
     }
 
     public asClonableNode()

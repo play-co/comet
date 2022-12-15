@@ -15,7 +15,7 @@
   ]);
 
   const menu = new Menu([
-    { label: "Item 1" },
+    { data: 1, label: "Item 1" },
     { label: "Item 2", menu: subMenuB },
     { label: "Item 3" },
   ]);
@@ -30,7 +30,7 @@
 </script>
 
 <view-port bind:this={container}>
-  <ContextMenu {menu} {container} on:select={(e) => console.log("!!!", e.detail)} />
+  <ContextMenu {menu} {container} />
 </view-port>
 
 <style>

@@ -145,7 +145,9 @@ export class Application
                 await datastore.deleteProject(lastProjectId);
             }
 
-            this.project = await datastore.createProject(name);
+            const project = await datastore.createProject(name);
+
+            this.project.replicate(project);
 
             this.initProject();
         }
@@ -164,7 +166,9 @@ export class Application
 
         this.clear();
 
-        this.project = await this.datastore.openProject(id);
+        const project = await this.datastore.openProject(id);
+
+        this.project.replicate(project);
         this.initProject();
 
         Events.project.open.success.emit();

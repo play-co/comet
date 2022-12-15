@@ -58,7 +58,7 @@
     </div>
   {/each}
   {#if menu}
-    <ContextMenu {menu} {container} on:select={(e) => console.log("tree!!!", e.detail)} />
+    <ContextMenu {menu} {container} />
   {/if}
 </tree-view>
 
