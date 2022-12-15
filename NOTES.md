@@ -33,3 +33,4 @@
 
 Try:
 * Replace Interface with Type definitions for models, may loosen generic polymorphism
+* Reduce grid lines when zoomed out

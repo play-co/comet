@@ -3,7 +3,7 @@ import type { GoldenLayout } from 'golden-layout';
 import { enableLog } from '../../core/log';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObjectNode';
-import type { FolderNode } from '../../core/nodes/concrete/meta/folderNode';
+import { FolderNode } from '../../core/nodes/concrete/meta/folderNode';
 import { ProjectNode } from '../../core/nodes/concrete/meta/projectNode';
 import { clearInstances, getInstance } from '../../core/nodes/instances';
 import { Actions } from '../actions';
@@ -285,7 +285,7 @@ export class Application
         let folderParentId: string | undefined;
 
         if (selection.hasSelection
-            && selection.firstNode.nodeType() === 'Folder'
+            && selection.firstNode.is(FolderNode)
             && selection.firstNode.cast<FolderNode>().isWithinRootFolder('Textures'))
         {
             folderParentId = selection.firstNode.id;

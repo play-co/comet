@@ -1,6 +1,7 @@
 import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
 import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
-import type { FolderNode } from '../../../core/nodes/concrete/meta/folderNode';
+import { FolderNode } from '../../../core/nodes/concrete/meta/folderNode';
+import { SceneNode } from '../../../core/nodes/concrete/meta/sceneNode';
 import { Application } from '../../core/application';
 import type { ProjectSelection } from '../../core/projectSelection';
 import Events from '../../events';
@@ -71,14 +72,14 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
         ).model;
     }
 
-    public hasChildren(obj: MetaNode)
+    public hasChildren(node: MetaNode)
     {
-        if (obj.nodeType() === 'Scene')
+        if (node.is(SceneNode))
         {
             return false;
         }
 
-        return obj.hasChildren;
+        return node.hasChildren;
     }
 
     // @ts-ignore
@@ -87,7 +88,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
     {
         const node = item.data;
 
-        if (node.nodeType() === 'Scene')
+        if (node.is(SceneNode))
         {
             Application.instance.edit(node.cast<DisplayObjectNode>());
         }
@@ -98,7 +99,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
         const sourceNode = this.selection.firstNode;
         const targetNode = target.data;
 
-        if (targetNode.nodeType() === 'Folder')
+        if (targetNode.is(FolderNode))
         {
             return super.canReParentTarget(target)
                 && targetNode.cast<FolderNode>().getRootFolder().contains(sourceNode);

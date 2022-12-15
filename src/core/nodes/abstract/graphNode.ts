@@ -99,7 +99,7 @@ export abstract class GraphNode
         return false;
     }
 
-    public getParents<T extends GraphNode>(breakType = 'Scene', includeBreak = false): T[]
+    public getParents<T extends GraphNode>(breakType = Function, includeBreak = false): T[]
     {
         const nodes: T[] = [];
 
@@ -107,7 +107,7 @@ export abstract class GraphNode
 
         while (node)
         {
-            if (node.nodeType() === breakType)
+            if (node.is(breakType))
             {
                 if (includeBreak)
                 {

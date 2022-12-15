@@ -1,7 +1,7 @@
 import { ModelSchema } from '../../../model/schema';
 import { type ClonableNodeModel, clonableNodeSchema } from '../../abstract/clonableNode';
 import { MetaNode } from '../../abstract/metaNode';
-import type { ProjectFolderName } from './projectNode';
+import { type ProjectFolderName, ProjectNode } from './projectNode';
 
 export interface FolderNodeModel extends ClonableNodeModel
 {
@@ -30,7 +30,7 @@ export class FolderNode<M extends ClonableNodeModel = ClonableNodeModel> extends
 
     public isRootFolder(name?: ProjectFolderName)
     {
-        if (this.parent && this.parent.nodeType() !== 'Project')
+        if (this.parent && !this.parent.is(ProjectNode))
         {
             return false;
         }
