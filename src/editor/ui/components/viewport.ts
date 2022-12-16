@@ -99,7 +99,7 @@ export class EditableViewport
 
     protected onKeyDown = (e: KeyboardEvent) =>
     {
-        if (e.key === ' ')
+        if (e.key === ' ' && !this.boxSelection.isSelecting)
         {
             this.viewport.cursor = 'grab';
             this.transformGizmo.isInteractive = false;
@@ -221,32 +221,10 @@ export class EditableViewport
 
     protected onMouseUp = () =>
     {
-        const { viewport, boxSelection, isSpaceKeyDown } = this;
+        const { viewport, isSpaceKeyDown } = this;
 
         viewport.pause = false;
         viewport.cursor = isSpaceKeyDown ? 'grab' : 'default';
-
-        if (boxSelection.isSelecting)
-        {
-            const { hierarchy: selection } = Application.instance.selection;
-            const nodes = boxSelection.selectWithinRootNode(this.rootNode);
-
-            selection.deselect();
-
-            if (nodes.length > 0)
-            {
-                if (nodes.length === 1)
-                {
-                    selection.set(nodes[0]);
-                }
-                else
-                {
-                    selection.set(nodes);
-                }
-            }
-        }
-
-        this.boxSelection.onMouseUp();
     };
 
     protected onViewportChanged = () =>

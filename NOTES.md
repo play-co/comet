@@ -11,7 +11,6 @@
 # Enhancements
 
 * Box Selection could white border highlight nodes as they are being dragged over and out
-* UI Layout, Tree State, Current Scene, Current Selection could be saved to localStorage to preserve user workspace
 
 # Known General Issues
 
@@ -32,7 +31,7 @@
 * select texture via properties panel - create submenu popups from texture asset tree
 * drop items from project tree to viewport
 * check project tree for bugs (reorder?, reparent)
-* 
+* localStorage project state: UI Layout, Tree State, Current Scene, Current Selection could be saved to localStorage to preserve user workspace
 
 Try:
 * Replace Interface with Type definitions for models, may loosen generic polymorphism

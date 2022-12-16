@@ -3,6 +3,7 @@ import { type InteractionEvent, Graphics, Point, Rectangle } from 'pixi.js';
 
 import type { ClonableNode } from '../../../core';
 import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
+import { getApp } from '../../core/application';
 
 export class BoxSelection extends Graphics
 {
@@ -26,6 +27,7 @@ export class BoxSelection extends Graphics
         this.corner = new Point(x, y);
 
         document.body.classList.add('no_splitter_hover');
+        window.addEventListener('mouseup', this.onMouseUp);
     }
 
     public onMouseMove(e: InteractionEvent)
@@ -40,16 +42,35 @@ export class BoxSelection extends Graphics
         }
     }
 
-    public onMouseUp()
+    public onMouseUp = () =>
     {
         if (this.isSelecting)
         {
             this.isSelecting = false;
             this.clear();
 
+            const app = getApp();
+            const { hierarchy: selection } = app.selection;
+            const nodes = this.selectWithinRootNode(app.viewport.rootNode);
+
+            selection.deselect();
+
+            if (nodes.length > 0)
+            {
+                if (nodes.length === 1)
+                {
+                    selection.set(nodes[0]);
+                }
+                else
+                {
+                    selection.set(nodes);
+                }
+            }
+
             document.body.classList.remove('no_splitter_hover');
+            window.removeEventListener('mouseup', this.onMouseUp);
         }
-    }
+    };
 
     get selectionBounds()
     {
