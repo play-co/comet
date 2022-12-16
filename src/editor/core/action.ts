@@ -104,6 +104,7 @@ export abstract class Action<OptionsType, ReturnType>
         this.dispatch({}, event);
     }
 
+    // TODO: change to required, check usages
     public dispatch(options: Partial<OptionsType> = {}, event?: KeyboardEvent): ReturnType | undefined
     {
         if (!this.shouldRun())

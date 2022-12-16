@@ -48,7 +48,7 @@ export abstract class GraphNode
         return this as unknown as T;
     }
 
-    public is(ctor: Function)
+    public is<T extends Function>(ctor: T): ctor is T
     {
         return this instanceof ctor;
     }

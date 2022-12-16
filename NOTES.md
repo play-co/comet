@@ -28,10 +28,19 @@
 
 # WIP TODO:
 
-* select texture via properties panel - create submenu popups from texture asset tree
+High Priority
 * drop items from project tree to viewport
-* check project tree for bugs (reorder?, reparent)
+* project preview
+* check project tree for bugs (reorder?, reparent, delete asset and reset sprite textures, delete asset folder and ensure child textures are deleted)
+
+Low Priority
 * localStorage project state: UI Layout, Tree State, Current Scene, Current Selection could be saved to localStorage to preserve user workspace
+* Project properties panel
+    - name
+    - created
+* Grid properties panel
+    - visible check
+    - inc values (small, medium, large)
 
 Try:
 * Replace Interface with Type definitions for models, may loosen generic polymorphism

@@ -14,6 +14,7 @@
   import { SceneNode } from "../../../core/nodes/concrete/meta/sceneNode.js";
   import FocusArea from "./components/focusArea.svelte";
   import { Icons } from "./icons.js";
+  import type { MetaNode } from "../../../core/nodes/abstract/metaNode.js";
 
   const app = Application.instance;
   const dropZone = new DropZone();
@@ -63,18 +64,18 @@
     Events.selection.project.setSingle.bind(() => {
       const node = selection.firstNode;
       const isFolder = selection.isSelected(FolderNode);
+      const isScene = selection.isSelected(SceneNode);
 
       newFolderButton.isEnabled = isFolder;
-      newSceneButton.isEnabled = isFolder && node.cast<FolderNode>().isWithinRootFolder("Scenes");
+      newSceneButton.isEnabled =
+        (isFolder && node.cast<MetaNode>().isWithinRootFolder("Scenes")) || isScene;
 
       callback(buttons);
     });
   };
 
   const onDeleteAssetNode = () => {
-    const node = selection.firstNode;
-
-    Actions.deleteNode.dispatch({ nodeId: node.id });
+    Actions.deleteTexture.dispatch({ nodeId: selection.firstNode.id });
   };
 
   const treeMenu = new Menu([{ label: "Delete", onClick: onDeleteAssetNode }], (item) => {

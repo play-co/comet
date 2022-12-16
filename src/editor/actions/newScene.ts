@@ -16,7 +16,7 @@ export class NewSceneAction extends Action<void, SceneNode>
     {
         const app = getApp();
 
-        return super.shouldRun() && app.isAreaFocussed('viewport', 'hierarchy');
+        return super.shouldRun() && app.isAreaFocussed('project');
     }
 
     protected exec(): SceneNode

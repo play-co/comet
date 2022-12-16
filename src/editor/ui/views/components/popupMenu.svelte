@@ -132,7 +132,7 @@
       if (active && active.menu === undefined) active = undefined;
     }}
   >
-    {#each items as item}
+    {#each menu.getItems() as item}
       <!-- svelte-ignore a11y-mouse-events-have-key-events -->
       <menu-item
         class:selected={item === active}
