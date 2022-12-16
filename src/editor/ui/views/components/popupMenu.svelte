@@ -10,6 +10,7 @@
 
   let show = false;
   let container: HTMLElement;
+  let lastBounds: DOMRect | undefined;
 
   $: x = 0;
   $: y = 0;
@@ -84,17 +85,36 @@
   afterUpdate(() => {
     const maxX = document.body.clientWidth;
     const maxY = document.body.clientHeight;
+    const marginX = 10;
+    const marginY = 10;
 
     if (container) {
       const bounds = container.getBoundingClientRect();
 
-      // if (bounds.right > maxX) {
-      //   overflowX = true;
-      // }
+      const a = bounds.toJSON();
+      const b = lastBounds?.toJSON() || {};
+      const isEqual =
+        a.left === b.left && a.top === b.top && a.right === b.right && a.bottom === b.bottom;
 
-      // if (bounds.bottom > maxY) {
-      //   overflowY = true;
-      // }
+      if (!isEqual) {
+        let transformX = "";
+        let transformY = "";
+
+        if (bounds.right > maxX) {
+          const overflowX = bounds.right - maxX;
+          transformX += `translateX(-${overflowX + marginX}px)`;
+        }
+
+        if (bounds.bottom > maxY) {
+          const overflowY = bounds.bottom - maxY;
+          transformY += `translateY(-${overflowY + marginY}px)`;
+        }
+
+        let transform = `${transformX} ${transformY}`;
+        container.style.transform = transform;
+      }
+
+      lastBounds = bounds;
     }
   });
 </script>
