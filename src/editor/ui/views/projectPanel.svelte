@@ -13,6 +13,7 @@
   import { Menu } from "./components/menu.js";
   import { SceneNode } from "../../../core/nodes/concrete/meta/sceneNode.js";
   import FocusArea from "./components/focusArea.svelte";
+  import { Icons } from "./icons.js";
 
   const app = Application.instance;
   const dropZone = new DropZone();
@@ -39,7 +40,7 @@
   const newFolderButton: ButtonBarItem = {
     id: "newFolder",
     label: "New Folder",
-    icon: "/assets/folder.ico",
+    icon: Icons.Folder,
     isEnabled: false,
     onClick: () => {
       Actions.newFolder.dispatch();
@@ -49,7 +50,7 @@
   const newSceneButton: ButtonBarItem = {
     id: "newScene",
     label: "New Scene",
-    icon: "/assets/scene.ico",
+    icon: Icons.Scene,
     isEnabled: false,
     onClick: () => {
       Actions.newScene.dispatch();

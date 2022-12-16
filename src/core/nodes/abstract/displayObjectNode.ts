@@ -80,6 +80,23 @@ export abstract class DisplayObjectNode<
         return displayObjectSchema as unknown as ModelSchema<M>;
     }
 
+    protected resetView()
+    {
+        this.view = this.createView();
+        this.initView();
+        if (this.parent)
+        {
+            this.addViewToParent(this.parent.cast());
+        }
+        this.updateView();
+    }
+
+    protected initView()
+    {
+        // eslint-disable-next-line camelcase
+        (this.view as any).__node_id = this.id;
+    }
+
     public updateView(): void
     {
         const {

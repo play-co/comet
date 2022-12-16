@@ -40,6 +40,7 @@ export const spriteSchema = new ModelSchema<SpriteModel>({
 export class SpriteNode<M extends SpriteModel = SpriteModel, V extends Sprite = Sprite> extends ContainerNode<M, V>
 {
     protected placeHolder?: Graphics;
+    protected textureAssetId?: string;
 
     public nodeType()
     {
@@ -88,14 +89,12 @@ export class SpriteNode<M extends SpriteModel = SpriteModel, V extends Sprite = 
                 view.texture = Texture.EMPTY;
                 view.addChild(placeHolder);
 
-                textureAsset.getResource().then(() =>
-                {
-                    // delay(2000).then(() =>
-                    // {
-                    this.setTexture(textureAsset);
-                    // });
-                });
+                textureAsset.getResource().then(() => this.setTexture(textureAsset));
             }
+        }
+        else if (this.textureAssetId)
+        {
+            this.clearTexture();
         }
     }
 
@@ -138,12 +137,33 @@ export class SpriteNode<M extends SpriteModel = SpriteModel, V extends Sprite = 
         });
 
         view.texture = texture;
+        this.textureAssetId = id;
 
+        this.clearPlaceHolder();
+    }
+
+    protected clearPlaceHolder()
+    {
         if (this.placeHolder)
         {
-            view.removeChild(this.placeHolder);
+            this.view.removeChild(this.placeHolder);
             delete this.placeHolder;
         }
+    }
+
+    protected clearTexture()
+    {
+        this.view.texture.destroy(true);
+
+        if (this.parent)
+        {
+            this.removeViewFromParent(this.parent.cast());
+        }
+
+        delete this.textureAssetId;
+
+        this.clearPlaceHolder();
+        this.resetView();
     }
 
     public get width(): number

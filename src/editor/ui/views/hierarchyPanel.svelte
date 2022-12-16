@@ -5,6 +5,7 @@
   import ButtonBar, { type ButtonBarItem } from "./components/buttonBar.svelte";
   import { Actions } from "../../actions/index.js";
   import FocusArea from "./components/focusArea.svelte";
+  import { Icons } from "./icons.js";
 
   const tree = new HierarchyTree();
 
@@ -12,7 +13,7 @@
     {
       id: "createSprite",
       label: "Create Sprite",
-      icon: "/assets/sprite.ico",
+      icon: Icons.Sprite,
       onClick: () => {
         Actions.newSprite.dispatch({ addToSelected: true });
       },
@@ -20,7 +21,7 @@
     {
       id: "createContainer",
       label: "Create Container",
-      icon: "/assets/container.ico",
+      icon: Icons.Container,
       onClick: () => {
         Actions.newContainer.dispatch({ addToSelected: true });
       },

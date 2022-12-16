@@ -2,11 +2,16 @@
   import { TextureAssetNode } from "../../../../../core/nodes/concrete/meta/assets/textureAssetNode";
   import { getApp } from "../../../../core/application";
   import { mixedToken, type PropertyBinding } from "../../propertiesPanel";
-  import { Menu } from "../menu";
+  import { Menu, type MenuItem } from "../menu";
   import ContextMenu from "../contextMenu.svelte";
   import Events from "../../../../events";
   import type { ModifyModelCommandParams } from "../../../../commands/modifyModel";
   import { ModifyModelsCommand } from "../../../../commands/modifyModels";
+  import { FolderNode } from "../../../../../core/nodes/concrete/meta/folderNode";
+  import type { MetaNode } from "../../../../../core/nodes/abstract/metaNode";
+  import { Icons } from "../../icons";
+  import type { ClonableNode } from "../../../../../core";
+  import { getInstance } from "../../../../../core/nodes/instances";
 
   export let property: PropertyBinding;
 
@@ -28,9 +33,21 @@
     return val;
   }
 
+  function getNodeValue(node: ClonableNode) {
+    const textureAssetId = node.model.getValue<string>(property.key);
+
+    if (textureAssetId === null) {
+      return null;
+    }
+
+    const textureNode = getInstance<TextureAssetNode>(textureAssetId);
+
+    return textureNode.model.getValue<string>("name");
+  }
+
   function getValue() {
     const { nodes } = property;
-    const propValue = nodes[0].model.getValue<string>(property.key);
+    const propValue = getNodeValue(nodes[0]);
 
     if (nodes.length === 1) {
       return format(propValue);
@@ -38,7 +55,7 @@
       let values = new Set();
 
       nodes.forEach((node) => {
-        const propValue = node.model.getValue<string>(property.key);
+        const propValue = getNodeValue(node);
         values.add(propValue);
       });
 
@@ -46,7 +63,7 @@
     }
   }
 
-  function setValue(textureAssetId: string) {
+  function setValue(textureAssetId: string | null) {
     const modifications: ModifyModelCommandParams<any>[] = [];
 
     property.nodes.forEach((node) => {
@@ -66,30 +83,60 @@
     Events.editor.propertyModified.emit(property);
   }
 
+  function createMenuFromFolder(folderNode: FolderNode) {
+    const menuItems: MenuItem[] = [];
+
+    folderNode.forEach<MetaNode>((child) => {
+      const label = child.model.getValue<string>("name");
+
+      if (child.is(FolderNode)) {
+        menuItems.push({
+          label,
+          icon: Icons.Folder,
+          menu: createMenuFromFolder(child.cast<FolderNode>()),
+        });
+      } else if (child.is(TextureAssetNode)) {
+        menuItems.push({
+          label,
+          icon: Icons.TextureAsset,
+          data: child.id,
+          onClick: () => {
+            setValue(child.id);
+          },
+        });
+      }
+    });
+
+    return new Menu(menuItems);
+  }
+
+  function update() {
+    value = getValue();
+  }
+
+  // handlers
   const onMouseDown = (e: MouseEvent) => {
-    const textures = app.project.getRootFolder("Textures").getAllChildrenByType(TextureAssetNode);
+    menu = createMenuFromFolder(app.project.getRootFolder("Textures"));
 
-    menu = new Menu(
-      textures.map((texture) => ({
-        label: texture.model.getValue("name"),
-        data: texture.id,
-        onClick: () => {
-          setValue(texture.id);
-        },
-      }))
-    );
+    menu.insertItem({
+      label: "<None>",
+      style: "prompt",
+      onClick: () => {
+        setValue(null);
+      },
+    });
 
-    setTimeout(() => {
-      Events.editor.contextMenuOpen.emit(e);
-    }, 0);
+    app.openContextMenuFromEvent(e);
   };
+
+  Events.datastore.node.local.modified.bind(update);
 </script>
 
 <select-control bind:this={container}>
   <input
     readonly
     type="text"
-    class={value === mixedToken || none ? "mixed" : "normal"}
+    class={value === mixedToken ? "mixed" : "normal"}
     placeholder={none ? "none" : undefined}
     {value}
     on:mousedown={onMouseDown}
@@ -112,5 +159,6 @@
     top: 0;
     width: 100%;
     height: 100%;
+    padding: 0 10px;
   }
 </style>

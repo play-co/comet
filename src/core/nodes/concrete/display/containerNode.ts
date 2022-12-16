@@ -39,11 +39,6 @@ export class ContainerNode<
         return new Container() as V;
     }
 
-    protected initView()
-    {
-        (this.view as any).id = this.id;
-    }
-
     public reParentTransform()
     {
         const viewMatrix = this.view.worldTransform.clone();

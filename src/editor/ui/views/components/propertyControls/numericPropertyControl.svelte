@@ -107,11 +107,11 @@
     Events.editor.propertyModified.emit(property);
   }
 
-  // handlers
-  const onUpdate = () => {
+  function update() {
     value = getValue();
-  };
+  }
 
+  // handlers
   const onFocus = (e: Event) => {
     const element = e.target as HTMLInputElement;
     prevValue = element.value;
@@ -195,7 +195,7 @@
     }, 1000) as unknown as number;
   };
 
-  Events.datastore.node.local.modified.bind(onUpdate);
+  Events.datastore.node.local.modified.bind(update);
 </script>
 
 <numeric-control>
@@ -221,9 +221,11 @@
     border: 1px solid #4f4f4f;
     background-color: #323030;
     font-size: 12px;
-    padding: 3px 5px;
+    padding: 5px;
     border-radius: 3px;
     min-width: 50px;
     box-shadow: inset 3px 3px 2px #04040459;
+    padding-top: 6px;
+    padding-bottom: 4px;
   }
 </style>

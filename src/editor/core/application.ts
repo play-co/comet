@@ -340,6 +340,14 @@ export class Application
         this.focusArea = id;
         Events.focus.focus.emit(id);
     }
+
+    public openContextMenuFromEvent(event: MouseEvent)
+    {
+        setTimeout(() =>
+        {
+            Events.editor.contextMenuOpen.emit(event);
+        }, 0);
+    }
 }
 
 export function getApp()

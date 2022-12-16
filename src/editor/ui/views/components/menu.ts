@@ -1,7 +1,9 @@
 export interface MenuItem
 {
-    data?: any;
     label: string;
+    icon?: string;
+    style?: 'separator' | 'prompt';
+    data?: any;
     isEnabled?: boolean;
     isHidden?: boolean;
     menu?: Menu;
@@ -39,5 +41,10 @@ export class Menu
     public hasSubMenus()
     {
         return this.items.some((item) => item.menu !== undefined);
+    }
+
+    public insertItem(item: MenuItem, index = 0): void
+    {
+        this.items.splice(index, 0, item);
     }
 }

@@ -75,11 +75,6 @@ export abstract class ClonableNode<
         this.assignedCustomProperties = new Map();
 
         this.view = this.createView();
-        if (this.view)
-        {
-            // eslint-disable-next-line camelcase
-            (this.view as any).__node_id = this.id;
-        }
         this.initView();
 
         this.model.bind(this.onModelModified);

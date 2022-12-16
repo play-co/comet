@@ -164,7 +164,7 @@
 
   .titlebar {
     height: 20px;
-    background-color: #333;
+    background-color: #525252;
     cursor: move;
     border: 1px outset #888;
     display: flex;
@@ -175,15 +175,17 @@
   .close {
     width: 20px;
     height: 20px;
-    background-color: #242424;
+    background-color: #4a4a4a;
     border: 1px outset #878585;
     font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #9a9a9a;
+    color: #ececec;
     font-family: sans-serif;
     cursor: pointer;
+    padding-bottom: 3px;
+    padding-left: 1px;
   }
 
   .close:hover {

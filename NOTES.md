@@ -28,7 +28,6 @@
 
 # WIP TODO:
 
-* fix popup overflow
 * select texture via properties panel - create submenu popups from texture asset tree
 * drop items from project tree to viewport
 * check project tree for bugs (reorder?, reparent)

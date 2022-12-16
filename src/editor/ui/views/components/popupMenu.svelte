@@ -39,6 +39,9 @@
     }
   }
 
+  $: items = menu.getItems();
+  $: hasIcons = items.some((item) => item.icon !== undefined);
+
   function close() {
     Events.editor.contextMenuClose.emit();
   }
@@ -129,15 +132,25 @@
       if (active && active.menu === undefined) active = undefined;
     }}
   >
-    {#each menu.getItems() as item}
+    {#each items as item}
       <!-- svelte-ignore a11y-mouse-events-have-key-events -->
       <menu-item
         class:selected={item === active}
         class:disabled={item.isEnabled === false}
+        class:hasIcons
+        class:prompt={item.style === "prompt"}
+        class:separator={item.style === "separator"}
         on:mouseover={() => (active = item)}
         on:click={() => onMenuItemClick(item)}
       >
-        {item.label}
+        {#if item.icon}
+          <!-- svelte-ignore a11y-missing-attribute -->
+          <img src={item.icon} class="icon" />
+        {/if}
+        {#if !item.icon && hasIcons}
+          <div class="iconMargin" />
+        {/if}
+        <span class="label">{item.label}</span>
         {#if item.menu && active === item}
           <svelte:self on:select {event} menu={item.menu} target={container} isSubMenu={true} />
         {/if}
@@ -166,6 +179,8 @@
   }
 
   menu-item {
+    display: flex;
+    align-items: center;
     position: relative;
     border: 1px outset #828282;
     padding: 0 10px;
@@ -185,5 +200,26 @@
   menu-item.disabled {
     font-style: italic;
     color: #bcbcbc;
+  }
+
+  menu-item.prompt {
+    font-style: italic;
+  }
+
+  .label {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .iconMargin {
+    height: 16px;
+    width: 21px;
+    display: inline-block;
+  }
+
+  .icon {
+    width: 16px;
+    margin-right: 5px;
+    pointer-events: none;
   }
 </style>

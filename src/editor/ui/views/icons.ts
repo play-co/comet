@@ -5,4 +5,4 @@ export const Icons: Record<string, string> = {
     Sprite: '/assets/sprite.ico',
     TextureAsset: '/assets/texture.ico',
     Container: '/assets/container.ico',
-};
+} as const;

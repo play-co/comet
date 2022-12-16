@@ -13,7 +13,7 @@ export abstract class MetaNode<M extends ClonableNodeModel = ClonableNodeModel> 
 
     protected initView(): void
     {
-        //
+        // bypass
     }
 
     // @ts-ignore
