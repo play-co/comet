@@ -104,9 +104,19 @@ export abstract class Action<OptionsType, ReturnType>
         this.dispatch({}, event);
     }
 
-    public dispatch(options: Partial<OptionsType> = {}, event?: KeyboardEvent): ReturnType
+    public dispatch(options: Partial<OptionsType> = {}, event?: KeyboardEvent): ReturnType | undefined
     {
+        if (!this.shouldRun())
+        {
+            return undefined;
+        }
+
         return this.exec(options, event);
+    }
+
+    protected shouldRun()
+    {
+        return true;
     }
 
     protected abstract exec(options: Partial<OptionsType>, event?: KeyboardEvent): ReturnType;

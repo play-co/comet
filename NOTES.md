@@ -29,7 +29,10 @@
 
 # WIP TODO:
 
-* select texture via properties panel
+* select texture via properties panel - create submenu popups from texture asset tree
+* drop items from project tree to viewport
+* check project tree for bugs (reorder?, reparent)
+* 
 
 Try:
 * Replace Interface with Type definitions for models, may loosen generic polymorphism

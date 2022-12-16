@@ -20,6 +20,7 @@ import { LocalStorageProvider } from '../storage/localStorageProvider';
 import { ConvergenceDatastore } from '../sync/convergenceDatastore';
 import { RemoteObjectSync } from '../sync/remoteObjectSync';
 import { EditableViewport } from '../ui/components/viewport';
+import type { FocusAreaId } from '../ui/views/components/focusArea.svelte';
 import { getUrlParam } from '../util';
 import { HierarchySelection } from './hierarchySelection';
 import { initHistory, writeUndoStack } from './history';
@@ -56,6 +57,8 @@ export class Application
 
     public gridSettings: GridSettings;
     public layout?: GoldenLayout;
+    protected focusArea: string | null;
+    public isColorPickerOpen: boolean;
 
     private static _instance: Application;
 
@@ -84,6 +87,9 @@ export class Application
         this.gridSettings = {
             ...defaultGridSettings,
         };
+
+        this.focusArea = null;
+        this.isColorPickerOpen = false;
 
         this.storageProvider = new LocalStorageProvider();
         this.project = new ProjectNode();
@@ -312,6 +318,27 @@ export class Application
                 });
             }
         });
+    }
+
+    public isAreaFocussed(...id: FocusAreaId[])
+    {
+        return id.some((id) => this.focusArea === id);
+    }
+
+    public setFocusArea(id: FocusAreaId)
+    {
+        if (this.focusArea === id)
+        {
+            return;
+        }
+
+        if (this.focusArea !== null)
+        {
+            Events.focus.blur.emit(this.focusArea);
+        }
+
+        this.focusArea = id;
+        Events.focus.focus.emit(id);
     }
 }
 

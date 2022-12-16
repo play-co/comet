@@ -4,6 +4,7 @@
   import TreeView from "./components/treeView.svelte";
   import ButtonBar, { type ButtonBarItem } from "./components/buttonBar.svelte";
   import { Actions } from "../../actions/index.js";
+  import FocusArea from "./components/focusArea.svelte";
 
   const tree = new HierarchyTree();
 
@@ -27,12 +28,14 @@
   ];
 </script>
 
-<hierarchy-panel>
-  <Panel>
-    <ButtonBar size="small" items={buttons} />
-    <TreeView {tree} />
-  </Panel>
-</hierarchy-panel>
+<FocusArea id="hierarchy">
+  <hierarchy-panel>
+    <Panel>
+      <ButtonBar size="small" items={buttons} />
+      <TreeView {tree} />
+    </Panel>
+  </hierarchy-panel>
+</FocusArea>
 
 <style>
   hierarchy-panel {

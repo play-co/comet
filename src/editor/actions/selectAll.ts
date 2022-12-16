@@ -1,6 +1,6 @@
 import type { ClonableNode } from '../../core';
 import { Action } from '../core/action';
-import { Application } from '../core/application';
+import { Application, getApp } from '../core/application';
 
 export class SelectAllAction extends Action<void, void>
 {
@@ -9,6 +9,13 @@ export class SelectAllAction extends Action<void, void>
         super('select-all', {
             hotkey: 'Ctrl+A',
         });
+    }
+
+    protected shouldRun(): boolean
+    {
+        const app = getApp();
+
+        return super.shouldRun() && app.isAreaFocussed('viewport');
     }
 
     protected exec()

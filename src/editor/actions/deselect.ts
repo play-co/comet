@@ -1,5 +1,5 @@
 import { Action } from '../core/action';
-import { Application } from '../core/application';
+import { Application, getApp } from '../core/application';
 
 export class DeselectAction extends Action<void, void>
 {
@@ -8,6 +8,13 @@ export class DeselectAction extends Action<void, void>
         super('deselect', {
             hotkey: 'Ctrl+Shift+A',
         });
+    }
+
+    protected shouldRun(): boolean
+    {
+        const app = getApp();
+
+        return super.shouldRun() && app.isAreaFocussed('viewport');
     }
 
     protected exec()

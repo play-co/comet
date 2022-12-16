@@ -4,6 +4,7 @@
   import { Menu } from "./components/menu";
   import ContextMenu from "./components/contextMenu.svelte";
   import { DropZone } from "../components/dropzone";
+  import FocusArea from "./components/focusArea.svelte";
 
   const app = Application.instance;
   const viewport = app.viewport;
@@ -40,9 +41,11 @@
   });
 </script>
 
-<view-port bind:this={container} class:isDragOver={$isDragOver}>
-  <ContextMenu {menu} {container} />
-</view-port>
+<FocusArea id="viewport">
+  <view-port bind:this={container} class:isDragOver={$isDragOver}>
+    <ContextMenu {menu} {container} />
+  </view-port>
+</FocusArea>
 
 <style>
   view-port {

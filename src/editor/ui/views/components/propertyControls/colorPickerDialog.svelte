@@ -3,15 +3,14 @@
   import { createEventDispatcher, onDestroy, onMount } from "svelte";
   import "toolcool-color-picker";
   import type ColorPicker from "toolcool-color-picker";
-  import { Actions } from "../../../../actions";
+  import { getApp } from "../../../../core/application";
   import Events from "../../../../events";
   import { mouseDrag } from "../../../components/dragger";
   import { isAcceptKey, isArrowKey, isDeleteKey, isNumeric } from "../../../components/filters";
 
   export let color: string;
-  // export declare function createEventDispatcher<EventMap extends {} = any>()
-  //  : <EventKey extends Extract<keyof EventMap, string>>(type: EventKey, detail?: EventMap[EventKey]) => void;
 
+  const app = getApp();
   const dispatch = createEventDispatcher();
 
   let left: number = 100;
@@ -32,31 +31,35 @@
       }
     }, 10);
 
-    init();
+    open();
   });
 
   onDestroy(close);
 
-  function init() {
+  function open() {
     if (!picker) {
-      // shadow-dom of 3rd party lib is not immediately available, poll until
-      setTimeout(init, 10);
+      // shadow-dom of 3rd party lib is not immediately available, short poll until its available
+      setTimeout(open, 10);
       return;
     }
 
+    app.isColorPickerOpen = true;
+
     // bind to events
+    window.addEventListener("mouseup", onMouseUp);
     titleBar.addEventListener("mousedown", onMouseDown);
     picker.addEventListener("change", onChange);
     Events.key.down.bind(onKeyDown);
-    window.addEventListener("mouseup", onMouseUp);
   }
 
   function close() {
+    app.isColorPickerOpen = false;
+
     // unbind to events
-    titleBar.removeEventListener("mousedown", onMouseDown);
-    titleBar.removeEventListener("change", onChange);
-    Events.key.down.unbind(onKeyDown);
     window.removeEventListener("mouseup", onMouseUp);
+    titleBar.removeEventListener("mousedown", onMouseDown);
+    picker.removeEventListener("change", onChange);
+    Events.key.down.unbind(onKeyDown);
 
     dispatch("close");
   }
@@ -119,16 +122,6 @@
     dispatch("accept", picker.hex8);
   };
 
-  const onMouseOver = () => {
-    // temp disable deleteNode action to allow deleting rgb inputs
-    Actions.deleteNode.isEnabled = false;
-  };
-
-  const onMouseOut = () => {
-    // restore deleteNode action
-    Actions.deleteNode.isEnabled = true;
-  };
-
   const onCloseClick = (e: MouseEvent) => {
     e.stopPropagation();
     close();
@@ -136,12 +129,7 @@
 </script>
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<color-picker-dialog
-  style={`left:${left}px;top:${top}px`}
-  on:keydown={onKeyUp}
-  on:mouseover={onMouseOver}
-  on:mouseout={onMouseOut}
->
+<color-picker-dialog style={`left:${left}px;top:${top}px`} on:keydown={onKeyUp}>
   <div bind:this={titleBar} class="titlebar">
     <button class="close" on:click={onCloseClick}>x</button>
   </div>

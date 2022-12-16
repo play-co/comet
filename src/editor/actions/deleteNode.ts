@@ -1,6 +1,6 @@
 import { RemoveNodesCommand } from '../commands/removeNodes';
 import { Action } from '../core/action';
-import { Application } from '../core/application';
+import { Application, getApp } from '../core/application';
 
 export type DeleteNodeOptions = {
     nodeId?: string;
@@ -13,6 +13,13 @@ export class DeleteNodeAction extends Action<DeleteNodeOptions, void>
         super('deleteNode', {
             hotkey: 'backspace,delete,del',
         });
+    }
+
+    protected shouldRun(): boolean
+    {
+        const app = getApp();
+
+        return super.shouldRun() && app.isAreaFocussed('viewport', 'project', 'hierarchy');
     }
 
     protected exec(options: DeleteNodeOptions): void

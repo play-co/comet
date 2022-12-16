@@ -3,13 +3,20 @@ import type { SceneNode } from '../../core/nodes/concrete/meta/sceneNode';
 import { createNodeSchema } from '../../core/nodes/schema';
 import { type CreateNodeCommandReturn, CreateNodeCommand } from '../commands/createNode';
 import { Action } from '../core/action';
-import { Application } from '../core/application';
+import { Application, getApp } from '../core/application';
 
 export class NewSceneAction extends Action<void, SceneNode>
 {
     constructor()
     {
         super('newScene');
+    }
+
+    protected shouldRun(): boolean
+    {
+        const app = getApp();
+
+        return super.shouldRun() && app.isAreaFocussed('viewport', 'hierarchy');
     }
 
     protected exec(): SceneNode

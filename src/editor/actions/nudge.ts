@@ -1,8 +1,9 @@
 import type { DisplayObjectModel } from '../../core/nodes/abstract/displayObjectNode';
 import { ModifyModelsCommand } from '../commands/modifyModels';
 import { Action } from '../core/action';
-import { Application } from '../core/application';
+import { Application, getApp } from '../core/application';
 import Events from '../events';
+import { snapToIncrement } from '../ui/transform/util';
 
 export class NudgeAction extends Action<void, void>
 {
@@ -13,34 +14,56 @@ export class NudgeAction extends Action<void, void>
         });
     }
 
+    protected shouldRun(): boolean
+    {
+        const app = getApp();
+
+        return super.shouldRun() && app.isAreaFocussed('viewport');
+    }
+
     protected exec(_options: void, event: KeyboardEvent)
     {
-        const { hierarchy: selection } = Application.instance.selection;
+        const app = getApp();
+        const { hierarchy: selection } = app.selection;
+        const gridSmallUnit = app.gridSettings.smallUnit;
 
         if (!selection.isEmpty)
         {
-            const inc = event.shiftKey ? 10 : 1;
+            const isShift = event.shiftKey;
+            const inc = isShift ? gridSmallUnit : 1;
             const command = ModifyModelsCommand.modifyNodes<DisplayObjectModel>(
                 selection.items,
                 'full',
                 (node, values) =>
                 {
+                    let x = node.model.getValue<number>('x');
+                    let y = node.model.getValue<number>('y');
+
                     if (event.key === 'ArrowLeft')
                     {
-                        values.x = node.model.getValue<number>('x') - inc;
+                        x = x - inc;
                     }
                     else if (event.key === 'ArrowRight')
                     {
-                        values.x = node.model.getValue<number>('x') + inc;
+                        x = x + inc;
                     }
                     else if (event.key === 'ArrowUp')
                     {
-                        values.y = node.model.getValue<number>('y') - inc;
+                        y = y - inc;
                     }
                     else if (event.key === 'ArrowDown')
                     {
-                        values.y = node.model.getValue<number>('y') + inc;
+                        y = y + inc;
                     }
+
+                    if (isShift)
+                    {
+                        x = snapToIncrement(x, gridSmallUnit);
+                        y = snapToIncrement(y, gridSmallUnit);
+                    }
+
+                    values.x = x;
+                    values.y = y;
                 });
 
             Application.instance.undoStack.exec(command);

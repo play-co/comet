@@ -4,7 +4,7 @@ import { type SpriteModel, type SpriteNode, defaultSpriteHeight, defaultSpriteWi
 import { createNodeSchema } from '../../core/nodes/schema';
 import { type AddChildCommandReturn, AddChildCommand } from '../commands/addChild';
 import { Action } from '../core/action';
-import { Application } from '../core/application';
+import { Application, getApp } from '../core/application';
 
 export type NewSpriteOptions = {
     addToSelected?: boolean;
@@ -23,6 +23,13 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
         super('newSprite', {
             hotkey: 'Ctrl+N',
         });
+    }
+
+    protected shouldRun(): boolean
+    {
+        const app = getApp();
+
+        return super.shouldRun() && app.isAreaFocussed('viewport', 'hierarchy');
     }
 
     protected rnd255()

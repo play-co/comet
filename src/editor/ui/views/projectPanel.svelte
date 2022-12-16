@@ -12,6 +12,7 @@
   import { DropZone } from "../components/dropzone";
   import { Menu } from "./components/menu.js";
   import { SceneNode } from "../../../core/nodes/concrete/meta/sceneNode.js";
+  import FocusArea from "./components/focusArea.svelte";
 
   const app = Application.instance;
   const dropZone = new DropZone();
@@ -95,19 +96,21 @@
   });
 </script>
 
-<project-panel class:isDragOver={$isDragOver}>
-  <Panel>
-    <div class="container" class:horizontal={orientation === "horizontal"} bind:this={container}>
-      <div class="tree">
-        <ButtonBar size="small" items={buttons} update={onButtonUpdater} />
-        <TreeView {tree} menu={treeMenu} />
+<FocusArea id="project">
+  <project-panel class:isDragOver={$isDragOver}>
+    <Panel>
+      <div class="container" class:horizontal={orientation === "horizontal"} bind:this={container}>
+        <div class="tree">
+          <ButtonBar size="small" items={buttons} update={onButtonUpdater} />
+          <TreeView {tree} menu={treeMenu} />
+        </div>
+        <div class="preview">
+          <ProjectPreview />
+        </div>
       </div>
-      <div class="preview">
-        <ProjectPreview />
-      </div>
-    </div>
-  </Panel>
-</project-panel>
+    </Panel>
+  </project-panel>
+</FocusArea>
 
 <style>
   project-panel {
@@ -149,6 +152,6 @@
   .container.horizontal .preview {
     margin-top: 0;
     margin-left: 5px;
-    flex-grow: 3;
+    flex-grow: 2;
   }
 </style>

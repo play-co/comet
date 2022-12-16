@@ -2,7 +2,7 @@ import type { ContainerModel } from '../../core/nodes/concrete/display/container
 import { createNodeSchema } from '../../core/nodes/schema';
 import { type AddChildCommandReturn, AddChildCommand } from '../commands/addChild';
 import { Action } from '../core/action';
-import { Application } from '../core/application';
+import { Application, getApp } from '../core/application';
 import type { EmptyNode } from '../nodes/empty';
 
 export type NewContainerOptions = {
@@ -17,6 +17,13 @@ export class NewContainerAction extends Action<NewContainerOptions, EmptyNode>
         super('newContainer', {
             hotkey: 'Shift+Ctrl+N',
         });
+    }
+
+    protected shouldRun(): boolean
+    {
+        const app = getApp();
+
+        return super.shouldRun() && app.isAreaFocussed('viewport', 'hierarchy');
     }
 
     protected exec(options: NewContainerOptions = {
