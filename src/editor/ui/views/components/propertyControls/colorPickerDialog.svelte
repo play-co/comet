@@ -20,6 +20,7 @@
   let colorBox: HTMLButtonElement;
   let mouseArea: HTMLDivElement;
   let lastColor = color;
+  let hasAccepted = false;
 
   onMount(() => {
     // keep 3rd party component open
@@ -61,7 +62,16 @@
     picker.removeEventListener("change", onChange);
     Events.key.down.unbind(onKeyDown);
 
+    if (!hasAccepted) {
+      accept(picker.hex8);
+    }
+
     dispatch("close");
+  }
+
+  function accept(color: string) {
+    dispatch("accept", color);
+    hasAccepted = true;
   }
 
   const onMouseDown = (event: MouseEvent) => {
@@ -86,7 +96,7 @@
     const rect = new Rectangle(bounds.left, bounds.top, bounds.width, bounds.height);
 
     if (rect.contains(clientX, clientY)) {
-      dispatch("accept", picker.hex8);
+      // accept(picker.hex8);
     }
   };
 
@@ -119,7 +129,8 @@
       return;
     }
 
-    dispatch("accept", picker.hex8);
+    accept(picker.hex8);
+    close();
   };
 
   const onCloseClick = (e: MouseEvent) => {

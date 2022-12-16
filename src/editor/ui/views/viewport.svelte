@@ -41,7 +41,7 @@
   });
 </script>
 
-<FocusArea id="viewport">
+<FocusArea id="viewport" focus={true}>
   <view-port bind:this={container} class:isDragOver={$isDragOver}>
     <ContextMenu {menu} {container} />
   </view-port>

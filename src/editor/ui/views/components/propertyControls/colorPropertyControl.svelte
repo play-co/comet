@@ -14,9 +14,7 @@
   const initialValues: Map<string, object> = new Map();
 
   function getInitialColor() {
-    const firstNodeColor = property.nodes[0].model.getValue<number>(
-      property.key
-    );
+    const firstNodeColor = property.nodes[0].model.getValue<number>(property.key);
 
     initialValues.clear();
 
@@ -51,10 +49,7 @@
         alpha = node.model.getValue<number>("alpha");
       }
 
-      c = c.mix(
-        Color(node.model.getValue<number>(property.key)).alpha(alpha),
-        0.5
-      );
+      c = c.mix(Color(node.model.getValue<number>(property.key)).alpha(alpha), 0.5);
     });
 
     return c.hexa();
@@ -91,9 +86,7 @@
     if (updateMode === "graphOnly") {
       new ModifyModelsCommand({ modifications }).run();
     } else {
-      Application.instance.undoStack.exec(
-        new ModifyModelsCommand({ modifications })
-      );
+      Application.instance.undoStack.exec(new ModifyModelsCommand({ modifications }));
     }
 
     Events.editor.propertyModified.emit(property);

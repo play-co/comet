@@ -14,8 +14,6 @@
   $: x = 0;
   $: y = 0;
   $: active = undefined as MenuItem | undefined;
-  $: overflowX = false;
-  $: overflowY = false;
 
   $: {
     if (event) {
@@ -24,11 +22,11 @@
     }
   }
 
-  $: subMenuLeft = `left:${overflowX ? `-2px;transform:translateX(-100%)` : "calc(100% + 2px)"}`;
-  $: subMenuTop = `top:${overflowY ? `100%;transform:translateY(-100%)` : "0"}`;
-  $: left = isSubMenu ? subMenuLeft : `left:${x}px`;
-  $: top = isSubMenu ? subMenuTop : `top:${y}px`;
-  $: style = `${left};${top}`;
+  $: subMenuLeft = "calc(100% + 2px)";
+  $: subMenuTop = "0";
+  $: left = isSubMenu ? subMenuLeft : `${x}px`;
+  $: top = isSubMenu ? subMenuTop : `${y}px`;
+  $: style = `left:${left};top:${top}`;
 
   $: {
     if (event && target) {
@@ -90,13 +88,13 @@
     if (container) {
       const bounds = container.getBoundingClientRect();
 
-      if (bounds.right > maxX) {
-        overflowX = true;
-      }
+      // if (bounds.right > maxX) {
+      //   overflowX = true;
+      // }
 
-      if (bounds.bottom > maxY) {
-        overflowY = true;
-      }
+      // if (bounds.bottom > maxY) {
+      //   overflowY = true;
+      // }
     }
   });
 </script>

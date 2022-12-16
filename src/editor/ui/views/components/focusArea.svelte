@@ -7,7 +7,9 @@
   import Events from "../../../events";
 
   export let id: FocusAreaId;
+  export let focus: boolean = false;
 
+  let container: any;
   let isFocussed = false;
 
   const app = Application.instance;
@@ -17,9 +19,22 @@
   });
 
   const onFocus = () => app.setFocusArea(id);
+
+  if (focus) {
+    Events.project.ready.bind(() => {
+      onFocus();
+      container.focus();
+    });
+  }
 </script>
 
-<focus-area class:focussed={isFocussed} on:focus={onFocus} on:mousedown={onFocus} tabindex="0">
+<focus-area
+  bind:this={container}
+  class:focussed={isFocussed}
+  on:focus={onFocus}
+  on:mousedown={onFocus}
+  tabindex="0"
+>
   <slot />
 </focus-area>
 
