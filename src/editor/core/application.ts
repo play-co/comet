@@ -9,7 +9,6 @@ import { FolderNode } from '../../core/nodes/concrete/meta/folderNode';
 import { ProjectNode } from '../../core/nodes/concrete/meta/projectNode';
 import { clearInstances, getInstance } from '../../core/nodes/instances';
 import { nextTick } from '../../core/util';
-import { Actions } from '../actions';
 import { type CreateTextureAssetCommandReturn, CreateTextureAssetCommand } from '../commands/createTextureAsset';
 import { RemoveNodeCommand } from '../commands/removeNode';
 import { DatastoreNodeInspector } from '../devTools/inspectors/datastoreNodeInspector';
@@ -301,25 +300,13 @@ export class Application
         {
             folderParentId = selection.firstNode.id;
         }
-        const { promise } = this.undoStack.exec<CreateTextureAssetCommandReturn>(new CreateTextureAssetCommand({ folderParentId, file }));
-
-        promise.then((texture) =>
-        {
-            if (createSpriteAtPoint)
-            {
-                const img = texture.resource as HTMLImageElement;
-
-                Actions.newSprite.dispatch({
-                    addToSelected: false,
-                    model: {
-                        x: createSpriteAtPoint.x - (img.width / 2),
-                        y: createSpriteAtPoint.y - (img.height / 2),
-                        textureAssetId: texture.id,
-                        tint: 0xffffff,
-                    },
-                });
-            }
-        });
+        this.undoStack.exec<CreateTextureAssetCommandReturn>(
+            new CreateTextureAssetCommand({
+                folderParentId,
+                file,
+                createSpriteAtPoint,
+            }),
+        );
     }
 
     public isAreaFocussed(...id: FocusAreaId[])

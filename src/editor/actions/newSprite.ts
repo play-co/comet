@@ -67,8 +67,6 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
             model: {
                 x,
                 y,
-                scaleX: 1,
-                scaleY: 1,
                 tint: tint.rgbNumber(),
                 ...actionOptions.model,
             },
