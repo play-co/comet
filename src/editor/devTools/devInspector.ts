@@ -248,7 +248,7 @@ export abstract class DevInspector<T extends Record<string, any> >
     {
         const table = this.table = this.createTable();
 
-        if (table.rows.length === 0 || !this.isExpanded)
+        if (table.rows.length === 0)
         {
             this.painter.size(0, 0);
         }

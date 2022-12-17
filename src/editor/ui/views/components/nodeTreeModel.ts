@@ -87,7 +87,7 @@ export abstract class NodeTreeModel<
             ? 0
             : parentNode.indexOf(targetObj, true) + 1;
 
-        if (index !== sourceObj.index)
+        if (index !== sourceObj.index && sourceObj !== targetObj)
         {
             Application.instance.undoStack.exec(
                 new SetNodeIndexCommand({
