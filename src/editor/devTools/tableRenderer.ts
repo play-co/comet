@@ -108,6 +108,13 @@ export function createTable<T extends Record<string, any>>(
         for (const columnId of row.keys())
         {
             const column = columnsById.get(columnId) as Column;
+
+            if (columnId.charAt(0) === '_')
+            {
+                column.width = 0;
+                continue;
+            }
+
             const cellSize = measureText(JSON.stringify(row.get(columnId)), fontSize);
             const columnHeadingSize = measureText(columnId, fontSize);
 
@@ -186,6 +193,11 @@ export function renderTable(
     // render column headers
     columns.forEach((column) =>
     {
+        if (column.id.charAt(0) === '_')
+        {
+            return;
+        }
+
         const cellStyle: CellStyle = {
             text: column.id === tableIndexKey ? indexColumnLabel : column.id,
             fillColor: Color(painter.backgroundColor).darken(0.5).hex(),
@@ -218,6 +230,11 @@ export function renderTable(
 
         for (const column of columns)
         {
+            if (column.id.charAt(0) === '_')
+            {
+                continue;
+            }
+
             const cell = row.get(column.id) as Cell;
 
             painter

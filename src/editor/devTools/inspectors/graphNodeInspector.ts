@@ -7,7 +7,8 @@ import { type CellStyle, type Column, type Row, tableIndexKey } from '../tableRe
 
 export interface GraphNodeDetail
 {
-    depth: number;
+    _depth: number;
+    name: string;
     index: number;
     parent: string;
     children: string;
@@ -44,7 +45,7 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
 
         if (column.id === tableIndexKey)
         {
-            const depth = this.getCell('depth', row).value as number;
+            const depth = this.getCell('_depth', row).value as number;
 
             let pad = '';
 
@@ -65,7 +66,8 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
         app.project.walk<ClonableNode>((node, options) =>
         {
             const detail: GraphNodeDetail = {
-                depth: options.depth,
+                _depth: options.depth,
+                name: node.model.getValue<string>('name'),
                 index: node.index,
                 parent: node.parent ? node.parent.id : '#empty#',
                 children: node.children.length === 0 ? '#empty#' : node.children.map((node) => node.id).join(','),
