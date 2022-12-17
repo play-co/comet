@@ -80,7 +80,9 @@ export default class UndoStack
 
         command.undo();
 
-        command.restoreSelection();
+        command.restoreSelection('undo');
+
+        log('command', 'undo', command.toJSON());
 
         Events.command.undo.emit(command);
 
@@ -100,7 +102,9 @@ export default class UndoStack
 
         command.redo();
 
-        command.restoreSelection();
+        command.restoreSelection('redo');
+
+        log('command', 'redo', command.toJSON());
 
         Events.command.redo.emit(command);
 

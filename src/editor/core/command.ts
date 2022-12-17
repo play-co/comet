@@ -84,7 +84,9 @@ export abstract class Command<ParamsType extends {} = {}, ReturnType = void, Cac
         this.selectedNodes = this.app.selection.hierarchy.items.map((node) => node.id);
     }
 
-    public restoreSelection()
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public restoreSelection(mode: 'redo' | 'undo')
     {
         this.app.selection.hierarchy.set(this.selectedNodes.map((nodeId) => this.getInstance(nodeId)));
     }

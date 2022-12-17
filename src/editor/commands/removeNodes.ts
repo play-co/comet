@@ -82,4 +82,12 @@ export class RemoveNodesCommand
             command.undo();
         }
     }
+
+    public restoreSelection(mode: 'redo' | 'undo'): void
+    {
+        if (mode === 'undo')
+        {
+            super.restoreSelection(mode);
+        }
+    }
 }
