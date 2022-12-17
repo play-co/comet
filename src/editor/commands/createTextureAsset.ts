@@ -1,8 +1,9 @@
 import type { TextureAssetNode } from '../../core/nodes/concrete/meta/assets/textureAssetNode';
 import { createNodeSchema } from '../../core/nodes/schema';
 import { Command } from '../core/command';
-import { type CreateNodeCommandReturn, CreateNodeCommand } from './createNode';
+import { CreateNodeCommand } from './createNode';
 import { ModifyModelCommand } from './modifyModel';
+import { RemoveChildCommand } from './removeChild';
 
 export interface CreateTextureAssetCommandParams
 {
@@ -15,7 +16,13 @@ export interface CreateTextureAssetCommandReturn
     promise: Promise<TextureAssetNode>;
 }
 
-export class CreateTextureAssetCommand extends Command<CreateTextureAssetCommandParams, CreateTextureAssetCommandReturn>
+export interface CreateTextureAssetCommandCache
+{
+    node: TextureAssetNode;
+}
+
+export class CreateTextureAssetCommand
+    extends Command<CreateTextureAssetCommandParams, CreateTextureAssetCommandReturn, CreateTextureAssetCommandCache>
 {
     public static commandName = 'CreateAsset';
 
@@ -37,7 +44,7 @@ export class CreateTextureAssetCommand extends Command<CreateTextureAssetCommand
             },
         });
 
-        const { node } = app.undoStack.exec<CreateNodeCommandReturn>(new CreateNodeCommand({ nodeSchema }));
+        const { node } = new CreateNodeCommand({ nodeSchema }).run();
 
         const asset = node.cast<TextureAssetNode>();
         const imageElement = await asset.getResource();
@@ -54,6 +61,8 @@ export class CreateTextureAssetCommand extends Command<CreateTextureAssetCommand
         asset.setBlob(file);
         asset.resource = imageElement;
 
+        this.cache.node = asset;
+
         return asset;
     }
 
@@ -67,6 +76,8 @@ export class CreateTextureAssetCommand extends Command<CreateTextureAssetCommand
 
     public undo(): void
     {
-        throw new Error('Unimplemented');
+        const { cache: { node } } = this;
+
+        new RemoveChildCommand({ nodeId: node.id }).run();
     }
 }

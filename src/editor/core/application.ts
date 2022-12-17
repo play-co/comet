@@ -10,7 +10,7 @@ import { ProjectNode } from '../../core/nodes/concrete/meta/projectNode';
 import { clearInstances, getInstance } from '../../core/nodes/instances';
 import { nextTick } from '../../core/util';
 import { Actions } from '../actions';
-import { CreateTextureAssetCommand } from '../commands/createTextureAsset';
+import { type CreateTextureAssetCommandReturn, CreateTextureAssetCommand } from '../commands/createTextureAsset';
 import { RemoveNodeCommand } from '../commands/removeNode';
 import { DatastoreNodeInspector } from '../devTools/inspectors/datastoreNodeInspector';
 import { GraphNodeInspector } from '../devTools/inspectors/graphNodeInspector';
@@ -301,7 +301,7 @@ export class Application
         {
             folderParentId = selection.firstNode.id;
         }
-        const { promise } = new CreateTextureAssetCommand({ folderParentId, file }).run();
+        const { promise } = this.undoStack.exec<CreateTextureAssetCommandReturn>(new CreateTextureAssetCommand({ folderParentId, file }));
 
         promise.then((texture) =>
         {

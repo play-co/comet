@@ -1,7 +1,6 @@
 import EventEmitter from 'eventemitter3';
 
 import { delay } from '../../../core/util';
-import { getApp } from '../../core/application';
 import type { FocusAreaId } from '../views/components/focusArea.svelte';
 import { WritableStore } from '../views/store';
 
@@ -93,9 +92,8 @@ export class DropZone extends EventEmitter<'enter' | 'leave' | 'drop'>
         if (dataTransfer)
         {
             const files = dataTransfer.files;
-            const focusAreaId = getApp().getFocusArea();
 
-            if (files.length >= 1 && this.isEnabled && focusAreaId === this.focusAreaId)
+            if (files.length >= 1 && this.isEnabled)
             {
                 this.emit('drop', files, e);
             }
