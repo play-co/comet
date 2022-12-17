@@ -1,3 +1,4 @@
+import { nextTick } from '../../../../core/util';
 import { Application } from '../../../core/application';
 import type { ItemSelection } from '../../../core/itemSelection';
 import { mouseDrag } from '../../components/dragger';
@@ -157,10 +158,7 @@ export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSe
 
         span.style.maxWidth = `calc(100% - ${45 + (item.depth * indentationWidth)}px)`;
 
-        setTimeout(() =>
-        {
-            span.focus();
-        }, 0);
+        nextTick().then(() => span.focus());
     }
 
     protected onEditKeyDown = (e: KeyboardEvent) =>

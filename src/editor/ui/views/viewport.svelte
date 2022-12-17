@@ -8,7 +8,7 @@
 
   const app = Application.instance;
   const viewport = app.viewport;
-  const dropZone = new DropZone();
+  const dropZone = new DropZone("viewport");
   const subMenuA = new Menu([{ label: "Item Sub 4" }, { label: "Item 5" }, { label: "Item 6" }]);
   const subMenuB = new Menu([
     { label: "Item Longer 7" },
@@ -27,13 +27,18 @@
 
   onMount(() => {
     viewport.mount(container);
-    dropZone.bind(container).on("drop", (files: FileList, e: DragEvent) => {
-      const clientPos = { x: e.clientX, y: e.clientY };
-      const viewportMousePos = viewport.getMousePos(clientPos.x, clientPos.y);
-      const viewportLocalPos = viewport.getLocalPoint(viewportMousePos.x, viewportMousePos.y);
+    dropZone
+      .bind(container)
+      .on("drop", (files: FileList, e: DragEvent) => {
+        const clientPos = { x: e.clientX, y: e.clientY };
+        const viewportMousePos = viewport.getMousePos(clientPos.x, clientPos.y);
+        const viewportLocalPos = viewport.getLocalPoint(viewportMousePos.x, viewportMousePos.y);
 
-      app.importLocalTextures(files, viewportLocalPos);
-    });
+        app.importLocalTextures(files, viewportLocalPos);
+      })
+      .on("enter", () => {
+        app.setFocusArea("viewport");
+      });
   });
 
   onDestroy(() => {

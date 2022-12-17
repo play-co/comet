@@ -5,7 +5,7 @@
   import ButtonBar, { type ButtonBarItem } from "./components/buttonBar.svelte";
   import { Actions } from "../../actions/index.js";
   import FocusArea from "./components/focusArea.svelte";
-  import { Icons } from "./icons.js";
+  import { Icons } from "./icons";
 
   const tree = new HierarchyTree();
 

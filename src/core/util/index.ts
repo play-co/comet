@@ -5,3 +5,8 @@ export function delay(ms: number)
         setTimeout(() => resolve(undefined), ms);
     });
 }
+
+export function nextTick()
+{
+    return delay(0);
+}

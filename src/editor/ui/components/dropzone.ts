@@ -1,5 +1,8 @@
 import EventEmitter from 'eventemitter3';
 
+import { delay } from '../../../core/util';
+import { getApp } from '../../core/application';
+import type { FocusAreaId } from '../views/components/focusArea.svelte';
 import { WritableStore } from '../views/store';
 
 function preventDefaults(e: Event)
@@ -19,7 +22,9 @@ export class DropZone extends EventEmitter<'enter' | 'leave' | 'drop'>
     public isDragOver: WritableStore<boolean>;
     private counter = 0;
 
-    constructor()
+    public static isDragOver = false;
+
+    constructor(public readonly focusAreaId: FocusAreaId)
     {
         super();
 
@@ -63,6 +68,8 @@ export class DropZone extends EventEmitter<'enter' | 'leave' | 'drop'>
 
             this.emit('enter');
         }
+
+        DropZone.isDragOver = true;
     };
 
     public onDragLeave = (e: DragEvent) =>
@@ -86,13 +93,18 @@ export class DropZone extends EventEmitter<'enter' | 'leave' | 'drop'>
         if (dataTransfer)
         {
             const files = dataTransfer.files;
+            const focusAreaId = getApp().getFocusArea();
 
-            if (files.length >= 1 && this.isEnabled)
+            if (files.length >= 1 && this.isEnabled && focusAreaId === this.focusAreaId)
             {
                 this.emit('drop', files, e);
             }
 
+            this.counter = 0;
             this.isDragOver.value = false;
+
+            // delay this to prevent other dropzones from receiving the event
+            delay(1000).then(() => { DropZone.isDragOver = false; });
         }
     };
 }

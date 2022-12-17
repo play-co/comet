@@ -13,11 +13,11 @@
   import { Menu } from "./components/menu.js";
   import { SceneNode } from "../../../core/nodes/concrete/meta/sceneNode.js";
   import FocusArea from "./components/focusArea.svelte";
-  import { Icons } from "./icons.js";
+  import { Icons } from "./icons";
   import type { MetaNode } from "../../../core/nodes/abstract/metaNode.js";
 
   const app = Application.instance;
-  const dropZone = new DropZone();
+  const dropZone = new DropZone("project");
   const tree = new ProjectTree();
   const selection = app.selection.project;
   const project = app.project;

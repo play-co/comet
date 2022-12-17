@@ -1,4 +1,5 @@
 import { type LogEntry, type LogSource, getLogEntries, logColor, onLog } from '../../../core/log';
+import { nextTick } from '../../../core/util';
 import { DevInspector } from '../devInspector';
 import { type CellStyle, type Column, type Row, tableIndexKey } from '../tableRenderer';
 
@@ -11,7 +12,7 @@ export class LogInspector extends DevInspector<Omit<LogEntry, 'timestamp'>>
             this.scrollToEnd();
         });
 
-        setTimeout(() => this.render(), 0);
+        nextTick(() => this.render());
     }
 
     protected getDetails()

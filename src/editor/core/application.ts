@@ -7,8 +7,8 @@ import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObjectNode';
 import { FolderNode } from '../../core/nodes/concrete/meta/folderNode';
 import { ProjectNode } from '../../core/nodes/concrete/meta/projectNode';
-import { sortNodesByDepth } from '../../core/nodes/const';
 import { clearInstances, getInstance } from '../../core/nodes/instances';
+import { nextTick } from '../../core/util';
 import { Actions } from '../actions';
 import { CreateTextureAssetCommand } from '../commands/createTextureAsset';
 import { RemoveNodeCommand } from '../commands/removeNode';
@@ -20,6 +20,7 @@ import Events from '../events';
 import { LocalStorageProvider } from '../storage/localStorageProvider';
 import { ConvergenceDatastore } from '../sync/convergenceDatastore';
 import { RemoteObjectSync } from '../sync/remoteObjectSync';
+import { DropZone } from '../ui/components/dropzone';
 import { EditableViewport } from '../ui/components/viewport';
 import type { FocusAreaId } from '../ui/views/components/focusArea.svelte';
 import { getUrlParam } from '../util';
@@ -326,9 +327,14 @@ export class Application
         return id.some((id) => this.focusArea === id);
     }
 
+    public getFocusArea()
+    {
+        return this.focusArea;
+    }
+
     public setFocusArea(id: FocusAreaId)
     {
-        if (this.focusArea === id)
+        if (this.focusArea === id || DropZone.isDragOver)
         {
             return;
         }
@@ -344,18 +350,7 @@ export class Application
 
     public openContextMenuFromEvent(event: MouseEvent)
     {
-        setTimeout(() =>
-        {
-            Events.editor.contextMenuOpen.emit(event);
-        }, 0);
-    }
-
-    public test()
-    {
-        const nodes = this.project.getAllChildren();
-
-        sortNodesByDepth(nodes).reverse();
-        console.log(nodes.map((node) => node.id));
+        nextTick().then(() => Events.editor.contextMenuOpen.emit(event));
     }
 }
 

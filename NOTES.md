@@ -29,7 +29,6 @@
 # WIP TODO:
 
 High Priority
-* delete textures needs thought, deleting folders needs to consider textures
 * drop items from project tree to viewport
 * project preview
 

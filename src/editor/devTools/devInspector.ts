@@ -1,5 +1,6 @@
 import Color from 'color';
 
+import { nextTick } from '../../core/util';
 import { getUserName } from '../sync/user';
 import { mouseDrag } from '../ui/components/dragger';
 import Canvas2DPainter from './2dPainter';
@@ -175,7 +176,7 @@ export abstract class DevInspector<T extends Record<string, any> >
             });
         };
 
-        setTimeout(() => this.init(), 0);
+        nextTick().then(() => this.init());
     }
 
     get localStorageKey()
