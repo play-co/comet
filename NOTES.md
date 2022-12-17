@@ -29,6 +29,10 @@
 # WIP TODO:
 
 High Priority
+* Remaining UI components:
+    - window status/message bar at bottom (remove existing viewport info for gizmo, send info to status bar)
+    - menu bar using context menu component
+    - modal dialog
 * drop items from project tree to viewport
 * project preview
 

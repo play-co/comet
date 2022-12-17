@@ -2,6 +2,7 @@
   import type { Menu } from "./menu";
   import ContextMenu from "./contextMenu.svelte";
   import { indentationWidth, TreeViewModel } from "./treeModel";
+  import { fade } from "svelte/transition";
 
   export let tree: TreeViewModel;
   export let menu: Menu | undefined = undefined;
@@ -15,6 +16,7 @@
   {#each $model as item (item.id)}
     <!-- svelte-ignore a11y-mouse-events-have-key-events -->
     <div
+      transition:fade={{ duration: 100 }}
       class="tree-item"
       class:selected={item.isSelected}
       class:visible={item.isVisible}
@@ -49,12 +51,12 @@
         <!-- svelte-ignore a11y-missing-attribute -->
         <a title={tree.getId(item)}>{tree.getLabel(item.data)}</a>
         {#if tree.isItemReParentDragTarget(item, $dragTarget)}
-          <div class="dragTargetIndicator reparent" />
+          <div transition:fade={{ duration: 100 }} class="dragTargetIndicator reparent" />
         {/if}
       </span>
 
       {#if tree.isItemReOrderDragTarget(item, $dragTarget)}
-        <div class="dragTargetIndicator reorder" />
+        <div transition:fade={{ duration: 100 }} class="dragTargetIndicator reorder" />
       {/if}
     </div>
   {/each}
