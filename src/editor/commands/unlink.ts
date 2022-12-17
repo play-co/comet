@@ -1,6 +1,6 @@
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
-import { sortNodesByCreation } from '../../core/nodes/const';
 import { CloneInfo } from '../../core/nodes/cloneInfo';
+import { sortNodesByDepth } from '../../core/nodes/const';
 import { type NodeSchema, getCloneInfoSchema, getNodeSchema } from '../../core/nodes/schema';
 import { Command } from '../core/command';
 
@@ -57,7 +57,7 @@ export class UnlinkCommand
             if (cloner)
             {
                 cloner.cloneInfo.cloned.push(node);
-                (cloner.cloneInfo.cloned as ClonableNode[]).sort(sortNodesByCreation);
+                sortNodesByDepth(cloner.cloneInfo.cloned as ClonableNode[]);
 
                 // references need to use the cloners exact model
                 if (nodeSchemaCloneInfo.isReference)

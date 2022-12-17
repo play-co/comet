@@ -2,7 +2,7 @@ import { type Model, type ModelBase, createModel } from '../../model/model';
 import { ModelSchema } from '../../model/schema';
 import { type Clonable, CloneInfo, CloneMode } from '../cloneInfo';
 import { getAllCloned, getDependants, getDependencies, getRestoreDependencies } from '../cloneUtils';
-import { sortNodesByCreation } from '../const';
+import { sortNodesByDepth } from '../const';
 import type {
     CustomProperty,
     CustomPropertyType,
@@ -368,7 +368,7 @@ export abstract class ClonableNode<
             nodes.push(...getAllCloned(this as unknown as ClonableNode));
         }
 
-        nodes.sort(sortNodesByCreation);
+        sortNodesByDepth(nodes);
 
         return nodes;
     }
@@ -514,7 +514,7 @@ export abstract class ClonableNode<
     {
         const array = getDependants(this.cast());
 
-        array.sort(sortNodesByCreation);
+        sortNodesByDepth(array);
 
         return array;
     }
@@ -527,7 +527,7 @@ export abstract class ClonableNode<
     {
         const array = getDependencies(this.cast());
 
-        array.sort(sortNodesByCreation);
+        sortNodesByDepth(array);
 
         return array;
     }
@@ -551,7 +551,7 @@ export abstract class ClonableNode<
 
         array = Array.from(new Set(array));
 
-        array.sort(sortNodesByCreation);
+        sortNodesByDepth(array);
 
         return array;
     }

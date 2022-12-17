@@ -1,5 +1,5 @@
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
-import { sortNodesByCreation } from '../../core/nodes/const';
+import { sortNodesByDepth } from '../../core/nodes/const';
 import { Command } from '../core/command';
 import { RemoveNodeCommand } from './removeNode';
 
@@ -35,7 +35,7 @@ export class RemoveChildCommand
 
         cache.commands = [];
 
-        nodes.sort(sortNodesByCreation).reverse();
+        sortNodesByDepth(nodes).reverse();
 
         datastore.batch(() =>
         {

@@ -7,6 +7,7 @@ import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObjectNode';
 import { FolderNode } from '../../core/nodes/concrete/meta/folderNode';
 import { ProjectNode } from '../../core/nodes/concrete/meta/projectNode';
+import { sortNodesByDepth } from '../../core/nodes/const';
 import { clearInstances, getInstance } from '../../core/nodes/instances';
 import { Actions } from '../actions';
 import { CreateTextureAssetCommand } from '../commands/createTextureAsset';
@@ -347,6 +348,14 @@ export class Application
         {
             Events.editor.contextMenuOpen.emit(event);
         }, 0);
+    }
+
+    public test()
+    {
+        const nodes = this.project.getAllChildren();
+
+        sortNodesByDepth(nodes).reverse();
+        console.log(nodes.map((node) => node.id));
     }
 }
 
