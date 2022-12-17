@@ -1,5 +1,7 @@
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
+import type { MetaNode } from '../../core/nodes/abstract/metaNode';
 import { SpriteNode } from '../../core/nodes/concrete/display/spriteNode';
+import { TextureAssetNode } from '../../core/nodes/concrete/meta/assets/textureAssetNode';
 import { getApp } from '../core/application';
 import { Command } from '../core/command';
 import { RemoveChildCommand } from './removeChild';
@@ -30,6 +32,7 @@ export class RemoveTextureAssetCommand
         const app = getApp();
 
         // todo:
+        // * find all textures from walk
         // * find all sprite usages:
         //   - create a ModifyModels command to reset their textureAssetId to null (store in cache commands)
         // * create a RemoveNodes command to remove the texture asset node (store in cache commands)
@@ -37,31 +40,47 @@ export class RemoveTextureAssetCommand
 
         nodeIds.forEach((nodeId) =>
         {
-            const textureAssetId = nodeId;
-            const usages = app.project.walk<ClonableNode, ClonableNode[]>((node, options) =>
-            {
-                if (node.is(SpriteNode))
-                {
-                    const sprite = node.cast<SpriteNode>();
+            const node = this.getInstance(nodeId);
 
-                    if (sprite.model.getValue<string>('textureAssetId') === textureAssetId)
-                    {
-                        options.data.push(node);
-                    }
+            const textureNodes = node.walk<MetaNode, MetaNode[]>((node, options) =>
+            {
+                if (node.is(TextureAssetNode))
+                {
+                    options.data.push(node);
                 }
             }, {
-                includeSelf: false,
                 data: [],
             });
 
-            usages.forEach((sprite) =>
+            textureNodes.forEach((textureNode) =>
             {
-                console.log(sprite.id);
+                const textureAssetId = textureNode.id;
+                const spriteDependants = app.project.walk<ClonableNode, SpriteNode[]>((node, options) =>
+                {
+                    if (node.is(SpriteNode))
+                    {
+                        const sprite = node.cast<SpriteNode>();
+
+                        if (sprite.model.getValue<string>('textureAssetId') === textureAssetId)
+                        {
+                            options.data.push(node);
+                        }
+                    }
+                }, {
+                    includeSelf: false,
+                    data: [],
+                });
+
+                spriteDependants.forEach((sprite) =>
+                {
+                    sprite.clearTexture();
+                });
+
+                debugger;
             });
         });
 
         // / --------------
-
         // remove child duplicates, find highest parent node
         const allNodes: ClonableNode[] = [];
 

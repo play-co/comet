@@ -151,7 +151,7 @@ export class SpriteNode<M extends SpriteModel = SpriteModel, V extends Sprite = 
         }
     }
 
-    protected clearTexture()
+    public clearTexture()
     {
         this.view.texture.destroy(true);
 

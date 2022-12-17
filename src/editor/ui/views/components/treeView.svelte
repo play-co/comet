@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Menu } from "./menu";
-  import { type TreeViewModel, indentationWidth } from "./treeModel";
   import ContextMenu from "./contextMenu.svelte";
+  import { indentationWidth, TreeViewModel } from "./treeModel";
 
   export let tree: TreeViewModel;
   export let menu: Menu | undefined = undefined;
@@ -46,7 +46,8 @@
         contenteditable={$isEditing}
         data-id="tree-view-label-edit"
       >
-        {tree.getLabel(item.data)}
+        <!-- svelte-ignore a11y-missing-attribute -->
+        <a title={tree.getId(item)}>{tree.getLabel(item.data)}</a>
         {#if tree.isItemReParentDragTarget(item, $dragTarget)}
           <div class="dragTargetIndicator reparent" />
         {/if}

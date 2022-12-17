@@ -1,4 +1,4 @@
-import { RemoveNodesCommand } from '../commands/removeNodes';
+import { RemoveTextureAssetCommand } from '../commands/removeTextureAsset';
 import { Action } from '../core/action';
 import { getApp } from '../core/application';
 
@@ -25,6 +25,6 @@ export class DeleteTextureAction extends Action<DeleteTextureOptions, void>
         const { nodeId } = options;
         const app = getApp();
 
-        app.undoStack.exec(new RemoveNodesCommand({ nodeIds: [nodeId] }));
+        app.undoStack.exec(new RemoveTextureAssetCommand({ nodeIds: [nodeId] }));
     }
 }
