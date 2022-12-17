@@ -32,7 +32,6 @@ High Priority
 * delete textures needs thought, deleting folders needs to consider textures
 * drop items from project tree to viewport
 * project preview
-* check project tree for bugs (reorder?, reparent, delete asset and reset sprite textures, delete asset folder and ensure child textures are deleted)
 
 Low Priority
 * localStorage project state: UI Layout, Tree State, Current Scene, Current Selection could be saved to localStorage to preserve user workspace

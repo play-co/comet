@@ -50,7 +50,7 @@
   }
 
   focus-area.focussed {
-    border: 1px solid #396a95;
+    border: 1px solid #338fa2;
   }
 
   focus-area:focus {

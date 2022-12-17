@@ -1,9 +1,12 @@
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { MetaNode } from '../../core/nodes/abstract/metaNode';
-import { SpriteNode } from '../../core/nodes/concrete/display/spriteNode';
+import { type SpriteModel, SpriteNode } from '../../core/nodes/concrete/display/spriteNode';
 import { TextureAssetNode } from '../../core/nodes/concrete/meta/assets/textureAssetNode';
+import type { FolderNode } from '../../core/nodes/concrete/meta/folderNode';
 import { getApp } from '../core/application';
 import { Command } from '../core/command';
+import Events from '../events';
+import { ModifyModelCommand } from './modifyModel';
 import { RemoveChildCommand } from './removeChild';
 
 export interface RemoveTextureAssetCommandParams
@@ -13,12 +16,13 @@ export interface RemoveTextureAssetCommandParams
 
 export interface RemoveTextureAssetCommandReturn
 {
-    nodes: ClonableNode[];
+    nodes: (FolderNode | TextureAssetNode)[];
 }
 
 export interface RemoveTextureAssetCommandCache
 {
-    commands: RemoveChildCommand[];
+    modifyModelCommands: ModifyModelCommand<SpriteModel>[];
+    removeChildCommands: RemoveChildCommand[];
 }
 
 export class RemoveTextureAssetCommand
@@ -32,92 +36,82 @@ export class RemoveTextureAssetCommand
         const app = getApp();
 
         // todo:
-        // * find all textures from walk
-        // * find all sprite usages:
+        // * find all textures by walking root texture asset folder
+        // * for all sprite used by each texture:
         //   - create a ModifyModels command to reset their textureAssetId to null (store in cache commands)
-        // * create a RemoveNodes command to remove the texture asset node (store in cache commands)
-        // for undo, undo the cached commands (in reverse order)
+        // * for all textures being removed:
+        //   - create a RemoveChild command to remove the texture asset node (store in cache commands)
+        // * for undo, undo the cached commands (in reverse order)
+
+        cache.modifyModelCommands = [];
+        cache.removeChildCommands = [];
+
+        const textureNodes: TextureAssetNode[] = [];
 
         nodeIds.forEach((nodeId) =>
         {
             const node = this.getInstance(nodeId);
 
-            const textureNodes = node.walk<MetaNode, MetaNode[]>((node, options) =>
+            node.walk<MetaNode, MetaNode[]>((node, options) =>
             {
                 if (node.is(TextureAssetNode))
                 {
                     options.data.push(node);
                 }
             }, {
+                data: textureNodes,
+            });
+        });
+
+        textureNodes.forEach((textureNode) =>
+        {
+            const textureAssetId = textureNode.id;
+            const spriteDependants = app.project.walk<ClonableNode, SpriteNode[]>((node, options) =>
+            {
+                if (node.is(SpriteNode))
+                {
+                    const sprite = node.cast<SpriteNode>();
+
+                    if (sprite.model.getValue<string>('textureAssetId') === textureAssetId)
+                    {
+                        options.data.push(node);
+                    }
+                }
+            }, {
+                includeSelf: false,
                 data: [],
             });
 
-            textureNodes.forEach((textureNode) =>
+            // clear model of dependant sprites and clear texture
+            spriteDependants.forEach((sprite) =>
             {
-                const textureAssetId = textureNode.id;
-                const spriteDependants = app.project.walk<ClonableNode, SpriteNode[]>((node, options) =>
-                {
-                    if (node.is(SpriteNode))
-                    {
-                        const sprite = node.cast<SpriteNode>();
-
-                        if (sprite.model.getValue<string>('textureAssetId') === textureAssetId)
-                        {
-                            options.data.push(node);
-                        }
-                    }
-                }, {
-                    includeSelf: false,
-                    data: [],
+                const command = new ModifyModelCommand({
+                    nodeId: sprite.id,
+                    values: {
+                        textureAssetId: null,
+                    },
+                    updateMode: 'full',
                 });
 
-                spriteDependants.forEach((sprite) =>
-                {
-                    sprite.clearTexture();
-                });
-
-                debugger;
+                cache.modifyModelCommands.push(command);
+                command.run();
+                sprite.clearTexture();
+                Events.datastore.node.local.textureRemoved.emit({ nodeId: sprite.id });
             });
         });
 
-        // / --------------
-        // remove child duplicates, find highest parent node
-        const allNodes: ClonableNode[] = [];
+        const deletedNodes: (FolderNode | TextureAssetNode)[] = [];
 
         nodeIds.forEach((nodeId) =>
         {
-            const node = this.getInstance(nodeId);
+            const command = new RemoveChildCommand({
+                nodeId,
+            });
 
-            allNodes.push(node);
-        });
-
-        const filteredNodes = allNodes.filter((node) =>
-        {
-            for (const allNode of allNodes)
-            {
-                if (allNode.contains(node))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        });
-
-        cache.commands = [];
-
-        const deletedNodes: ClonableNode[] = [];
-
-        filteredNodes.forEach((node) =>
-        {
-            const nodeId = node.id;
-            const command = new RemoveChildCommand({ nodeId });
-
-            cache.commands.push(command);
-
+            cache.removeChildCommands.push(command);
             const { nodes } = command.run();
 
-            deletedNodes.push(...nodes);
+            deletedNodes.push(...nodes as (FolderNode | TextureAssetNode)[]);
         });
 
         return { nodes: deletedNodes };
@@ -125,13 +119,23 @@ export class RemoveTextureAssetCommand
 
     public undo(): void
     {
-        const { cache: { commands } } = this;
+        const { cache: { modifyModelCommands, removeChildCommands } } = this;
 
-        for (let i = commands.length - 1; i >= 0; i--)
+        // undo commands in reverse order
+
+        for (let i = modifyModelCommands.length - 1; i >= 0; i--)
         {
-            const command = commands[i];
+            const command = modifyModelCommands[i];
 
-            // ensure restore dependencies are available before reverting undo of single node
+            this.getInstance(command.params.nodeId);
+
+            command.undo();
+        }
+
+        for (let i = removeChildCommands.length - 1; i >= 0; i--)
+        {
+            const command = removeChildCommands[i];
+
             this.getInstance(command.params.nodeId);
 
             command.undo();

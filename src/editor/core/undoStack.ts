@@ -34,9 +34,9 @@ export default class UndoStack
 
         log('command', 'exec', command.toJSON());
 
-        Events.command.exec.emit(command);
-
         const result = command.run();
+
+        Events.command.exec.emit(command);
 
         return result as unknown as CommandReturnType;
     }
@@ -78,11 +78,11 @@ export default class UndoStack
 
         const command = stack[head];
 
+        log('command', 'undo', command.toJSON());
+
         command.undo();
 
         command.restoreSelection('undo');
-
-        log('command', 'undo', command.toJSON());
 
         Events.command.undo.emit(command);
 
@@ -100,11 +100,11 @@ export default class UndoStack
 
         const command = stack[head + 1];
 
+        log('command', 'redo', command.toJSON());
+
         command.redo();
 
         command.restoreSelection('redo');
-
-        log('command', 'redo', command.toJSON());
 
         Events.command.redo.emit(command);
 

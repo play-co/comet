@@ -93,6 +93,7 @@ export class TransformGizmo extends Container
         Events.$('editor.(propertyModified|nudge)', this.updateSelection);
         Events.$('selection.hierarchy.(setSingle|setMulti|add|remove)', this.updateSelection);
         Events.selection.hierarchy.deselect.bind(this.onSelectionDeselect);
+        Events.datastore.node.local.textureRemoved.bind(this.onTextureRemoved);
     }
 
     get selection()
@@ -133,6 +134,16 @@ export class TransformGizmo extends Container
         this.nodeCache.clear();
 
         this.hide();
+    };
+
+    protected onTextureRemoved = ({ nodeId }: typeof Events.datastore.node.local.textureRemoved.type) =>
+    {
+        const { selection } = this;
+
+        if (selection.items.some((node) => node.id === nodeId))
+        {
+            this.updateSelection();
+        }
     };
 
     protected updateSingleSelectionNode()

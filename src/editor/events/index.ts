@@ -6,7 +6,7 @@ import focusEvents from './modules/focusEvents';
 import hierarchySelectionEvents from './modules/hierarchySelectionEvents';
 import keyboardEvents from './modules/keyboardEvents';
 import projectEvents from './modules/projectEvents';
-import projectSelectionEvents from './modules/projectPanelEvents';
+import projectSelectionEvents from './modules/projectSelectionEvents';
 import transformEvents from './modules/transformEvents';
 import viewportEvents from './modules/viewportEvents';
 
