@@ -60,6 +60,7 @@
 
   function close() {
     Events.contextMenu.close.emit();
+    active = undefined;
     dispatch("close");
   }
 

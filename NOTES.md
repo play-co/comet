@@ -30,9 +30,8 @@
 
 High Priority
 * Remaining UI components:
-    - modal dialog
-* drop items from project tree to viewport
 * project preview
+* drop items from project tree to viewport
 
 Low Priority
 * localStorage project state: UI Layout, Tree State, Current Scene, Current Selection could be saved to localStorage to preserve user workspace
