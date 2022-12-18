@@ -22,6 +22,7 @@ import { RemoteObjectSync } from '../sync/remoteObjectSync';
 import { DropZone } from '../ui/components/dropzone';
 import { EditableViewport } from '../ui/components/viewport';
 import type { FocusAreaId } from '../ui/views/components/focusArea.svelte';
+import { StatusBar } from '../ui/views/statusBar';
 import { getUrlParam } from '../util';
 import { HierarchySelection } from './hierarchySelection';
 import { initHistory, writeUndoStack } from './history';
@@ -51,6 +52,7 @@ export class Application
     public viewport: EditableViewport;
     public storageProvider: LocalStorageProvider;
     public project: ProjectNode;
+    public statusBar: StatusBar;
     public selection: {
         hierarchy: HierarchySelection;
         project: ProjectSelection;
@@ -82,6 +84,8 @@ export class Application
         this.preloadAssets();
 
         enableLog();
+
+        this.statusBar = new StatusBar();
 
         const datastore = this.datastore = new ConvergenceDatastore();
 

@@ -5,7 +5,7 @@ import type { ClonableNode } from '../../../core';
 import { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
 import { ContainerNode } from '../../../core/nodes/concrete/display/containerNode';
 import { SceneNode } from '../../../core/nodes/concrete/meta/sceneNode';
-import { Application } from '../../core/application';
+import { Application, getApp } from '../../core/application';
 import Events from '../../events';
 import { TransformGizmo } from '../transform/gizmo';
 import { BoxSelection } from './boxSelection';
@@ -62,6 +62,13 @@ export class EditableViewport
         const boxSelection = this.boxSelection = new BoxSelection();
 
         editLayer.addChild(boxSelection);
+
+        const app = getApp();
+
+        app.statusBar.addItem('x.label', { text: 'x:' });
+        app.statusBar.addItem('x.value', { style: 'value', text: '-', width: 60 });
+        app.statusBar.addItem('y.label', { text: 'y:' });
+        app.statusBar.addItem('y.value', { style: 'value', text: '-', width: 60 });
 
         gizmo
             .on('mouseup', this.onMouseUp)
@@ -217,6 +224,20 @@ export class EditableViewport
     protected onMouseMove = (e: InteractionEvent) =>
     {
         this.boxSelection.onMouseMove(e);
+
+        const { canvas, viewport } = this;
+        const { statusBar } = getApp();
+        const { x: globalX, y: globalY } = e.data.global;
+
+        if (globalX >= 0 && globalX <= canvas.offsetWidth && globalY >= 0 && globalY <= canvas.offsetHeight)
+        {
+            const pos = viewport.toLocal({ x: globalX, y: globalY });
+            const gx = pos.x.toFixed(2);
+            const gy = pos.y.toFixed(2);
+
+            statusBar.getItem('x.value').label = gx;
+            statusBar.getItem('y.value').label = gy;
+        }
     };
 
     protected onMouseUp = () =>
