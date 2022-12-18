@@ -2,6 +2,7 @@
   import { onDestroy, onMount, afterUpdate } from "svelte";
   import Events from "../../../events";
   import type { Menu, MenuItem } from "./menu";
+  import { slide } from "svelte/transition";
 
   export let menu: Menu;
   export let event: MouseEvent | undefined;
@@ -126,6 +127,7 @@
   <!-- svelte-ignore a11y-mouse-events-have-key-events -->
   <popup-menu
     bind:this={container}
+    transition:slide={{ duration: 85 }}
     class:submenu={isSubMenu}
     {style}
     on:mouseout={() => {

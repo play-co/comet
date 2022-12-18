@@ -1,96 +1,49 @@
 <script lang="ts">
-  import type { LayoutConfig } from "golden-layout";
   import DockablePanelLayout from "./dockablePanelLayout.svelte";
-  import type { FactoryTypes } from "./dockablePanelLayout.svelte";
   import Tools from "./tools.svelte";
-  import HierarchyPanel from "./hierarchyPanel.svelte";
-  import ProjectPanel from "./projectPanel.svelte";
-  import PropertiesPanel from "./propertiesPanel.svelte";
-  import Viewport from "./viewport.svelte";
-
-  const factoryTypes: FactoryTypes = {
-    Hierarchy: HierarchyPanel,
-    Properties: PropertiesPanel,
-    Project: ProjectPanel,
-    Viewport: Viewport,
-  };
-
-  const layoutConfig: LayoutConfig = {
-    root: {
-      type: "row",
-      content: [
-        {
-          type: "stack",
-          content: [
-            {
-              id: "project",
-              title: "Project",
-              type: "component",
-              componentType: "Project",
-              size: "1fr",
-              minWidth: 100,
-            },
-            {
-              id: "hierarchy",
-              title: "Hierarchy",
-              type: "component",
-              componentType: "Hierarchy",
-              size: "1fr",
-              minWidth: 100,
-            },
-          ],
-        },
-        {
-          type: "column",
-          id: "foo",
-          size: "2fr",
-          content: [
-            {
-              title: "Viewport",
-              type: "component",
-              componentType: "Viewport",
-              size: "1fr",
-              header: {
-                show: false,
-              },
-              // minSize: "100px",
-            },
-          ],
-        },
-        {
-          id: "properties",
-          title: "Properties",
-          type: "component",
-          componentType: "Properties",
-          minWidth: 200,
-        },
-      ],
-    },
-    dimensions: {
-      headerHeight: 30,
-    },
-  };
+  import { factoryTypes, layoutConfig } from "./mainLayout";
+  import StatusBar from "./statusBar.svelte";
+  import MenuBar from "./menuBar.svelte";
+  import { fade } from "svelte/transition";
 </script>
 
-<main-layout>
-  <div class="main-layout">
+<main-layout transition:fade={{ duration: 1000 }}>
+  <MenuBar />
+  <img
+    transition:fade={{ duration: 250 }}
+    id="logo"
+    src="assets/logo-small.png"
+    alt="Welcome to Comet!"
+  />
+  <div class="horizontal">
     <Tools />
     <DockablePanelLayout {layoutConfig} {factoryTypes} />
   </div>
+  <StatusBar />
 </main-layout>
 
 <style>
   main-layout {
+    background-color: var(--panel-bg-color-dark);
     position: absolute;
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: 100%;
   }
 
-  main-layout :global(.main-layout) {
-    position: absolute;
+  .horizontal {
     display: flex;
     flex-direction: row;
-    width: 100%;
-    height: 100%;
+    flex-grow: 1;
+    padding: 5px;
+  }
+
+  #logo {
+    position: absolute;
+    top: 4px;
+    left: 0px;
+    z-index: 100;
+    width: 50px;
   }
 </style>

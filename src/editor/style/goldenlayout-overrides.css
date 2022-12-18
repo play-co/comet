@@ -20,3 +20,7 @@
 .no_splitter_hover .lm_splitter:hover {
     opacity: 0;
 }
+
+.lm_header .lm_tab.lm_active {
+    box-shadow: 0 -2px 2px #00000078;
+}

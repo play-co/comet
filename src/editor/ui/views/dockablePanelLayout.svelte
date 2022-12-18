@@ -6,7 +6,7 @@
 
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { ComponentContainer, LayoutConfig } from "golden-layout";
+  import { LayoutConfig, type ComponentContainer } from "golden-layout";
   import { GoldenLayout } from "golden-layout";
   import Events from "../../events";
   import { Application } from "../../core/application";
@@ -29,17 +29,31 @@
 
     Application.instance.layout = layout;
 
-    // const savedConfig = localStorage.getItem("comet:layout");
-    // if (savedConfig) {
-    //   const data = JSON.parse(savedConfig);
-    //   layout.loadLayout(data);
-    // } else {
-    layout.loadLayout(layoutConfig);
-    // }
+    const savedConfig = localStorage.getItem("comet:layout");
+    if (savedConfig) {
+      const data = JSON.parse(savedConfig);
+      let persistGoldenLayoutConfig;
+
+      try {
+        if ("resolved" in data) {
+          persistGoldenLayoutConfig = LayoutConfig.fromResolved(data);
+        } else {
+          persistGoldenLayoutConfig = data as unknown as LayoutConfig;
+        }
+
+        layout.loadLayout(persistGoldenLayoutConfig);
+      } catch (e) {
+        console.warn("Failed to load saved layout config", e);
+        layout.loadLayout(layoutConfig);
+      }
+    } else {
+      layout.loadLayout(layoutConfig);
+    }
 
     layout.on("stateChanged", () => {
-      // const config = layout.saveLayout();
-      // localStorage.setItem("comet:layout", JSON.stringify(config));
+      const config = layout.saveLayout();
+      localStorage.setItem("comet:layout", JSON.stringify(config));
+
       Events.editor.resize.emit();
     });
   });
