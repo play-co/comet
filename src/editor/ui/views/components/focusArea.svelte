@@ -3,11 +3,15 @@
 </script>
 
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
+
   import { Application } from "../../../core/application";
   import Events from "../../../events";
 
   export let id: FocusAreaId;
   export let focus: boolean = false;
+
+  const dispatch = createEventDispatcher();
 
   let container: any;
   let isFocussed = false;
@@ -16,6 +20,18 @@
 
   Events.focus.focus.bind((focusId) => {
     isFocussed = id === focusId;
+  });
+
+  Events.key.down.bind((e) => {
+    if (app.isAreaFocussed(id)) {
+      dispatch("keydown", e);
+    }
+  });
+
+  Events.key.up.bind((e) => {
+    if (app.isAreaFocussed(id)) {
+      dispatch("keyup", e);
+    }
   });
 
   const onFocus = () => app.setFocusArea(id);

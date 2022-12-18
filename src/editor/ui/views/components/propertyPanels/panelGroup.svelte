@@ -14,7 +14,6 @@
     display: grid;
     grid-template-columns: 1fr;
     border-radius: 10px;
-    overflow: auto;
   }
 
   fieldset {

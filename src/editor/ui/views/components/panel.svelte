@@ -14,5 +14,6 @@
     height: 100%;
     padding: 5px;
     border-radius: 3px;
+    overflow: auto;
   }
 </style>

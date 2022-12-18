@@ -7,6 +7,14 @@
   export let tree: TreeViewModel;
   export let menu: Menu | undefined = undefined;
 
+  export function selectPrev() {
+    tree.selectPrev();
+  }
+
+  export function selectNext() {
+    tree.selectNext();
+  }
+
   let container: HTMLElement;
 
   const { model, dragTarget, isEditing } = tree.store;

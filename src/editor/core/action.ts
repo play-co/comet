@@ -9,12 +9,14 @@ export interface ActionOptions
     isChecked: boolean;
     canToggle: boolean;
     hotkey: string;
+    preventDefault: boolean;
 }
 
 export const defaultActionOptions: Omit<ActionOptions, 'hotkey'> = {
     isEnabled: true,
     isChecked: false,
     canToggle: false,
+    preventDefault: false,
 };
 
 export type ActionConstructorOptions = Partial<ActionOptions> & { hotkey: string };
@@ -25,6 +27,7 @@ export abstract class Action<OptionsType, ReturnType>
     public isEnabled: boolean;
     public isChecked: boolean;
     public canToggle: boolean;
+    public preventDefault: boolean;
     public hotkey: string;
 
     public static actions: Map<string, Action<any, any>> = new Map();
@@ -36,7 +39,7 @@ export abstract class Action<OptionsType, ReturnType>
             throw new Error(`Action "${id}" already registered`);
         }
 
-        const { isEnabled, isChecked, canToggle, hotkey } = {
+        const { isEnabled, isChecked, canToggle, hotkey, preventDefault } = {
             ...defaultActionOptions,
             ...options,
         };
@@ -46,6 +49,7 @@ export abstract class Action<OptionsType, ReturnType>
         this.isEnabled = isEnabled;
         this.isChecked = isChecked;
         this.canToggle = canToggle;
+        this.preventDefault = preventDefault;
 
         this.register();
     }
@@ -64,10 +68,19 @@ export abstract class Action<OptionsType, ReturnType>
         {
             hotkeys(this.hotkey, (event, handler) =>
             {
-                event.preventDefault();
+                if (this.preventDefault)
+                {
+                    event.preventDefault();
+                }
+
                 this.onShortCut(event, handler);
 
-                return false;
+                if (this.preventDefault)
+                {
+                    return false;
+                }
+
+                return true;
             });
         }
 

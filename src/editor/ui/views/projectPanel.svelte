@@ -24,6 +24,7 @@
   let orientation: "horizontal" | "vertical" = "vertical";
 
   let container: HTMLDivElement;
+  let treeView: TreeView;
 
   $: isDragOver = dropZone.isDragOver.store;
 
@@ -96,15 +97,24 @@
       }
     }
   });
+
+  const onKeyDown = (e: CustomEvent) => {
+    const {
+      detail: { key },
+    } = e;
+
+    key === "ArrowUp" && treeView.selectPrev();
+    key === "ArrowDown" && treeView.selectNext();
+  };
 </script>
 
-<FocusArea id="project">
+<FocusArea id="project" on:keydown={onKeyDown}>
   <project-panel class:isDragOver={$isDragOver}>
     <Panel>
       <div class="container" class:horizontal={orientation === "horizontal"} bind:this={container}>
         <div class="tree">
           <ButtonBar size="small" items={buttons} update={onButtonUpdater} />
-          <TreeView {tree} menu={treeMenu} />
+          <TreeView bind:this={treeView} {tree} menu={treeMenu} />
         </div>
         <div class="preview">
           <ProjectPreview />

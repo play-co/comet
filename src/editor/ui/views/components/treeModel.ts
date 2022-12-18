@@ -438,4 +438,42 @@ export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSe
     {
         return true;
     }
+
+    public selectPrev()
+    {
+        const { selection } = this;
+
+        if (selection.hasSelection)
+        {
+            const index = this.model.value.findIndex((item) => item.data === selection.firstNode);
+
+            if (index > 0)
+            {
+                selection.set(this.model.value[index - 1].data);
+            }
+        }
+        else
+        {
+            this.selection.add(this.model.value[this.model.value.length - 1].data);
+        }
+    }
+
+    public selectNext()
+    {
+        const { selection } = this;
+
+        if (selection.hasSelection)
+        {
+            const index = this.model.value.findIndex((item) => item.data === selection.firstNode);
+
+            if (index < this.model.value.length - 1)
+            {
+                selection.set(this.model.value[index + 1].data);
+            }
+        }
+        else
+        {
+            this.selection.add(this.model.value[0].data);
+        }
+    }
 }

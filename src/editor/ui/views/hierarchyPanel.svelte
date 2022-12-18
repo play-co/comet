@@ -27,13 +27,24 @@
       },
     },
   ];
+
+  let treeView: TreeView;
+
+  const onKeyDown = (e: CustomEvent) => {
+    const {
+      detail: { key },
+    } = e;
+
+    key === "ArrowUp" && treeView.selectPrev();
+    key === "ArrowDown" && treeView.selectNext();
+  };
 </script>
 
-<FocusArea id="hierarchy">
+<FocusArea id="hierarchy" on:keydown={onKeyDown}>
   <hierarchy-panel>
     <Panel>
       <ButtonBar size="small" items={buttons} />
-      <TreeView {tree} />
+      <TreeView bind:this={treeView} {tree} />
     </Panel>
   </hierarchy-panel>
 </FocusArea>
