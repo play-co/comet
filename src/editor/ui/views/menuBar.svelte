@@ -1,11 +1,23 @@
 <script lang="ts">
+  import type { MenuItem } from "./components/menu";
   import { menu } from "./menuBar";
   import MenuBarItem from "./menuBarItem.svelte";
+
+  let selected: MenuItem | undefined = undefined;
+
+  const onSelect = ({ detail: item }: CustomEvent) => {
+    selected = item;
+  };
 </script>
 
 <menu-bar>
   {#each menu.getItems() as item}
-    <MenuBarItem {item} />
+    <MenuBarItem
+      {item}
+      on:select={onSelect}
+      selected={item === selected}
+      on:close={() => (selected = undefined)}
+    />
   {/each}
 </menu-bar>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount, afterUpdate } from "svelte";
+  import { onDestroy, onMount, afterUpdate, createEventDispatcher } from "svelte";
   import Events from "../../../events";
   import type { Menu, MenuItem } from "./menu";
   import { slide } from "svelte/transition";
@@ -8,6 +8,10 @@
   export let event: MouseEvent | undefined;
   export let target: HTMLElement;
   export let isSubMenu = false;
+  export let anchorElement: HTMLElement | undefined = undefined;
+  export let anchorPosition: "bottom" | "right" = "bottom";
+
+  const dispatch = createEventDispatcher();
 
   let show = false;
   let container: HTMLElement;
@@ -19,8 +23,19 @@
 
   $: {
     if (event) {
-      x = event.clientX;
-      y = event.clientY;
+      if (anchorElement) {
+        const bounds = anchorElement.getBoundingClientRect();
+        if (anchorPosition === "bottom") {
+          x = bounds.left;
+          y = bounds.bottom;
+        } else if (anchorPosition === "right") {
+          x = bounds.right;
+          y = bounds.top;
+        }
+      } else {
+        x = event.clientX;
+        y = event.clientY;
+      }
     }
   }
 
@@ -45,6 +60,7 @@
 
   function close() {
     Events.editor.contextMenuClose.emit();
+    dispatch("close");
   }
 
   const onMouseDown = (e: MouseEvent) => {

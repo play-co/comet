@@ -6,6 +6,8 @@
 
   export let menu: Menu;
   export let container: HTMLElement;
+  export let anchorElement: HTMLElement | undefined = undefined;
+  export let anchorPosition: "top" | "bottom" | "left" | "right" = "bottom";
 
   let element: HTMLElement;
 
@@ -33,7 +35,7 @@
 </script>
 
 <context-menu bind:this={element}>
-  <PopupMenu {menu} {event} target={container} on:select />
+  <PopupMenu {menu} {event} target={container} {anchorElement} on:select on:close />
 </context-menu>
 
 <style>
