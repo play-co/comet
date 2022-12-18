@@ -8,7 +8,7 @@
 </script>
 
 <status-bar>
-  <div class="message">{$message}</div>
+  <pre class="message">{$message}</pre>
   {#each $items as item}
     <StatusBarItem {item} />
   {/each}
@@ -31,5 +31,6 @@
 
   .message {
     flex-grow: 1;
+    color: #aaa;
   }
 </style>

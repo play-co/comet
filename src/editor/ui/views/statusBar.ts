@@ -45,6 +45,7 @@ export class StatusBar
     protected $message: WritableStore<string>;
     protected $items: WritableStore<StatusBarItem[]>;
     protected itemsById: Map<string, StatusBarItem>;
+    protected messageTimeout?: number;
 
     constructor()
     {
@@ -66,16 +67,18 @@ export class StatusBar
         this.$message.value = '';
     }
 
-    public setMessage(message: string, clearTimeout = 0)
+    public setMessage(message: string, clearAfterMs = 0)
     {
         this.$message.value = message;
 
-        if (clearTimeout > 0)
+        if (clearAfterMs > 0)
         {
-            setTimeout(() =>
+            clearTimeout(this.messageTimeout);
+
+            this.messageTimeout = setTimeout(() =>
             {
                 this.clearMessage();
-            }, clearTimeout);
+            }, clearAfterMs) as unknown as number;
         }
     }
 
