@@ -1,3 +1,4 @@
+import { getApp } from '../../core/application';
 import { Menu } from './components/menu';
 
 function subMenu(prefix: string)
@@ -13,7 +14,13 @@ function subMenu(prefix: string)
         { data: 1, label: `${prefix}Item 1` },
         { label: `${prefix}Item 2`, menu: subMenuB },
         { label: `${prefix}Item 3` },
-    ]);
+    ], (item, index) =>
+    {
+        if (index === 0)
+        {
+            item.isEnabled = getApp().isAreaFocussed('viewport');
+        }
+    });
 }
 
 export const menu = new Menu([

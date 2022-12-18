@@ -1,17 +1,23 @@
 <script lang="ts">
+  import { nextTick } from "../../../core/util";
   import type { MenuItem } from "./components/menu";
   import { menu } from "./menuBar";
   import MenuBarItem from "./menuBarItem.svelte";
 
   let selected: MenuItem | undefined = undefined;
 
+  $: items = menu.getItems();
+
   const onSelect = ({ detail: item }: CustomEvent) => {
-    selected = item;
+    nextTick().then(() => {
+      items = menu.getItems();
+      selected = item;
+    });
   };
 </script>
 
 <menu-bar>
-  {#each menu.getItems() as item}
+  {#each items as item}
     <MenuBarItem
       {item}
       on:select={onSelect}

@@ -217,7 +217,7 @@
 
   menu-item.disabled {
     font-style: italic;
-    color: #bcbcbc;
+    color: #8a8a8a;
   }
 
   menu-item.prompt {

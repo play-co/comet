@@ -10,27 +10,42 @@ export interface MenuItem
     onClick?: (item: MenuItem) => void;
 }
 
-export type FilterCallback = (item: MenuItem) => void;
+export type RefreshCallback = (item: MenuItem, index: number, array: MenuItem[]) => void;
 
 export class Menu
 {
     protected items: MenuItem[];
-    protected filter?: FilterCallback;
+    protected refreshFn?: RefreshCallback;
 
-    constructor(items: MenuItem[], filter?: FilterCallback)
+    constructor(items: MenuItem[], refreshFn?: RefreshCallback)
     {
         this.items = items;
-        this.filter = filter;
+        this.refreshFn = refreshFn;
+    }
+
+    public refresh()
+    {
+        const { refreshFn } = this;
+
+        if (refreshFn)
+        {
+            this.items.forEach((item, i, array) =>
+            {
+                refreshFn(item, i, array);
+
+                if (item.menu)
+                {
+                    item.menu.refresh();
+                }
+            });
+        }
     }
 
     public getItems(): MenuItem[]
     {
-        if (this.filter)
-        {
-            this.items.forEach(this.filter);
-        }
+        this.refresh();
 
-        return this.items.filter((a) => a.isHidden !== true);
+        return this.items.filter((item) => item.isHidden !== true);
     }
 
     public addItem(item: MenuItem): void
