@@ -33,7 +33,7 @@
 
   // component functions
   function format(value: number) {
-    return value.toFixed(2).replace(/\.0+$/, "").replace(/^-0/, "0");
+    return value.toFixed(1).replace(/\.0+$/, "").replace(/^-0/, "0");
   }
 
   function getValue() {

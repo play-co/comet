@@ -80,10 +80,10 @@ export class TransformGizmoInfo extends Container
     {
         const { frame: { gizmo: { x, y, localX, localY } } } = this;
 
-        const gx = `${round(x, 1).toFixed(2)}px`;
-        const gy = `${round(y, 1).toFixed(2)}px`;
-        const lx = `${round(localX, 1).toFixed(2)}px`;
-        const ly = `${round(localY, 1).toFixed(2)}px`;
+        const gx = `${round(x, 1).toFixed(1)}px`;
+        const gy = `${round(y, 1).toFixed(1)}px`;
+        const lx = `${round(localX, 1).toFixed(1)}px`;
+        const ly = `${round(localY, 1).toFixed(1)}px`;
         const globalInfo = `GLOBAL  x: ${gx.padEnd(10, ' ')} y: ${gy.padEnd(10, ' ')}`;
         const localInfo = `LOCAL x: ${lx} y: ${ly}`;
 

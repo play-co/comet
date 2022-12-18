@@ -66,9 +66,9 @@ export class EditableViewport
         const app = getApp();
 
         app.statusBar.addItem('x.label', { text: 'x:' });
-        app.statusBar.addItem('x.value', { style: 'value', text: '-', width: 60 });
+        app.statusBar.addItem('x.value', { style: 'value', text: ' ', width: 60 });
         app.statusBar.addItem('y.label', { text: 'y:' });
-        app.statusBar.addItem('y.value', { style: 'value', text: '-', width: 60 });
+        app.statusBar.addItem('y.value', { style: 'value', text: ' ', width: 60 });
 
         gizmo
             .on('mouseup', this.onMouseUp)
@@ -232,8 +232,8 @@ export class EditableViewport
         if (globalX >= 0 && globalX <= canvas.offsetWidth && globalY >= 0 && globalY <= canvas.offsetHeight)
         {
             const pos = viewport.toLocal({ x: globalX, y: globalY });
-            const gx = pos.x.toFixed(2);
-            const gy = pos.y.toFixed(2);
+            const gx = pos.x.toFixed(1);
+            const gy = pos.y.toFixed(1);
 
             statusBar.getItem('x.value').label = gx;
             statusBar.getItem('y.value').label = gy;
