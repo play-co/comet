@@ -1,5 +1,6 @@
 <script lang="ts">
   import { nextTick } from "../../../core/util";
+  import Events from "../../events";
   import type { MenuItem } from "./components/menu";
   import { menu } from "./menuBar";
   import MenuBarItem from "./menuBarItem.svelte";
@@ -9,7 +10,14 @@
   $: items = menu.getItems();
 
   const onSelect = ({ detail: item }: CustomEvent) => {
+    if (item.label === selected?.label) {
+      selected = undefined;
+      nextTick().then(() => Events.editor.contextMenuClose.emit());
+      return;
+    }
+
     nextTick().then(() => {
+      console.log(item.label);
       items = menu.getItems();
       selected = item;
     });
