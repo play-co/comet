@@ -12,12 +12,11 @@
   const onSelect = ({ detail: item }: CustomEvent) => {
     if (item.label === selected?.label) {
       selected = undefined;
-      nextTick().then(() => Events.editor.contextMenuClose.emit());
+      nextTick().then(() => Events.contextMenu.close.emit());
       return;
     }
 
     nextTick().then(() => {
-      console.log(item.label);
       items = menu.getItems();
       selected = item;
     });

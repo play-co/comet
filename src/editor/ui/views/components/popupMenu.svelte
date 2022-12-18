@@ -59,7 +59,7 @@
   $: hasIcons = items.some((item) => item.icon !== undefined);
 
   function close() {
-    Events.editor.contextMenuClose.emit();
+    Events.contextMenu.close.emit();
     dispatch("close");
   }
 
@@ -82,7 +82,7 @@
   const onMenuItemClick = (item: MenuItem) => {
     if (!item.menu && item.isEnabled !== false) {
       item.onClick && item.onClick(item);
-      Events.editor.contextMenuClose.emit();
+      Events.contextMenu.close.emit();
     }
   };
 
@@ -91,7 +91,7 @@
       window.addEventListener("mousedown", onMouseDown);
       Events.key.down.bind(onKeyDown);
     }
-    Events.editor.contextMenuClose.bind(onContextMenuClose);
+    Events.contextMenu.close.bind(onContextMenuClose);
   });
 
   onDestroy(() => {
@@ -99,7 +99,7 @@
       window.removeEventListener("mousedown", onMouseDown);
       Events.key.down.unbind(onKeyDown);
     }
-    Events.editor.contextMenuClose.unbind(onContextMenuClose);
+    Events.contextMenu.close.unbind(onContextMenuClose);
   });
 
   afterUpdate(() => {
@@ -143,7 +143,7 @@
   <!-- svelte-ignore a11y-mouse-events-have-key-events -->
   <popup-menu
     bind:this={container}
-    transition:slide={{ duration: 85 }}
+    transition:slide={{ duration: 50 }}
     class:submenu={isSubMenu}
     {style}
     on:mouseout={() => {

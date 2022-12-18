@@ -5,4 +5,5 @@ export default {
     start: Emit<TransformGizmo>(),
     modify: Emit<TransformGizmo>(),
     end: Emit<TransformGizmo>(),
+    nudge: Emit<void>(),
 };

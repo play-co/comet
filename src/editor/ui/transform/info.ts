@@ -98,7 +98,7 @@ export class TransformGizmoInfo extends Container
         const yPos = `${round(pivotY, 1).toFixed(1)}px`;
         const relX = `${round(pivotX / naturalWidth, 1)}%`;
         const relY = `${round(pivotY / naturalHeight, 1)}%`;
-        const xInfo = `${xPos.padEnd(8, ' ')} ${yPos.padEnd(8, ' ')}`;
+        const xInfo = `${xPos.padEnd(5, ' ')} ${yPos.padEnd(5, ' ')}`;
         const yInfo = `${relX.padEnd(4, ' ')} ${relY.padEnd(4, ' ')}`;
 
         getApp().statusBar.setMessage(`PIVOT ${xInfo} (relative: ${yInfo})`);

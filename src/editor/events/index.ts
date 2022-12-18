@@ -1,6 +1,8 @@
 import { EventMap } from './emitter';
 import commandEvents from './modules/commandEvents';
+import contextMenuEvents from './modules/contextMenuEvents';
 import datastoreEvents from './modules/datastoreEvents';
+import dialogEvents from './modules/dialogEvents';
 import editorEvents from './modules/editorEvents';
 import focusEvents from './modules/focusEvents';
 import hierarchySelectionEvents from './modules/hierarchySelectionEvents';
@@ -24,6 +26,8 @@ const Events = EventMap({
     viewport: viewportEvents,
     projectPanel: projectSelectionEvents,
     focus: focusEvents,
+    contextMenu: contextMenuEvents,
+    dialog: dialogEvents,
 });
 
 export default Events;

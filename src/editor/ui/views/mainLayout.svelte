@@ -5,6 +5,7 @@
   import StatusBar from "./statusBar.svelte";
   import MenuBar from "./menuBar.svelte";
   import { fade } from "svelte/transition";
+  import ModalDialog from "./components/modalDialog.svelte";
 </script>
 
 <main-layout transition:fade={{ duration: 1000 }}>
@@ -20,6 +21,7 @@
     <DockablePanelLayout {layoutConfig} {factoryTypes} />
   </div>
   <StatusBar />
+  <ModalDialog />
 </main-layout>
 
 <style>

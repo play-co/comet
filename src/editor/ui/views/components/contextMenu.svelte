@@ -23,14 +23,14 @@
 
   onMount(() => {
     document.body.appendChild(element);
-    Events.editor.contextMenuOpen.bind(onContextMenuShow);
-    Events.editor.contextMenuClose.bind(onContextMenuHide);
+    Events.contextMenu.open.bind(onContextMenuShow);
+    Events.contextMenu.close.bind(onContextMenuHide);
   });
 
   onDestroy(() => {
     document.body.removeChild(element);
-    Events.editor.contextMenuOpen.unbind(onContextMenuShow);
-    Events.editor.contextMenuClose.unbind(onContextMenuHide);
+    Events.contextMenu.open.unbind(onContextMenuShow);
+    Events.contextMenu.close.unbind(onContextMenuHide);
   });
 </script>
 

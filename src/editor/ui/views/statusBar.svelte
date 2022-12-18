@@ -31,6 +31,6 @@
 
   .message {
     flex-grow: 1;
-    color: #aaa;
+    color: #90b7c1;
   }
 </style>

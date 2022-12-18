@@ -19,7 +19,7 @@
 <style>
   status-item {
     flex-grow: 0;
-    font-family: monospace;
+    /* font-family: monospace; */
     white-space: nowrap;
     margin: 0 5px;
   }
@@ -37,6 +37,7 @@
   }
 
   pre {
+    font-family: sans-serif;
     text-align: center;
   }
 </style>

@@ -67,7 +67,7 @@ export class NudgeAction extends Action<void, void>
                 });
 
             Application.instance.undoStack.exec(command);
-            Events.editor.nudge.emit();
+            Events.transform.nudge.emit();
         }
     }
 }

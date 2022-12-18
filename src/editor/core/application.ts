@@ -221,7 +221,7 @@ export class Application
         document.addEventListener('contextmenu', (event) =>
         {
             event.preventDefault();
-            Events.editor.contextMenuOpen.emit(event);
+            Events.contextMenu.open.emit(event);
         });
     }
 
@@ -341,7 +341,7 @@ export class Application
 
     public openContextMenuFromEvent(event: MouseEvent)
     {
-        nextTick().then(() => Events.editor.contextMenuOpen.emit(event));
+        nextTick().then(() => Events.contextMenu.open.emit(event));
     }
 }
 
