@@ -13,7 +13,7 @@
     {
       id: "createSprite",
       label: "Create Sprite",
-      icon: Icons.Sprite,
+      icon: Icons.SpriteAdd,
       onClick: () => {
         Actions.newSprite.dispatch({ addToSelected: true });
       },
@@ -21,7 +21,7 @@
     {
       id: "createContainer",
       label: "Create Container",
-      icon: Icons.Container,
+      icon: Icons.ContainerAdd,
       onClick: () => {
         Actions.newContainer.dispatch({ addToSelected: true });
       },

@@ -42,7 +42,7 @@
   const newFolderButton: ButtonBarItem = {
     id: "newFolder",
     label: "New Folder",
-    icon: Icons.Folder,
+    icon: Icons.FolderAdd,
     isEnabled: false,
     onClick: () => {
       Actions.newFolder.dispatch();
@@ -52,7 +52,7 @@
   const newSceneButton: ButtonBarItem = {
     id: "newScene",
     label: "New Scene",
-    icon: Icons.Scene,
+    icon: Icons.SceneAdd,
     isEnabled: false,
     onClick: () => {
       Actions.newScene.dispatch();

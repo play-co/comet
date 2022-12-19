@@ -359,6 +359,7 @@ export class Application
         this.selection.hierarchy.deselect();
         this.viewport.setRoot(node);
         this.focusPanel('hierarchy');
+
         saveUserEditPrefs();
     }
 

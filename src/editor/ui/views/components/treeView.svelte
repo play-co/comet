@@ -2,7 +2,7 @@
   import type { Menu } from "./menu";
   import ContextMenu from "./contextMenu.svelte";
   import { indentationWidth, TreeViewModel } from "./treeModel";
-  import { fade, scale } from "svelte/transition";
+  import { scale } from "svelte/transition";
 
   export let tree: TreeViewModel;
   export let menu: Menu | undefined = undefined;
@@ -28,7 +28,6 @@
   {#each $model as item (item.id)}
     <!-- svelte-ignore a11y-mouse-events-have-key-events -->
     <div
-      transition:fade={{ duration: 100 }}
       class="tree-item"
       class:selected={item.isSelected}
       class:visible={item.isVisible}
