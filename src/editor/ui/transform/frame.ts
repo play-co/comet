@@ -304,10 +304,11 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
         this.drawPivot();
     }
 
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public startOperation(dragInfo: DragInfo)
     {
         this.info.visible = true;
-        this.info.update(dragInfo);
     }
 
     public updateOperation(dragInfo: DragInfo)

@@ -24,6 +24,10 @@ body {
   background-color: var(--app-bg-color);
 }
 
+body.isDragging {
+  cursor: copy;
+}
+
 html, body {
   overflow: hidden;
 }

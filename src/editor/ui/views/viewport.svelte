@@ -30,9 +30,7 @@
     dropZone
       .bind(container)
       .on("drop", (files: FileList, e: DragEvent) => {
-        const clientPos = { x: e.clientX, y: e.clientY };
-        const viewportMousePos = viewport.getMousePos(clientPos.x, clientPos.y);
-        const viewportLocalPos = viewport.getLocalPoint(viewportMousePos.x, viewportMousePos.y);
+        const viewportLocalPos = viewport.getMouseLocalPoint(e);
 
         app.importLocalTextures(files, viewportLocalPos);
       })

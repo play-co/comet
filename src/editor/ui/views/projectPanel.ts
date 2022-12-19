@@ -1,8 +1,10 @@
 import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
 import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
+import { TextureAssetNode } from '../../../core/nodes/concrete/meta/assets/textureAssetNode';
 import { FolderNode } from '../../../core/nodes/concrete/meta/folderNode';
 import { SceneNode } from '../../../core/nodes/concrete/meta/sceneNode';
-import { Application } from '../../core/application';
+import { Actions } from '../../actions';
+import { Application, getApp } from '../../core/application';
 import type { ProjectSelection } from '../../core/projectSelection';
 import Events from '../../events';
 import { NodeTreeModel } from './components/nodeTreeModel';
@@ -22,6 +24,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
         Events.$('datastore.node|command', this.rebuildModel);
         Events.project.ready.bind(this.rebuildModel);
         Events.selection.project.deselect.bind(this.onDeselect);
+        Events.itemDrag.endDrag.bind(this.onItemDragEnd);
     }
 
     protected generateModel()
@@ -107,4 +110,48 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
 
         return false;
     }
+
+    protected onDragItemOut(event: MouseEvent)
+    {
+        const draggable = this.selection.items.filter((item) => item.is(TextureAssetNode));
+
+        if (draggable.length > 0)
+        {
+            getApp().itemDrag.startDrag('project', event, draggable[0]);
+        }
+    }
+
+    protected onItemDragEnd = ({ focusAreaId, item, event }: typeof Events.itemDrag.endDrag.type) =>
+    {
+        if (focusAreaId === 'viewport')
+        {
+            const app = getApp();
+            const textureAsset = item as TextureAssetNode;
+            const viewportLocalPos = app.viewport.getMouseLocalPoint(event);
+            let parentId: string | undefined;
+            let x = viewportLocalPos.x;
+            let y = viewportLocalPos.y;
+
+            if (app.selection.hierarchy.hasSelection)
+            {
+                const targetNode = app.selection.hierarchy.firstNode.cast<DisplayObjectNode>();
+                const mousePos = app.viewport.getMousePos(event.clientX, event.clientY);
+                const localPoint = targetNode.globalToLocal(mousePos.x, mousePos.y);
+
+                parentId = targetNode.id;
+                x = localPoint.x;
+                y = localPoint.y;
+            }
+
+            Actions.newSprite.dispatch({
+                addToSelected: false,
+                parentId,
+                model: {
+                    x,
+                    y,
+                    textureAssetId: textureAsset.id,
+                    tint: 0xffffff,
+                } });
+        }
+    };
 }

@@ -6,7 +6,9 @@ import dialogEvents from './modules/dialogEvents';
 import editorEvents from './modules/editorEvents';
 import focusEvents from './modules/focusEvents';
 import hierarchySelectionEvents from './modules/hierarchySelectionEvents';
+import itemDragEvents from './modules/itemDragEvents';
 import keyboardEvents from './modules/keyboardEvents';
+import mouseEvents from './modules/mouseEvents';
 import projectEvents from './modules/projectEvents';
 import projectSelectionEvents from './modules/projectSelectionEvents';
 import transformEvents from './modules/transformEvents';
@@ -17,6 +19,7 @@ const Events = EventMap({
     datastore: datastoreEvents,
     editor: editorEvents,
     key: keyboardEvents,
+    mouse: mouseEvents,
     project: projectEvents,
     selection: {
         hierarchy: hierarchySelectionEvents,
@@ -28,6 +31,7 @@ const Events = EventMap({
     focus: focusEvents,
     contextMenu: contextMenuEvents,
     dialog: dialogEvents,
+    itemDrag: itemDragEvents,
 });
 
 export default Events;

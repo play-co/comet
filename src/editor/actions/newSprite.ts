@@ -8,6 +8,7 @@ import { Application, getApp } from '../core/application';
 
 export type NewSpriteOptions = {
     addToSelected?: boolean;
+    parentId?: string;
     model?: Partial<SpriteModel>;
 };
 
@@ -51,7 +52,11 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
 
         let parentId = app.viewport.rootNode.id;
 
-        if (actionOptions.addToSelected && selection.hasSelection)
+        if (actionOptions.parentId)
+        {
+            parentId = actionOptions.parentId;
+        }
+        else if (actionOptions.addToSelected && selection.hasSelection)
         {
             parentId = selection.lastNode.id;
             x = 10;
@@ -62,14 +67,18 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
 
         tint.lighten(0.5);
 
+        const model: any = {
+            x,
+            y,
+            tint: tint.rgbNumber(),
+            ...actionOptions.model,
+        };
+
+        console.log(model);
+
         const nodeSchema = createNodeSchema('Sprite', {
             parent: parentId,
-            model: {
-                x,
-                y,
-                tint: tint.rgbNumber(),
-                ...actionOptions.model,
-            },
+            model,
         });
 
         const { nodes } = app.undoStack.exec<AddChildCommandReturn>(new AddChildCommand({ parentId, nodeSchema }));

@@ -6,6 +6,7 @@
   import MenuBar from "./menuBar.svelte";
   import { fade } from "svelte/transition";
   import ModalDialog from "./components/modalDialog.svelte";
+  import ItemDrag from "./components/itemDrag.svelte";
 </script>
 
 <main-layout transition:fade={{ duration: 1000 }}>
@@ -21,6 +22,7 @@
     <DockablePanelLayout {layoutConfig} {factoryTypes} />
   </div>
   <StatusBar />
+  <ItemDrag />
   <ModalDialog />
 </main-layout>
 

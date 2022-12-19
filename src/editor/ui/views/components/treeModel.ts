@@ -1,6 +1,7 @@
 import { nextTick } from '../../../../core/util';
-import { Application } from '../../../core/application';
+import { Application, getApp } from '../../../core/application';
 import type { ItemSelection } from '../../../core/itemSelection';
+import Events from '../../../events';
 import { mouseDrag } from '../../components/dragger';
 import { WritableStore } from '../store';
 
@@ -56,6 +57,8 @@ export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSe
         originalValue: string;
     };
 
+    protected isMouseOver: boolean;
+
     constructor(
         public readonly selection: SelectionType,
         options: Partial<TreeViewModelOptions> = {},
@@ -73,6 +76,9 @@ export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSe
 
         this.isDragging = false;
         this.lastClick = -1;
+        this.isMouseOver = false;
+
+        Events.key.down.bind(this.onKeyDown);
 
         this.rebuildModel();
     }
@@ -284,6 +290,42 @@ export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSe
     // subclasses...
     }
 
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public onTreeMouseOver = (event: MouseEvent) =>
+    {
+        this.isMouseOver = true;
+    };
+
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public onTreeMouseOut = (event: MouseEvent) =>
+    {
+        this.isMouseOver = false;
+        this.dragTarget.value = undefined;
+
+        if (this.isDragging)
+        {
+            this.onDragItemOut(event);
+        }
+    };
+
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected onDragItemOut(event: MouseEvent)
+    {
+        // subclasses
+    }
+
+    public onKeyDown = (event: KeyboardEvent) =>
+    {
+        if (this.isDragging && event.key === 'Escape')
+        {
+            this.isDragging = false;
+            this.dragTarget.value = undefined;
+        }
+    };
+
     public onRowMouseDown(event: MouseEvent, item: TreeItem<ItemType>)
     {
         const { selection, operation, dragTarget, options: { canReOrder, canReParent } } = this;
@@ -357,7 +399,12 @@ export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSe
 
     public onRowMouseOver(e: MouseEvent, item: TreeItem<ItemType>)
     {
-        const { isDragging, operation, dragTarget, selection, options: { canReParent, canReOrder } } = this;
+        const { isDragging, operation, dragTarget, selection, options: { canReParent, canReOrder }, isMouseOver } = this;
+
+        if (!isMouseOver || getApp().itemDrag.isDragging)
+        {
+            return;
+        }
 
         if (isDragging && (canReParent || canReOrder))
         {

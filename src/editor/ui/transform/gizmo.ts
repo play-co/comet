@@ -7,7 +7,7 @@ import { type DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/
 import { type Point, degToRad, radToDeg } from '../../../core/util/geom';
 import type { ModifyModelCommandParams } from '../../commands/modifyModel';
 import { ModifyModelsCommand } from '../../commands/modifyModels';
-import { Application } from '../../core/application';
+import { Application, getApp } from '../../core/application';
 import type { UpdateMode } from '../../core/command';
 import Events from '../../events';
 import { isKeyPressed } from '../components/keyboardListener';
@@ -133,6 +133,8 @@ export class TransformGizmo extends Container
         });
 
         this.nodeCache.clear();
+
+        getApp().statusBar.clearMessage();
 
         this.hide();
     };

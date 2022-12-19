@@ -269,7 +269,7 @@ export class EditableViewport
         }
     }
 
-    protected findNodesAtPoint(globalX: number, globalY: number)
+    public findNodesAtPoint(globalX: number, globalY: number)
     {
         const underCursor: ClonableNode[] = [];
 
@@ -350,6 +350,14 @@ export class EditableViewport
         const y = clientY - rect.top;
 
         return { x, y };
+    }
+
+    public getMouseLocalPoint(e: {clientX: number; clientY: number})
+    {
+        const clientPos = { x: e.clientX, y: e.clientY };
+        const viewportMousePos = this.getMousePos(clientPos.x, clientPos.y);
+
+        return this.getLocalPoint(viewportMousePos.x, viewportMousePos.y);
     }
 
     public getLocalPoint(globalX: number, globalY: number)

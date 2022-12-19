@@ -1,3 +1,5 @@
+import type { ClonableNode } from '../../core';
+import { getInstance } from '../../core/nodes/instances';
 import { RemoveNodesCommand } from '../commands/removeNodes';
 import { Action } from '../core/action';
 import { Application, getApp } from '../core/application';
@@ -25,7 +27,7 @@ export class DeleteNodeAction extends Action<DeleteNodeOptions, void>
     protected exec(options: DeleteNodeOptions): void
     {
         const app = Application.instance;
-        const nodeIds: string[] = [];
+        let nodeIds: string[] = [];
 
         if (options.nodeId)
         {
@@ -35,6 +37,8 @@ export class DeleteNodeAction extends Action<DeleteNodeOptions, void>
         {
             nodeIds.push(...app.selection.hierarchy.items.map((node) => node.id));
         }
+
+        nodeIds = nodeIds.filter((nodeId) => !getInstance<ClonableNode>(nodeId).isMetaNode);
 
         if (nodeIds.length)
         {

@@ -115,6 +115,9 @@
   const onFocus = (e: Event) => {
     const element = e.target as HTMLInputElement;
     prevValue = element.value;
+
+    // select all text
+    element.setSelectionRange(0, element.value.length);
   };
 
   const onChange = (e: Event) => {

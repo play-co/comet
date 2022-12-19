@@ -84,10 +84,10 @@ export class Grid extends Graphics
         const p1 = worldTransform.applyInverse({ x: 0, y: 0 });
         const p2 = worldTransform.applyInverse({ x: screenWidth, y: screenHeight });
 
-        const x = snapToIncrement(p1.x, smallUnit);
-        const y = snapToIncrement(p1.y, smallUnit);
-        const width = snapToIncrement(p2.x - p1.x, smallUnit);
-        const height = snapToIncrement(p2.y - p1.y, smallUnit);
+        const x = snapToIncrement(p1.x, smallUnit) - smallUnit;
+        const y = snapToIncrement(p1.y, smallUnit) - smallUnit;
+        const width = snapToIncrement(p2.x - p1.x, smallUnit) + (smallUnit * 2);
+        const height = snapToIncrement(p2.y - p1.y, smallUnit) + (smallUnit * 2);
 
         return new Rectangle(x, y, width, height);
     }
@@ -124,6 +124,9 @@ export class Grid extends Graphics
     protected drawHorizontal()
     {
         const { globalOrigin, localScreenRect, gridSettings: { smallUnit }, screenWidth, config: { style: { color } } } = this;
+        // const smallUnitScreenSize = this.getGlobalUnitSize(smallUnit);
+        // const isTiny = smallUnitScreenSize < smallUnit * 0.75;
+        // const unit = isTiny ? mediumUnit : smallUnit;
         const unit = smallUnit;
 
         if (globalOrigin.x > 0)
@@ -204,9 +207,25 @@ export class Grid extends Graphics
 
     private lineColor(color: Color, num: number)
     {
+        const { mediumUnit, bigUnit } = this.gridSettings;
         // eslint-disable-next-line no-nested-ternary
-        const alpha = num % 100 === 0 ? light : num % 50 === 0 ? inBetween : dark;
+        const alpha = num % bigUnit === 0 ? light : num % mediumUnit === 0 ? inBetween : dark;
 
         return color.darken(alpha).rgbNumber();
+    }
+
+    private lightLine(color: Color)
+    {
+        return color.darken(light).rgbNumber();
+    }
+
+    private inBetweenLine(color: Color)
+    {
+        return color.darken(inBetween).rgbNumber();
+    }
+
+    private darkLine(color: Color)
+    {
+        return color.darken(dark).rgbNumber();
     }
 }

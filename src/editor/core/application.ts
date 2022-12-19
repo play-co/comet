@@ -1,6 +1,8 @@
 import '../ui/components/mouseListener';
+import '../ui/components/keyboardListener';
 
 import type { GoldenLayout } from 'golden-layout';
+import { Rectangle } from 'pixi.js';
 
 import { enableLog } from '../../core/log';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
@@ -22,6 +24,7 @@ import { RemoteObjectSync } from '../sync/remoteObjectSync';
 import { DropZone } from '../ui/components/dropzone';
 import { EditableViewport } from '../ui/components/viewport';
 import type { FocusAreaId } from '../ui/views/components/focusArea.svelte';
+import { ItemDrag } from '../ui/views/components/itemDrag';
 import { StatusBar } from '../ui/views/statusBar';
 import { getUrlParam } from '../util';
 import { HierarchySelection } from './hierarchySelection';
@@ -53,6 +56,7 @@ export class Application
     public storageProvider: LocalStorageProvider;
     public project: ProjectNode;
     public statusBar: StatusBar;
+    public itemDrag: ItemDrag;
     public selection: {
         hierarchy: HierarchySelection;
         project: ProjectSelection;
@@ -60,7 +64,8 @@ export class Application
 
     public gridSettings: GridSettings;
     public layout?: GoldenLayout;
-    protected focusArea: string | null;
+    protected focusArea: FocusAreaId | null;
+    protected focusAreaElements: Map<FocusAreaId, HTMLElement>;
     public isColorPickerOpen: boolean;
 
     private static _instance: Application;
@@ -86,6 +91,7 @@ export class Application
         enableLog();
 
         this.statusBar = new StatusBar();
+        this.itemDrag = new ItemDrag();
 
         const datastore = this.datastore = new ConvergenceDatastore();
 
@@ -94,6 +100,7 @@ export class Application
         };
 
         this.focusArea = null;
+        this.focusAreaElements = new Map();
         this.isColorPickerOpen = false;
 
         this.storageProvider = new LocalStorageProvider();
@@ -304,6 +311,7 @@ export class Application
         {
             folderParentId = selection.firstNode.id;
         }
+
         this.undoStack.exec<CreateTextureAssetCommandReturn>(
             new CreateTextureAssetCommand({
                 folderParentId,
@@ -318,9 +326,35 @@ export class Application
         return id.some((id) => this.focusArea === id);
     }
 
-    public getFocusArea()
+    public getFocusArea(): FocusAreaId | null
     {
         return this.focusArea;
+    }
+
+    public registerFocusArea(id: FocusAreaId, element: HTMLElement)
+    {
+        this.focusAreaElements.set(id, element);
+    }
+
+    public getFocusAreaElement(id: FocusAreaId)
+    {
+        const element = this.focusAreaElements.get(id);
+
+        if (!element)
+        {
+            throw new Error(`Focus area element not found: ${id}`);
+        }
+
+        return element;
+    }
+
+    public doesFocusAreaContain(id: FocusAreaId, clientX: number, clientY: number)
+    {
+        const element = getApp().getFocusAreaElement(id);
+        const bounds = element.getBoundingClientRect();
+        const rect = new Rectangle(bounds.left, bounds.top, bounds.width, bounds.height);
+
+        return rect.contains(clientX, clientY);
     }
 
     public setFocusArea(id: FocusAreaId)

@@ -44,6 +44,8 @@ export abstract class ItemSelection<T>
 
             this.onSetSingle(item);
         }
+
+        (window as any).$node = this.firstNode;
     }
 
     public add(item: T)

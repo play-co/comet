@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
 
   import { Application } from "../../../core/application";
   import Events from "../../../events";
@@ -34,6 +34,10 @@
     }
   });
 
+  onMount(() => {
+    app.registerFocusArea(id, container);
+  });
+
   const onFocus = () => app.setFocusArea(id);
 
   if (focus) {
@@ -42,6 +46,12 @@
       container.focus();
     });
   }
+
+  const onMouseEnter = () => {
+    if (app.itemDrag.isDragging) {
+      onFocus();
+    }
+  };
 </script>
 
 <focus-area
@@ -49,6 +59,7 @@
   class:focussed={isFocussed}
   on:focus={onFocus}
   on:mousedown={onFocus}
+  on:mouseenter={onMouseEnter}
   tabindex="0"
 >
   <slot />

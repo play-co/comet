@@ -157,6 +157,20 @@ export abstract class DisplayObjectNode<
         return this.getLocalBounds().contains(localPoint.x, localPoint.y);
     }
 
+    public localToGlobal(localX: number, localY: number)
+    {
+        const view = this.view;
+
+        return view.worldTransform.apply({ x: localX, y: localY });
+    }
+
+    public globalToLocal(globalX: number, globalY: number)
+    {
+        const view = this.view;
+
+        return view.worldTransform.applyInverse({ x: globalX, y: globalY });
+    }
+
     // not the localBounds (which includes the children, but the single local dimension of this view)
     public abstract get width(): number;
     public abstract get height(): number;

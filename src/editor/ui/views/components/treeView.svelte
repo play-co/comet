@@ -2,7 +2,7 @@
   import type { Menu } from "./menu";
   import ContextMenu from "./contextMenu.svelte";
   import { indentationWidth, TreeViewModel } from "./treeModel";
-  import { fade } from "svelte/transition";
+  import { fade, scale } from "svelte/transition";
 
   export let tree: TreeViewModel;
   export let menu: Menu | undefined = undefined;
@@ -18,9 +18,13 @@
   let container: HTMLElement;
 
   const { model, dragTarget, isEditing } = tree.store;
+
+  const onTreeMouseOver = (e: MouseEvent) => tree.onTreeMouseOver(e);
+  const onTreeMouseOut = (e: MouseEvent) => tree.onTreeMouseOut(e);
 </script>
 
-<tree-view bind:this={container}>
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+<tree-view bind:this={container} on:mouseenter={onTreeMouseOver} on:mouseleave={onTreeMouseOut}>
   {#each $model as item (item.id)}
     <!-- svelte-ignore a11y-mouse-events-have-key-events -->
     <div
@@ -33,7 +37,9 @@
       on:mousedown={(e) => tree.onRowMouseDown(e, item)}
       on:mouseover={(e) => tree.onRowMouseOver(e, item)}
     >
-      <span class="indentation" style="width:{item.depth * indentationWidth}px" />
+      <span class="indentation no-events" style="padding-left:{item.depth * indentationWidth}px"
+        >&nbsp;</span
+      >
 
       {#if tree.hasChildren(item.data)}
         <span
@@ -43,11 +49,11 @@
           on:mousedown={(e) => tree.toggleItemExpanded(e, item)}
         />
       {:else}
-        <span class="arrow-filler" on:click={(e) => tree.toggleItemExpanded(e, item)} />
+        <span class="arrow-filler no-events" on:click={(e) => tree.toggleItemExpanded(e, item)} />
       {/if}
 
       {#if item.icon}
-        <img class="icon" src={item.icon} alt={tree.getLabel(item.data)} />
+        <img class="icon no-events" src={item.icon} alt={tree.getLabel(item.data)} />
       {/if}
 
       <span
@@ -59,12 +65,15 @@
         <!-- svelte-ignore a11y-missing-attribute -->
         <a title={tree.getId(item)}>{tree.getLabel(item.data)}</a>
         {#if tree.isItemReParentDragTarget(item, $dragTarget)}
-          <div transition:fade={{ duration: 100 }} class="dragTargetIndicator reparent" />
+          <div
+            transition:scale={{ duration: 150 }}
+            class="dragTargetIndicator reparent no-events"
+          />
         {/if}
       </span>
 
       {#if tree.isItemReOrderDragTarget(item, $dragTarget)}
-        <div transition:fade={{ duration: 100 }} class="dragTargetIndicator reorder" />
+        <div transition:scale={{ duration: 150 }} class="dragTargetIndicator reorder no-events" />
       {/if}
     </div>
   {/each}
@@ -82,7 +91,8 @@
     display: block;
     border: 1px outset #666a;
     border-radius: 5px;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   .tree-item {
@@ -116,10 +126,19 @@
     color: black;
   }
 
+  .no-events {
+    pointer-events: none;
+  }
+
+  .indentation {
+    display: inline-block;
+    height: 10px;
+  }
+
   .arrow-filler {
     display: inline-block;
-    width: 13px;
-    height: 5px;
+    padding-left: 13px;
+    height: 10px;
   }
 
   .arrow {
@@ -147,7 +166,6 @@
     width: 100%;
     position: absolute;
     bottom: 0;
-    pointer-events: none;
   }
 
   .reparent {
@@ -165,6 +183,5 @@
   .icon {
     width: 16px;
     margin-right: 5px;
-    pointer-events: none;
   }
 </style>
