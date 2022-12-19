@@ -76,9 +76,9 @@ export abstract class ItemSelection<T>
             return;
         }
 
-        this.onDeselect();
-
         this.items.length = 0;
+
+        this.onDeselect();
     }
 
     public shallowContains(item: T)

@@ -77,3 +77,12 @@ input.mixed {
 input:focus {
   outline: 1px solid #5a67c2;
 }
+
+canvas.viewport {
+  transition: opacity 0.25s ease-in-out;
+  opacity: 1;
+}
+
+canvas.hide-viewport {
+  opacity: 0;
+}

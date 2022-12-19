@@ -7,6 +7,7 @@ import { Rectangle } from 'pixi.js';
 import { enableLog } from '../../core/log';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObjectNode';
+import type { MetaNode } from '../../core/nodes/abstract/metaNode';
 import { FolderNode } from '../../core/nodes/concrete/meta/folderNode';
 import { ProjectNode } from '../../core/nodes/concrete/meta/projectNode';
 import { clearInstances, getInstance } from '../../core/nodes/instances';
@@ -31,6 +32,7 @@ import { HierarchySelection } from './hierarchySelection';
 import { initHistory, writeUndoStack } from './history';
 import { ProjectSelection } from './projectSelection';
 import UndoStack from './undoStack';
+import { loadUserSelectionPrefs, saveUserSelectionPrefs } from './userPrefs';
 
 export type AppOptions = {};
 
@@ -146,6 +148,8 @@ export class Application
 
         this.project.isReady = true;
         Events.project.ready.emit();
+
+        nextTick().then(() => this.initPersistentSelection());
     }
 
     public async createProject(name: string)
@@ -230,6 +234,48 @@ export class Application
             event.preventDefault();
             Events.contextMenu.open.emit(event);
         });
+    }
+
+    protected initPersistentSelection()
+    {
+        const prefs = loadUserSelectionPrefs();
+
+        // load selection prefs if found
+        if (prefs)
+        {
+            const { hierarchy, project } = prefs;
+
+            hierarchy.forEach((id) =>
+            {
+                try
+                {
+                    const node = getInstance<ClonableNode>(id);
+
+                    this.selection.hierarchy.add(node);
+                }
+                catch (e)
+                {
+                    //
+                }
+            });
+
+            project.forEach((id) =>
+            {
+                try
+                {
+                    const node = getInstance<MetaNode>(id);
+
+                    this.selection.project.add(node);
+                }
+                catch (e)
+                {
+                    //
+                }
+            });
+        }
+
+        // listen to selection events
+        Events.$('selection.', saveUserSelectionPrefs);
     }
 
     protected initDevInspectors()
@@ -376,6 +422,16 @@ export class Application
     public openContextMenuFromEvent(event: MouseEvent)
     {
         nextTick().then(() => Events.contextMenu.open.emit(event));
+    }
+
+    public getLayout()
+    {
+        if (!this.layout)
+        {
+            throw new Error('Layout not initialized');
+        }
+
+        return this.layout;
     }
 }
 

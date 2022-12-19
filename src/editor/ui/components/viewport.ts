@@ -6,6 +6,7 @@ import { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNod
 import { ContainerNode } from '../../../core/nodes/concrete/display/containerNode';
 import { SceneNode } from '../../../core/nodes/concrete/meta/sceneNode';
 import { Application, getApp } from '../../core/application';
+import { loadUserViewportPrefs, saveUserViewportPrefs } from '../../core/userPrefs';
 import Events from '../../events';
 import { TransformGizmo } from '../transform/gizmo';
 import { BoxSelection } from './boxSelection';
@@ -35,6 +36,9 @@ export class EditableViewport
         });
 
         const canvas = this.canvas = pixi.renderer.view;
+
+        canvas.classList.add('viewport');
+        canvas.classList.add('hide-viewport');
 
         const grid = this.grid = new Grid(canvas);
 
@@ -79,8 +83,16 @@ export class EditableViewport
             .on('mouseup', this.onMouseUp)
             .on('mousemove', this.onMouseMove)
             .on('moved', this.onViewportChanged)
-            .on('moved-end', this.onViewportChanged)
-            .on('zoomed-end', this.onViewportChanged);
+            .on('moved-end', () =>
+            {
+                this.onViewportChanged();
+                saveUserViewportPrefs();
+            })
+            .on('zoomed-end', () =>
+            {
+                this.onViewportChanged();
+                saveUserViewportPrefs();
+            });
 
         viewport
             .drag()
@@ -92,6 +104,26 @@ export class EditableViewport
         Events.key.up.bind(this.onKeyUp);
         Events.editor.resize.bind(this.onResize);
         Events.datastore.node.local.cloaked.bind(this.onNodeCloaked);
+        Events.project.ready.bind(() =>
+        {
+            this.loadPrefs();
+            this.canvas.classList.remove('hide-viewport');
+        });
+    }
+
+    get x()
+    {
+        return this.viewport.x;
+    }
+
+    get y()
+    {
+        return this.viewport.y;
+    }
+
+    get scale()
+    {
+        return this.viewport.scale.x;
     }
 
     get stage()
@@ -102,6 +134,21 @@ export class EditableViewport
     get isSpaceKeyDown()
     {
         return isKeyPressed(' ');
+    }
+
+    protected loadPrefs()
+    {
+        const prefs = loadUserViewportPrefs();
+
+        if (prefs)
+        {
+            const { x, y, scale } = prefs;
+
+            this.viewport.x = x;
+            this.viewport.y = y;
+            this.viewport.scale.set(scale);
+            this.onViewportChanged();
+        }
     }
 
     protected onKeyDown = (e: KeyboardEvent) =>
@@ -248,7 +295,7 @@ export class EditableViewport
         viewport.cursor = isSpaceKeyDown ? 'grab' : 'default';
     };
 
-    protected onViewportChanged = () =>
+    public onViewportChanged = () =>
     {
         this.viewport.updateTransform();
         this.transformGizmo.onRootContainerChanged();
@@ -305,7 +352,7 @@ export class EditableViewport
             pixi.renderer.resize(width, height);
             viewport.resize(width, height);
 
-            grid.draw();
+            grid.renderGrid();
         }
     };
 

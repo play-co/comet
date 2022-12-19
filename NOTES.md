@@ -29,7 +29,7 @@
 # WIP TODO:
 
 High Priority
-* drop items from project tree to viewport
+* Prefabs
 
 Low Priority
 * localStorage project state: UI Layout, Tree State, Current Scene, Current Selection could be saved to localStorage to preserve user workspace

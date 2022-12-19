@@ -60,7 +60,7 @@ export class Grid extends Graphics
             ...config,
         };
 
-        this.draw();
+        this.renderGrid();
     }
 
     protected get screenWidth()
@@ -106,7 +106,7 @@ export class Grid extends Graphics
         return this.container.worldTransform.apply(p);
     }
 
-    public draw()
+    public renderGrid()
     {
         const { x, y, scale } = this.config;
 
@@ -116,12 +116,12 @@ export class Grid extends Graphics
 
         this.clear();
 
-        this.drawHorizontal();
-        this.drawVertical();
-        this.drawOrigin();
+        this.renderHorizontalLines();
+        this.renderVerticalLines();
+        this.renderOrigin();
     }
 
-    protected drawHorizontal()
+    protected renderHorizontalLines()
     {
         const { globalOrigin, localScreenRect, gridSettings: { smallUnit }, screenWidth, config: { style: { color } } } = this;
         // const smallUnitScreenSize = this.getGlobalUnitSize(smallUnit);
@@ -158,7 +158,7 @@ export class Grid extends Graphics
         }
     }
 
-    protected drawVertical()
+    protected renderVerticalLines()
     {
         const { globalOrigin, localScreenRect, gridSettings: { smallUnit }, screenHeight, config: { style: { color } } } = this;
         const unit = smallUnit;
@@ -192,7 +192,7 @@ export class Grid extends Graphics
         }
     }
 
-    protected drawOrigin()
+    protected renderOrigin()
     {
         const { localScreenRect, globalOrigin, config: { style: { origin } } } = this;
         const p1 = this.localToGlobal({ x: localScreenRect.left, y: localScreenRect.top });

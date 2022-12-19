@@ -6,10 +6,10 @@
 
 <script lang="ts">
   import { onMount } from "svelte";
-  import { LayoutConfig, type ComponentContainer } from "golden-layout";
-  import { GoldenLayout } from "golden-layout";
+  import { ComponentContainer, GoldenLayout, LayoutConfig } from "golden-layout";
   import Events from "../../events";
   import { Application } from "../../core/application";
+  import { loadUserLayoutPrefs, saveUserLayoutPrefs } from "../../core/userPrefs";
 
   export let layoutConfig: LayoutConfig;
   export let factoryTypes: FactoryTypes;
@@ -29,30 +29,11 @@
 
     Application.instance.layout = layout;
 
-    const savedConfig = localStorage.getItem("comet:layout");
-    if (savedConfig) {
-      const data = JSON.parse(savedConfig);
-      let persistGoldenLayoutConfig;
-
-      try {
-        if ("resolved" in data) {
-          persistGoldenLayoutConfig = LayoutConfig.fromResolved(data);
-        } else {
-          persistGoldenLayoutConfig = data as unknown as LayoutConfig;
-        }
-
-        layout.loadLayout(persistGoldenLayoutConfig);
-      } catch (e) {
-        console.warn("Failed to load saved layout config", e);
-        layout.loadLayout(layoutConfig);
-      }
-    } else {
-      layout.loadLayout(layoutConfig);
-    }
+    const savedConfig = loadUserLayoutPrefs();
+    layout.loadLayout(savedConfig ?? layoutConfig);
 
     layout.on("stateChanged", () => {
-      const config = layout.saveLayout();
-      localStorage.setItem("comet:layout", JSON.stringify(config));
+      saveUserLayoutPrefs();
 
       Events.editor.resize.emit();
     });
