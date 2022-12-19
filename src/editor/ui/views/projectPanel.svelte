@@ -153,7 +153,9 @@
   }
 
   .container.horizontal .tree {
-    height: calc(100% - 25px);
+    height: calc(100% - 20px);
+    flex-grow: 0;
+    width: 40%;
   }
 
   .preview {

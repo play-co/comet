@@ -29,8 +29,6 @@
 # WIP TODO:
 
 High Priority
-* Remaining UI components:
-* project preview
 * drop items from project tree to viewport
 
 Low Priority
