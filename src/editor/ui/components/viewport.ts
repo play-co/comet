@@ -387,6 +387,8 @@ export class EditableViewport
         this.rootNode = node;
         this.nodeLayer.addChild(this.rootNode.view);
 
+        saveUserViewportPrefs();
+
         Events.viewport.rootChanged.emit(node);
     }
 

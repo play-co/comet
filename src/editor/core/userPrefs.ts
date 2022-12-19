@@ -2,7 +2,7 @@ import { type ResolvedLayoutConfig, LayoutConfig } from 'golden-layout';
 
 import { getApp } from './application';
 
-export type UserPrefStorageKey = 'layout' | 'selection' | 'viewport';
+export type UserPrefStorageKey = 'layout' | 'selection' | 'viewport' | 'edit';
 
 export interface UserLayoutPrefs
 {
@@ -22,15 +22,10 @@ export interface UserViewportPrefs
     scale: number;
 }
 
-// export function loadUserPrefs()
-// {
-//     const json = localStorage.getItem('comet:userPrefs');
-
-//     if (json)
-//     {
-//         const prefs: UserPrefs = JSON.parse(json) as UserPrefs;
-//     }
-// }
+export interface UserEditPrefs
+{
+    viewportRoot: string;
+}
 
 function storageKey(id: UserPrefStorageKey)
 {
@@ -77,7 +72,7 @@ export function saveUserLayoutPrefs()
     const app = getApp();
     const layout = app.getLayout().saveLayout();
 
-    writeStorage('layout', { layout });
+    writeStorage('layout', { layout } as UserLayoutPrefs);
 }
 
 export function saveUserSelectionPrefs()
@@ -88,7 +83,7 @@ export function saveUserSelectionPrefs()
     writeStorage('selection', {
         hierarchy: hierarchy.hasSelection ? hierarchy.items.map((item) => item.id) : [],
         project: project.items.map((item) => item.id),
-    });
+    } as UserSelectionPrefs);
 }
 
 export function saveUserViewportPrefs()
@@ -99,7 +94,16 @@ export function saveUserViewportPrefs()
         x: app.viewport.x,
         y: app.viewport.y,
         scale: app.viewport.scale,
-    });
+    } as UserViewportPrefs);
+}
+
+export function saveUserEditPrefs()
+{
+    const app = getApp();
+
+    writeStorage('edit', {
+        viewportRoot: app.viewport.rootNode.id,
+    } as UserEditPrefs);
 }
 
 export function loadUserLayoutPrefs()
@@ -152,6 +156,18 @@ export function loadUserSelectionPrefs()
 export function loadUserViewportPrefs()
 {
     const prefs = readStorage<UserViewportPrefs>('viewport');
+
+    if (prefs)
+    {
+        return prefs;
+    }
+
+    return null;
+}
+
+export function loadUserEditPrefs()
+{
+    const prefs = readStorage<UserEditPrefs>('edit');
 
     if (prefs)
     {

@@ -32,7 +32,6 @@ High Priority
 * Prefabs
 
 Low Priority
-* localStorage project state: UI Layout, Tree State, Current Scene, Current Selection could be saved to localStorage to preserve user workspace
 * Project properties panel
     - name
     - created

@@ -32,7 +32,7 @@ import { HierarchySelection } from './hierarchySelection';
 import { initHistory, writeUndoStack } from './history';
 import { ProjectSelection } from './projectSelection';
 import UndoStack from './undoStack';
-import { loadUserSelectionPrefs, saveUserSelectionPrefs } from './userPrefs';
+import { loadUserEditPrefs, loadUserSelectionPrefs, saveUserEditPrefs, saveUserSelectionPrefs } from './userPrefs';
 
 export type AppOptions = {};
 
@@ -202,8 +202,25 @@ export class Application
     protected initProject()
     {
         const scene = this.project.getRootFolder('Scenes').getChildAt(0);
+        let root = scene.cast<DisplayObjectNode>();
 
-        this.viewport.setRoot(scene.cast<DisplayObjectNode>());
+        const prefs = loadUserEditPrefs();
+
+        if (prefs)
+        {
+            const { viewportRoot } = prefs;
+
+            try
+            {
+                root = getInstance<DisplayObjectNode>(viewportRoot);
+            }
+            catch (e)
+            {
+                // silent fail
+            }
+        }
+
+        this.viewport.setRoot(root);
 
         this.project.updateRecursive();
     }
@@ -342,6 +359,7 @@ export class Application
         this.selection.hierarchy.deselect();
         this.viewport.setRoot(node);
         this.focusPanel('hierarchy');
+        saveUserEditPrefs();
     }
 
     public importLocalTextures(files: FileList, createSpriteAtPoint?: {x: number; y: number})
