@@ -67,6 +67,10 @@
     const modifications: ModifyModelCommandParams<any>[] = [];
 
     property.nodes.forEach((node) => {
+      if (node.model.getValue<"string" | null>("textureAssetId") === null) {
+        return;
+      }
+
       const values: any = {
         textureAssetId,
       };
@@ -78,9 +82,11 @@
       });
     });
 
-    app.undoStack.exec(new ModifyModelsCommand({ modifications }));
+    if (modifications.length) {
+      app.undoStack.exec(new ModifyModelsCommand({ modifications }));
 
-    Events.editor.propertyModified.emit(property);
+      Events.editor.propertyModified.emit(property);
+    }
   }
 
   function createMenuFromFolder(folderNode: FolderNode) {

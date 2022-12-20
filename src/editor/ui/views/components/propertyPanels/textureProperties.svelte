@@ -2,7 +2,7 @@
   import type { PropertiesPanel } from "../../propertiesPanel";
   import PropertyPanel from "./panelGroup.svelte";
   import { PropertyMap } from "./propertyMap";
-  import SelectControl from "../propertyControls/selectControl.svelte";
+  import TextureSelectControl from "../propertyControls/textureSelectControl.svelte";
 
   export let panel: PropertiesPanel;
 
@@ -15,7 +15,7 @@
   {#if properties.has("textureAssetId")}
     <property-row class="single">
       <property-label>id</property-label>
-      <SelectControl property={properties.get("textureAssetId")} />
+      <TextureSelectControl property={properties.get("textureAssetId")} />
     </property-row>
   {/if}
 </PropertyPanel>

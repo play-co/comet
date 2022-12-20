@@ -8,11 +8,9 @@ import { enableLog } from '../../core/log';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObjectNode';
 import type { MetaNode } from '../../core/nodes/abstract/metaNode';
-import { FolderNode } from '../../core/nodes/concrete/meta/folderNode';
 import { ProjectNode } from '../../core/nodes/concrete/meta/projectNode';
 import { clearInstances, getInstance } from '../../core/nodes/instances';
 import { nextTick } from '../../core/util';
-import { type CreateTextureAssetCommandReturn, CreateTextureAssetCommand } from '../commands/createTextureAsset';
 import { RemoveNodeCommand } from '../commands/removeNode';
 import { DatastoreNodeInspector } from '../devTools/inspectors/datastoreNodeInspector';
 import { GraphNodeInspector } from '../devTools/inspectors/graphNodeInspector';
@@ -361,29 +359,6 @@ export class Application
         this.focusPanel('hierarchy');
 
         saveUserEditPrefs();
-    }
-
-    public importLocalTextures(files: FileList, createSpriteAtPoint?: {x: number; y: number})
-    {
-        const { project: selection } = this.selection;
-        const file = files[0];
-
-        let folderParentId: string | undefined;
-
-        if (selection.hasSelection
-            && selection.firstNode.is(FolderNode)
-            && selection.firstNode.cast<FolderNode>().isWithinRootFolder('Textures'))
-        {
-            folderParentId = selection.firstNode.id;
-        }
-
-        this.undoStack.exec<CreateTextureAssetCommandReturn>(
-            new CreateTextureAssetCommand({
-                folderParentId,
-                file,
-                createSpriteAtPoint,
-            }),
-        );
     }
 
     public isAreaFocussed(...id: FocusAreaId[])

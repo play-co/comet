@@ -1,3 +1,20 @@
+<script lang="ts" context="module">
+  export const cloneMenu = new Menu([
+    {
+      label: "Copy",
+      onClick: () => Actions.copy.dispatch(),
+    },
+    {
+      label: "Paste",
+      onClick: () => Actions.paste.dispatch(),
+    },
+    {
+      label: "Create Prefab",
+      onClick: () => Application.instance.createPrefabFromSelection(),
+    },
+  ]);
+</script>
+
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
   import { Application } from "../../core/application";
@@ -5,21 +22,24 @@
   import ContextMenu from "./components/contextMenu.svelte";
   import { DropZone } from "../components/dropzone";
   import FocusArea from "./components/focusArea.svelte";
+  import { Actions } from "../../actions";
 
   const app = Application.instance;
   const viewport = app.viewport;
   const dropZone = new DropZone("viewport");
-  const subMenuA = new Menu([{ label: "Item Sub 4" }, { label: "Item 5" }, { label: "Item 6" }]);
-  const subMenuB = new Menu([
-    { label: "Item Longer 7" },
-    { label: "Item 8" },
-    { label: "Item 9", menu: subMenuA },
-  ]);
-  const menu = new Menu([
-    { data: 1, label: "Item 1" },
-    { label: "Item 2", menu: subMenuB },
-    { label: "Item 3" },
-  ]);
+  // const subMenuA = new Menu([{ label: "Item Sub 4" }, { label: "Item 5" }, { label: "Item 6" }]);
+  // const subMenuB = new Menu([
+  //   { label: "Item Longer 7" },
+  //   { label: "Item 8" },
+  //   { label: "Item 9", menu: subMenuA },
+  // ]);
+  // const menu = new Menu([
+  //   { data: 1, label: "Item 1" },
+  //   { label: "Item 2", menu: subMenuB },
+  //   { label: "Item 3" },
+  // ]);
+
+  const menu = cloneMenu;
 
   let container: HTMLDivElement;
 
@@ -32,7 +52,7 @@
       .on("drop", (files: FileList, e: DragEvent) => {
         const viewportLocalPos = viewport.getMouseLocalPoint(e);
 
-        app.importLocalTextures(files, viewportLocalPos);
+        Actions.importTexture.dispatch({ files, createSpriteAtPoint: viewportLocalPos });
       })
       .on("enter", () => {
         app.setFocusArea("viewport");

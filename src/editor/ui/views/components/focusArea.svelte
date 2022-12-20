@@ -73,7 +73,7 @@
     position: relative;
     border: 1px solid transparent;
     border-radius: 2px;
-    transition: 0.1s border-color ease-in-out;
+    transition: 0.2s border-color ease-in-out;
   }
 
   focus-area.focussed {

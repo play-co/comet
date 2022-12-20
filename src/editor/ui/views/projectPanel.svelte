@@ -30,7 +30,7 @@
 
   onMount(() => {
     dropZone.bind(container).on("drop", (files: FileList) => {
-      app.importLocalTextures(files);
+      Actions.importTexture.dispatch({ files });
     });
 
     Events.editor.resize.bind(() => {

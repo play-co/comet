@@ -1,16 +1,20 @@
+import { CopyAction } from './copy';
 import { DeleteNodeAction } from './deleteNode';
 import { DeleteTextureAction } from './deleteTexture';
 import { DeselectAction } from './deselect';
+import { ImportTextureAction } from './importTexture';
 import { NewContainerAction } from './newContainer';
 import { NewFolderAction } from './newFolder';
 import { NewSceneAction } from './newScene';
 import { NewSpriteAction } from './newSprite';
 import { NudgeAction } from './nudge';
+import { PasteAction } from './paste';
 import { RedoAction } from './redo';
 import { SelectAllAction } from './selectAll';
 import { UndoAction } from './undo';
 
 export const Actions = {
+    importTexture: new ImportTextureAction(),
     newFolder: new NewFolderAction(),
     newScene: new NewSceneAction(),
     newContainer: new NewContainerAction(),
@@ -22,4 +26,6 @@ export const Actions = {
     nudge: new NudgeAction(),
     undo: new UndoAction(),
     redo: new RedoAction(),
+    copy: new CopyAction(),
+    paste: new PasteAction(),
 };
