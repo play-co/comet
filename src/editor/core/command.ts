@@ -88,7 +88,10 @@ export abstract class Command<ParamsType extends {} = {}, ReturnType = void, Cac
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public restoreSelection(mode: 'redo' | 'undo')
     {
-        this.app.selection.hierarchy.set(this.selectedNodes.map((nodeId) => this.getInstance(nodeId)));
+        if (this.selectedNodes.length > 0)
+        {
+            this.app.selection.hierarchy.set(this.selectedNodes.map((nodeId) => this.getInstance(nodeId)));
+        }
     }
 
     public toJSON(): CommandSchema

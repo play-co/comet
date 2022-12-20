@@ -260,6 +260,12 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         return this.model.root().toJSON() as ProjectFileSchema;
     }
 
+    public fromProjectSchema(schema: ProjectFileSchema)
+    {
+        this.model.root().value(schema);
+        window.location.reload();
+    }
+
     // command API
 
     public createNode(nodeSchema: NodeSchema)

@@ -299,6 +299,8 @@ export class Application
     {
         if (getUrlParam<number>('devtools') === 1)
         {
+            const container = document.body;
+
             const graphNodeInspector = new GraphNodeInspector('Graph Nodes', 'blue');
             const datastoreNodeInspector = new DatastoreNodeInspector('Datastore Nodes', 'green');
             const logInspector = new LogInspector('Log', 'darkslategrey');
@@ -306,7 +308,6 @@ export class Application
 
             const mediumMaxHeight = Math.round(screen.availHeight * 0.3);
             const shortMaxHeight = Math.round(screen.availHeight * 0.2);
-            const container = document.body;
 
             graphNodeInspector.maxHeight = mediumMaxHeight;
             datastoreNodeInspector.maxHeight = mediumMaxHeight;

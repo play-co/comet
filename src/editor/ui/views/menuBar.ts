@@ -23,10 +23,38 @@ function subMenu(prefix: string)
     });
 }
 
+const fileMenu = new Menu([
+    {
+        label: 'Save',
+        onClick: () =>
+        {
+            const app = getApp();
+            const data = app.datastore.toProjectSchema();
+
+            localStorage.setItem('comet:project', JSON.stringify(data));
+            app.statusBar.setMessage('Project saved to local storage');
+        },
+    },
+    {
+        label: 'Restore',
+        onClick: () =>
+        {
+            const app = getApp();
+            const data = localStorage.getItem('comet:project');
+
+            if (data)
+            {
+                app.datastore.fromProjectSchema(JSON.parse(data));
+                app.statusBar.setMessage('Project restored from local storage, reloading...');
+            }
+        },
+    },
+]);
+
 export const menu = new Menu([
     {
         label: 'File',
-        menu: subMenu('File'),
+        menu: fileMenu,
     },
     {
         label: 'Edit',

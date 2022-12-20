@@ -20,6 +20,7 @@ export interface Datastore
     hydrate: () => ClonableNode;
     reset: () => void;
     toProjectSchema: () => ProjectFileSchema;
+    fromProjectSchema: (schema: ProjectFileSchema) => void;
     getProjectId: () => string;
 }
 
@@ -80,6 +81,7 @@ implements Datastore, DatastoreCommandProvider, DatastoreChangeEventHandler<Remo
     public abstract hydrate(): ClonableNode;
     public abstract reset(): void;
     public abstract toProjectSchema(): ProjectFileSchema;
+    public abstract fromProjectSchema(schema: ProjectFileSchema): void;
     public abstract getProjectId(): string;
 
     // command API

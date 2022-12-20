@@ -43,10 +43,7 @@ export class PasteAction extends Action<void, void>
                 newParentId,
             }));
 
-            const command = app.undoStack.lastCommand;
-
             selection.set(clonedNode);
-            // command.storeSelection();
         }
     }
 }
