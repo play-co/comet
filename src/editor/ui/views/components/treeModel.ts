@@ -118,11 +118,6 @@ export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSe
         return this.selection.items.map((item) => this.getId(item));
     }
 
-    protected hasSelectedIds(ids: string[])
-    {
-        return this.getSelectedIds().some((id) => ids.includes(id));
-    }
-
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected onDblClick(e: MouseEvent, item: TreeItem<ItemType>)
@@ -319,10 +314,17 @@ export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSe
 
     public onKeyDown = (event: KeyboardEvent) =>
     {
-        if (this.isDragging && event.key === 'Escape')
+        if (event.key === 'Escape')
         {
-            this.isDragging = false;
-            this.dragTarget.value = undefined;
+            if (this.isDragging)
+            {
+                this.isDragging = false;
+                this.dragTarget.value = undefined;
+            }
+            else if (this.isFocussed())
+            {
+                this.selection.deselect();
+            }
         }
     };
 
@@ -378,7 +380,10 @@ export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSe
                     });
                 }
                 else
-                if (deltaX === 0 && deltaY === 0 && this.hasSelectedIds(existingSelection))
+                if (
+                    deltaX === 0 && deltaY === 0
+                    && `${this.getSelectedIds()}` === `${existingSelection}`
+                )
                 {
                     this.onEditOpen(event, item);
                 }
@@ -522,5 +527,10 @@ export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSe
         {
             this.selection.add(this.model.value[0].data);
         }
+    }
+
+    protected isFocussed()
+    {
+        return true;
     }
 }

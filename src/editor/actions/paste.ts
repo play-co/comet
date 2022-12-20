@@ -37,6 +37,8 @@ export class PasteAction extends Action<void, void>
                 newParentId = app.selection.hierarchy.firstNode.id;
             }
 
+            // for multiple node selections, clone each one and paste into single selected parent
+
             const { clonedNode } = app.undoStack.exec<CloneCommandReturn>(new CloneCommand({
                 nodeId: sourceNode.id,
                 cloneMode: CloneMode.Duplicate,

@@ -91,7 +91,7 @@
   const onMenuItemClick = (item: MenuItem) => {
     if (!item.menu && item.isEnabled !== false) {
       item.onClick && item.onClick(item);
-      Events.contextMenu.close.emit();
+      close();
     }
   };
 

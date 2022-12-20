@@ -5,7 +5,6 @@
     - Also need a way to recalculate multi-transform gizmo when remote nodes move
 * Empty (Container) icon needs to be selectable, but not scale with viewport
     - Also needs to select all children, not itself when clicked so transform gizmo can manipulate
-* 'mousemove' event for viewport needs to be trapped globally, grabbing and panning stops when mouse leaves canvas
 * Undoing nested nodes restores children which were also removed, could be an uncloaking problem
 
 # Enhancements
@@ -39,6 +38,7 @@ Low Priority
     - visible check
     - inc values (small, medium, large)
 * Texture asset settings, global in project preview? use properties panel?
+* Re-parent preserves global transform (via key modifier during drag operation)
 
 Fix
 * overflow for project panel

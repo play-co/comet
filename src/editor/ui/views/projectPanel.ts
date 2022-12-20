@@ -154,4 +154,9 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
                 } });
         }
     };
+
+    protected isFocussed(): boolean
+    {
+        return Application.instance.isAreaFocussed('project');
+    }
 }

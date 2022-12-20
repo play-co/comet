@@ -66,5 +66,10 @@ export class HierarchyTree extends NodeTreeModel<HierarchySelection>
         this.root = node.cast();
         this.rebuildModel();
     };
+
+    protected isFocussed(): boolean
+    {
+        return Application.instance.isAreaFocussed('hierarchy');
+    }
 }
 
