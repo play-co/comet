@@ -49,7 +49,7 @@ export class AddChildCommand<
             const cloneMode = clonedParent.getNewChildCloneMode();
 
             const { clonedNode } = new CloneCommand({
-                parentId: clonedParent.id,
+                newParentId: clonedParent.id,
                 nodeId: lastCloneSource.id,
                 cloneMode,
                 depth: 1,

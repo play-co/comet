@@ -8,9 +8,10 @@ import { SetParentCommand } from './setParent';
 
 export interface CloneCommandParams
 {
-    parentId?: string;
     nodeId: string;
     cloneMode: CloneMode;
+    newParentId?: string;
+    depth?: number;
 }
 
 export interface CloneCommandReturn
@@ -20,7 +21,7 @@ export interface CloneCommandReturn
     originalNode: ClonableNode;
 }
 
-export interface CloneCommandCache
+export interface CloneCommandCache extends CloneCommandReturn
 {
     commands: RemoveNodeCommand[];
 }
@@ -32,7 +33,7 @@ export class CloneCommand
 
     public apply(): CloneCommandReturn
     {
-        const { datastore, params: { nodeId, cloneMode, parentId }, cache } = this;
+        const { datastore, params: { nodeId, cloneMode, newParentId, depth }, cache } = this;
 
         const sourceNode = this.getInstance(nodeId);
         const originalNode = sourceNode.getCloneTarget();
@@ -41,7 +42,7 @@ export class CloneCommand
         const clonedNodes: ClonableNode[] = [];
 
         // clone original
-        const clonedNode = originalNode.clone(cloneMode);
+        const clonedNode = originalNode.clone(cloneMode, depth);
 
         // update originals new cloneInfo
         datastore.updateNodeCloneInfo(originalNode.id, cloneInfoSchema);
@@ -88,10 +89,14 @@ export class CloneCommand
         });
 
         // set parent if provided
-        if (parentId)
+        if (newParentId)
         {
-            new SetParentCommand({ parentId, nodeId: clonedNode.id, updateMode: 'full' }).run();
+            new SetParentCommand({ parentId: newParentId, nodeId: clonedNode.id, updateMode: 'full' }).run();
         }
+
+        cache.sourceNode = sourceNode;
+        cache.clonedNode = clonedNode;
+        cache.originalNode = originalNode;
 
         return {
             sourceNode,
@@ -117,6 +122,18 @@ export class CloneCommand
         for (let i = 0; i < commands.length; i++)
         {
             commands[i].undo();
+        }
+    }
+
+    public restoreSelection(mode: 'redo' | 'undo')
+    {
+        if (mode === 'redo')
+        {
+            this.app.selection.hierarchy.set(this.cache.clonedNode);
+        }
+        else
+        {
+            super.restoreSelection(mode);
         }
     }
 }

@@ -136,6 +136,11 @@ export default class UndoStack
         return this.head > -1;
     }
 
+    public get lastCommand()
+    {
+        return this.stack[this.head];
+    }
+
     public clear()
     {
         this.stack.length = 0;

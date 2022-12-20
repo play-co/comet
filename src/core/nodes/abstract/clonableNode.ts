@@ -9,6 +9,7 @@ import type {
     CustomPropertyValueType,
 } from '../customProperties';
 import { GraphNode } from './graphNode';
+import type { MetaNode } from './metaNode';
 
 export type ClonableNodeConstructor = {
     new (options: NewNodeOptions<any>): ClonableNode<any, any>;
@@ -390,6 +391,24 @@ export abstract class ClonableNode<
                 node: this,
             },
         }).node as ClonableNode;
+    }
+
+    public getMetaNode(): MetaNode
+    {
+        return this.walk<ClonableNode, { node: ClonableNode }>((node, options) =>
+        {
+            if (node.isMetaNode)
+            {
+                options.data.node = node.cast<MetaNode>();
+                options.cancel = true;
+            }
+        }, {
+            includeSelf: false,
+            direction: 'up',
+            data: {
+                node: this,
+            },
+        }).node as MetaNode;
     }
 
     public getOriginal(): ClonableNode

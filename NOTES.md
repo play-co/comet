@@ -38,6 +38,10 @@ Low Priority
 * Grid properties panel
     - visible check
     - inc values (small, medium, large)
+* Texture asset settings, global in project preview? use properties panel?
+
+Fix
+* overflow for project panel
 
 Try:
 * Replace Interface with Type definitions for models, may loosen generic polymorphism

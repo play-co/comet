@@ -67,7 +67,7 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
 
             if (app.selection.hierarchy.shallowContains(node))
             {
-                cellStyle.fillColor = Color(this.painter.backgroundColor).darken(0.3).hex();
+                cellStyle.fillColor = Color(this.painter.backgroundColor).lighten(0.3).hex();
                 cellStyle.fontStyle = 'bold';
             }
         }

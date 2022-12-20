@@ -41,11 +41,17 @@ export class ContainerNode<
 
     public reParentTransform()
     {
-        const viewMatrix = this.view.worldTransform.clone();
-        const parentMatrix = this.view.parent.worldTransform.clone();
+        const thisView = this.view;
+        const parentView = this.view.parent;
+
+        thisView.updateTransform();
+        parentView.updateTransform();
+
+        const viewMatrix = thisView.worldTransform.clone();
+        const parentMatrix = parentView.worldTransform.clone();
 
         viewMatrix.prepend(parentMatrix.invert());
-        this.view.transform.setFromMatrix(viewMatrix);
+        thisView.transform.setFromMatrix(viewMatrix);
     }
 
     protected addViewToParent(parent: ClonableNode): void

@@ -55,21 +55,22 @@
         <img class="icon no-events" src={item.icon} alt={tree.getLabel(item.data)} />
       {/if}
 
-      <span
+      <!-- svelte-ignore a11y-missing-attribute -->
+      <a
+        title={tree.getId(item)}
         class="label"
         class:selected={item.isSelected}
         contenteditable={$isEditing}
         data-id="tree-view-label-edit"
       >
-        <!-- svelte-ignore a11y-missing-attribute -->
-        <a title={tree.getId(item)}>{tree.getLabel(item.data)}</a>
+        {tree.getLabel(item.data)}
         {#if tree.isItemReParentDragTarget(item, $dragTarget)}
           <div
             transition:scale={{ duration: 150 }}
             class="dragTargetIndicator reparent no-events"
           />
         {/if}
-      </span>
+      </a>
 
       {#if tree.isItemReOrderDragTarget(item, $dragTarget)}
         <div transition:scale={{ duration: 150 }} class="dragTargetIndicator reorder no-events" />

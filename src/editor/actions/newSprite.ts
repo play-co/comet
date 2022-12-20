@@ -74,8 +74,6 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
             ...actionOptions.model,
         };
 
-        console.log(model);
-
         const nodeSchema = createNodeSchema('Sprite', {
             parent: parentId,
             model,

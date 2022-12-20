@@ -1,3 +1,4 @@
+import { SceneNode } from '../../core/nodes/concrete/meta/sceneNode';
 import { Action } from '../core/action';
 import { getApp } from '../core/application';
 
@@ -13,8 +14,10 @@ export class CopyAction extends Action<void, void>
     protected shouldRun(): boolean
     {
         const app = getApp();
+        const selection = app.selection.hierarchy;
+        const isOnlySceneSelected = selection.length === 1 && selection.firstNode.is(SceneNode);
 
-        return super.shouldRun() && app.isAreaFocussed('viewport');
+        return super.shouldRun() && app.isAreaFocussed('viewport', 'hierarchy') && !isOnlySceneSelected;
     }
 
     protected exec()
@@ -24,7 +27,12 @@ export class CopyAction extends Action<void, void>
 
         if (selection.hasSelection)
         {
-            app.setClipboard(selection.firstNode);
+            if (selection.length === 1)
+            {
+                app.setClipboard([selection.firstNode]);
+            }
+
+            app.statusBar.setMessage(`Copied ${selection.length} node${selection.length > 1 ? 's' : ''} to clipboard`);
         }
     }
 }

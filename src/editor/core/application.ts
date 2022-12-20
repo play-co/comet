@@ -67,7 +67,7 @@ export class Application
     protected focusArea: FocusAreaId | null;
     protected focusAreaElements: Map<FocusAreaId, HTMLElement>;
     public isColorPickerOpen: boolean;
-    protected clipboard?: ClonableNode;
+    protected clipboard: ClonableNode[];
 
     private static _instance: Application;
 
@@ -100,6 +100,7 @@ export class Application
             ...defaultGridSettings,
         };
 
+        this.clipboard = [];
         this.focusArea = null;
         this.focusAreaElements = new Map();
         this.isColorPickerOpen = false;
@@ -429,14 +430,20 @@ export class Application
         return this.layout;
     }
 
-    public setClipboard(node: ClonableNode)
+    public setClipboard(nodes: ClonableNode[])
     {
-        this.clipboard = node;
+        this.clipboard.length = 0;
+        this.clipboard.push(...nodes);
     }
 
     public getClipboard()
     {
         return this.clipboard;
+    }
+
+    public hasClipboard()
+    {
+        return this.clipboard.length > 0;
     }
 }
 
