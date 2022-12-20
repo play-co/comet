@@ -1,6 +1,7 @@
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import { ContainerNode } from '../../core/nodes/concrete/display/containerNode';
 import { type UpdateMode, Command } from '../core/command';
+import Events from '../events';
 
 export interface SetParentCommandParams
 {
@@ -57,6 +58,11 @@ export class SetParentCommand
         {
             childNode.reParentTransform();
         }
+
+        Events.datastore.node.local.reParented.emit({
+            nodeId: childNode.id,
+            parentId: parentNode.id,
+        });
 
         return { parentNode, childNode };
     }

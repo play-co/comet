@@ -21,6 +21,7 @@ export default {
             hydrated: Emit<EventData>(),
             created: Emit<EventData>(),
             modified: Emit<EventData & { values: Partial<Record<string, ModelValue>> }>(),
+            reParented: Emit<EventData & { parentId: string }>(),
             cloaked: Emit<ClonableNode>(),
             uncloaked: Emit<ClonableNode>(),
             textureRemoved: Emit<EventData>(),

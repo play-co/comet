@@ -90,6 +90,7 @@ export class TransformGizmo extends Container
 
         Events.$('command.(undo|redo)', this.updateSelection);
         Events.$('datastore.node.remote.(created|removed)', this.updateSelection);
+        Events.$('datastore.node.local.(reParented)', this.updateSelection);
         Events.$('selection.hierarchy.(setSingle|setMulti|add|remove)', this.updateSelection);
         Events.editor.propertyModified.bind(this.updateSelection);
         Events.transform.nudge.bind(this.updateSelection);
