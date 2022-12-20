@@ -15,7 +15,7 @@
   {#if texture}
     <div class="texturePreview">
       {#await texture.getResource()}
-        <p>...waiting</p>
+        <p>...loading</p>
       {:then img}
         <!-- svelte-ignore a11y-missing-attribute -->
         <img src={img.src} />

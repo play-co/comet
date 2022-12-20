@@ -10,6 +10,7 @@
   export let isSubMenu = false;
   export let anchorElement: HTMLElement | undefined = undefined;
   export let anchorPosition: "bottom" | "right" = "bottom";
+  export let anchorCenter: boolean = false;
 
   const dispatch = createEventDispatcher();
 
@@ -30,7 +31,7 @@
           x = anchorElementBounds.left;
           y = anchorElementBounds.bottom;
 
-          if (container) {
+          if (container && anchorCenter) {
             const containerBounds = container.getBoundingClientRect();
 
             x += (anchorElementBounds.width - containerBounds.width) / 2;

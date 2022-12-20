@@ -19,6 +19,12 @@ export class CopyAction extends Action<void, void>
 
     protected exec()
     {
-        // invoke clone command
+        const app = getApp();
+        const selection = app.selection.hierarchy;
+
+        if (selection.hasSelection)
+        {
+            app.setClipboard(selection.firstNode);
+        }
     }
 }

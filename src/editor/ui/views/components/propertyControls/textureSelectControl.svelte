@@ -67,7 +67,8 @@
     const modifications: ModifyModelCommandParams<any>[] = [];
 
     property.nodes.forEach((node) => {
-      if (node.model.getValue<"string" | null>("textureAssetId") === null) {
+      if (node.model.getValue<"string" | null>("textureAssetId") === textureAssetId) {
+        // don't create a command if the value is the same
         return;
       }
 
@@ -143,12 +144,12 @@
     readonly
     type="text"
     class={value === mixedToken ? "mixed" : "normal"}
-    placeholder={none ? "none" : undefined}
+    placeholder={none ? "<None>" : undefined}
     {value}
     on:mousedown={onMouseDown}
   />
   {#if menu}
-    <ContextMenu {menu} {container} anchorElement={container} />
+    <ContextMenu {menu} {container} anchorElement={container} anchorCenter={true} />
   {/if}
 </select-control>
 
