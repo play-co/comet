@@ -1,4 +1,5 @@
-import { type InteractionEvent, Application as PixiApplication, Container } from 'pixi.js';
+import type { InteractionEvent } from 'pixi.js';
+import { Application as PixiApplication, Container } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 
 import type { ClonableNode } from '../../../core';

@@ -17,8 +17,8 @@ export interface GridConfig
 
 export const defaultGridConfig: GridConfig = {
     style: {
-        color: Color('darkcyan'),
-        origin: Color('cyan'),
+        color: Color('darkgreen'),
+        origin: Color('green'),
     },
     scale: 1,
     x: 0,

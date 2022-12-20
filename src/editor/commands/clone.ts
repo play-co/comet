@@ -11,7 +11,6 @@ export interface CloneCommandParams
     parentId?: string;
     nodeId: string;
     cloneMode: CloneMode;
-    depth?: number;
 }
 
 export interface CloneCommandReturn
@@ -33,7 +32,7 @@ export class CloneCommand
 
     public apply(): CloneCommandReturn
     {
-        const { datastore, params: { nodeId, cloneMode, depth, parentId }, cache } = this;
+        const { datastore, params: { nodeId, cloneMode, parentId }, cache } = this;
 
         const sourceNode = this.getInstance(nodeId);
         const originalNode = sourceNode.getCloneTarget();
@@ -42,7 +41,7 @@ export class CloneCommand
         const clonedNodes: ClonableNode[] = [];
 
         // clone original
-        const clonedNode = originalNode.clone(cloneMode, depth);
+        const clonedNode = originalNode.clone(cloneMode);
 
         // update originals new cloneInfo
         datastore.updateNodeCloneInfo(originalNode.id, cloneInfoSchema);

@@ -24,13 +24,20 @@
   $: {
     if (event) {
       if (anchorElement) {
-        const bounds = anchorElement.getBoundingClientRect();
+        const anchorElementBounds = anchorElement.getBoundingClientRect();
+
         if (anchorPosition === "bottom") {
-          x = bounds.left;
-          y = bounds.bottom;
+          x = anchorElementBounds.left;
+          y = anchorElementBounds.bottom;
+
+          if (container) {
+            const containerBounds = container.getBoundingClientRect();
+
+            x += (anchorElementBounds.width - containerBounds.width) / 2;
+          }
         } else if (anchorPosition === "right") {
-          x = bounds.right;
-          y = bounds.top;
+          x = anchorElementBounds.right;
+          y = anchorElementBounds.top;
         }
       } else {
         x = event.clientX;

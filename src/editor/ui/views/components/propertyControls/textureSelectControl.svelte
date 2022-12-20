@@ -148,7 +148,7 @@
     on:mousedown={onMouseDown}
   />
   {#if menu}
-    <ContextMenu {menu} {container} />
+    <ContextMenu {menu} {container} anchorElement={container} />
   {/if}
 </select-control>
 
@@ -167,5 +167,10 @@
     height: 100%;
     padding: 0 10px;
     cursor: pointer;
+    box-shadow: 3px 3px 2px #04040459;
+    border-top-color: #777;
+    border-left-color: #777;
+    text-align: center;
+    color: #c5c3c3;
   }
 </style>

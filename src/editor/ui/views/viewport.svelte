@@ -10,7 +10,6 @@
     },
     {
       label: "Create Prefab",
-      onClick: () => Application.instance.createPrefabFromSelection(),
     },
   ]);
 </script>
