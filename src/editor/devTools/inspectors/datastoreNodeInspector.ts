@@ -1,7 +1,11 @@
-import { Application } from '../../core/application';
+import Color from 'color';
+
+import type { ClonableNode } from '../../../core';
+import { getInstance, hasInstance } from '../../../core/nodes/instances';
+import { Application, getApp } from '../../core/application';
 import Events from '../../events';
 import { DevInspector } from '../devInspector';
-import type { CellStyle, Column, Row } from '../tableRenderer';
+import { type CellStyle, type Column, type Row, tableIndexKey } from '../tableRenderer';
 
 export interface DatastoreNodeDetail
 {
@@ -14,6 +18,7 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
     protected init(): void
     {
         Events.$('datastore.node', () => this.scrollToEnd());
+        Events.$('selection.hierarchy', () => this.render());
 
         this.render();
     }
@@ -43,6 +48,7 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
 
     public onCellStyle = (row: Row, column: Column, cellStyle: CellStyle) =>
     {
+        const app = getApp();
         const currentCell = this.getCell(column.id, row);
 
         if (currentCell.value === '#empty#')
@@ -50,6 +56,19 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
             cellStyle.fontStyle = 'italic';
             cellStyle.fontColor = '#aaa';
             cellStyle.text = 'none';
+        }
+
+        const id = this.getCell(tableIndexKey, row).value as string;
+
+        if (hasInstance(id))
+        {
+            const node = getInstance<ClonableNode>(id);
+
+            if (app.selection.hierarchy.shallowContains(node))
+            {
+                cellStyle.fillColor = Color(this.painter.backgroundColor).darken(0.3).hex();
+                cellStyle.fontStyle = 'bold';
+            }
         }
     };
 

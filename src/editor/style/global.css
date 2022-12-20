@@ -79,7 +79,7 @@ input:focus {
 }
 
 canvas.viewport {
-  transition: opacity 0.25s ease-in-out;
+  transition: opacity 1.25s ease-in-out;
   opacity: 1;
 }
 

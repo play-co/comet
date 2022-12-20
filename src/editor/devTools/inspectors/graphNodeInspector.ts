@@ -1,7 +1,8 @@
 import Color from 'color';
 
 import type { ClonableNode } from '../../../core';
-import { Application } from '../../core/application';
+import { getInstance, hasInstance } from '../../../core/nodes/instances';
+import { Application, getApp } from '../../core/application';
 import { DevInspector } from '../devInspector';
 import { type CellStyle, type Column, type Row, tableIndexKey } from '../tableRenderer';
 
@@ -27,6 +28,7 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
 
     public onCellStyle = (row: Row, column: Column, cellStyle: CellStyle) =>
     {
+        const app = getApp();
         const currentCell = this.getCell(column.id, row);
         const cloakedCell = this.getCell('cloaked', row);
 
@@ -55,6 +57,19 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
             }
 
             cellStyle.text = `${pad}${currentCell.value}`;
+        }
+
+        const id = this.getCell(tableIndexKey, row).value as string;
+
+        if (hasInstance(id))
+        {
+            const node = getInstance<ClonableNode>(id);
+
+            if (app.selection.hierarchy.shallowContains(node))
+            {
+                cellStyle.fillColor = Color(this.painter.backgroundColor).darken(0.3).hex();
+                cellStyle.fontStyle = 'bold';
+            }
         }
     };
 
