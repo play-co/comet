@@ -7,10 +7,12 @@ import { type CreateNodeCommandParams, CreateNodeCommand } from '../commands/cre
 import { type CreateTextureAssetCommandParams, CreateTextureAssetCommand } from '../commands/createTextureAsset';
 import { type ModifyModelCommandParams, ModifyModelCommand } from '../commands/modifyModel';
 import { type ModifyModelsCommandParams, ModifyModelsCommand } from '../commands/modifyModels';
+import { type PasteCommandParams, PasteCommand } from '../commands/paste';
 import { type RemoveChildCommandParams, RemoveChildCommand } from '../commands/removeChild';
 import { type RemoveCustomPropCommandParams, RemoveCustomPropCommand } from '../commands/removeCustomProp';
 import { type RemoveNodeCommandParams, RemoveNodeCommand } from '../commands/removeNode';
 import { type RemoveNodesCommandParams, RemoveNodesCommand } from '../commands/removeNodes';
+import { type RemoveTextureAssetCommandParams, RemoveTextureAssetCommand } from '../commands/removeTextureAsset';
 import { type SetCustomPropCommandParams, SetCustomPropCommand } from '../commands/setCustomProp';
 import { type SetNodeIndexCommandParams, SetNodeIndexCommand } from '../commands/setNodeIndex';
 import { type SetParentCommandParams, SetParentCommand } from '../commands/setParent';
@@ -19,21 +21,25 @@ import { type UnlinkCommandParams, UnlinkCommand } from '../commands/unlink';
 import type { Command } from './command';
 
 export type CommandName =
+    'AddChild' |
+    'AddSelection' |
     'AssignCustomProp' |
     'Clone' |
-    'AddChild' |
     'CreateNode' |
+    'CreateTextureAsset' |
     'ModifyModel' |
     'ModifyModels' |
+    'Paste' |
     'RemoveChild' |
     'RemoveCustomProp' |
     'RemoveNode' |
-    'RestoreNode' |
+    'RemoveNodes' |
+    'RemoveTextureAsset' |
     'SetCustomProp' |
+    'SetNodeIndex' |
     'SetParent' |
     'UnAssignCustomProp' |
-    'Unlink' |
-    'SetNodeIndex';
+    'Unlink';
 
 export const Commands
 = {
@@ -45,15 +51,17 @@ export const Commands
     CreateTextureAsset: CreateTextureAssetCommand,
     ModifyModel: ModifyModelCommand,
     ModifyModels: ModifyModelsCommand,
+    Paste: PasteCommand,
     RemoveChild: RemoveChildCommand,
     RemoveCustomProp: RemoveCustomPropCommand,
     RemoveNode: RemoveNodeCommand,
     RemoveNodes: RemoveNodesCommand,
+    RemoveTextureAsset: RemoveTextureAssetCommand,
     SetCustomProp: SetCustomPropCommand,
+    SetNodeIndex: SetNodeIndexCommand,
     SetParent: SetParentCommand,
     UnAssignCustomProp: UnAssignCustomPropCommand,
     Unlink: UnlinkCommand,
-    SetNodeIndex: SetNodeIndexCommand,
 };
 
 export interface CommandParams
@@ -66,15 +74,17 @@ export interface CommandParams
     CreateTextureAsset: CreateTextureAssetCommandParams;
     ModifyModel: ModifyModelCommandParams<ModelBase>;
     ModifyModels: ModifyModelsCommandParams;
+    Paste: PasteCommandParams;
     RemoveChild: RemoveChildCommandParams;
     RemoveCustomProp: RemoveCustomPropCommandParams;
     RemoveNode: RemoveNodeCommandParams;
     RemoveNodes: RemoveNodesCommandParams;
+    RemoveTextureAsset: RemoveTextureAssetCommandParams;
     SetCustomProp: SetCustomPropCommandParams;
+    SetNodeIndex: SetNodeIndexCommandParams;
     SetParent: SetParentCommandParams;
     UnAssignCustomProp: UnAssignCustomPropCommandParams;
     Unlink: UnlinkCommandParams;
-    SetNodeIndex: SetNodeIndexCommandParams;
 }
 
 export function createCommand<

@@ -1,5 +1,6 @@
-import { Container } from 'pixi.js';
+import { Container, Transform } from 'pixi.js';
 
+import { decomposeTransform } from '../../../../editor/ui/transform/util';
 import { ModelSchema } from '../../../model/schema';
 import type { ClonableNode } from '../../abstract/clonableNode';
 import type { DisplayObjectModel } from '../../abstract/displayObjectNode';
@@ -52,6 +53,23 @@ export class ContainerNode<
 
         viewMatrix.prepend(parentMatrix.invert());
         thisView.transform.setFromMatrix(viewMatrix);
+    }
+
+    public test()
+    {
+        const thisView = this.view;
+        const parentView = this.view.parent;
+
+        thisView.updateTransform();
+        parentView.updateTransform();
+
+        const viewMatrix = thisView.worldTransform.clone();
+
+        const transform = new Transform();
+
+        decomposeTransform(transform, viewMatrix, undefined, { x: 0, y: 0 } as any);
+
+        return transform;
     }
 
     protected addViewToParent(parent: ClonableNode): void

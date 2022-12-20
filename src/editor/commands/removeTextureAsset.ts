@@ -35,7 +35,6 @@ export class RemoveTextureAssetCommand
         const { cache, params: { nodeIds } } = this;
         const app = getApp();
 
-        // todo:
         // * find all textures by walking root texture asset folder
         // * for all sprite used by each texture:
         //   - create a ModifyModels command to reset their textureAssetId to null (store in cache commands)

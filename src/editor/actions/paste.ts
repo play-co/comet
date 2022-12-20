@@ -1,5 +1,4 @@
-import { CloneMode } from '../../core/nodes/cloneInfo';
-import { type CloneCommandReturn, CloneCommand } from '../commands/clone';
+import { PasteCommand } from '../commands/paste';
 import { Action } from '../core/action';
 import { getApp } from '../core/application';
 
@@ -22,30 +21,40 @@ export class PasteAction extends Action<void, void>
     protected exec()
     {
         const app = getApp();
-        const selection = app.selection.hierarchy;
         const clipboard = app.getClipboard();
 
-        if (clipboard.length === 1)
-        {
-            const sourceNode = clipboard[0];
-            let newParentId = selection.length === 1
-                ? selection.firstNode.id
-                : sourceNode.getMetaNode().id;
+        app.undoStack.exec(new PasteCommand({
+            nodeIds: clipboard.map((node) => node.id),
+        }));
 
-            if (app.selection.hierarchy.length === 1)
-            {
-                newParentId = app.selection.hierarchy.firstNode.id;
-            }
+        // const app = getApp();
+        // const selection = app.selection.hierarchy;
+        // const clipboard = app.getClipboard();
 
-            // for multiple node selections, clone each one and paste into single selected parent
+        // if (clipboard.length === 1)
+        // {
+        //     const sourceNode = clipboard[0];
+        //     let newParentId = selection.length === 1
+        //         ? selection.firstNode.id
+        //         : sourceNode.getMetaNode().id;
 
-            const { clonedNode } = app.undoStack.exec<CloneCommandReturn>(new CloneCommand({
-                nodeId: sourceNode.id,
-                cloneMode: CloneMode.Duplicate,
-                newParentId,
-            }));
+        //     if (app.selection.hierarchy.length === 1)
+        //     {
+        //         newParentId = app.selection.hierarchy.firstNode.id;
+        //     }
 
-            selection.set(clonedNode);
-        }
+        //     if (newParentId === sourceNode.id && sourceNode.parent)
+        //     {
+        //         newParentId = sourceNode.parent.id;
+        //     }
+
+        //     const { clonedNode } = app.undoStack.exec<CloneCommandReturn>(new CloneCommand({
+        //         nodeId: sourceNode.id,
+        //         cloneMode: CloneMode.Duplicate,
+        //         newParentId,
+        //     }));
+
+        //     selection.set(clonedNode);
+        // }
     }
 }

@@ -27,7 +27,9 @@ export class CopyAction extends Action<void, void>
 
         if (selection.hasSelection)
         {
-            app.setClipboard(selection.items);
+            const reducedSelection = selection.findUnique();
+
+            app.setClipboard(reducedSelection);
 
             app.statusBar.setMessage(`Copied ${selection.length} node${selection.length > 1 ? 's' : ''} to clipboard`);
         }

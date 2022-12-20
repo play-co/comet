@@ -1,8 +1,10 @@
-export abstract class ItemSelection<T>
+import type { ClonableNode } from '../../core';
+
+export abstract class ItemSelection<T extends ClonableNode>
 {
     public readonly items: T[];
 
-    constructor()
+    constructor(protected readonly debugId: string)
     {
         this.items = [];
     }
@@ -45,12 +47,13 @@ export abstract class ItemSelection<T>
             this.onSetSingle(item);
         }
 
-        (window as any).$node = this.firstNode;
+        (window as any)[this.debugId] = this.firstNode;
     }
 
     public add(item: T)
     {
         this.items.push(item);
+        (window as any)[this.debugId] = item;
 
         this.onAdd(item);
     }
@@ -150,5 +153,38 @@ export abstract class ItemSelection<T>
     public isSelected(ctor: Function)
     {
         return this.items.some((item) => item instanceof ctor);
+    }
+
+    public findUnique()
+    {
+        const valid = this.items.filter((selectedNode) =>
+        {
+            const result = selectedNode.walk<ClonableNode, {include: boolean}>((node, options) =>
+            {
+                if (node.isMetaNode)
+                {
+                    options.cancel = true;
+
+                    return;
+                }
+
+                if ((this.items as ClonableNode[]).indexOf(node) > -1)
+                {
+                    console.log('X');
+                    options.data.include = false;
+                    options.cancel = true;
+                }
+            }, {
+                includeSelf: false,
+                direction: 'up',
+                data: {
+                    include: true,
+                },
+            }).include;
+
+            return result;
+        });
+
+        return valid;
     }
 }

@@ -1,3 +1,4 @@
+import type { ClonableNode } from '../../../../core';
 import { nextTick } from '../../../../core/util';
 import { Application, getApp } from '../../../core/application';
 import type { ItemSelection } from '../../../core/itemSelection';
@@ -40,7 +41,7 @@ export const defaultOptions: TreeViewModelOptions = {
 export const dblClickTimeout = 300;
 export const indentationWidth = 10;
 
-export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSelection<ItemType> = ItemSelection<ItemType>>
+export abstract class TreeViewModel<ItemType extends ClonableNode, SelectionType extends ItemSelection<ItemType> = ItemSelection<ItemType>>
 {
     protected model: WritableStore<TreeItem<ItemType>[]>;
     protected dragTarget: WritableStore<TreeItem<ItemType> | undefined>;
@@ -262,7 +263,7 @@ export abstract class TreeViewModel<ItemType = any, SelectionType extends ItemSe
             // add to selection
             selection.add(data);
         }
-        else if (!selection.shallowContains(data))
+        else
         {
             // replace selection if not already selected
             selection.set(data);

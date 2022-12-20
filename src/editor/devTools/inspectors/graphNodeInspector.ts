@@ -45,19 +45,19 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
             cellStyle.text = 'none';
         }
 
-        if (column.id === tableIndexKey)
-        {
-            const depth = this.getCell('_depth', row).value as number;
+        // if (column.id === tableIndexKey)
+        // {
+        //     const depth = this.getCell('_depth', row).value as number;
 
-            let pad = '';
+        //     let pad = '';
 
-            if (depth > 0)
-            {
-                pad = `${'│'.repeat(depth - 1)}└`;
-            }
+        //     if (depth > 0)
+        //     {
+        //         pad = `${'│'.repeat(depth - 1)}└`;
+        //     }
 
-            cellStyle.text = `${pad}${currentCell.value}`;
-        }
+        //     cellStyle.text = `${pad}${currentCell.value}`;
+        // }
 
         const id = this.getCell(tableIndexKey, row).value as string;
 

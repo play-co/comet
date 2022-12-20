@@ -12,7 +12,7 @@ export class LogInspector extends DevInspector<Omit<LogEntry, 'timestamp'>>
             this.scrollToEnd();
         });
 
-        nextTick(() => this.render());
+        nextTick().then(() => this.render());
     }
 
     protected getDetails()
