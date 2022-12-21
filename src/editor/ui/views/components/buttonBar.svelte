@@ -29,7 +29,7 @@
       on:click={(e) => item.isEnabled !== false && item.onClick(e)}
     >
       {#if item.icon}
-        <img src={item.icon} alt={item.label} class="icon" />
+        <img src={item.icon} alt={item.label} class="icon" draggable="false" />
       {/if}
       {#if size === "large"}
         {item.label}
@@ -79,7 +79,7 @@
   }
 
   a:hover {
-    background-color: #383737;
+    background-color: var(--control-hover);
   }
 
   a.disabled {
@@ -87,11 +87,17 @@
   }
 
   a:active {
-    background-color: #302f2f;
+    background-color: var(--control-active);
   }
 
   .icon {
     width: 16px;
-    pointer-events: none;
+    user-select: none;
+  }
+
+  .icon:active {
+    position: relative;
+    top: 2px;
+    left: 2px;
   }
 </style>

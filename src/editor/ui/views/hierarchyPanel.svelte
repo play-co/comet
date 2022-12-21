@@ -11,16 +11,16 @@
 
   const buttons: ButtonBarItem[] = [
     {
-      id: "createSprite",
-      label: "Create Sprite",
+      id: "newSprite",
+      label: "New Sprite",
       icon: Icons.SpriteAdd,
       onClick: () => {
         Actions.newSprite.dispatch({ addToSelected: true });
       },
     },
     {
-      id: "createContainer",
-      label: "Create Container",
+      id: "newContainer",
+      label: "New Container",
       icon: Icons.ContainerAdd,
       onClick: () => {
         Actions.newContainer.dispatch({ addToSelected: true });
