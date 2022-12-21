@@ -1,6 +1,7 @@
 import Color from 'color';
 
 import type { ClonableNode } from '../../../core';
+import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
 import { getInstance, hasInstance } from '../../../core/nodes/instances';
 import { Application, getApp } from '../../core/application';
 import Events from '../../events';
@@ -18,7 +19,7 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
     protected init(): void
     {
         Events.$('datastore.node', () => this.scrollToEnd());
-        Events.$('selection.hierarchy', () => this.render());
+        Events.$('selection.', () => this.render());
 
         this.render();
     }
@@ -66,7 +67,14 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
 
             if (app.selection.hierarchy.shallowContains(node))
             {
-                cellStyle.fillColor = Color(this.painter.backgroundColor).lighten(0.3).hex();
+                cellStyle.fillColor = Color('turquoise').lighten(0.5).hex();
+                cellStyle.fontStyle = 'bold';
+                cellStyle.fontColor = 'blue';
+            }
+
+            if (app.selection.project.shallowContains(node.cast<MetaNode>()))
+            {
+                cellStyle.fillColor = Color(this.painter.backgroundColor).lighten(0.35).hex();
                 cellStyle.fontStyle = 'bold';
             }
         }

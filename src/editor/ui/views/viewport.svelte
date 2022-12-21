@@ -2,21 +2,33 @@
   export const spriteMenu = new Menu(
     [
       {
+        id: "copy",
         label: "Copy",
         onClick: () => Actions.copy.dispatch(),
       },
       {
+        id: "paste",
         label: "Paste",
         onClick: () => Actions.paste.dispatch(),
       },
       {
         id: "createPrefab",
         label: "Create Prefab",
+        onClick: () => Actions.createReferencePrefab.dispatch(),
       },
     ],
     (item) => {
-      if (item.id === "createPrefab") {
-        item.isEnabled = getApp().selection.hierarchy.isSingle;
+      const app = getApp();
+      const selection = app.selection.hierarchy;
+      const isOnlySceneSelected = selection.isSingle && selection.firstNode.is(SceneNode);
+      const id = item.id;
+
+      if (id === "copy") {
+        item.isEnabled = !isOnlySceneSelected;
+      } else if (id === "paste") {
+        item.isEnabled = app.hasClipboard();
+      } else if (id === "createPrefab") {
+        item.isEnabled = selection.isSingle && !isOnlySceneSelected;
       }
     }
   );
@@ -30,6 +42,7 @@
   import { DropZone } from "../components/dropzone";
   import FocusArea from "./components/focusArea.svelte";
   import { Actions } from "../../actions";
+  import { SceneNode } from "../../../core/nodes/concrete/meta/sceneNode";
 
   const app = Application.instance;
   const viewport = app.viewport;

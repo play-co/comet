@@ -1,6 +1,7 @@
 import Color from 'color';
 
 import type { ClonableNode } from '../../../core';
+import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
 import { getInstance, hasInstance } from '../../../core/nodes/instances';
 import { Application, getApp } from '../../core/application';
 import { DevInspector } from '../devInspector';
@@ -67,7 +68,13 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
 
             if (app.selection.hierarchy.shallowContains(node))
             {
-                cellStyle.fillColor = Color(this.painter.backgroundColor).lighten(0.3).hex();
+                cellStyle.fillColor = Color('turquoise').lighten(0.5).hex();
+                cellStyle.fontStyle = 'bold';
+                cellStyle.fontColor = 'blue';
+            }
+            if (app.selection.project.shallowContains(node.cast<MetaNode>()))
+            {
+                cellStyle.fillColor = Color(this.painter.backgroundColor).lighten(0.35).hex();
                 cellStyle.fontStyle = 'bold';
             }
         }

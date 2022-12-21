@@ -17,7 +17,7 @@
     width: 50px;
     height: 100%;
     padding: 5px;
-    padding-top: 30px;
+    padding-top: 32px;
   }
 
   .container {
