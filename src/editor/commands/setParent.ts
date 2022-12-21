@@ -54,9 +54,9 @@ export class SetParentCommand
         // update graph node
         parentNode.addChild(childNode);
 
-        if (childNode instanceof ContainerNode)
+        if (childNode.is(ContainerNode) && parentNode.is(ContainerNode))
         {
-            childNode.reParentTransform();
+            childNode.cast<ContainerNode>().reParentTransform();
         }
 
         Events.datastore.node.local.reParented.emit({

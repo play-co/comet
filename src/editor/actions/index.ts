@@ -1,4 +1,5 @@
 import { CopyAction } from './copy';
+import { CreateReferenceAction } from './createReference';
 import { DeleteNodeAction } from './deleteNode';
 import { DeleteTextureAction } from './deleteTexture';
 import { DeselectAction } from './deselect';
@@ -28,4 +29,5 @@ export const Actions = {
     redo: new RedoAction(),
     copy: new CopyAction(),
     paste: new PasteAction(),
+    createReferencePrefab: new CreateReferenceAction(),
 };

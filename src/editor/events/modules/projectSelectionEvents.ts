@@ -1,10 +1,10 @@
-import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
+import type { ClonableNode } from '../../../core';
 import { Emit } from '../emitter';
 
 export default {
-    setSingle: Emit<MetaNode>(),
-    setMulti: Emit<MetaNode[]>(),
-    add: Emit<MetaNode>(),
-    remove: Emit<MetaNode>(),
+    setSingle: Emit<ClonableNode>(),
+    setMulti: Emit<ClonableNode[]>(),
+    add: Emit<ClonableNode>(),
+    remove: Emit<ClonableNode>(),
     deselect: Emit<void>(),
 };

@@ -1,3 +1,4 @@
+import type { ClonableNode } from '../../../core';
 import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
 import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
 import { TextureAssetNode } from '../../../core/nodes/concrete/meta/assets/textureAssetNode';
@@ -45,24 +46,44 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
     {
         const { selection } = this;
 
-        return rootFolder.walk<MetaNode, { model: TreeItem<MetaNode>[] }>(
+        return rootFolder.walk<ClonableNode, { model: TreeItem<MetaNode>[] }>(
             (node, options) =>
             {
-                if (node.isCloaked || !node.isMetaNode)
+                const isChildOfScene = node.parent?.is(SceneNode);
+                const isChildOfPrefab = node.parent?.is(FolderNode) && node.parent.cast<FolderNode>().isWithinRootFolder('Prefabs');
+
+                if (isChildOfScene)
                 {
                     options.cancel = true;
 
                     return;
                 }
+                else if (isChildOfPrefab)
+                {
+                    const item: TreeItem<ClonableNode> = {
+                        id: node.id,
+                        depth: options.depth,
+                        isSelected: selection.shallowContains(node.cast()),
+                        isExpanded: false,
+                        isVisible: true,
+                        data: node,
+                        icon: Icons.Prefab,
+                    };
 
-                const item: TreeItem<MetaNode> = {
+                    options.data.model.push(item);
+                    options.cancel = true;
+
+                    return;
+                }
+
+                const item: TreeItem<ClonableNode> = {
                     id: node.id,
                     depth: options.depth,
                     isSelected: selection.shallowContains(node.cast()),
                     isExpanded: true,
                     isVisible: true,
                     data: node,
-                    icon: Icons[node.nodeType()],
+                    icon: Icons[node.nodeType() as keyof typeof Icons],
                 };
 
                 options.data.model.push(item);
@@ -77,7 +98,9 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
 
     public hasChildren(node: MetaNode)
     {
-        if (node.is(SceneNode))
+        const isChildOfPrefab = node.parent?.is(FolderNode) && node.parent.cast<FolderNode>().isWithinRootFolder('Prefabs');
+
+        if (node.is(SceneNode) || isChildOfPrefab)
         {
             return false;
         }
