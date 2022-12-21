@@ -27,7 +27,7 @@ export class CopyAction extends Action<void, void>
 
         if (selection.hasSelection)
         {
-            const reducedSelection = selection.findUnique();
+            const reducedSelection = selection.findUnique().filter((node) => !node.is(SceneNode));
 
             app.setClipboard(reducedSelection);
 

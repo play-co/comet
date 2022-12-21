@@ -34,13 +34,14 @@ export class PasteCommand
 
         cache.commands = [];
 
-        if (sourceNodes.length === 1)
+        sourceNodes.forEach((sourceNode) =>
         {
-            const sourceNode = sourceNodes[0];
+            let newParentId = sourceNode.getMetaNode().id;
 
-            let newParentId = selection.length === 1
-                ? selection.firstNode.id
-                : sourceNode.getMetaNode().id;
+            if (selection.length === 1)
+            {
+                newParentId = selection.firstNode.id;
+            }
 
             if (newParentId === sourceNode.id && sourceNode.parent)
             {
@@ -58,13 +59,9 @@ export class PasteCommand
             const { clonedNode } = command.run();
 
             nodes.push(clonedNode);
-        }
-
-        nodes.forEach((node) =>
-        {
-            console.log('!');
-            app.selection.hierarchy.set(node);
         });
+
+        app.selection.hierarchy.set(nodes);
 
         return { nodes };
     }
