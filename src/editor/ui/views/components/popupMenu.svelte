@@ -195,7 +195,6 @@
     display: flex;
     flex-direction: column;
     white-space: nowrap;
-    z-index: 100000;
     box-shadow: 5px 5px 5px #00000045;
   }
 

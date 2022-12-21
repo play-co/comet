@@ -118,6 +118,7 @@ export class Application
         Events.datastore.node.remote.removed.bind(writeUndoStack);
 
         initHistory();
+        this.initEvents();
     }
 
     public async connect()
@@ -143,8 +144,6 @@ export class Application
         {
             await this.createProject('Test');
         }
-
-        this.initEvents();
 
         this.project.isReady = true;
         Events.project.ready.emit();
@@ -249,7 +248,10 @@ export class Application
         document.addEventListener('contextmenu', (event) =>
         {
             event.preventDefault();
-            Events.contextMenu.open.emit(event);
+            if (this.project.isReady)
+            {
+                Events.contextMenu.open.emit(event);
+            }
         });
     }
 
