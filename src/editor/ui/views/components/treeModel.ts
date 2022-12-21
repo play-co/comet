@@ -246,32 +246,6 @@ export abstract class TreeViewModel<ItemType extends ClonableNode, SelectionType
         model.value = [...model.value];
     }
 
-    protected selectItem(e: MouseEvent, item: TreeItem<ItemType>): boolean
-    {
-        const { selection, options: { allowMultiSelect } } = this;
-        const { data } = item;
-
-        if ((e.shiftKey || e.metaKey) && allowMultiSelect)
-        {
-            if (selection.shallowContains(data))
-            {
-            // remove from selection
-                selection.remove(data);
-
-                return false;
-            }
-            // add to selection
-            selection.add(data);
-        }
-        else
-        {
-            // replace selection if not already selected
-            selection.set(data);
-        }
-
-        return true;
-    }
-
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected setParent(sourceObj: ItemType, parentObj: ItemType)
@@ -329,8 +303,42 @@ export abstract class TreeViewModel<ItemType extends ClonableNode, SelectionType
         }
     };
 
+    protected selectItem(e: MouseEvent, item: TreeItem<ItemType>): boolean
+    {
+        const { selection, options: { allowMultiSelect } } = this;
+        const { data } = item;
+
+        if ((e.shiftKey || e.metaKey) && allowMultiSelect)
+        {
+            if (selection.shallowContains(data))
+            {
+            // remove from selection
+                selection.remove(data);
+
+                return false;
+            }
+            // add to selection
+            selection.add(data);
+        }
+        else
+        {
+            // replace selection if not already selected
+            selection.set(data);
+        }
+
+        return true;
+    }
+
     public onRowMouseDown(event: MouseEvent, item: TreeItem<ItemType>)
     {
+        if (event.button === 2)
+        {
+            // context menu right click - don't select
+            event.stopPropagation();
+
+            return;
+        }
+
         const { selection, operation, dragTarget, options: { canReOrder, canReParent } } = this;
         const existingSelection = this.getSelectedIds();
 

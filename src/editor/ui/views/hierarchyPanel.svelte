@@ -6,6 +6,7 @@
   import { Actions } from "../../actions/index.js";
   import FocusArea from "./components/focusArea.svelte";
   import { Icons } from "./icons";
+  import { spriteMenu } from "./viewport.svelte";
 
   const tree = new HierarchyTree();
 
@@ -44,7 +45,7 @@
   <hierarchy-panel>
     <Panel>
       <ButtonBar size="small" items={buttons} />
-      <TreeView bind:this={treeView} {tree} />
+      <TreeView bind:this={treeView} {tree} menu={spriteMenu} />
     </Panel>
   </hierarchy-panel>
 </FocusArea>

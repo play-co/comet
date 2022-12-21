@@ -1,5 +1,6 @@
 export interface MenuItem
 {
+    id?: string;
     label: string;
     icon?: string;
     style?: 'separator' | 'prompt';

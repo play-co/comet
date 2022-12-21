@@ -31,7 +31,7 @@
     height: 2px;
     background-color: #000;
     margin-top: 5px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     display: block;
     border-bottom: 1px solid #535353;
   }
