@@ -20,7 +20,12 @@
 
 <!-- svelte-ignore a11y-missing-attribute -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<a bind:this={container} on:mousedown={onMouseDown} on:mouseover class:selected>
+<a
+  bind:this={container}
+  on:mousedown={onMouseDown}
+  on:mouseover={() => dispatch("mouseover", item)}
+  class:selected
+>
   {item.label}
   {#if item.menu}
     <ContextMenu menu={item.menu} {container} anchorElement={container} on:close />

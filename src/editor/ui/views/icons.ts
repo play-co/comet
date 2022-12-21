@@ -1,4 +1,4 @@
-export const Icons: Record<string, string> = {
+export const Icons = {
     Scene: '/assets/scene.ico',
     SceneAdd: '/assets/scene_add.ico',
     Folder: '/assets/folder.ico',
