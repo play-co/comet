@@ -15,8 +15,8 @@ export class RemoteObjectSync
 {
     constructor(public readonly datastore: DatastoreBase<any, any>)
     {
-        Events.datastore.node.local.hydrated.bind(this.onNodeCreated);
-        Events.datastore.node.remote.created.bind(this.onNodeCreated);
+        Events.datastore.node.local.hydrated.bind(this.onNodeHydrated);
+        Events.datastore.node.remote.created.bind(this.onRemoteNodeCreated);
         Events.datastore.node.remote.removed.bind(this.onRemoteNodeRemoved);
         Events.datastore.node.remote.setParent.bind(this.onRemoteNodeParentSet);
         Events.datastore.node.remote.customProp.defined.bind(this.onRemoteNodeCustomPropDefined);
@@ -28,7 +28,23 @@ export class RemoteObjectSync
         Events.datastore.node.remote.setChildren.bind(this.onRemoteNodeChildrenSet);
     }
 
-    protected onNodeCreated = (event: typeof Events.datastore.node.remote.created.type) =>
+    protected onNodeHydrated = (event: typeof Events.datastore.node.remote.created.type) =>
+    {
+        const { nodeId } = event;
+
+        if (hasInstance(nodeId) && getInstance<ClonableNode>(nodeId).isCloaked)
+        {
+            getInstance<ClonableNode>(nodeId).uncloak();
+        }
+        else
+        {
+            const nodeSchema = this.datastore.getNodeAsJSON(event.nodeId);
+
+            new CreateNodeCommand({ nodeSchema, deferCloneInfo: true }).run();
+        }
+    };
+
+    protected onRemoteNodeCreated = (event: typeof Events.datastore.node.remote.created.type) =>
     {
         const { nodeId } = event;
 

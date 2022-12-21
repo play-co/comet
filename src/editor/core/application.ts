@@ -88,8 +88,6 @@ export class Application
 
         (window as any).app = this;
 
-        this.preloadAssets();
-
         enableLog();
 
         this.statusBar = new StatusBar();
@@ -331,28 +329,6 @@ export class Application
             logInspector.mount(container);
             undoStackInspector.mount(container);
         }
-    }
-
-    protected preloadAssets()
-    {
-        const preload = document.getElementById('preload') as HTMLDivElement;
-
-        [
-            '/assets/scene.ico',
-            '/assets/folder.ico',
-            '/assets/sprite.ico',
-            '/assets/texture.ico',
-            '/assets/container.ico',
-        ].forEach((path) =>
-        {
-            // todo: use loadImage?
-            const img = new Image();
-
-            img.classList.add('preload');
-            img.src = path;
-
-            preload.appendChild(img);
-        });
     }
 
     public focusPanel(id: string)

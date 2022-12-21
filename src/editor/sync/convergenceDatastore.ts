@@ -263,7 +263,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
     public fromProjectSchema(schema: ProjectFileSchema)
     {
         this.model.root().value(schema);
-        window.location.reload();
     }
 
     // command API

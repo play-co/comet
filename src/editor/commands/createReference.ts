@@ -6,7 +6,7 @@ import { getApp } from '../core/application';
 import { Command } from '../core/command';
 import { CloneCommand } from './clone';
 import type { RemoveNodeCommand } from './removeNode';
-import type { SetParentCommand } from './setParent';
+import { SetParentCommand } from './setParent';
 
 export interface CreateReferenceCommandParams
 {
@@ -36,11 +36,18 @@ export class CreateReferenceCommand
     {
         const { cache, params: { nodeId } } = this;
         const app = getApp();
+        const hierarchySelection = app.selection.hierarchy;
         const projectSelection = app.selection.project;
         const sourceNode = this.getInstance(nodeId);
         const sourceParentId = sourceNode.getParent().id;
         let assetFolderId = app.project.getRootFolder('Prefabs').id;
 
+        // 1. determine target asset folder
+        // 2. remove sourceNode from scene parent by re-parenting to to asset folder
+        // 3. clone sourceNode
+        // 4. add to sourceNode parent in place of sourceNode
+
+        // 1. determine target asset folder
         if (
             projectSelection.hasSelection
             && projectSelection.firstNode.cast<MetaNode>().is(FolderNode)
@@ -50,23 +57,28 @@ export class CreateReferenceCommand
             assetFolderId = projectSelection.firstNode.cast<FolderNode>().id;
         }
 
+        // 2. remove sourceNode from scene parent by re-parenting to to asset folder
+        const setParentCommand = new SetParentCommand({ nodeId, parentId: assetFolderId, updateMode: 'full' });
+
+        hierarchySelection.deselect();
+        setParentCommand.run();
+
         const cloneCommand = new CloneCommand({
             nodeId,
             cloneMode: CloneMode.Reference,
-            newParentId: assetFolderId,
+            newParentId: sourceParentId,
         });
-        // const setParentCommand = new SetParentCommand({ nodeId, parentId: assetFolderId, updateMode: 'full' });
+
+        const { clonedNode } = cloneCommand.run();
 
         // cache.commands = {
         //     clone: cloneCommand,
         //     setParent: setParentCommand,
         // };
 
-        const { clonedNode } = cloneCommand.run();
+        // app.selection.project.set(clonedNode.cast<MetaNode>());
 
-        app.selection.project.set(clonedNode.cast<MetaNode>());
-
-        return { node: clonedNode };
+        // return { node: clonedNode };
     }
 
     public undo(): void

@@ -12,6 +12,7 @@ import { SetCustomPropCommand } from './setCustomProp';
 export interface CreateNodeCommandParams<M extends ModelBase>
 {
     nodeSchema: NodeSchema<M>;
+    deferCloneInfo?: boolean;
 }
 
 export interface CreateNodeCommandReturn
@@ -27,10 +28,12 @@ export class CreateNodeCommand<
 
     public apply(): CreateNodeCommandReturn
     {
-        const { datastore, params: { nodeSchema } } = this;
+        const { datastore, params: { nodeSchema, deferCloneInfo } } = this;
 
         const { id, type, model, cloneInfo: { cloneMode, cloner }, customProperties } = nodeSchema;
-        const cloneInfo = new CloneInfo(cloneMode, cloner ? this.getInstance(cloner) : undefined);
+        const cloneInfo = deferCloneInfo === true
+            ? new CloneInfo()
+            : new CloneInfo(cloneMode, cloner ? this.getInstance(cloner) : undefined);
 
         if (!datastore.hasNode(id))
         {

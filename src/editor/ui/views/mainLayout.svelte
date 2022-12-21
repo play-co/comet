@@ -7,9 +7,11 @@
   import { fade } from "svelte/transition";
   import ModalDialog from "./components/modalDialog.svelte";
   import ItemDrag from "./components/itemDrag.svelte";
+  import Preload from "./components/preload.svelte";
 </script>
 
 <main-layout transition:fade={{ duration: 1000 }}>
+  <Preload />
   <MenuBar />
   <img
     transition:fade={{ duration: 250 }}
