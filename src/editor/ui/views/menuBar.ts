@@ -1,6 +1,19 @@
 import { getApp } from '../../core/application';
 import { Menu } from './components/menu';
 
+export function restore()
+{
+    const app = getApp();
+    const data = localStorage.getItem('comet:project');
+
+    if (data)
+    {
+        app.datastore.fromProjectSchema(JSON.parse(data));
+        app.statusBar.setMessage('Project restored from local storage, reloading...');
+        window.location.href = window.location.href.replace(window.location.hash, '');
+    }
+}
+
 function subMenu(prefix: string)
 {
     const subMenuA = new Menu([{ label: 'Item Sub 4' }, { label: 'Item 5' }, { label: 'Item 6' }]);
@@ -37,17 +50,7 @@ const fileMenu = new Menu([
     },
     {
         label: 'Restore',
-        onClick: () =>
-        {
-            const app = getApp();
-            const data = localStorage.getItem('comet:project');
-
-            if (data)
-            {
-                app.datastore.fromProjectSchema(JSON.parse(data));
-                app.statusBar.setMessage('Project restored from local storage, reloading...');
-            }
-        },
+        onClick: restore,
     },
 ]);
 

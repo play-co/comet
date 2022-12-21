@@ -2,6 +2,7 @@ import Color from 'color';
 
 import type { ClonableNode } from '../../../core';
 import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
+import type { CloneMode } from '../../../core/nodes/cloneInfo';
 import { getInstance, hasInstance } from '../../../core/nodes/instances';
 import { Application, getApp } from '../../core/application';
 import { DevInspector } from '../devInspector';
@@ -10,11 +11,11 @@ import { type CellStyle, type Column, type Row, tableIndexKey } from '../tableRe
 export interface GraphNodeDetail
 {
     _depth: number;
+    _cloaked: boolean;
     name: string;
-    index: number;
     parent: string;
     children: string;
-    cloaked: boolean;
+    cloneMode: CloneMode;
 }
 
 export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
@@ -31,7 +32,7 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
     {
         const app = getApp();
         const currentCell = this.getCell(column.id, row);
-        const cloakedCell = this.getCell('cloaked', row);
+        const cloakedCell = this.getCell('_cloaked', row);
 
         if (cloakedCell.value as boolean === true)
         {
@@ -89,11 +90,11 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
         {
             const detail: GraphNodeDetail = {
                 _depth: options.depth,
+                _cloaked: node.isCloaked,
                 name: node.model.getValue<string>('name'),
-                index: node.index,
                 parent: node.parent ? node.parent.id : '#empty#',
                 children: node.children.length === 0 ? '#empty#' : node.children.map((node) => node.id).join(','),
-                cloaked: node.isCloaked,
+                cloneMode: node.cloneInfo.cloneMode,
             };
 
             details[node.id] = detail;

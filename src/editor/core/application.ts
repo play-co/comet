@@ -24,6 +24,7 @@ import { DropZone } from '../ui/components/dropzone';
 import { EditableViewport } from '../ui/components/viewport';
 import type { FocusAreaId } from '../ui/views/components/focusArea.svelte';
 import { ItemDrag } from '../ui/views/components/itemDrag';
+import { restore } from '../ui/views/menuBar';
 import { StatusBar } from '../ui/views/statusBar';
 import { getUrlParam } from '../util';
 import { HierarchySelection } from './hierarchySelection';
@@ -133,6 +134,15 @@ export class Application
     public async init()
     {
         this.initDevInspectors();
+
+        if (window.location.hash === '#restore')
+        {
+            // special case for dev tools
+            await this.createProject('Test');
+            restore();
+
+            return;
+        }
 
         const lastProjectId = localStorage.getItem('comet:lastProjectId');
 
