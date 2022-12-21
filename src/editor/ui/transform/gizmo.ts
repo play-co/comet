@@ -635,7 +635,9 @@ export class TransformGizmo extends Container
 
     public selectNode<T extends ClonableNode>(node: T)
     {
-        if (node instanceof DisplayObjectNode)
+        const viewportContainsNode = getApp().viewport.rootNode.contains(node);
+
+        if (viewportContainsNode && node instanceof DisplayObjectNode)
         {
             const initialTransform = getGizmoInitialTransformFromView(node.view, node.width, node.width, this.parent.worldTransform);
 

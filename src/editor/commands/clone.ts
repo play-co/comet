@@ -23,6 +23,8 @@ export interface CloneCommandReturn
 
 export interface CloneCommandCache extends CloneCommandReturn
 {
+    originalNode: ClonableNode;
+    clonedNode: ClonableNode;
     commands: RemoveNodeCommand[];
 }
 
@@ -49,6 +51,8 @@ export class CloneCommand
 
         // prepare cache
         cache.commands = [];
+        cache.originalNode = originalNode;
+        cache.clonedNode = clonedNode;
 
         // for each cloned node (including primary cloned node)...
         clonedNode.walk<ClonableNode>((node) =>
@@ -107,7 +111,12 @@ export class CloneCommand
 
     public undo(): void
     {
-        const { cache: { commands } } = this;
+        const { datastore, cache: { commands, originalNode, clonedNode } } = this;
+
+        originalNode.cloneInfo.removeCloned(clonedNode);
+        const cloneInfoSchema = getCloneInfoSchema(originalNode);
+
+        datastore.updateNodeCloneInfo(originalNode.id, cloneInfoSchema);
 
         for (let i = commands.length - 1; i >= 0; i--)
         {
@@ -117,7 +126,12 @@ export class CloneCommand
 
     public redo()
     {
-        const { cache: { commands } } = this;
+        const { datastore, cache: { commands, originalNode, clonedNode } } = this;
+
+        originalNode.cloneInfo.addCloned(clonedNode);
+        const cloneInfoSchema = getCloneInfoSchema(originalNode);
+
+        datastore.updateNodeCloneInfo(originalNode.id, cloneInfoSchema);
 
         for (let i = 0; i < commands.length; i++)
         {

@@ -5,7 +5,6 @@ import { FolderNode } from '../../core/nodes/concrete/meta/folderNode';
 import { getApp } from '../core/application';
 import { Command } from '../core/command';
 import { CloneCommand } from './clone';
-import type { RemoveNodeCommand } from './removeNode';
 import { SetParentCommand } from './setParent';
 
 export interface CreateReferenceCommandParams
@@ -20,10 +19,11 @@ export interface CreateReferenceCommandReturn
 
 export interface CreateReferenceCommandCache
 {
+    sourceNode: ClonableNode;
+    clonedNode: ClonableNode;
     commands: {
-        clone: CloneCommand;
-        delete: RemoveNodeCommand;
         setParent: SetParentCommand;
+        clone: CloneCommand;
     };
 }
 
@@ -34,18 +34,13 @@ export class CreateReferenceCommand
 
     public apply(): CreateReferenceCommandReturn
     {
-        const { params: { nodeId } } = this;
+        const { cache, params: { nodeId } } = this;
         const app = getApp();
         const hierarchySelection = app.selection.hierarchy;
         const projectSelection = app.selection.project;
         const sourceNode = this.getInstance(nodeId);
         const sourceParentId = sourceNode.getParent().id;
         let assetFolderId = app.project.getRootFolder('Prefabs').id;
-
-        // 1. determine target asset folder
-        // 2. remove sourceNode from scene parent by re-parenting to to asset folder
-        // 3. clone sourceNode
-        // 4. add to sourceNode parent in place of sourceNode
 
         // 1. determine target asset folder
         if (
@@ -63,6 +58,7 @@ export class CreateReferenceCommand
         hierarchySelection.deselect();
         setParentCommand.run();
 
+        // 3. clone sourceNode and re-parent to original scene parent
         const cloneCommand = new CloneCommand({
             nodeId,
             cloneMode: CloneMode.Reference,
@@ -71,42 +67,50 @@ export class CreateReferenceCommand
 
         const { clonedNode } = cloneCommand.run();
 
-        // cache.commands = {
-        //     clone: cloneCommand,
-        //     setParent: setParentCommand,
-        // };
+        cache.commands = {
+            setParent: setParentCommand,
+            clone: cloneCommand,
+        };
+        cache.sourceNode = sourceNode;
+        cache.clonedNode = clonedNode;
 
-        // app.selection.project.set(clonedNode.cast<MetaNode>());
+        app.selection.hierarchy.set(clonedNode);
+        app.selection.project.set(sourceNode);
 
         return { node: clonedNode };
     }
 
     public undo(): void
     {
-        // const { cache: { commands } } = this;
+        const { cache: { commands: { setParent, clone } } } = this;
 
-        // for (let i = commands.length - 1; i >= 0; i--)
-        // {
-        //     commands[i].undo();
-        //     // commands[i].restoreSelection('undo');
-        // }
+        clone.undo();
+        setParent.undo();
     }
 
     public redo()
     {
-        // const { cache: { commands } } = this;
+        const { cache: { commands: { setParent, clone } } } = this;
 
-        // for (let i = 0; i < commands.length; i++)
-        // {
-        //     commands[i].redo();
-        //     // commands[i].restoreSelection('redo');
-        // }
+        setParent.redo();
+        clone.redo();
     }
 
-    // // @ts-ignore
-    // // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // public restoreSelection(type: 'undo' | 'redo')
-    // {
-    //     // clone command will restore selection
-    // }
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public restoreSelection(type: 'undo' | 'redo')
+    {
+        if (type === 'redo')
+        {
+            const { cache: { clonedNode, sourceNode } } = this;
+            const app = getApp();
+
+            app.selection.hierarchy.set(clonedNode);
+            app.selection.project.set(sourceNode);
+        }
+        else
+        {
+            super.restoreSelection(type);
+        }
+    }
 }
