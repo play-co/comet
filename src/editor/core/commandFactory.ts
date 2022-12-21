@@ -6,6 +6,7 @@ import { type CloneCommandParams, CloneCommand } from '../commands/clone';
 import { type CreateNodeCommandParams, CreateNodeCommand } from '../commands/createNode';
 import { type CreatePrefabAssetCommandParams, CreatePrefabAssetCommand } from '../commands/createPrefabAsset';
 import type { CreatePrefabInstanceCommandParams } from '../commands/createPrefabInstance';
+import { type CreatePrefabVariantCommandParams, CreatePrefabVariantCommand } from '../commands/createPrefabVariant';
 import { type CreateTextureAssetCommandParams, CreateTextureAssetCommand } from '../commands/createTextureAsset';
 import { type ModifyModelCommandParams, ModifyModelCommand } from '../commands/modifyModel';
 import { type ModifyModelsCommandParams, ModifyModelsCommand } from '../commands/modifyModels';
@@ -14,6 +15,7 @@ import { type RemoveChildCommandParams, RemoveChildCommand } from '../commands/r
 import { type RemoveCustomPropCommandParams, RemoveCustomPropCommand } from '../commands/removeCustomProp';
 import { type RemoveNodeCommandParams, RemoveNodeCommand } from '../commands/removeNode';
 import { type RemoveNodesCommandParams, RemoveNodesCommand } from '../commands/removeNodes';
+import { type RemovePrefabAssetCommandParams, RemovePrefabAssetCommand } from '../commands/removePrefabAsset';
 import { type RemoveTextureAssetCommandParams, RemoveTextureAssetCommand } from '../commands/removeTextureAsset';
 import { type SetCustomPropCommandParams, SetCustomPropCommand } from '../commands/setCustomProp';
 import { type SetNodeIndexCommandParams, SetNodeIndexCommand } from '../commands/setNodeIndex';
@@ -30,6 +32,7 @@ export type CommandName =
     'CreateNode' |
     'CreatePrefabAsset' |
     'CreatePrefabInstance' |
+    'CreatePrefabVariant' |
     'CreateTextureAsset' |
     'ModifyModel' |
     'ModifyModels' |
@@ -38,6 +41,7 @@ export type CommandName =
     'RemoveCustomProp' |
     'RemoveNode' |
     'RemoveNodes' |
+    'RemovePrefabAsset' |
     'RemoveTextureAsset' |
     'SetCustomProp' |
     'SetNodeIndex' |
@@ -54,6 +58,7 @@ export const Commands
     CreateNode: CreateNodeCommand,
     CreatePrefabAsset: CreatePrefabAssetCommand,
     CreatePrefabInstance: CreatePrefabAssetCommand,
+    CreatePrefabVariant: CreatePrefabVariantCommand,
     CreateTextureAsset: CreateTextureAssetCommand,
     ModifyModel: ModifyModelCommand,
     ModifyModels: ModifyModelsCommand,
@@ -62,6 +67,7 @@ export const Commands
     RemoveCustomProp: RemoveCustomPropCommand,
     RemoveNode: RemoveNodeCommand,
     RemoveNodes: RemoveNodesCommand,
+    RemovePrefabAsset: RemovePrefabAssetCommand,
     RemoveTextureAsset: RemoveTextureAssetCommand,
     SetCustomProp: SetCustomPropCommand,
     SetNodeIndex: SetNodeIndexCommand,
@@ -79,6 +85,7 @@ export interface CommandParams
     CreateNode: CreateNodeCommandParams<ModelBase>;
     CreatePrefabAsset: CreatePrefabAssetCommandParams;
     CreatePrefabInstance: CreatePrefabInstanceCommandParams;
+    CreatePrefabVariant: CreatePrefabVariantCommandParams;
     CreateTextureAsset: CreateTextureAssetCommandParams;
     ModifyModel: ModifyModelCommandParams<ModelBase>;
     ModifyModels: ModifyModelsCommandParams;
@@ -87,6 +94,7 @@ export interface CommandParams
     RemoveCustomProp: RemoveCustomPropCommandParams;
     RemoveNode: RemoveNodeCommandParams;
     RemoveNodes: RemoveNodesCommandParams;
+    RemovePrefabAsset: RemovePrefabAssetCommandParams;
     RemoveTextureAsset: RemoveTextureAssetCommandParams;
     SetCustomProp: SetCustomPropCommandParams;
     SetNodeIndex: SetNodeIndexCommandParams;

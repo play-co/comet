@@ -76,27 +76,60 @@
   };
 
   const onDeleteAssetNode = () => {
-    Actions.deleteTexture.dispatch({ nodeId: selection.firstNode.id });
+    const node = selection.firstNode;
+    if (app.project.getRootFolder("Textures").contains(node)) {
+      Actions.deleteTexture.dispatch({ nodeId: node.id });
+    } else if (app.project.getRootFolder("Prefabs").contains(node)) {
+      Actions.deletePrefab.dispatch({ nodeId: node.id });
+    }
   };
 
-  const treeMenu = new Menu([{ label: "Delete", onClick: onDeleteAssetNode }], (item) => {
-    if (item.label === "Delete") {
-      item.isHidden = false;
-      if (!selection.hasSelection) {
-        item.isHidden = true;
-      } else {
-        const node = selection.firstNode;
-        if (
-          (node.is(FolderNode) && node.cast<FolderNode>().isRootFolder()) ||
-          (node.is(SceneNode) &&
-            project.getRootFolder("Scenes").getAllChildrenByType(SceneNode).length === 1)
-        ) {
-          // hide if root folder or last scene
+  const onCreateVariant = () => {
+    Actions.newPrefabVariant.dispatch({ nodeId: selection.firstNode.id });
+  };
+
+  const treeMenu = new Menu(
+    [
+      {
+        id: "delete",
+        label: "Delete",
+        onClick: onDeleteAssetNode,
+      },
+      {
+        id: "createVariant",
+        label: "Create Variant",
+        onClick: onCreateVariant,
+      },
+    ],
+    (item) => {
+      if (!app.project.isReady) {
+        return;
+      }
+
+      if (item.id === "delete") {
+        item.isHidden = false;
+        if (!selection.hasSelection) {
           item.isHidden = true;
+        } else {
+          const node = selection.firstNode;
+          if (
+            (node.is(FolderNode) && node.cast<FolderNode>().isRootFolder()) ||
+            (node.is(SceneNode) &&
+              project.getRootFolder("Scenes").getAllChildrenByType(SceneNode).length === 1)
+          ) {
+            // hide if root folder or last scene
+            item.isHidden = true;
+          }
+        }
+      } else if (item.id === "createVariant") {
+        const node = selection.firstNode;
+        item.isHidden = true;
+        if (app.project.getRootFolder("Prefabs").contains(node) && !node.is(FolderNode)) {
+          item.isHidden = false;
         }
       }
     }
-  });
+  );
 
   const onKeyDown = (e: CustomEvent) => {
     const {

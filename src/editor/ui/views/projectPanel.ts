@@ -59,7 +59,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
 
                     return;
                 }
-                else if (isChildOfPrefab)
+                else if (isChildOfPrefab && !node.is(FolderNode))
                 {
                     const item: TreeItem<ClonableNode> = {
                         id: node.id,
@@ -162,9 +162,17 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
                 const mousePos = app.viewport.getMousePos(event.clientX, event.clientY);
                 const localPoint = targetNode.globalToLocal(mousePos.x, mousePos.y);
 
-                parentId = targetNode.id;
                 x = localPoint.x;
                 y = localPoint.y;
+
+                parentId = targetNode.id;
+
+                if (targetNode.cloneInfo.cloner?.id === node.id)
+                {
+                    app.statusBar.setMessage('Cannot clone a prefab into itself');
+
+                    return;
+                }
             }
 
             if (node.is(TextureAssetNode))

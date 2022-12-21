@@ -1,6 +1,6 @@
 import { type DisplayObject, Rectangle } from 'pixi.js';
 
-import { NumericRangeLimitConstraint, ReferenceConstraint } from '../../model/constraints';
+import { NumericRangeLimitConstraint } from '../../model/constraints';
 import { ModelSchema } from '../../model/schema';
 import { type ClonableNodeModel, ClonableNode, clonableNodeSchema } from './clonableNode';
 
@@ -24,12 +24,10 @@ export const displayObjectSchema = new ModelSchema<DisplayObjectModel>({
     x: {
         defaultValue: 0,
         category: 'transform',
-        constraints: [new ReferenceConstraint<DisplayObjectModel>(['x'])],
     },
     y: {
         defaultValue: 0,
         category: 'transform',
-        constraints: [new ReferenceConstraint<DisplayObjectModel>(['y'])],
     },
     pivotX: {
         defaultValue: 0,
