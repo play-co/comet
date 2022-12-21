@@ -16,6 +16,8 @@ export interface GraphNodeDetail
     parent: string;
     children: string;
     cloneMode: CloneMode;
+    cloner: string;
+    cloned: string;
 }
 
 export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
@@ -95,6 +97,8 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
                 parent: node.parent ? node.parent.id : '#empty#',
                 children: node.children.length === 0 ? '#empty#' : node.children.map((node) => node.id).join(','),
                 cloneMode: node.cloneInfo.cloneMode,
+                cloner: node.cloneInfo.cloner ? node.cloneInfo.cloner.id : '#empty#',
+                cloned: node.cloneInfo.cloned ? node.cloneInfo.cloned.map((node) => node.id).join(',') : '#empty#',
             };
 
             details[node.id] = detail;

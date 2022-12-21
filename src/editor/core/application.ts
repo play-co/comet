@@ -200,10 +200,26 @@ export class Application
         const project = await this.datastore.openProject(id);
 
         this.project.copy(project);
+        this.linkDeferredCloners();
 
         this.initProject();
 
         Events.project.open.success.emit();
+    }
+
+    protected linkDeferredCloners()
+    {
+        this.project.walk<ClonableNode>((node) =>
+        {
+            if (node.deferredCloner)
+            {
+                const cloner = getInstance<ClonableNode>(node.deferredCloner);
+
+                node.cloneInfo.cloner = cloner;
+                node.initCloning();
+                delete node.deferredCloner;
+            }
+        });
     }
 
     protected initProject()

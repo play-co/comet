@@ -32,7 +32,7 @@ export class CreateNodeCommand<
 
         const { id, type, model, cloneInfo: { cloneMode, cloner }, customProperties } = nodeSchema;
         const cloneInfo = deferCloneInfo === true
-            ? new CloneInfo()
+            ? new CloneInfo(cloneMode)
             : new CloneInfo(cloneMode, cloner ? this.getInstance(cloner) : undefined);
 
         if (!datastore.hasNode(id))
@@ -49,6 +49,11 @@ export class CreateNodeCommand<
         const node = createNode<ClonableNode>(type, { id, model, cloneInfo });
 
         node.created = nodeSchema.created;
+
+        if (deferCloneInfo)
+        {
+            node.deferredCloner = cloner;
+        }
 
         if (nodeSchema.parent && hasInstance(nodeSchema.parent))
         {

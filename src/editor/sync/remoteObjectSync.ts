@@ -31,17 +31,9 @@ export class RemoteObjectSync
     protected onNodeHydrated = (event: typeof Events.datastore.node.remote.created.type) =>
     {
         const { nodeId } = event;
+        const nodeSchema = this.datastore.getNodeAsJSON(nodeId);
 
-        if (hasInstance(nodeId) && getInstance<ClonableNode>(nodeId).isCloaked)
-        {
-            getInstance<ClonableNode>(nodeId).uncloak();
-        }
-        else
-        {
-            const nodeSchema = this.datastore.getNodeAsJSON(event.nodeId);
-
-            new CreateNodeCommand({ nodeSchema, deferCloneInfo: true }).run();
-        }
+        new CreateNodeCommand({ nodeSchema, deferCloneInfo: true }).run();
     };
 
     protected onRemoteNodeCreated = (event: typeof Events.datastore.node.remote.created.type) =>
@@ -54,7 +46,7 @@ export class RemoteObjectSync
         }
         else
         {
-            const nodeSchema = this.datastore.getNodeAsJSON(event.nodeId);
+            const nodeSchema = this.datastore.getNodeAsJSON(nodeId);
 
             new CreateNodeCommand({ nodeSchema }).run();
         }

@@ -45,6 +45,7 @@ export abstract class ClonableNode<
     public defineCustomProperties: Map<string, CustomProperty>;
     public assignedCustomProperties: Map<keyof M, string>;
     public isCloaked: boolean;
+    public deferredCloner?: string;
 
     constructor(
         options: NewNodeOptions<M> = {},
@@ -87,7 +88,7 @@ export abstract class ClonableNode<
 
     protected abstract initView(): void;
 
-    protected initCloning()
+    public initCloning()
     {
         const { cloneInfo, cloneInfo: { isVariantLike, isReferenceRoot } } = this;
 
