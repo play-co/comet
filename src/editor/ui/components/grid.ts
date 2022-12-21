@@ -214,18 +214,18 @@ export class Grid extends Graphics
         return color.darken(alpha).rgbNumber();
     }
 
-    private lightLine(color: Color)
-    {
-        return color.darken(light).rgbNumber();
-    }
+    // private lightLine(color: Color)
+    // {
+    //     return color.darken(light).rgbNumber();
+    // }
 
-    private inBetweenLine(color: Color)
-    {
-        return color.darken(inBetween).rgbNumber();
-    }
+    // private inBetweenLine(color: Color)
+    // {
+    //     return color.darken(inBetween).rgbNumber();
+    // }
 
-    private darkLine(color: Color)
-    {
-        return color.darken(dark).rgbNumber();
-    }
+    // private darkLine(color: Color)
+    // {
+    //     return color.darken(dark).rgbNumber();
+    // }
 }

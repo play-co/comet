@@ -1,12 +1,9 @@
-<script lang="ts" context="module">
-  export type FocusAreaId = "project" | "hierarchy" | "viewport" | "properties";
-</script>
-
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
 
   import { Application } from "../../../core/application";
   import Events from "../../../events";
+  import type { FocusAreaId } from "./focusArea";
 
   export let id: FocusAreaId;
   export let focus: boolean = false;

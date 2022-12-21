@@ -22,7 +22,7 @@ import { ConvergenceDatastore } from '../sync/convergenceDatastore';
 import { RemoteObjectSync } from '../sync/remoteObjectSync';
 import { DropZone } from '../ui/components/dropzone';
 import { EditableViewport } from '../ui/components/viewport';
-import type { FocusAreaId } from '../ui/views/components/focusArea.svelte';
+import type { FocusAreaId } from '../ui/views/components/focusArea';
 import { ItemDrag } from '../ui/views/components/itemDrag';
 import { restore } from '../ui/views/menuBar';
 import { StatusBar } from '../ui/views/statusBar';

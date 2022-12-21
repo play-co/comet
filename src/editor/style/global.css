@@ -49,7 +49,7 @@ h2{
   list-style-type:none;
 }
 
-#preload {
+.preload {
   opacity: 0.00001;
   position: absolute;
   pointer-events: none;

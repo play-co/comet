@@ -1,4 +1,4 @@
-import type { FocusAreaId } from '../../ui/views/components/focusArea.svelte';
+import type { FocusAreaId } from '../../ui/views/components/focusArea';
 import { Emit } from '../emitter';
 
 export default {

@@ -3,8 +3,7 @@
   import { scale } from "svelte/transition";
   import Events from "../../../events";
   import Splash from "../dialog/splash.svelte";
-
-  export type ModalDialogId = "splash";
+  import type { ModalDialogId } from "./modalDialog";
 
   const modalDialogs: Record<ModalDialogId, ComponentType> = {
     splash: Splash,

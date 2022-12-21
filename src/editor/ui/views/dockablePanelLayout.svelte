@@ -1,15 +1,10 @@
-<script lang="ts" context="module">
-  export type FactoryTypes = {
-    [name: string]: { new (params: { target: HTMLElement }): object };
-  };
-</script>
-
 <script lang="ts">
   import { onMount } from "svelte";
   import { ComponentContainer, GoldenLayout, LayoutConfig } from "golden-layout";
   import Events from "../../events";
   import { Application } from "../../core/application";
   import { loadUserLayoutPrefs, saveUserLayoutPrefs } from "../../core/userPrefs";
+  import type { FactoryTypes } from "./dockablePanelLayout";
 
   export let layoutConfig: LayoutConfig;
   export let factoryTypes: FactoryTypes;

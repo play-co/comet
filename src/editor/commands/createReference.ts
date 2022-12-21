@@ -1,4 +1,4 @@
-import type { ClonableNode, NodeConstructor } from '../../core/nodes/abstract/clonableNode';
+import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { MetaNode } from '../../core/nodes/abstract/metaNode';
 import { CloneMode } from '../../core/nodes/cloneInfo';
 import { FolderNode } from '../../core/nodes/concrete/meta/folderNode';
@@ -34,7 +34,7 @@ export class CreateReferenceCommand
 
     public apply(): CreateReferenceCommandReturn
     {
-        const { cache, params: { nodeId } } = this;
+        const { params: { nodeId } } = this;
         const app = getApp();
         const hierarchySelection = app.selection.hierarchy;
         const projectSelection = app.selection.project;
@@ -78,29 +78,29 @@ export class CreateReferenceCommand
 
         // app.selection.project.set(clonedNode.cast<MetaNode>());
 
-        // return { node: clonedNode };
+        return { node: clonedNode };
     }
 
     public undo(): void
     {
-        const { cache: { commands } } = this;
+        // const { cache: { commands } } = this;
 
-        for (let i = commands.length - 1; i >= 0; i--)
-        {
-            commands[i].undo();
-            // commands[i].restoreSelection('undo');
-        }
+        // for (let i = commands.length - 1; i >= 0; i--)
+        // {
+        //     commands[i].undo();
+        //     // commands[i].restoreSelection('undo');
+        // }
     }
 
     public redo()
     {
-        const { cache: { commands } } = this;
+        // const { cache: { commands } } = this;
 
-        for (let i = 0; i < commands.length; i++)
-        {
-            commands[i].redo();
-            // commands[i].restoreSelection('redo');
-        }
+        // for (let i = 0; i < commands.length; i++)
+        // {
+        //     commands[i].redo();
+        //     // commands[i].restoreSelection('redo');
+        // }
     }
 
     // // @ts-ignore

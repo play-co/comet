@@ -1,7 +1,7 @@
 import EventEmitter from 'eventemitter3';
 
 import { delay } from '../../../core/util';
-import type { FocusAreaId } from '../views/components/focusArea.svelte';
+import type { FocusAreaId } from '../views/components/focusArea';
 import { WritableStore } from '../views/store';
 
 function preventDefaults(e: Event)

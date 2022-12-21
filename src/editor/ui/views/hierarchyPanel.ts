@@ -48,7 +48,7 @@ export class HierarchyTree extends NodeTreeModel<HierarchySelection>
                     isExpanded: true,
                     isVisible: true,
                     data: node,
-                    icon: Icons[node.nodeType()],
+                    icon: Icons[node.nodeType() as keyof typeof Icons],
                 };
 
                 options.data.model.push(item);

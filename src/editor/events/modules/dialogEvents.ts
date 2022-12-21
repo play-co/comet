@@ -1,4 +1,4 @@
-import type { ModalDialogId } from '../../ui/views/components/modalDialog.svelte';
+import type { ModalDialogId } from '../../ui/views/components/modalDialog';
 import { Emit } from '../emitter';
 
 export default {

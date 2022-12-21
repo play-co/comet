@@ -1,6 +1,6 @@
 import { getApp } from '../../../core/application';
 import Events from '../../../events';
-import type { FocusAreaId } from './focusArea.svelte';
+import type { FocusAreaId } from './focusArea';
 
 export class ItemDrag
 {

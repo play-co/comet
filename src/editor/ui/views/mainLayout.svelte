@@ -4,19 +4,18 @@
   import { factoryTypes, layoutConfig } from "./mainLayout";
   import StatusBar from "./statusBar.svelte";
   import MenuBar from "./menuBar.svelte";
-  import { fade } from "svelte/transition";
+  import { fade, scale } from "svelte/transition";
   import ModalDialog from "./components/modalDialog.svelte";
   import ItemDrag from "./components/itemDrag.svelte";
   import Preload from "./components/preload.svelte";
 </script>
 
 <main-layout transition:fade={{ duration: 1000 }}>
-  <Preload />
   <MenuBar />
   <img
-    transition:fade={{ duration: 250 }}
+    transition:scale={{ duration: 5000 }}
     id="logo"
-    src="assets/logo-small.png"
+    src="assets/logo_small.png"
     alt="Welcome to Comet!"
   />
   <div class="horizontal">
@@ -26,6 +25,7 @@
   <StatusBar />
   <ItemDrag />
   <ModalDialog />
+  <Preload />
 </main-layout>
 
 <style>

@@ -22,7 +22,8 @@
         "test": "jest",
         "test:coverage": "jest --coverage",
         "test:watch": "jest --watchAll",
-        "server": "./scripts/server.sh"
+        "server": "./scripts/server.sh",
+        "serve": "npx http-server ./dist/editor -p 3000"
     },
     "config": {
         "commitizen": {

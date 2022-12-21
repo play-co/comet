@@ -1,6 +1,6 @@
 import type { ComponentItemConfig, LayoutConfig } from 'golden-layout';
 
-import type { FactoryTypes } from './dockablePanelLayout.svelte';
+import type { FactoryTypes } from './dockablePanelLayout';
 import HierarchyPanel from './hierarchyPanel.svelte';
 import ProjectPanel from './projectPanel.svelte';
 import PropertiesPanel from './propertiesPanel.svelte';
