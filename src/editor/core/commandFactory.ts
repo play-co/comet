@@ -4,6 +4,8 @@ import { type AddSelectionCommandParams, AddSelectionCommand } from '../commands
 import { type AssignCustomPropCommandParams, AssignCustomPropCommand } from '../commands/assignCustomProp';
 import { type CloneCommandParams, CloneCommand } from '../commands/clone';
 import { type CreateNodeCommandParams, CreateNodeCommand } from '../commands/createNode';
+import { type CreatePrefabAssetCommandParams, CreatePrefabAssetCommand } from '../commands/createPrefabAsset';
+import type { CreatePrefabInstanceCommandParams } from '../commands/createPrefabInstance';
 import { type CreateTextureAssetCommandParams, CreateTextureAssetCommand } from '../commands/createTextureAsset';
 import { type ModifyModelCommandParams, ModifyModelCommand } from '../commands/modifyModel';
 import { type ModifyModelsCommandParams, ModifyModelsCommand } from '../commands/modifyModels';
@@ -26,6 +28,8 @@ export type CommandName =
     'AssignCustomProp' |
     'Clone' |
     'CreateNode' |
+    'CreatePrefabAsset' |
+    'CreatePrefabInstance' |
     'CreateTextureAsset' |
     'ModifyModel' |
     'ModifyModels' |
@@ -48,6 +52,8 @@ export const Commands
     AssignCustomProp: AssignCustomPropCommand,
     Clone: CloneCommand,
     CreateNode: CreateNodeCommand,
+    CreatePrefabAsset: CreatePrefabAssetCommand,
+    CreatePrefabInstance: CreatePrefabAssetCommand,
     CreateTextureAsset: CreateTextureAssetCommand,
     ModifyModel: ModifyModelCommand,
     ModifyModels: ModifyModelsCommand,
@@ -71,6 +77,8 @@ export interface CommandParams
     AssignCustomProp: AssignCustomPropCommandParams;
     Clone: CloneCommandParams;
     CreateNode: CreateNodeCommandParams<ModelBase>;
+    CreatePrefabAsset: CreatePrefabAssetCommandParams;
+    CreatePrefabInstance: CreatePrefabInstanceCommandParams;
     CreateTextureAsset: CreateTextureAssetCommandParams;
     ModifyModel: ModifyModelCommandParams<ModelBase>;
     ModifyModels: ModifyModelsCommandParams;

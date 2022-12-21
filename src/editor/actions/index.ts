@@ -6,6 +6,7 @@ import { DeselectAction } from './deselect';
 import { ImportTextureAction } from './importTexture';
 import { NewContainerAction } from './newContainer';
 import { NewFolderAction } from './newFolder';
+import { NewPrefabAction } from './newPrefab';
 import { NewSceneAction } from './newScene';
 import { NewSpriteAction } from './newSprite';
 import { NudgeAction } from './nudge';
@@ -20,6 +21,7 @@ export const Actions = {
     newScene: new NewSceneAction(),
     newContainer: new NewContainerAction(),
     newSprite: new NewSpriteAction(),
+    newPrefab: new NewPrefabAction(),
     deleteNode: new DeleteNodeAction(),
     deleteTexture: new DeleteTextureAction(),
     selectAll: new SelectAllAction(),

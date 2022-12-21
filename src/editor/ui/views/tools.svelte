@@ -18,6 +18,8 @@
     height: 100%;
     padding: 5px;
     padding-top: 32px;
+    margin-right: 3px;
+    flex-grow: 0;
   }
 
   .container {

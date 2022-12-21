@@ -13,6 +13,7 @@ export interface GraphNodeDetail
     _depth: number;
     _cloaked: boolean;
     name: string;
+    model: string;
     parent: string;
     children: string;
     cloneMode: CloneMode;
@@ -93,6 +94,7 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
             const detail: GraphNodeDetail = {
                 _depth: options.depth,
                 _cloaked: node.isCloaked,
+                model: node.model.id,
                 name: node.model.getValue<string>('name'),
                 parent: node.parent ? node.parent.id : '#empty#',
                 children: node.children.length === 0 ? '#empty#' : node.children.map((node) => node.id).join(','),

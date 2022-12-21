@@ -1,6 +1,7 @@
-import type { ClonableNode } from '../../../core';
+import { ClonableNode } from '../../../core';
 import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
 import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
+import { CloneMode } from '../../../core/nodes/cloneInfo';
 import { TextureAssetNode } from '../../../core/nodes/concrete/meta/assets/textureAssetNode';
 import { FolderNode } from '../../../core/nodes/concrete/meta/folderNode';
 import { SceneNode } from '../../../core/nodes/concrete/meta/sceneNode';
@@ -136,7 +137,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
 
     protected onDragItemOut(event: MouseEvent)
     {
-        const draggable = this.selection.items.filter((item) => item.is(TextureAssetNode));
+        const draggable = this.selection.items.filter((item) => item.is(TextureAssetNode) || item.is(ClonableNode));
 
         if (draggable.length > 0)
         {
@@ -149,7 +150,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
         if (focusAreaId === 'viewport')
         {
             const app = getApp();
-            const textureAsset = item as TextureAssetNode;
+            const node = item as ClonableNode;
             const viewportLocalPos = app.viewport.getMouseLocalPoint(event);
             let parentId: string | undefined;
             let x = viewportLocalPos.x;
@@ -166,15 +167,32 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
                 y = localPoint.y;
             }
 
-            Actions.newSprite.dispatch({
-                addToSelected: false,
-                parentId,
-                model: {
-                    x,
-                    y,
-                    textureAssetId: textureAsset.id,
-                    tint: 0xffffff,
-                } });
+            if (node.is(TextureAssetNode))
+            {
+                Actions.newSprite.dispatch({
+                    parentId,
+                    model: {
+                        x,
+                        y,
+                        textureAssetId: node.id,
+                        tint: 0xffffff,
+                    } });
+            }
+            else
+            {
+                Actions.newPrefab.dispatch({
+                    parentId,
+                    cloneInfo: {
+                        cloneMode: CloneMode.ReferenceRoot,
+                        cloner: node.id,
+                        cloned: [],
+                    },
+                    model: {
+                        x,
+                        y,
+                        tint: 0xffffff,
+                    } });
+            }
         }
     };
 

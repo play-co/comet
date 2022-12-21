@@ -201,8 +201,8 @@ export class Grid extends Graphics
         this.lineStyle(1, origin.rgbNumber(), 1);
         this.moveTo(globalOrigin.x, p1.y);
         this.lineTo(globalOrigin.x, p2.y);
-        this.moveTo(p1.x, globalOrigin.y);
-        this.lineTo(p2.x, globalOrigin.y);
+        this.moveTo(p1.x, globalOrigin.y - 1);
+        this.lineTo(p2.x, globalOrigin.y - 1);
     }
 
     private lineColor(color: Color, num: number)

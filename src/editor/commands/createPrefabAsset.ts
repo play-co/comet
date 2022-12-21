@@ -7,17 +7,17 @@ import { Command } from '../core/command';
 import { CloneCommand } from './clone';
 import { SetParentCommand } from './setParent';
 
-export interface CreateReferenceCommandParams
+export interface CreatePrefabAssetCommandParams
 {
     nodeId: string;
 }
 
-export interface CreateReferenceCommandReturn
+export interface CreatePrefabAssetCommandReturn
 {
     node: ClonableNode;
 }
 
-export interface CreateReferenceCommandCache
+export interface CreatePrefabAssetCommandCache
 {
     sourceNode: ClonableNode;
     clonedNode: ClonableNode;
@@ -27,12 +27,12 @@ export interface CreateReferenceCommandCache
     };
 }
 
-export class CreateReferenceCommand
-    extends Command<CreateReferenceCommandParams, CreateReferenceCommandReturn, CreateReferenceCommandCache>
+export class CreatePrefabAssetCommand
+    extends Command<CreatePrefabAssetCommandParams, CreatePrefabAssetCommandReturn, CreatePrefabAssetCommandCache>
 {
-    public static commandName = 'CreateReferenceCommand';
+    public static commandName = 'CreatePrefabAsset';
 
-    public apply(): CreateReferenceCommandReturn
+    public apply(): CreatePrefabAssetCommandReturn
     {
         const { cache, params: { nodeId } } = this;
         const app = getApp();

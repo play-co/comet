@@ -1,5 +1,5 @@
 import { SceneNode } from '../../core/nodes/concrete/meta/sceneNode';
-import { CreateReferenceCommand } from '../commands/createReference';
+import { CreatePrefabAssetCommand } from '../commands/createPrefabAsset';
 import { Action } from '../core/action';
 import { getApp } from '../core/application';
 
@@ -28,6 +28,6 @@ export class CreateReferenceAction extends Action<void, void>
         const app = getApp();
         const selection = app.selection.hierarchy;
 
-        app.undoStack.exec(new CreateReferenceCommand({ nodeId: selection.firstNode.id }));
+        app.undoStack.exec(new CreatePrefabAssetCommand({ nodeId: selection.firstNode.id }));
     }
 }
