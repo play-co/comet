@@ -4,6 +4,7 @@
   import { Application } from "../../core/application";
   import { getUrlParam } from "../../util";
   import MainLayout from "./mainLayout.svelte";
+  import ModalDialog from "./components/modalDialog.svelte";
 
   let isConnected = false;
   let connectionError: Error | undefined;
@@ -39,6 +40,7 @@
       <button on:click={() => connect()}>Connect</button>
     </div>
   {/if}
+  <ModalDialog />
 </main>
 
 <style>

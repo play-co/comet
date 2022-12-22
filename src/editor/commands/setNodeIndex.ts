@@ -40,7 +40,7 @@ export class SetNodeIndexCommand
                     .filter((node) => !node.asClonableNode().isCloaked)
                     .map((node) => node.id);
 
-                datastore.setNodeChildren(parentId, childIds);
+                datastore.setChildren(parentId, childIds);
             }
         }
     }
@@ -66,7 +66,7 @@ export class SetNodeIndexCommand
                     .filter((node) => !node.asClonableNode().isCloaked)
                     .map((node) => node.id);
 
-                datastore.setNodeChildren(parentId, childIds);
+                datastore.setChildren(parentId, childIds);
             }
         }
     }

@@ -62,7 +62,7 @@ export class RemoveChildCommand
                     const [node, cloner] = nodeWithCloner;
                     const cloneInfoSchema = cloner.cloneInfo.clone().removeCloned(node).toSchema();
 
-                    datastore.updateNodeCloneInfo(cloner.id, cloneInfoSchema);
+                    datastore.updateCloneInfo(cloner.id, cloneInfoSchema);
                 });
             });
         }

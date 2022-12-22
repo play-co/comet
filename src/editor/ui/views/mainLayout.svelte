@@ -5,7 +5,7 @@
   import StatusBar from "./statusBar.svelte";
   import MenuBar from "./menuBar.svelte";
   import { fade, scale } from "svelte/transition";
-  import ModalDialog from "./components/modalDialog.svelte";
+
   import ItemDrag from "./components/itemDrag.svelte";
   import Preload from "./components/preload.svelte";
 </script>
@@ -24,7 +24,7 @@
   </div>
   <StatusBar />
   <ItemDrag />
-  <ModalDialog />
+
   <Preload />
 </main-layout>
 

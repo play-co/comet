@@ -10,8 +10,8 @@ export interface Datastore
     batch: (fn: () => void) => Promise<void>;
     registerNode: (nodeId: string) => void;
     hasNode: (nodeId: string) => boolean;
-    hasRegisteredNode: (nodeId: string) => boolean;
-    getNodeAsJSON: (nodeId: string) => NodeSchema;
+    hasNodeProxy: (nodeId: string) => boolean;
+    getNodeSchema: (nodeId: string) => NodeSchema;
     createProject: (name: string, id?: string) => Promise<ClonableNode>;
     openProject: (id: string) => Promise<ClonableNode>;
     hasProject: (name: string) => Promise<boolean>;
@@ -28,14 +28,14 @@ export interface DatastoreCommandProvider
 {
     createNode: (nodeSchema: NodeSchema) => void;
     removeNode: (nodeId: string) => void;
-    setNodeParent: (childId: string, parentId: string) => void;
-    modifyNodeModel: (nodeId: string, values: object) => void;
-    updateNodeCloneInfo: (nodeId: string, cloneInfoSchema: CloneInfoSchema) => void;
+    setParent: (childId: string, parentId: string) => void;
+    modifyModel: (nodeId: string, values: object) => void;
+    updateCloneInfo: (nodeId: string, cloneInfoSchema: CloneInfoSchema) => void;
     setCustomProperty: (nodeId: string, customKey: string, type: CustomPropertyType, value: CustomPropertyValueType | undefined) => void;
     removeCustomProperty: (nodeId: string, customKey: string) => void;
     assignCustomProperty: (nodeId: string, modelKey: string, customKey: string) => void;
     unassignCustomProperty: (nodeId: string, modelKey: string) => void;
-    setNodeChildren: (nodeId: string, childIds: string[]) => void;
+    setChildren: (nodeId: string, childIds: string[]) => void;
 }
 
 export interface DatastoreChangeEventHandler<RemoteChangeEvent>
@@ -54,7 +54,10 @@ export interface DatastoreChangeEventHandler<RemoteChangeEvent>
     onRemoteChildrenSet: (event: RemoteChangeEvent) => void;
 }
 
-export abstract class DatastoreBase<NodeProxyObject, RemoteChangeEvent>
+export abstract class DatastoreBase<
+    NodeProxyObject,
+    RemoteChangeEvent,
+>
 implements Datastore, DatastoreCommandProvider, DatastoreChangeEventHandler<RemoteChangeEvent>
 {
     protected nodeProxies: Map<string, NodeProxyObject>;
@@ -71,8 +74,8 @@ implements Datastore, DatastoreCommandProvider, DatastoreChangeEventHandler<Remo
     public abstract batch(fn: () => void): Promise<void>;
     public abstract registerNode(nodeId: string): void;
     public abstract hasNode(nodeId: string): boolean;
-    public abstract hasRegisteredNode(nodeId: string): boolean;
-    public abstract getNodeAsJSON(nodeId: string): NodeSchema;
+    public abstract hasNodeProxy(nodeId: string): boolean;
+    public abstract getNodeSchema(nodeId: string): NodeSchema;
     public abstract createProject(name: string, id?: string): Promise<ClonableNode>;
     public abstract openProject(id: string): Promise<ClonableNode>;
     public abstract hasProject(name: string): Promise<boolean>;
@@ -87,14 +90,14 @@ implements Datastore, DatastoreCommandProvider, DatastoreChangeEventHandler<Remo
     // command API
     public abstract createNode(nodeSchema: NodeSchema): void;
     public abstract removeNode(nodeId: string): void;
-    public abstract setNodeParent(childId: string, parentId: string): void;
-    public abstract modifyNodeModel(nodeId: string, values: object): void;
-    public abstract updateNodeCloneInfo(nodeId: string, cloneInfoSchema: CloneInfoSchema): void;
+    public abstract setParent(childId: string, parentId: string): void;
+    public abstract modifyModel(nodeId: string, values: object): void;
+    public abstract updateCloneInfo(nodeId: string, cloneInfoSchema: CloneInfoSchema): void;
     public abstract setCustomProperty(nodeId: string, customKey: string, type: CustomPropertyType, value: CustomPropertyValueType | undefined): void;
     public abstract removeCustomProperty(nodeId: string, customKey: string): void;
     public abstract assignCustomProperty(nodeId: string, modelKey: string, customKey: string): void;
     public abstract unassignCustomProperty(nodeId: string, modelKey: string): void;
-    public abstract setNodeChildren(nodeId: string, childIds: string[]): void;
+    public abstract setChildren(nodeId: string, childIds: string[]): void;
 
     // remote change event handles
     public abstract onRemoteNodeCreated(event: RemoteChangeEvent): void;

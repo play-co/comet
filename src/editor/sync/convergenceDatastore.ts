@@ -87,8 +87,8 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
                 },
             }).then((domain) =>
             {
-                clearTimeout(timeout);
                 this._domain = domain;
+                clearTimeout(timeout);
                 log('datastore', 'connect.success');
                 resolve();
             }).catch(reject);
@@ -113,17 +113,17 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
     public registerNode(nodeId: string)
     {
-        const nodeElement = this.nodes.get(nodeId) as RealTimeObject;
+        const nodeProxy = this.nodes.get(nodeId) as RealTimeObject;
 
-        if (!nodeElement)
+        if (!nodeProxy)
         {
-            throw new Error(`${userName}:Existing node "${nodeId}" RealTimeObject not found, cannot track.`);
+            throw new Error(`${userName}:Existing node "${nodeId}" not found, cannot register.`);
         }
 
         if (!this.nodeProxies.has(nodeId))
         {
             // index element
-            this.nodeProxies.set(nodeId, nodeElement);
+            this.nodeProxies.set(nodeId, nodeProxy);
 
             // track remote changes
             this.initNodeRemoteEvents(nodeId);
@@ -135,16 +135,16 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         return this.nodes.hasKey(nodeId);
     }
 
-    public hasRegisteredNode(nodeId: string)
+    public hasNodeProxy(nodeId: string)
     {
         return this.nodeProxies.has(nodeId);
     }
 
-    public getNodeAsJSON(nodeId: string)
+    public getNodeSchema(nodeId: string)
     {
-        const nodeElement = this.getNodeElement(nodeId);
+        const nodeProxy = this.getNodeElement(nodeId);
 
-        return nodeElement.toJSON() as NodeSchema;
+        return nodeProxy.toJSON() as NodeSchema;
     }
 
     public async createProject(name: string)
@@ -204,7 +204,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         if (this._model)
         {
             await this._model.close();
-            delete this._model;
+            this.reset();
         }
     }
 
@@ -280,7 +280,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         if (nodeSchema.parent)
         {
-            this.setNodeParent(nodeSchema.id, nodeSchema.parent);
+            this.setParent(nodeSchema.id, nodeSchema.parent);
         }
 
         Events.datastore.node.local.created.emit({ nodeId: nodeSchema.id });
@@ -313,7 +313,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         this.unRegisterNode(nodeId);
     }
 
-    public setNodeParent(childId: string, parentId: string)
+    public setParent(childId: string, parentId: string)
     {
         const parentElement = this.getNodeElement(parentId);
         const childElement = this.getNodeElement(childId);
@@ -345,7 +345,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         }
     }
 
-    public modifyNodeModel(nodeId: string, values: object)
+    public modifyModel(nodeId: string, values: object)
     {
         const nodeElement = this.getNodeElement(nodeId);
         const modelElement = nodeElement.get('model') as RealTimeObject;
@@ -366,7 +366,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         }
     }
 
-    public updateNodeCloneInfo(nodeId: string, cloneInfoSchema: CloneInfoSchema)
+    public updateCloneInfo(nodeId: string, cloneInfoSchema: CloneInfoSchema)
     {
         const nodeElement = this.getNodeElement(nodeId);
 
@@ -413,7 +413,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         assignedCustomProps.remove(modelKey);
     }
 
-    public setNodeChildren(nodeId: string, childIds: string[])
+    public setChildren(nodeId: string, childIds: string[])
     {
         const nodeElement = this.getNodeElement(nodeId);
 
@@ -550,16 +550,6 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
         Events.datastore.node.remote.setChildren.emit({ nodeId, childIds: array.toJSON() });
     };
-
-    public getRegisteredIds()
-    {
-        return Array.from(this.nodeProxies.keys());
-    }
-
-    public setNodesData(data: Record<string, NodeSchema>)
-    {
-        this.nodes.value(data);
-    }
 
     public getNodeElement(id: string)
     {

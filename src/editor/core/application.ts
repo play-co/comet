@@ -119,6 +119,8 @@ export class Application
 
         initHistory();
         this.initEvents();
+
+        nextTick().then(() => Events.dialog.modal.open.emit('splash'));
     }
 
     public async connect()
@@ -156,6 +158,8 @@ export class Application
 
         this.project.isReady = true;
         Events.project.ready.emit();
+
+        Events.dialog.modal.close.emit();
 
         nextTick().then(() => this.initPersistentSelection());
     }

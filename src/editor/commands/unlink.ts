@@ -38,8 +38,8 @@ export class UnlinkCommand
             node.unlink();
 
             // update datastore with new cloneInfo and model values
-            datastore.updateNodeCloneInfo(nodeId, getCloneInfoSchema(node));
-            datastore.modifyNodeModel(nodeId, node.model.ownValues);
+            datastore.updateCloneInfo(nodeId, getCloneInfoSchema(node));
+            datastore.modifyModel(nodeId, node.model.ownValues);
         });
     }
 
@@ -76,7 +76,7 @@ export class UnlinkCommand
             node.cloneInfo.cloned = nodeSchema.cloneInfo.cloned.map((id) => this.getInstance(id));
 
             // update datastore
-            datastore.updateNodeCloneInfo(nodeSchema.id, getCloneInfoSchema(node));
+            datastore.updateCloneInfo(nodeSchema.id, getCloneInfoSchema(node));
         }
     }
 }

@@ -47,7 +47,7 @@ export class CloneCommand
         const clonedNode = originalNode.clone(cloneMode, depth);
 
         // update originals new cloneInfo
-        datastore.updateNodeCloneInfo(originalNode.id, cloneInfoSchema);
+        datastore.updateCloneInfo(originalNode.id, cloneInfoSchema);
 
         // prepare cache
         cache.commands = [];
@@ -68,7 +68,7 @@ export class CloneCommand
             // update parenting info in datastore to trigger remote users
             if (node.parent)
             {
-                datastore.setNodeParent(node.id, node.parent.id);
+                datastore.setParent(node.id, node.parent.id);
             }
 
             // register the graph node
@@ -82,7 +82,7 @@ export class CloneCommand
                 const cloner = this.getInstance(clonerId);
                 const cloneInfoSchema = getCloneInfoSchema(cloner);
 
-                datastore.updateNodeCloneInfo(clonerId, cloneInfoSchema);
+                datastore.updateCloneInfo(clonerId, cloneInfoSchema);
             }
 
             // track for return
@@ -116,7 +116,7 @@ export class CloneCommand
         originalNode.cloneInfo.removeCloned(clonedNode);
         const cloneInfoSchema = getCloneInfoSchema(originalNode);
 
-        datastore.updateNodeCloneInfo(originalNode.id, cloneInfoSchema);
+        datastore.updateCloneInfo(originalNode.id, cloneInfoSchema);
 
         for (let i = commands.length - 1; i >= 0; i--)
         {
@@ -131,7 +131,7 @@ export class CloneCommand
         originalNode.cloneInfo.addCloned(clonedNode);
         const cloneInfoSchema = getCloneInfoSchema(originalNode);
 
-        datastore.updateNodeCloneInfo(originalNode.id, cloneInfoSchema);
+        datastore.updateCloneInfo(originalNode.id, cloneInfoSchema);
 
         for (let i = 0; i < commands.length; i++)
         {

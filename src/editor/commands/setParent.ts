@@ -48,7 +48,7 @@ export class SetParentCommand
         // update datastore
         if (updateMode === 'full')
         {
-            datastore.setNodeParent(nodeId, parentId);
+            datastore.setParent(nodeId, parentId);
         }
 
         // update graph node

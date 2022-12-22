@@ -31,7 +31,7 @@ export class RemoteObjectSync
     protected onNodeHydrated = (event: typeof Events.datastore.node.remote.created.type) =>
     {
         const { nodeId } = event;
-        const nodeSchema = this.datastore.getNodeAsJSON(nodeId);
+        const nodeSchema = this.datastore.getNodeSchema(nodeId);
 
         new CreateNodeCommand({ nodeSchema, deferCloneInfo: true }).run();
     };
@@ -46,7 +46,7 @@ export class RemoteObjectSync
         }
         else
         {
-            const nodeSchema = this.datastore.getNodeAsJSON(nodeId);
+            const nodeSchema = this.datastore.getNodeSchema(nodeId);
 
             new CreateNodeCommand({ nodeSchema }).run();
         }
