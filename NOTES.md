@@ -33,6 +33,9 @@ High Priority
     - Delete prefab asset
     - Add items to clones needs investigating, didn't update properly
         - AddChildCommand needs modified version (new command?) which takes a Node instead of schema (which only does a single child) and propagates to all clone descendants
+    - Paste logic needs tightening:
+        - if all from same parent, paste into that parent
+        - if from different parents, paste into selected parent
 
 Low Priority
 * Project properties panel

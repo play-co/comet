@@ -107,8 +107,8 @@ export class Application
         this.storageProvider = new LocalStorageProvider();
         this.project = new ProjectNode();
         this.selection = {
-            hierarchy: new HierarchySelection('$node'),
-            project: new ProjectSelection('$meta'),
+            hierarchy: new HierarchySelection('$2'),
+            project: new ProjectSelection('$3'),
         };
         this.nodeUpdater = new RemoteObjectSync(datastore);
         this.viewport = new EditableViewport();
