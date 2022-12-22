@@ -32,6 +32,7 @@ High Priority
     - Create variant
     - Delete prefab asset
     - Add items to clones needs investigating, didn't update properly
+        - AddChildCommand needs modified version (new command?) which takes a Node instead of schema (which only does a single child) and propagates to all clone descendants
 
 Low Priority
 * Project properties panel

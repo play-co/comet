@@ -1,7 +1,6 @@
 import { ClonableNode } from '../../../core';
 import type { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
 import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
-import { CloneMode } from '../../../core/nodes/cloneInfo';
 import { TextureAssetNode } from '../../../core/nodes/concrete/meta/assets/textureAssetNode';
 import { FolderNode } from '../../../core/nodes/concrete/meta/folderNode';
 import { SceneNode } from '../../../core/nodes/concrete/meta/sceneNode';
@@ -59,7 +58,8 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
 
                     return;
                 }
-                else if (isChildOfPrefab && !node.is(FolderNode))
+
+                if (isChildOfPrefab && !node.is(FolderNode))
                 {
                     const item: TreeItem<ClonableNode> = {
                         id: node.id,
@@ -186,19 +186,14 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
                         tint: 0xffffff,
                     } });
             }
-            else
+            else if (app.project.getRootFolder('Prefabs').contains(node))
             {
                 Actions.newPrefab.dispatch({
+                    clonerId: node.id,
                     parentId,
-                    cloneInfo: {
-                        cloneMode: CloneMode.ReferenceRoot,
-                        cloner: node.id,
-                        cloned: [],
-                    },
                     model: {
                         x,
                         y,
-                        tint: 0xffffff,
                     } });
             }
         }

@@ -332,8 +332,8 @@ export class Application
             const logInspector = new LogInspector('Log', 'darkslategrey');
             const undoStackInspector = new UndoStackInspector('UndoStack', 'purple');
 
-            const mediumMaxHeight = Math.round(screen.availHeight * 0.3);
-            const shortMaxHeight = Math.round(screen.availHeight * 0.2);
+            const mediumMaxHeight = Math.round(screen.availHeight * 0.4);
+            const shortMaxHeight = Math.round(screen.availHeight * 0.3);
 
             graphNodeInspector.maxHeight = mediumMaxHeight;
             datastoreNodeInspector.maxHeight = mediumMaxHeight;

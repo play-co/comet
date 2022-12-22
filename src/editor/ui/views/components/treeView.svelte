@@ -4,8 +4,9 @@
   import { indentationWidth, TreeViewModel } from "./treeModel";
   import { scale } from "svelte/transition";
 
-  export let tree: TreeViewModel;
+  export let tree: TreeViewModel<any, any>;
   export let menu: Menu | undefined = undefined;
+  export let cssClass: string | undefined = undefined;
 
   export function selectPrev() {
     tree.selectPrev();
@@ -24,7 +25,12 @@
 </script>
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<tree-view bind:this={container} on:mouseenter={onTreeMouseOver} on:mouseleave={onTreeMouseOut}>
+<tree-view
+  bind:this={container}
+  on:mouseenter={onTreeMouseOver}
+  on:mouseleave={onTreeMouseOut}
+  class={`tree-view ${cssClass ?? ""}`}
+>
   {#each $model as item (item.id)}
     <!-- svelte-ignore a11y-mouse-events-have-key-events -->
     <div
@@ -105,6 +111,10 @@
 
   .tree-item.selected {
     background-color: #2eb2c8;
+  }
+
+  .tree-view.project .tree-item.selected {
+    background-color: #2e66c8;
   }
 
   .tree-item.hidden {

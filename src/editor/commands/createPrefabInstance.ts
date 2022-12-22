@@ -1,14 +1,16 @@
+import type { ModelBase } from '../../core/model/model';
 import type { ClonableNode, ClonableNodeModel } from '../../core/nodes/abstract/clonableNode';
-import type { NodeSchema } from '../../core/nodes/schema';
+import { CloneMode } from '../../core/nodes/cloneInfo';
 import { getApp } from '../core/application';
 import { Command } from '../core/command';
-import { AddChildCommand } from './addChild';
+import { CloneCommand } from './clone';
 import { ModifyModelCommand } from './modifyModel';
 
 export interface CreatePrefabInstanceCommandParams
 {
+    clonerId: string;
     parentId: string;
-    nodeSchema: NodeSchema;
+    model?: Partial<ModelBase>;
 }
 
 export interface CreatePrefabInstanceCommandReturn
@@ -20,7 +22,7 @@ export interface CreatePrefabInstanceCommandCache
 {
     clonedNode: ClonableNode;
     commands: {
-        addChild: AddChildCommand;
+        clone: CloneCommand;
         modifyModel: ModifyModelCommand<ClonableNodeModel>;
     };
 }
@@ -32,65 +34,51 @@ export class CreatePrefabInstanceCommand
 
     public apply(): CreatePrefabInstanceCommandReturn
     {
-        const { cache, params: { parentId, nodeSchema } } = this;
+        const { params: { parentId, clonerId, model } } = this;
         const app = getApp();
 
-        const addChildCommand = new AddChildCommand({ parentId, nodeSchema });
+        const cloneCommand = new CloneCommand({ nodeId: clonerId, newParentId: parentId, cloneMode: CloneMode.ReferenceRoot });
+        const { clonedNode } = cloneCommand.run();
+
         const modifyModelCommand = new ModifyModelCommand<ClonableNodeModel>({
-            nodeId: nodeSchema.id,
+            nodeId: clonedNode.id,
             updateMode: 'full',
             values: {
-                ...nodeSchema.model,
+                name: clonedNode.id,
+                ...model,
             },
         });
 
-        cache.commands = {
-            addChild: addChildCommand,
-            modifyModel: modifyModelCommand,
-        };
-
-        const { nodes } = addChildCommand.run();
-
         modifyModelCommand.run();
 
-        const node = nodes[0];
+        this.cache = {
+            clonedNode,
+            commands: {
+                clone: cloneCommand,
+                modifyModel: modifyModelCommand,
+            },
+        };
 
-        app.selection.hierarchy.set(node);
+        app.selection.hierarchy.set(clonedNode);
 
-        return { node };
+        return { node: clonedNode };
     }
 
     public undo(): void
     {
-        // const { cache: { commands: { setParent, clone } } } = this;
+        const { cache: { commands: { clone, modifyModel } } } = this;
 
-        // clone.undo();
-        // setParent.undo();
+        modifyModel.undo();
+        clone.undo();
     }
 
     public redo()
     {
-        // const { cache: { commands: { setParent, clone } } } = this;
+        const { cache: { commands: { clone, modifyModel }, clonedNode } } = this;
 
-        // setParent.redo();
-        // clone.redo();
-    }
+        clone.redo();
+        modifyModel.redo();
 
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public restoreSelection(type: 'undo' | 'redo')
-    {
-        // if (type === 'redo')
-        // {
-        //     const { cache: { clonedNode, sourceNode } } = this;
-        //     const app = getApp();
-
-        //     app.selection.hierarchy.set(clonedNode);
-        //     app.selection.project.set(sourceNode);
-        // }
-        // else
-        // {
-        //     super.restoreSelection(type);
-        // }
+        getApp().selection.hierarchy.set(clonedNode);
     }
 }

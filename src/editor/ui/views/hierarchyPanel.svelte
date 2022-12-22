@@ -45,7 +45,7 @@
   <hierarchy-panel>
     <Panel>
       <ButtonBar size="small" items={buttons} />
-      <TreeView bind:this={treeView} {tree} menu={spriteMenu} />
+      <TreeView bind:this={treeView} {tree} menu={spriteMenu} cssClass="hierarchy" />
     </Panel>
   </hierarchy-panel>
 </FocusArea>

@@ -147,7 +147,7 @@
       <div class="container" class:horizontal={orientation === "horizontal"} bind:this={container}>
         <div class="tree">
           <ButtonBar size="small" items={buttons} update={onButtonUpdater} />
-          <TreeView bind:this={treeView} {tree} menu={treeMenu} />
+          <TreeView bind:this={treeView} {tree} menu={treeMenu} cssClass="project" />
         </div>
         <div class="preview">
           <ProjectPreview />

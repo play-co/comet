@@ -1,8 +1,8 @@
-import type { ClonableNode, ClonableNodeModel } from '../../core/nodes/abstract/clonableNode';
+import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
+import { CloneMode } from '../../core/nodes/cloneInfo';
 import { getApp } from '../core/application';
 import { Command } from '../core/command';
-import { AddChildCommand } from './addChild';
-import { ModifyModelCommand } from './modifyModel';
+import { CloneCommand } from './clone';
 
 export interface CreatePrefabVariantCommandParams
 {
@@ -16,11 +16,7 @@ export interface CreatePrefabVariantCommandReturn
 
 export interface CreatePrefabVariantCommandCache
 {
-    clonedNode: ClonableNode;
-    commands: {
-        addChild: AddChildCommand;
-        modifyModel: ModifyModelCommand<ClonableNodeModel>;
-    };
+    cloneCommand: CloneCommand;
 }
 
 export class CreatePrefabVariantCommand
@@ -30,65 +26,34 @@ export class CreatePrefabVariantCommand
 
     public apply(): CreatePrefabVariantCommandReturn
     {
-        const { cache, params: { parentId, nodeSchema } } = this;
+        // 1. clone source node in prefab folder, make sibling of source node
+        const { cache, params: { nodeId } } = this;
         const app = getApp();
+        const sourceNode = this.getInstance(nodeId);
+        const newParentId = sourceNode.getParent().id;
 
-        const addChildCommand = new AddChildCommand({ parentId, nodeSchema });
-        const modifyModelCommand = new ModifyModelCommand<ClonableNodeModel>({
-            nodeId: nodeSchema.id,
-            updateMode: 'full',
-            values: {
-                ...nodeSchema.model,
-            },
-        });
+        const cloneCommand = new CloneCommand({ cloneMode: CloneMode.VariantRoot, newParentId, nodeId });
 
-        cache.commands = {
-            addChild: addChildCommand,
-            modifyModel: modifyModelCommand,
-        };
+        cache.cloneCommand = cloneCommand;
 
-        const { nodes } = addChildCommand.run();
+        const { clonedNode } = cloneCommand.run();
 
-        modifyModelCommand.run();
+        app.selection.hierarchy.set(clonedNode);
 
-        const node = nodes[0];
-
-        app.selection.hierarchy.set(node);
-
-        return { node };
+        return { node: clonedNode };
     }
 
     public undo(): void
     {
-        // const { cache: { commands: { setParent, clone } } } = this;
+        const { cache: { cloneCommand } } = this;
 
-        // clone.undo();
-        // setParent.undo();
+        cloneCommand.undo();
     }
 
     public redo()
     {
-        // const { cache: { commands: { setParent, clone } } } = this;
+        const { cache: { cloneCommand } } = this;
 
-        // setParent.redo();
-        // clone.redo();
-    }
-
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public restoreSelection(type: 'undo' | 'redo')
-    {
-        // if (type === 'redo')
-        // {
-        //     const { cache: { clonedNode, sourceNode } } = this;
-        //     const app = getApp();
-
-        //     app.selection.hierarchy.set(clonedNode);
-        //     app.selection.project.set(sourceNode);
-        // }
-        // else
-        // {
-        //     super.restoreSelection(type);
-        // }
+        cloneCommand.redo();
     }
 }

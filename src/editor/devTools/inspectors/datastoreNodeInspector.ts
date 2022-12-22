@@ -73,14 +73,14 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
 
             if (app.selection.hierarchy.shallowContains(node))
             {
-                cellStyle.fillColor = Color('turquoise').lighten(0.5).hex();
+                cellStyle.fillColor = Color('#2eb2c8').hex();
                 cellStyle.fontStyle = 'bold';
-                cellStyle.fontColor = 'blue';
+                cellStyle.fontColor = 'white';
             }
 
             if (app.selection.project.shallowContains(node.cast<MetaNode>()))
             {
-                cellStyle.fillColor = Color(this.painter.backgroundColor).lighten(0.35).hex();
+                cellStyle.fillColor = Color('#2e66c8').hex();
                 cellStyle.fontStyle = 'bold';
             }
         }
