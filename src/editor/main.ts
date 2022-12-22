@@ -1,5 +1,3 @@
-// implicitly register all core node types, editor must also register types
-import './core/nodeRegistry';
 // styles
 import './style';
 

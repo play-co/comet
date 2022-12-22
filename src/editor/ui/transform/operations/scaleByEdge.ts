@@ -19,8 +19,6 @@ export class ScaleByEdgeOperation extends ScaleOperation
         {
             this.setPivotFromVertex(vertex);
         }
-
-        // this.gizmo.setVisualPivot(pivotX, pivotY);
     }
 
     // @ts-ignore
@@ -74,9 +72,20 @@ export class ScaleByEdgeOperation extends ScaleOperation
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public end(dragInfo: DragInfo): void
     {
-        const { gizmo: { initialTransform: { width, height } } } = this;
-        const origPivotX = this.readCache('pivotX') / width;
-        const origPivotY = this.readCache('pivotY') / height;
+        const { gizmo: { initialTransform: { width, height, localBounds }, selection } } = this;
+        const isContainerSelected = selection.isSingle && selection.firstNode.nodeType() === 'Container';
+
+        let pivotX = this.readCache('pivotX');
+        let pivotY = this.readCache('pivotY');
+
+        if (isContainerSelected)
+        {
+            pivotX = pivotX - localBounds.left;
+            pivotY = pivotY - localBounds.top;
+        }
+
+        const origPivotX = pivotX / width;
+        const origPivotY = pivotY / height;
 
         this.setPivot(origPivotX, origPivotY);
     }

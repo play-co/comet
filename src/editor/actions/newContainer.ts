@@ -1,16 +1,15 @@
-import type { ContainerModel } from '../../core/nodes/concrete/display/containerNode';
+import type { ContainerModel, ContainerNode } from '../../core/nodes/concrete/display/containerNode';
 import { createNodeSchema } from '../../core/nodes/schema';
 import { type AddChildCommandReturn, AddChildCommand } from '../commands/addChild';
 import { Action } from '../core/action';
 import { Application, getApp } from '../core/application';
-import type { EmptyNode } from '../nodes/empty';
 
 export type NewContainerOptions = {
     addToSelected?: boolean;
     model?: Partial<ContainerModel>;
 };
 
-export class NewContainerAction extends Action<NewContainerOptions, EmptyNode>
+export class NewContainerAction extends Action<NewContainerOptions, ContainerNode>
 {
     constructor()
     {
@@ -29,7 +28,7 @@ export class NewContainerAction extends Action<NewContainerOptions, EmptyNode>
     protected exec(options: NewContainerOptions = {
         model: {},
         addToSelected: true,
-    }): EmptyNode
+    }): ContainerNode
     {
         const app = Application.instance;
         const { selection: { hierarchy: selection } } = app;
@@ -41,7 +40,7 @@ export class NewContainerAction extends Action<NewContainerOptions, EmptyNode>
             parentId = selection.lastNode.id;
         }
 
-        const nodeSchema = createNodeSchema('Empty', {
+        const nodeSchema = createNodeSchema('Container', {
             parent: parentId,
             model: {
                 x: 10,
@@ -53,7 +52,7 @@ export class NewContainerAction extends Action<NewContainerOptions, EmptyNode>
 
         const { nodes } = app.undoStack.exec<AddChildCommandReturn>(new AddChildCommand({ parentId, nodeSchema }));
 
-        const node = nodes[0] as unknown as EmptyNode;
+        const node = nodes[0] as unknown as ContainerNode;
 
         app.selection.hierarchy.set(node.asClonableNode());
 

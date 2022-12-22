@@ -1,5 +1,6 @@
 import '../ui/components/mouseListener';
 import '../ui/components/keyboardListener';
+import '../../core/nodes/nodeRegistry';
 
 import type { GoldenLayout } from 'golden-layout';
 import { Rectangle } from 'pixi.js';

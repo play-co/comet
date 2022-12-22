@@ -58,7 +58,7 @@ export class TransformGizmo extends Container
     protected groupSizeGraphic: Graphics;
 
     protected lastClick: number;
-    protected isDirty: boolean;
+    public isDirty: boolean;
 
     constructor(editableView: EditableViewport, config: Partial<TransformGizmoConfig> = {})
     {
@@ -457,6 +457,7 @@ export class TransformGizmo extends Container
 
     public onMouseDown = (event: InteractionEvent) =>
     {
+        const { initialTransform } = this;
         const isShiftKeyPressed = event.data.originalEvent.shiftKey;
         const isSpacePressed = isKeyPressed(' ');
         const wasDrillDownClick = this.wasDoubleClick() || isShiftKeyPressed;
@@ -486,7 +487,12 @@ export class TransformGizmo extends Container
             config,
         } = this;
 
-        if (isMetaDown && !isAltDown)
+        if (initialTransform.localBounds.width === 0 && initialTransform.localBounds.height === 0)
+        {
+            // container, only translation available
+            config.enableTranslation && this.setOperation(new TranslateOperation(this));
+        }
+        else if (isMetaDown && !isAltDown)
         {
             // rotation
             config.enableRotation && this.setOperation(new RotateOperation(this));

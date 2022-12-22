@@ -104,7 +104,7 @@ export abstract class ClonableNode<
 
             if (isVariantLike)
             {
-                this.model.link(sourceModel);
+                this.model.link(sourceModel, this.cloneInfo.cloneMode);
 
                 if (isReferenceRoot)
                 {

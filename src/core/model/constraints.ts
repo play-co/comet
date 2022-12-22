@@ -30,7 +30,7 @@ export class NumericRangeLimitConstraint extends ModelConstraint<number>
     }
 }
 
-// todo: needed anymore?
+// todo: needed any more?
 export class ReferenceConstraint<M extends object> extends ModelConstraint<unknown>
 {
     public mutableKeys: (keyof M)[];

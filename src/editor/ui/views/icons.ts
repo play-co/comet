@@ -8,6 +8,5 @@ export const Icons = {
     SpriteAdd: '/assets/sprite_add.ico',
     TextureAsset: '/assets/texture.ico',
     Container: '/assets/container.ico',
-    Empty: '/assets/container.ico',
     ContainerAdd: '/assets/container_add.ico',
 } as const;

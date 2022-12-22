@@ -1,6 +1,7 @@
 import EventEmitter from 'eventemitter3';
 
 import { GraphNode } from '../nodes/abstract/graphNode';
+import { CloneMode } from '../nodes/cloneInfo';
 import { newId } from '../nodes/instances';
 import type { ModelSchema } from './schema';
 
@@ -18,6 +19,7 @@ export class Model<M> extends GraphNode
     public readonly schema: ModelSchema<M>;
     public readonly data: Partial<M>;
     public isReference: boolean;
+    public cloneMode: CloneMode;
 
     protected readonly emitter: EventEmitter<'modified'>;
 
@@ -29,15 +31,17 @@ export class Model<M> extends GraphNode
         this.data = data;
         this.children = [];
         this.isReference = false;
+        this.cloneMode = CloneMode.Original;
 
         this.emitter = new EventEmitter();
 
         this.setValues(data);
     }
 
-    public link(sourceModel: Model<M>)
+    public link(sourceModel: Model<M>, cloneMode: CloneMode = CloneMode.Original)
     {
         this.parent = sourceModel;
+        this.cloneMode = cloneMode;
 
         sourceModel.children.push(this);
     }
