@@ -34,11 +34,15 @@ export class DeleteNodeAction extends Action<DeleteNodeOptions, void>
             nodeIds.push(options.nodeId);
         }
         else
+        if (app.isAreaFocussed('viewport') || app.isAreaFocussed('hierarchy'))
         {
             nodeIds.push(...app.selection.hierarchy.items.map((node) => node.id));
+            nodeIds = nodeIds.filter((nodeId) => !getInstance<ClonableNode>(nodeId).isMetaNode);
         }
-
-        nodeIds = nodeIds.filter((nodeId) => !getInstance<ClonableNode>(nodeId).isMetaNode);
+        else if (app.isAreaFocussed('project'))
+        {
+            nodeIds.push(...app.selection.project.items.map((node) => node.id));
+        }
 
         if (nodeIds.length)
         {

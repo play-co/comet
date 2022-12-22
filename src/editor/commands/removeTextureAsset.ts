@@ -64,14 +64,13 @@ export class RemoveTextureAssetCommand
 
         textureNodes.forEach((textureNode) =>
         {
-            const textureAssetId = textureNode.id;
             const spriteDependants = app.project.walk<ClonableNode, SpriteNode[]>((node, options) =>
             {
                 if (node.is(SpriteNode))
                 {
                     const sprite = node.cast<SpriteNode>();
 
-                    if (sprite.model.getValue<string>('textureAssetId') === textureAssetId)
+                    if (sprite.model.getValue<string>('textureAssetId') === textureNode.id)
                     {
                         options.data.push(node);
                     }

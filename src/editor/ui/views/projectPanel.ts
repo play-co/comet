@@ -53,7 +53,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
                 const isChildOfScene = node.parent?.is(SceneNode);
                 const isChildOfPrefab = node.parent?.is(FolderNode) && node.parent.cast<FolderNode>().isWithinRootFolder('Prefabs');
 
-                if (isChildOfScene)
+                if (isChildOfScene || node.isCloaked)
                 {
                     options.cancel = true;
 

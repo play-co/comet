@@ -29,8 +29,9 @@
 
 High Priority
 * Prefabs
-    - Add items needs investigating
-    - Delete asset undo/redo needs investigating
+    - Create variant
+    - Delete prefab asset
+    - Add items to clones needs investigating, didn't update properly
 
 Low Priority
 * Project properties panel
