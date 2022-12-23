@@ -30,7 +30,8 @@ export abstract class DevInspector<T extends Record<string, any> >
     constructor(id: string, backgroundColor = 'blue')
     {
         this.id = id;
-        this.painter = new Canvas2DPainter(0, 0, backgroundColor);
+        this.painter = new Canvas2DPainter();
+        this.painter.setBackgroundColor(backgroundColor);
         this.isExpanded = true;
         this.maxHeight = -1;
         this.scrollTop = 0;

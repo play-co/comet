@@ -28,6 +28,7 @@
 # WIP TODO:
 
 High Priority
+* Re-parenting - need to be able to re-parent and preserve transform, or keep current transform for local positioning
 * Prefabs
     - Create PrefabInstance
         - all nodes are getting reference_root, just need the root
@@ -41,6 +42,7 @@ High Priority
 * Cloaking - needs overhaul, perhaps rename to "markForDeletion" and "unmarkForDeletion"
     - only root node should be marked, don't walk all child nodes
     - restore node currently brings back too many nodes, needs to be tightened
+* Multi-user testing - once the above is checked, we need to validate and patch multi-user cases
 
 Low Priority
 * Project properties panel

@@ -1,4 +1,7 @@
-import { degToRad } from '../../core/util/geom';
+export function degToRad(deg: number)
+{
+    return deg * (Math.PI / 180);
+}
 
 export const px = (value: number) => value + 0.5;
 
@@ -62,17 +65,17 @@ export default class Canvas2DPainter
     protected _fontStyle: FontStyle;
     protected _fontFamily: string;
 
-    constructor(width = 100, height = 100, backgroundColor = 'black')
+    constructor(canvas?: HTMLCanvasElement, backgroundColor = 'black')
     {
         this._fontColor = 'white';
-        this._fontSize = 10;
+        this._fontSize = 11;
         this._fontStyle = 'normal';
         this._fontFamily = 'sans-serif';
 
         this._backgroundColor = backgroundColor;
-        this.canvas = document.createElement('canvas');
+        this.canvas = canvas ?? document.createElement('canvas');
         this
-            .size(width, height)
+            .size(this.canvas.offsetWidth, this.canvas.offsetHeight)
             .updateFont()
             .clear();
     }
@@ -102,6 +105,16 @@ export default class Canvas2DPainter
         return this;
     }
 
+    public setBackgroundColor(color: string)
+    {
+        this._backgroundColor = color;
+    }
+
+    public setTransform(transform: DOMMatrix)
+    {
+        this.ctx.setTransform(transform);
+    }
+
     public resetTransform()
     {
         this.ctx.resetTransform();
@@ -112,6 +125,13 @@ export default class Canvas2DPainter
     public translate(x: number, y: number)
     {
         this.ctx.translate(x, y);
+
+        return this;
+    }
+
+    public alpha(alpha: number)
+    {
+        this.ctx.globalAlpha = alpha;
 
         return this;
     }
@@ -259,6 +279,16 @@ export default class Canvas2DPainter
         this.ctx.clip(region, 'nonzero');
 
         return this;
+    }
+
+    public setFont(size: number, family: string, style: FontStyle, color: string)
+    {
+        this._fontSize = size;
+        this._fontStyle = style;
+        this._fontFamily = family;
+        this._fontColor = color;
+
+        return this.updateFont();
     }
 
     public get font()
