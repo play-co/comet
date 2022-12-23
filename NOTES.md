@@ -28,10 +28,9 @@
 # WIP TODO:
 
 High Priority
-* Re-parenting - need to be able to re-parent and preserve transform, or keep current transform for local positioning
 * Prefabs
     - Create PrefabInstance
-        - all nodes are getting reference_root, just need the root
+        - need to give replaced instance same model values
     - Delete prefab asset - need to delete all clones and be undoable
     - Add items to clones needs investigating, didn't update properly
         - AddChildCommand needs modified version (new command?) which takes a Node instead of schema (which only does a single child) and propagates to all clone descendants

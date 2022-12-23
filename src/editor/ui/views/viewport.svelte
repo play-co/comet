@@ -14,7 +14,7 @@
       {
         id: "createPrefab",
         label: "Create Prefab",
-        onClick: () => Actions.createReferencePrefab.dispatch(),
+        onClick: () => Actions.newPrefabAsset.dispatch(),
       },
     ],
     (item) => {

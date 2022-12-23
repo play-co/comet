@@ -3,11 +3,11 @@ import { CreatePrefabAssetCommand } from '../commands/createPrefabAsset';
 import { Action } from '../core/action';
 import { getApp } from '../core/application';
 
-export class CreateReferenceAction extends Action<void, void>
+export class NewPrefabAssetAction extends Action<void, void>
 {
     constructor()
     {
-        super('createReference');
+        super('newPrefabAsset');
     }
 
     protected shouldRun(): boolean

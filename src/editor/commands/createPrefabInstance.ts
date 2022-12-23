@@ -1,6 +1,7 @@
 import type { ModelBase } from '../../core/model/model';
 import type { ClonableNode, ClonableNodeModel } from '../../core/nodes/abstract/clonableNode';
 import { CloneMode } from '../../core/nodes/cloneInfo';
+import { getApp } from '../core/application';
 import { Command } from '../core/command';
 import { CloneCommand } from './clone';
 import { ModifyModelCommand } from './modifyModel';
@@ -38,11 +39,15 @@ export class CreatePrefabInstanceCommand
         const cloneCommand = new CloneCommand({ nodeId: clonerId, newParentId: parentId, cloneMode: CloneMode.ReferenceRoot });
         const { clonedNode } = cloneCommand.run();
 
+        const sourceNode = this.getInstance(clonerId);
+        const values = sourceNode.model.ownValues;
+
         const modifyModelCommand = new ModifyModelCommand<ClonableNodeModel>({
             nodeId: clonedNode.id,
             updateMode: 'full',
             values: {
                 name: clonedNode.id,
+                ...values,
                 ...model,
             },
         });
@@ -56,6 +61,8 @@ export class CreatePrefabInstanceCommand
                 modifyModel: modifyModelCommand,
             },
         };
+
+        getApp().selection.hierarchy.set(clonedNode);
 
         return { node: clonedNode };
     }

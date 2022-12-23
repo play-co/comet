@@ -10,11 +10,11 @@ export type NewPrefabOptions = {
     model?: Partial<ModelBase>;
 };
 
-export class NewPrefabAction extends Action<NewPrefabOptions, ClonableNode>
+export class NewPrefabInstanceAction extends Action<NewPrefabOptions, ClonableNode>
 {
     constructor()
     {
-        super('NewPrefab');
+        super('NewPrefabInstance');
     }
 
     protected shouldRun(): boolean

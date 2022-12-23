@@ -1,5 +1,4 @@
 import { CopyAction } from './copy';
-import { CreateReferenceAction } from './createReference';
 import { DeleteNodeAction } from './deleteNode';
 import { DeletePrefabAction } from './deletePrefab';
 import { DeleteTextureAction } from './deleteTexture';
@@ -7,7 +6,8 @@ import { DeselectAction } from './deselect';
 import { ImportTextureAction } from './importTexture';
 import { NewContainerAction } from './newContainer';
 import { NewFolderAction } from './newFolder';
-import { NewPrefabAction } from './newPrefab';
+import { NewPrefabAssetAction } from './newPrefabAsset';
+import { NewPrefabInstanceAction } from './newPrefabInstance';
 import { NewPrefabVariantAction } from './newPrefabVariant';
 import { NewSceneAction } from './newScene';
 import { NewSpriteAction } from './newSprite';
@@ -23,7 +23,8 @@ export const Actions = {
     newScene: new NewSceneAction(),
     newContainer: new NewContainerAction(),
     newSprite: new NewSpriteAction(),
-    newPrefab: new NewPrefabAction(),
+    newPrefabAsset: new NewPrefabAssetAction(),
+    newPrefabInstance: new NewPrefabInstanceAction(),
     newPrefabVariant: new NewPrefabVariantAction(),
     deleteNode: new DeleteNodeAction(),
     deleteTexture: new DeleteTextureAction(),
@@ -35,5 +36,4 @@ export const Actions = {
     redo: new RedoAction(),
     copy: new CopyAction(),
     paste: new PasteAction(),
-    createReferencePrefab: new CreateReferenceAction(),
 };

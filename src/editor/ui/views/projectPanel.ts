@@ -141,7 +141,11 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
 
         if (draggable.length > 0)
         {
-            getApp().itemDrag.startDrag('project', event, draggable[0]);
+            const app = getApp();
+            const assetName = draggable[0].model.getValue<string>('name');
+
+            app.itemDrag.startDrag('project', event, draggable[0]);
+            app.statusBar.setMessage(`Create instance of <${assetName}>`);
         }
     }
 
@@ -158,7 +162,13 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
 
             if (app.selection.hierarchy.hasSelection)
             {
-                const targetNode = app.selection.hierarchy.firstNode.cast<DisplayObjectNode>();
+                let targetNode = app.selection.hierarchy.firstNode.cast<DisplayObjectNode>();
+
+                if (targetNode.cloneInfo.cloner?.id === node.id)
+                {
+                    targetNode = targetNode.parent as DisplayObjectNode;
+                }
+
                 const mousePos = app.viewport.getMousePos(event.clientX, event.clientY);
                 const localPoint = targetNode.globalToLocal(mousePos.x, mousePos.y);
 
@@ -166,13 +176,6 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
                 y = localPoint.y;
 
                 parentId = targetNode.id;
-
-                if (targetNode.cloneInfo.cloner?.id === node.id)
-                {
-                    app.statusBar.setMessage('Cannot clone a prefab into itself');
-
-                    return;
-                }
             }
 
             if (node.is(TextureAssetNode))
@@ -188,7 +191,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
             }
             else if (app.project.getRootFolder('Prefabs').contains(node))
             {
-                Actions.newPrefab.dispatch({
+                Actions.newPrefabInstance.dispatch({
                     clonerId: node.id,
                     parentId,
                     model: {

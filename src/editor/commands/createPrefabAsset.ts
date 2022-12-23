@@ -5,6 +5,7 @@ import { FolderNode } from '../../core/nodes/concrete/meta/folderNode';
 import { getApp } from '../core/application';
 import { Command } from '../core/command';
 import { CloneCommand } from './clone';
+import { ModifyModelCommand } from './modifyModel';
 import { SetParentCommand } from './setParent';
 
 export interface CreatePrefabAssetCommandParams
@@ -66,6 +67,16 @@ export class CreatePrefabAssetCommand
         });
 
         const { clonedNode } = cloneCommand.run();
+
+        const values = sourceNode.model.ownValues;
+
+        const modifyCommand = new ModifyModelCommand({
+            nodeId: clonedNode.id,
+            updateMode: 'full',
+            values,
+        });
+
+        modifyCommand.run();
 
         cache.commands = {
             setParent: setParentCommand,
