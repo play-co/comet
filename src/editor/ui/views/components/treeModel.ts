@@ -407,6 +407,8 @@ export abstract class TreeViewModel<ItemType extends ClonableNode, SelectionType
                 }
 
                 this.lastClick = Date.now();
+
+                getApp().statusBar.clearMessage();
             });
         }
     }
@@ -443,6 +445,8 @@ export abstract class TreeViewModel<ItemType extends ClonableNode, SelectionType
                 }
 
                 dragTarget.value = target;
+
+                this.onHintReOrderTarget(selection.firstNode, target?.data);
             }
             else if (canReParent)
             {
@@ -457,8 +461,24 @@ export abstract class TreeViewModel<ItemType extends ClonableNode, SelectionType
                 }
 
                 dragTarget.value = target;
+
+                this.onHintReParentTarget(selection.firstNode, target?.data);
             }
         }
+    }
+
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected onHintReOrderTarget(sourceObject: ItemType, targetObject: ItemType | undefined)
+    {
+        // subclasses
+    }
+
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected onHintReParentTarget(sourceObject: ItemType, targetObject: ItemType | undefined)
+    {
+        // subclasses
     }
 
     public doesSelectionContainItem(item: TreeItem<ItemType>)

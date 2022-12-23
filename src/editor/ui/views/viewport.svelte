@@ -24,7 +24,7 @@
       const id = item.id;
 
       if (id === "copy") {
-        item.isEnabled = !isOnlySceneSelected;
+        item.isEnabled = !isOnlySceneSelected && selection.length > 0;
       } else if (id === "paste") {
         item.isEnabled = app.hasClipboard();
       } else if (id === "createPrefab") {

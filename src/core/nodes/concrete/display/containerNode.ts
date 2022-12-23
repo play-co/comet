@@ -45,14 +45,12 @@ export class ContainerNode<
         const thisView = this.view;
         const parentView = this.view.parent;
 
-        thisView.updateTransform();
-        parentView.updateTransform();
-
-        const viewMatrix = thisView.worldTransform.clone();
+        const thisMatrix = thisView.worldTransform.clone();
         const parentMatrix = parentView.worldTransform.clone();
 
-        viewMatrix.prepend(parentMatrix.invert());
-        thisView.transform.setFromMatrix(viewMatrix);
+        parentMatrix.invert();
+        thisMatrix.prepend(parentMatrix);
+        thisView.transform.setFromMatrix(thisMatrix);
     }
 
     public test()

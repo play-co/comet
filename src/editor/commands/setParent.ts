@@ -8,6 +8,7 @@ export interface SetParentCommandParams
     parentId: string;
     nodeId: string;
     updateMode: UpdateMode;
+    preserveTransform?: boolean;
 }
 
 export interface SetParentCommandReturn
@@ -28,7 +29,7 @@ export class SetParentCommand
 
     public apply(): SetParentCommandReturn
     {
-        const { datastore, params: { parentId, nodeId, updateMode } } = this;
+        const { datastore, params: { parentId, nodeId, updateMode, preserveTransform } } = this;
 
         const parentNode = this.getInstance(parentId);
         const childNode = this.getInstance(nodeId);
@@ -54,9 +55,10 @@ export class SetParentCommand
         // update graph node
         parentNode.addChild(childNode);
 
-        if (childNode.is(ContainerNode) && parentNode.is(ContainerNode))
+        if (preserveTransform !== true && childNode.is(ContainerNode) && parentNode.is(ContainerNode))
         {
             childNode.cast<ContainerNode>().reParentTransform();
+            // todo: decompose transform (like gizmo does to get local transform)
         }
 
         Events.datastore.node.local.reParented.emit({

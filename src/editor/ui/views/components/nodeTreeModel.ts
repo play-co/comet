@@ -2,7 +2,7 @@ import type { ClonableNode } from '../../../../core';
 import { ModifyModelCommand } from '../../../commands/modifyModel';
 import { SetNodeIndexCommand } from '../../../commands/setNodeIndex';
 import { SetParentCommand } from '../../../commands/setParent';
-import { Application } from '../../../core/application';
+import { Application, getApp } from '../../../core/application';
 import type { ItemSelection } from '../../../core/itemSelection';
 import { type TreeItem, TreeViewModel } from './treeModel';
 
@@ -74,7 +74,7 @@ export abstract class NodeTreeModel<
         }
     }
 
-    protected reorder(
+    protected getReOrderIndex(
         sourceObj: ClonableNode,
         targetObj: ClonableNode,
     )
@@ -88,6 +88,21 @@ export abstract class NodeTreeModel<
             : parentNode.indexOf(targetObj, true) + 1;
 
         if (index !== sourceObj.index && sourceObj !== targetObj)
+        {
+            return index;
+        }
+
+        return -1;
+    }
+
+    protected reorder(
+        sourceObj: ClonableNode,
+        targetObj: ClonableNode,
+    )
+    {
+        const index = this.getReOrderIndex(sourceObj, targetObj);
+
+        if (index > -1)
         {
             Application.instance.undoStack.exec(
                 new SetNodeIndexCommand({
@@ -121,5 +136,39 @@ export abstract class NodeTreeModel<
                 updateMode: 'full',
             }),
         );
+    }
+
+    protected onHintReOrderTarget(sourceObject: ClonableNode, targetObject: ClonableNode | undefined): void
+    {
+        const app = getApp();
+        const sourceName = sourceObject.model.getValue<string>('name');
+
+        if (targetObject)
+        {
+            const targetName = targetObject ? targetObject.model.getValue<string>('name') : '';
+
+            app.statusBar.setMessage(targetObject ? `Reorder <${sourceName}> under <${targetName}>` : '');
+        }
+        else
+        {
+            app.statusBar.clearMessage();
+        }
+    }
+
+    protected onHintReParentTarget(sourceObject: ClonableNode, targetObject: ClonableNode | undefined): void
+    {
+        const app = getApp();
+        const sourceName = sourceObject.model.getValue<string>('name');
+
+        if (targetObject)
+        {
+            const targetName = targetObject ? targetObject.model.getValue<string>('name') : '';
+
+            app.statusBar.setMessage(targetObject ? `Reparent <${sourceName}> to <${targetName}>` : '');
+        }
+        else
+        {
+            app.statusBar.clearMessage();
+        }
     }
 }

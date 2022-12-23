@@ -91,7 +91,10 @@ export class Application
     {
         Application._instance = this;
 
-        (window as any).app = this;
+        const win = window as any;
+
+        win.app = this;
+        win.$ = getInstance;
 
         enableLog();
 
