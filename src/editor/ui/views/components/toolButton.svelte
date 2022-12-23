@@ -60,7 +60,7 @@
 
   tool-button.selected img {
     position: relative;
-    left: 2px;
-    top: 2px;
+    left: 1px;
+    top: 1px;
   }
 </style>

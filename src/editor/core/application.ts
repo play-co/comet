@@ -251,7 +251,7 @@ export class Application
             }
         }
 
-        this.viewport.setRoot(root);
+        this.viewport.setRoot(root, false);
 
         this.project.updateRecursive();
     }

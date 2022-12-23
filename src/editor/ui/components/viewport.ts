@@ -387,13 +387,16 @@ export class EditableViewport
         container.removeChild(this.canvas);
     }
 
-    public setRoot(node: DisplayObjectNode)
+    public setRoot(node: DisplayObjectNode, savePrefs = true)
     {
         this.nodeLayer.removeChild(this.rootNode.view);
         this.rootNode = node;
         this.nodeLayer.addChild(this.rootNode.view);
 
-        saveUserViewportPrefs();
+        if (savePrefs)
+        {
+            saveUserViewportPrefs();
+        }
 
         Events.viewport.rootChanged.emit(node);
     }
