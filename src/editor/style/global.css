@@ -49,12 +49,6 @@ h2{
   list-style-type:none;
 }
 
-.preload {
-  opacity: 0.00001;
-  position: absolute;
-  pointer-events: none;
-}
-
 input {
   width: 100%;
   border: 1px solid #4f4f4f;

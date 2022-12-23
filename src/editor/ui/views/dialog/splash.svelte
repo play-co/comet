@@ -1,14 +1,22 @@
 <script lang="ts">
   import Events from "../../../events";
+  let message = "Connecting...";
 
   const onClick = () => {
     Events.dialog.modal.close.emit();
   };
+
+  Events.project.ready.bind(() => {
+    message = "Connected and ready";
+    setTimeout(() => {
+      Events.dialog.modal.close.emit();
+    }, 1500);
+  });
 </script>
 
 <dialog-splash on:click={onClick}>
   <img src="/assets/logo.png" alt="Comet" />
-  <div class="message">Connecting...</div>
+  <div class="message">{message}</div>
 </dialog-splash>
 
 <style>

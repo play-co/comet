@@ -28,7 +28,10 @@
       } else if (id === "paste") {
         item.isEnabled = app.hasClipboard();
       } else if (id === "createPrefab") {
-        item.isEnabled = selection.isSingle && !isOnlySceneSelected;
+        item.isEnabled =
+          selection.isSingle &&
+          !isOnlySceneSelected &&
+          selection.firstNode.cloneInfo.cloneMode === CloneMode.Original;
       }
     }
   );
@@ -43,6 +46,7 @@
   import FocusArea from "./components/focusArea.svelte";
   import { Actions } from "../../actions";
   import { SceneNode } from "../../../core/nodes/concrete/meta/sceneNode";
+  import { CloneMode } from "../../../core/nodes/cloneInfo";
 
   const app = Application.instance;
   const viewport = app.viewport;

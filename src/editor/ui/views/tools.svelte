@@ -1,13 +1,29 @@
 <script lang="ts">
+  import { getApp } from "../../core/application";
+  import type { Tool } from "../../core/tool";
+  import Events from "../../events";
+  import { Tools } from "../../tools/tools";
   import ToolButton from "./components/toolButton.svelte";
-  import { Icons } from "./icons";
+
+  const app = getApp();
+
+  let tools: (Tool | "-")[] = [Tools.select, "-", Tools.newSprite, Tools.newContainer];
+  let selected = app.currentTool().id;
+
+  Events.tool.select.bind((tool) => {
+    selected = tool.id;
+  });
 </script>
 
 <tool-panel>
   <div class="container">
-    <ToolButton icon={Icons.Sprite} tip="New Sprite" />
-    <tool-separator />
-    <ToolButton icon={Icons.Container} tip="New Container" />
+    {#each tools as tool}
+      {#if tool === "-"}
+        <tool-separator />
+      {:else}
+        <ToolButton {tool} selected={tool.id === selected} />
+      {/if}
+    {/each}
   </div>
 </tool-panel>
 

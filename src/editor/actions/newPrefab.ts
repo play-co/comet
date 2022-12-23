@@ -36,8 +36,6 @@ export class NewPrefabAction extends Action<NewPrefabOptions, ClonableNode>
             model: options.model,
         }));
 
-        app.selection.hierarchy.set(node.asClonableNode());
-
         return node;
     }
 }

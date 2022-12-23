@@ -1,18 +1,21 @@
 <script lang="ts">
-  export let icon: string;
-  export let tip: string | undefined = undefined;
+  import { getApp } from "../../../core/application";
+  import type { Tool } from "../../../core/tool";
+
+  export let tool: Tool;
+  export let selected: boolean;
 </script>
 
-<tool-button>
+<tool-button class:selected on:click={() => getApp().setTool(tool)}>
   <!-- svelte-ignore a11y-missing-attribute -->
-  <a title={tip}>
-    <img src={icon} draggable="false" alt={tip} />
+  <a title={tool.options.tip}>
+    <img src={tool.options.icon} draggable="false" alt={tool.options.tip} />
   </a>
 </tool-button>
 
 <style>
   tool-button {
-    width: 100%;
+    width: 40px;
     height: 40px;
     border-radius: 5px;
     background-color: var(--panel-bg-color-light);
@@ -20,6 +23,12 @@
     border: 1px outset #a699998f;
     margin-bottom: 8px;
     display: block;
+    position: relative;
+  }
+
+  tool-button.selected {
+    background-color: #555;
+    border: 1px inset #00c1ff;
   }
 
   tool-button:hover {
@@ -47,5 +56,11 @@
   img {
     width: 30px;
     user-select: none;
+  }
+
+  tool-button.selected img {
+    position: relative;
+    left: 2px;
+    top: 2px;
   }
 </style>

@@ -126,19 +126,6 @@ export abstract class ClonableNode<
 
         const cloneInfo = new CloneInfo(cloneMode, this);
 
-        if (depth === 0)
-        {
-            // change to root type for top level clone node
-            if (cloneInfo.isReference)
-            {
-                cloneInfo.cloneMode = CloneMode.ReferenceRoot;
-            }
-            else if (cloneInfo.isVariant)
-            {
-                cloneInfo.cloneMode = CloneMode.VariantRoot;
-            }
-        }
-
         const node = new Ctor(
             {
                 cloneInfo,
@@ -152,7 +139,19 @@ export abstract class ClonableNode<
                 return;
             }
 
-            const childNode = child.clone(cloneMode, depth + 1);
+            let childCloneMode = cloneMode;
+
+            if (cloneMode === CloneMode.ReferenceRoot)
+            {
+                childCloneMode = CloneMode.Reference;
+            }
+
+            if (cloneMode === CloneMode.VariantRoot)
+            {
+                childCloneMode = CloneMode.Variant;
+            }
+
+            const childNode = child.clone(childCloneMode, depth + 1);
 
             childNode.setParent(node);
         });

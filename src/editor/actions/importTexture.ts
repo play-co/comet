@@ -19,7 +19,7 @@ export class ImportTextureAction extends Action<ImportTextureActionOptions, void
     {
         const app = getApp();
 
-        return super.shouldRun() && app.isAreaFocussed('viewport');
+        return super.shouldRun() && app.isAreaFocussed('viewport', 'project');
     }
 
     protected exec(options: ImportTextureActionOptions)

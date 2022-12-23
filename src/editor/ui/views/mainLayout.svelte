@@ -7,7 +7,6 @@
   import { fade, scale } from "svelte/transition";
 
   import ItemDrag from "./components/itemDrag.svelte";
-  import Preload from "./components/preload.svelte";
 </script>
 
 <main-layout transition:fade={{ duration: 1000 }}>
@@ -24,8 +23,6 @@
   </div>
   <StatusBar />
   <ItemDrag />
-
-  <Preload />
 </main-layout>
 
 <style>

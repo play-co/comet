@@ -11,6 +11,7 @@ import keyboardEvents from './modules/keyboardEvents';
 import mouseEvents from './modules/mouseEvents';
 import projectEvents from './modules/projectEvents';
 import projectSelectionEvents from './modules/projectSelectionEvents';
+import toolEvents from './modules/toolEvents';
 import transformEvents from './modules/transformEvents';
 import viewportEvents from './modules/viewportEvents';
 
@@ -32,6 +33,7 @@ const Events = EventMap({
     contextMenu: contextMenuEvents,
     dialog: dialogEvents,
     itemDrag: itemDragEvents,
+    tool: toolEvents,
 });
 
 export default Events;

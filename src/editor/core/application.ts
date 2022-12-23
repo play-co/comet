@@ -21,6 +21,7 @@ import Events from '../events';
 import { LocalStorageProvider } from '../storage/localStorageProvider';
 import { ConvergenceDatastore } from '../sync/convergenceDatastore';
 import { RemoteObjectSync } from '../sync/remoteObjectSync';
+import { Tools } from '../tools/tools';
 import { DropZone } from '../ui/components/dropzone';
 import { EditableViewport } from '../ui/components/viewport';
 import type { FocusAreaId } from '../ui/views/components/focusArea';
@@ -31,6 +32,7 @@ import { getUrlParam } from '../util';
 import { HierarchySelection } from './hierarchySelection';
 import { initHistory, writeUndoStack } from './history';
 import { ProjectSelection } from './projectSelection';
+import type { Tool } from './tool';
 import UndoStack from './undoStack';
 import { loadUserEditPrefs, loadUserSelectionPrefs, saveUserEditPrefs, saveUserSelectionPrefs } from './userPrefs';
 
@@ -63,6 +65,8 @@ export class Application
         hierarchy: HierarchySelection;
         project: ProjectSelection;
     };
+
+    public tool: Tool;
 
     public gridSettings: GridSettings;
     public layout?: GoldenLayout;
@@ -114,13 +118,14 @@ export class Application
         this.nodeUpdater = new RemoteObjectSync(datastore);
         this.viewport = new EditableViewport();
         this.undoStack = new UndoStack();
+        this.tool = Tools.select;
 
         Events.datastore.node.remote.removed.bind(writeUndoStack);
 
         initHistory();
         this.initEvents();
 
-        nextTick().then(() => Events.dialog.modal.open.emit('splash'));
+        // nextTick().then(() => Events.dialog.modal.open.emit('splash'));
     }
 
     public async connect()
@@ -158,8 +163,6 @@ export class Application
 
         this.project.isReady = true;
         Events.project.ready.emit();
-
-        Events.dialog.modal.close.emit();
 
         nextTick().then(() => this.initPersistentSelection());
     }
@@ -454,6 +457,20 @@ export class Application
     public hasClipboard()
     {
         return this.clipboard.length > 0;
+    }
+
+    public currentTool()
+    {
+        return this.tool;
+    }
+
+    public setTool(tool: Tool)
+    {
+        Events.tool.deselect.emit(this.tool);
+
+        this.tool = tool;
+
+        Events.tool.select.emit(tool);
     }
 }
 

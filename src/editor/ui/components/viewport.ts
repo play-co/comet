@@ -238,6 +238,7 @@ export class EditableViewport
 
             return;
         }
+
         if (gizmoFrameBounds.contains(globalX, globalY) && isAddKey)
         {
             // click inside transform gizmo area remove from selection if shift down

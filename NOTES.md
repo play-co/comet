@@ -29,15 +29,19 @@
 
 High Priority
 * Prefabs
-    - Create variant
-    - Delete prefab asset
+    - Create PrefabInstance
+        - all nodes are getting reference_root, just need the root
+    - Delete prefab asset - need to delete all clones and be undoable
     - Add items to clones needs investigating, didn't update properly
         - AddChildCommand needs modified version (new command?) which takes a Node instead of schema (which only does a single child) and propagates to all clone descendants
     - Paste logic needs tightening:
+        - need to support prefab instances (currently only duplicate)
         - if all from same parent, paste into that parent
         - if from different parents, paste into selected parent
+* Viewport user prefs not working
 
 Low Priority
+* Tool buttons (app.currentTool) use Actions, Select (translate only gizmo), Transform, Sprite, Container, Graphic, Text...
 * Project properties panel
     - name
     - created

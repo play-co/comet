@@ -1,4 +1,6 @@
 export const Icons = {
+    Select: '/assets/select.ico',
+    Transform: '/assets/transform.ico',
     Scene: '/assets/scene.ico',
     SceneAdd: '/assets/scene_add.ico',
     Folder: '/assets/folder.ico',
