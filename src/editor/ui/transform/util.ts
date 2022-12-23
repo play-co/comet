@@ -3,8 +3,8 @@ import type { Container, DisplayObject } from 'pixi.js';
 import { Matrix, Rectangle, Transform } from 'pixi.js';
 
 import type { ClonableNode } from '../../../core';
-import { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
-import { angleBetween } from '../../../core/util/geom';
+import { type DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
+import { angleBetween, radToDeg } from '../../../core/util/geom';
 
 export interface InitialGizmoTransform
 {
@@ -183,6 +183,60 @@ export function decomposeTransform(
     transform.position.y = matrix.ty + ((pivot.x * matrix.b) + (pivot.y * matrix.d));
 
     return transform;
+}
+
+export function getLocalTransform(view: DisplayObject)
+{
+    view.updateTransform();
+
+    const pivotX = view.pivot.x;
+    const pivotY = view.pivot.y;
+
+    const x = view.x;
+    const y = view.y;
+    const scaleX = view.scale.x;
+    const scaleY = view.scale.y;
+
+    const matrix = view.worldTransform.clone();
+
+    if (view.parent)
+    {
+        const parentMatrix = view.parent.worldTransform.clone();
+
+        parentMatrix.invert();
+        matrix.prepend(parentMatrix);
+    }
+
+    const transform = new Transform();
+
+    decomposeTransform(transform, matrix, undefined, { x: pivotX, y: pivotY } as any);
+
+    const angle = radToDeg(transform.rotation);
+    const skewX = transform.skew.x;
+    const skewY = transform.skew.y;
+
+    const values: Partial<DisplayObjectModel> = {
+        x,
+        y,
+        scaleX,
+        scaleY,
+        angle,
+        skewX,
+        skewY,
+    };
+
+    const p1 = matrix.apply({ x: view.pivot.x, y: view.pivot.y });
+    const p2 = matrix.apply({ x: pivotX, y: pivotY });
+    const deltaX = p2.x - p1.x;
+    const deltaY = p2.y - p1.y;
+
+    values.pivotX = pivotX;
+    values.pivotY = pivotY;
+
+    values.x = x + deltaX;
+    values.y = y + deltaY;
+
+    return values;
 }
 
 export function snapToIncrement(val: number, increment: number)

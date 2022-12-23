@@ -1,7 +1,10 @@
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
+import type { DisplayObjectModel } from '../../core/nodes/abstract/displayObjectNode';
 import { ContainerNode } from '../../core/nodes/concrete/display/containerNode';
 import { type UpdateMode, Command } from '../core/command';
 import Events from '../events';
+import { getLocalTransform } from '../ui/transform/util';
+import { ModifyModelCommand } from './modifyModel';
 
 export interface SetParentCommandParams
 {
@@ -20,6 +23,7 @@ export interface SetParentCommandReturn
 export interface SetParentCommandCache
 {
     prevParentId?: string;
+    modifyCommand?: ModifyModelCommand<DisplayObjectModel>;
 }
 
 export class SetParentCommand
@@ -37,6 +41,7 @@ export class SetParentCommand
 
         // cache previous parent
         this.cache.prevParentId = prevParentId;
+        delete this.cache.modifyCommand;
 
         // remove from existing parent
         if (prevParentId)
@@ -58,7 +63,16 @@ export class SetParentCommand
         if (preserveTransform !== true && childNode.is(ContainerNode) && parentNode.is(ContainerNode))
         {
             childNode.cast<ContainerNode>().reParentTransform();
-            // todo: decompose transform (like gizmo does to get local transform)
+            const values = getLocalTransform(childNode.view);
+            const command = new ModifyModelCommand({
+                nodeId: childNode.id,
+                updateMode: 'full',
+                values,
+            });
+
+            this.cache.modifyCommand = command;
+
+            command.run();
         }
 
         Events.datastore.node.local.reParented.emit({
@@ -71,7 +85,12 @@ export class SetParentCommand
 
     public undo(): void
     {
-        const { cache: { prevParentId }, params: { parentId, nodeId } } = this;
+        const { cache: { prevParentId, modifyCommand }, params: { parentId, nodeId, preserveTransform } } = this;
+
+        if (modifyCommand)
+        {
+            modifyCommand.undo();
+        }
 
         const parentNode = this.getInstance(parentId);
         const childNode = this.getInstance(nodeId);
@@ -80,7 +99,11 @@ export class SetParentCommand
 
         if (prevParentId)
         {
-            new SetParentCommand({ parentId: prevParentId, nodeId, updateMode: 'full' }).run();
+            new SetParentCommand({
+                parentId: prevParentId,
+                nodeId,
+                updateMode: 'full',
+                preserveTransform }).run();
         }
     }
 }
