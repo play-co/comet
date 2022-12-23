@@ -1,5 +1,5 @@
 import { SmoothGraphics as Graphics } from '@pixi/graphics-smooth';
-import type { Container, DisplayObject } from 'pixi.js';
+import type { Container, DisplayObject, ObservablePoint } from 'pixi.js';
 import { Matrix, Rectangle, Transform } from 'pixi.js';
 
 import type { ClonableNode } from '../../../core';
@@ -185,12 +185,12 @@ export function decomposeTransform(
     return transform;
 }
 
-export function getLocalTransform(view: DisplayObject)
+export function getLocalTransform(view: DisplayObject, pivot?: ObservablePoint, adjustForPivotDelta = true)
 {
     view.updateTransform();
 
-    const pivotX = view.pivot.x;
-    const pivotY = view.pivot.y;
+    const pivotX = pivot ? pivot.x : view.pivot.x;
+    const pivotY = pivot ? pivot.y : view.pivot.y;
 
     const x = view.x;
     const y = view.y;
@@ -225,16 +225,19 @@ export function getLocalTransform(view: DisplayObject)
         skewY,
     };
 
-    const p1 = matrix.apply({ x: view.pivot.x, y: view.pivot.y });
-    const p2 = matrix.apply({ x: pivotX, y: pivotY });
-    const deltaX = p2.x - p1.x;
-    const deltaY = p2.y - p1.y;
+    if (adjustForPivotDelta)
+    {
+        const p1 = matrix.apply({ x: view.pivot.x, y: view.pivot.y });
+        const p2 = matrix.apply({ x: pivotX, y: pivotY });
+        const deltaX = p2.x - p1.x;
+        const deltaY = p2.y - p1.y;
 
-    values.pivotX = pivotX;
-    values.pivotY = pivotY;
+        values.pivotX = pivotX;
+        values.pivotY = pivotY;
 
-    values.x = x + deltaX;
-    values.y = y + deltaY;
+        values.x = x + deltaX;
+        values.y = y + deltaY;
+    }
 
     return values;
 }

@@ -1,6 +1,6 @@
 import type { SmoothGraphics } from '@pixi/graphics-smooth';
 import type { InteractionEvent } from 'pixi.js';
-import { Container, Graphics, Matrix, Transform } from 'pixi.js';
+import { Container, Graphics, Matrix } from 'pixi.js';
 
 import type { ClonableNode } from '../../../core';
 import { type DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
@@ -25,9 +25,9 @@ import { defaultTransformGizmoConfig } from './types';
 import type { InitialGizmoTransform } from './util';
 import {
     bluePivot,
-    decomposeTransform,
     defaultInitialGizmoTransform,
     getGizmoInitialTransformFromView,
+    getLocalTransform,
     getTotalGlobalBounds,
     yellowPivot,
 } from './util';
@@ -785,57 +785,7 @@ export class TransformGizmo extends Container
             {
                 const view = node.view;
 
-                view.updateTransform();
-
-                const pivotX = this.pivotX;
-                const pivotY = this.pivotY;
-
-                const x = view.x;
-                const y = view.y;
-                const scaleX = view.scale.x;
-                const scaleY = view.scale.y;
-
-                const matrix = view.worldTransform.clone();
-
-                if (view.parent)
-                {
-                    const parentMatrix = view.parent.worldTransform.clone();
-
-                    parentMatrix.invert();
-                    matrix.prepend(parentMatrix);
-                }
-
-                const transform = new Transform();
-
-                decomposeTransform(transform, matrix, undefined, { x: pivotX, y: pivotY } as any);
-
-                const angle = radToDeg(transform.rotation);
-                const skewX = transform.skew.x;
-                const skewY = transform.skew.y;
-
-                const values: Partial<DisplayObjectModel> = {
-                    x,
-                    y,
-                    scaleX,
-                    scaleY,
-                    angle,
-                    skewX,
-                    skewY,
-                };
-
-                if (selection.length === 1)
-                {
-                    const p1 = matrix.apply({ x: view.pivot.x, y: view.pivot.y });
-                    const p2 = matrix.apply({ x: pivotX, y: pivotY });
-                    const deltaX = p2.x - p1.x;
-                    const deltaY = p2.y - p1.y;
-
-                    values.pivotX = pivotX;
-                    values.pivotY = pivotY;
-
-                    values.x = x + deltaX;
-                    values.y = y + deltaY;
-                }
+                const values = getLocalTransform(view, this.pivot, selection.isSingle);
 
                 const prevValues = this.getCachedMatrix(node.cast()).ownValues;
 
