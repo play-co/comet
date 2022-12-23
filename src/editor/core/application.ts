@@ -466,10 +466,12 @@ export class Application
 
     public setTool(tool: Tool)
     {
+        this.tool.deselect();
         Events.tool.deselect.emit(this.tool);
 
         this.tool = tool;
 
+        tool.select();
         Events.tool.select.emit(tool);
     }
 }

@@ -529,23 +529,39 @@ export class TransformGizmo extends Container
             config.enableTranslation && this.setOperation(new TranslateOperation(this));
         }
 
-        if (this.operation)
+        this.startOperation();
+    };
+
+    public startOperation(event?: InteractionEvent, operation?: TransformOperation)
+    {
+        if (event && operation)
+        {
+            this.operation = operation;
+            this.dragInfo = {
+                ...defaultDragInfo,
+                event,
+            };
+
+            this.updateDragInfoFromEvent(event);
+        }
+
+        if (this.operation && this.dragInfo)
         {
             // start the operation
             this.operation.init(this.dragInfo);
             this.operation.drag(this.dragInfo);
+
+            this.update();
+
+            this.frame.startOperation(this.dragInfo);
+
+            this.lastClick = Date.now();
+
+            document.body.classList.add('no_splitter_hover');
+
+            Events.transform.start.emit(this);
         }
-
-        this.update();
-
-        this.frame.startOperation(this.dragInfo);
-
-        this.lastClick = Date.now();
-
-        document.body.classList.add('no_splitter_hover');
-
-        Events.transform.start.emit(this);
-    };
+    }
 
     public onMouseMove = (event: InteractionEvent) =>
     {

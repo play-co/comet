@@ -7,6 +7,7 @@ import { DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNod
 import { ContainerNode } from '../../../core/nodes/concrete/display/containerNode';
 import { SceneNode } from '../../../core/nodes/concrete/meta/sceneNode';
 import { Application, getApp } from '../../core/application';
+import type { ToolEvent } from '../../core/tool';
 import { loadUserViewportPrefs, saveUserViewportPrefs } from '../../core/userPrefs';
 import Events from '../../events';
 import { TransformGizmo } from '../transform/gizmo';
@@ -21,7 +22,7 @@ export class EditableViewport
     public rootNode: DisplayObjectNode;
     public canvas: HTMLCanvasElement;
     public pixi: PixiApplication;
-    public transformGizmo: TransformGizmo;
+    public gizmo: TransformGizmo;
     public nodeLayer: Container;
     public editLayer: Container;
     public viewport: Viewport;
@@ -55,7 +56,7 @@ export class EditableViewport
         const nodeLayer = this.nodeLayer = new Container();
         const editLayer = this.editLayer = new Container();
 
-        const gizmo = this.transformGizmo = new TransformGizmo(this);
+        const gizmo = this.gizmo = new TransformGizmo(this);
 
         viewport.addChild(nodeLayer);
         viewport.addChild(gizmo);
@@ -157,7 +158,7 @@ export class EditableViewport
         if (e.key === ' ' && !this.boxSelection.isSelecting)
         {
             this.viewport.cursor = 'grab';
-            this.transformGizmo.isInteractive = false;
+            this.gizmo.isInteractive = false;
         }
         else if (e.key === 'Escape')
         {
@@ -171,7 +172,7 @@ export class EditableViewport
         {
             this.viewport.cursor = 'default';
             this.viewport.pause = false;
-            this.transformGizmo.isInteractive = true;
+            this.gizmo.isInteractive = true;
         }
     };
 
@@ -216,18 +217,29 @@ export class EditableViewport
         }
     };
 
-    protected onMouseDown = (e: InteractionEvent) =>
+    protected getToolEvent(e: InteractionEvent): ToolEvent
     {
         const globalX = e.data.global.x;
         const globalY = e.data.global.y;
-        const { hierarchy: selection } = Application.instance.selection;
-        const underCursor = this.findNodesAtPoint(globalX, globalY).filter((node) => !selection.deepContains(node));
-        const topNode = underCursor[0];
+        const localPoint = this.getLocalPoint(globalX, globalY);
+        const toolEvent: ToolEvent = {
+            originalEvent: e,
+            globalX,
+            globalY,
+            localX: localPoint.x,
+            localY: localPoint.y,
+            alt: e.data.originalEvent.altKey,
+            ctrl: e.data.originalEvent.ctrlKey,
+            meta: e.data.originalEvent.metaKey,
+            shift: e.data.originalEvent.shiftKey,
+        };
+
+        return toolEvent;
+    }
+
+    protected onMouseDown = (e: InteractionEvent) =>
+    {
         const isSpacePressed = this.isSpaceKeyDown;
-        const isShiftKeyPressed = e.data.originalEvent.shiftKey;
-        const isMetaKeyPressed = e.data.originalEvent.metaKey;
-        const isAddKey = isShiftKeyPressed || isMetaKeyPressed;
-        const gizmoFrameBounds = this.transformGizmo.frame.getGlobalBounds();
 
         this.viewport.pause = !isSpacePressed;
 
@@ -239,45 +251,14 @@ export class EditableViewport
             return;
         }
 
-        if (gizmoFrameBounds.contains(globalX, globalY) && isAddKey)
-        {
-            // click inside transform gizmo area remove from selection if shift down
-            const nodes = this.findNodesAtPoint(globalX, globalY);
-            const underCursor = nodes.filter((node) => selection.deepContains(node));
-            const topNode = underCursor[0];
+        const app = getApp();
+        const toolEvent = this.getToolEvent(e);
 
-            selection.remove(topNode);
-        }
-
-        // click outside of transform gizmo area
-        if (underCursor.length === 0)
-        {
-            // nothing selected, deselect
-            selection.deselect();
-
-            this.boxSelection.onMouseDown(e);
-        }
-        else
-        {
-            const selectedNode = topNode.getCloneRoot();
-
-            if (isAddKey)
-            {
-                // add new node to selection
-                selection.add(topNode);
-            }
-            else
-            {
-                // new selection and start dragging
-                this.selectWithDrag(selectedNode, e);
-            }
-        }
+        app.tool.mouseDown(toolEvent);
     };
 
     protected onMouseMove = (e: InteractionEvent) =>
     {
-        this.boxSelection.onMouseMove(e);
-
         const { canvas, viewport } = this;
         const { statusBar } = getApp();
         const { x: globalX, y: globalY } = e.data.global;
@@ -291,6 +272,11 @@ export class EditableViewport
             statusBar.getItem('x.value').label = gx;
             statusBar.getItem('y.value').label = gy;
         }
+
+        const app = getApp();
+        const toolEvent = this.getToolEvent(e);
+
+        app.tool.mouseMove(toolEvent);
     };
 
     protected onMouseUp = () =>
@@ -299,12 +285,16 @@ export class EditableViewport
 
         viewport.pause = false;
         viewport.cursor = isSpaceKeyDown ? 'grab' : 'default';
+
+        const app = getApp();
+
+        app.tool.mouseUp();
     };
 
     public onViewportChanged = () =>
     {
         this.viewport.updateTransform();
-        this.transformGizmo.onRootContainerChanged();
+        this.gizmo.onRootContainerChanged();
         this.grid.setConfig({
             x: this.viewport.x,
             y: this.viewport.y,
@@ -312,13 +302,13 @@ export class EditableViewport
         });
     };
 
-    protected selectWithDrag(selectedNode: ClonableNode, e: InteractionEvent)
+    public selectWithDrag(selectedNode: ClonableNode, e: InteractionEvent)
     {
         Application.instance.selection.hierarchy.set(selectedNode);
 
-        if (this.transformGizmo.config.enableTranslation)
+        if (this.gizmo.config.enableTranslation)
         {
-            this.transformGizmo.onMouseDown(e);
+            this.gizmo.onMouseDown(e);
         }
     }
 

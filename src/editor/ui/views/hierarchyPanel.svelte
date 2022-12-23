@@ -2,32 +2,10 @@
   import { HierarchyTree } from "./hierarchyPanel.js";
   import Panel from "./components/panel.svelte";
   import TreeView from "./components/treeView.svelte";
-  import ButtonBar, { type ButtonBarItem } from "./components/buttonBar.svelte";
-  import { Actions } from "../../actions/index.js";
   import FocusArea from "./components/focusArea.svelte";
-  import { Icons } from "./icons";
   import { spriteMenu } from "./viewport.svelte";
 
   const tree = new HierarchyTree();
-
-  const buttons: ButtonBarItem[] = [
-    {
-      id: "newSprite",
-      label: "New Sprite",
-      icon: Icons.SpriteAdd,
-      onClick: () => {
-        Actions.newSprite.dispatch({ addToSelected: true });
-      },
-    },
-    {
-      id: "newContainer",
-      label: "New Container",
-      icon: Icons.ContainerAdd,
-      onClick: () => {
-        Actions.newContainer.dispatch({ addToSelected: true });
-      },
-    },
-  ];
 
   let treeView: TreeView;
 
@@ -44,7 +22,6 @@
 <FocusArea id="hierarchy" on:keydown={onKeyDown}>
   <hierarchy-panel>
     <Panel>
-      <ButtonBar size="small" items={buttons} />
       <TreeView bind:this={treeView} {tree} menu={spriteMenu} cssClass="hierarchy" />
     </Panel>
   </hierarchy-panel>
