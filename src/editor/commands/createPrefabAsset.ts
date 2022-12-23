@@ -61,7 +61,7 @@ export class CreatePrefabAssetCommand
         // 3. clone sourceNode and re-parent to original scene parent
         const cloneCommand = new CloneCommand({
             nodeId,
-            cloneMode: CloneMode.Reference,
+            cloneMode: CloneMode.ReferenceRoot,
             newParentId: sourceParentId,
         });
 

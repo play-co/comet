@@ -38,10 +38,11 @@ High Priority
         - need to support prefab instances (currently only duplicate)
         - if all from same parent, paste into that parent
         - if from different parents, paste into selected parent
-* Viewport user prefs not working
+* Cloaking - needs overhaul, perhaps rename to "markForDeletion" and "unmarkForDeletion"
+    - only root node should be marked, don't walk all child nodes
+    - restore node currently brings back too many nodes, needs to be tightened
 
 Low Priority
-* Tool buttons (app.currentTool) use Actions, Select (translate only gizmo), Transform, Sprite, Container, Graphic, Text...
 * Project properties panel
     - name
     - created
