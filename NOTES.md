@@ -28,16 +28,16 @@
 # WIP TODO:
 
 High Priority
-* Prefabs
-    - Create PrefabInstance
-        - need to give replaced instance same model values
-    - Delete prefab asset - need to delete all clones and be undoable
-    - Add items to clones needs investigating, didn't update properly
-        - AddChildCommand needs modified version (new command?) which takes a Node instead of schema (which only does a single child) and propagates to all clone descendants
+* Copy paste
     - Paste logic needs tightening:
         - need to support prefab instances (currently only duplicate)
         - if all from same parent, paste into that parent
         - if from different parents, paste into selected parent
+* Prefabs
+    - Create PrefabInstance
+    - Delete prefab asset - need to delete all clones and be undoable
+    - Add items to clones needs investigating, didn't update properly
+        - AddChildCommand needs modified version (new command?) which takes a Node instead of schema (which only does a single child) and propagates to all clone descendants
 * Cloaking - needs overhaul, perhaps rename to "markForDeletion" and "unmarkForDeletion"
     - only root node should be marked, don't walk all child nodes
     - restore node currently brings back too many nodes, needs to be tightened

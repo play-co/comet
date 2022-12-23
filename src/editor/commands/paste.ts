@@ -3,6 +3,7 @@ import { CloneMode } from '../../core/nodes/cloneInfo';
 import { getApp } from '../core/application';
 import { Command } from '../core/command';
 import { CloneCommand } from './clone';
+import { ModifyModelCommand } from './modifyModel';
 
 export interface PasteCommandParams
 {
@@ -57,6 +58,18 @@ export class PasteCommand
             cache.commands.push(command);
 
             const { clonedNode } = command.run();
+
+            const values = sourceNode.model.ownValues;
+
+            const modifyCommand = new ModifyModelCommand({
+                nodeId: clonedNode.id,
+                updateMode: 'full',
+                values,
+            });
+
+            modifyCommand.run();
+
+            console.log(values);
 
             nodes.push(clonedNode);
         });
