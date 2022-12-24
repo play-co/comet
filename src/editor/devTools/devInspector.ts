@@ -25,6 +25,8 @@ export abstract class DevInspector<T extends Record<string, any> >
     public scrollTop: number;
     public zIndex: number;
 
+    protected renderRowMap?: Map<number, Row>;
+
     protected isExpanded: boolean;
 
     constructor(id: string, backgroundColor = 'blue')
@@ -100,7 +102,7 @@ export abstract class DevInspector<T extends Record<string, any> >
             this.updateExpandedState();
         }
 
-        container.onmousedown = (event: MouseEvent) =>
+        label.onmousedown = (event: MouseEvent) =>
         {
             this.zIndex++;
 
@@ -177,7 +179,39 @@ export abstract class DevInspector<T extends Record<string, any> >
             });
         };
 
+        canvas.onmousedown = (e: MouseEvent) =>
+        {
+            const { renderRowMap } = this;
+
+            if (renderRowMap)
+            {
+                const { clientY } = e;
+                const bounds = canvas.getBoundingClientRect();
+                const y = clientY - bounds.top;
+
+                for (const [renderY, row] of renderRowMap.entries())
+                {
+                    if (y >= renderY && y < renderY + this.table.rowHeight)
+                    {
+                        const value = this.getRowValue(row);
+
+                        if (value)
+                        {
+                            console.log(value);
+                        }
+
+                        break;
+                    }
+                }
+            }
+        };
+
         nextTick().then(() => this.init());
+    }
+
+    protected getRowValue(row: Row): any | undefined
+    {
+        return row.get('$')?.value;
     }
 
     get localStorageKey()
@@ -264,7 +298,9 @@ export abstract class DevInspector<T extends Record<string, any> >
                     ? table.height
                     : Math.min(table.height, maxHeight + titleBarHeight + scrollBoxTrackSize);
 
-                renderTable(table, this.painter, this.onCellStyle, width, height, 0, this.scrollTop);
+                const { renderRowMap } = renderTable(table, this.painter, this.onCellStyle, width, height, 0, this.scrollTop);
+
+                this.renderRowMap = renderRowMap;
 
                 this.label.innerHTML = `${this.id} (${this.table.rows.length})`;
             }

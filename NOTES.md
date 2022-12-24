@@ -34,9 +34,10 @@ High Priority
         - if all from same parent, paste into that parent
         - if from different parents, paste into selected parent
 * Prefabs
-    - Create PrefabInstance
+    - Create PrefabInstance checks
+    - ReferenceRoot and VariantRoots need some properties to override, and others to mirror (revisit constraints)
     - Delete prefab asset - need to delete all clones and be undoable
-    - Add items to clones needs investigating, didn't update properly
+    - Add/Modify child items to clones needs investigating, didn't update properly
         - AddChildCommand needs modified version (new command?) which takes a Node instead of schema (which only does a single child) and propagates to all clone descendants
 * Cloaking - needs overhaul, perhaps rename to "markForDeletion" and "unmarkForDeletion"
     - only root node should be marked, don't walk all child nodes

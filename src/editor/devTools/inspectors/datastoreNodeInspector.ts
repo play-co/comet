@@ -3,6 +3,7 @@ import Color from 'color';
 import type { ClonableNode } from '../../../core';
 import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
 import { getInstance, hasInstance } from '../../../core/nodes/instances';
+import { getNodeSchema } from '../../../core/nodes/schema';
 import { Application, getApp } from '../../core/application';
 import Events from '../../events';
 import { DevInspector } from '../devInspector';
@@ -10,6 +11,7 @@ import { type CellStyle, type Column, type Row, tableIndexKey } from '../tableRe
 
 export interface DatastoreNodeDetail
 {
+    $: string;
     parent: string;
     children: string;
     cloneMode: string;
@@ -42,6 +44,7 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
         for (const [nodeId, node] of Object.entries(project.nodes))
         {
             details[nodeId] = {
+                $: nodeId,
                 parent: node.parent ? node.parent : '#empty#',
                 children: node.children.length === 0 ? '#empty#' : node.children.join(','),
                 cloneMode: node.cloneInfo.cloneMode,
@@ -96,5 +99,17 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
     protected indexColumnLabel()
     {
         return 'id';
+    }
+
+    protected getRowValue(row: Row)
+    {
+        const value = super.getRowValue(row);
+
+        if (value)
+        {
+            return getNodeSchema(getInstance(value));
+        }
+
+        return undefined;
     }
 }

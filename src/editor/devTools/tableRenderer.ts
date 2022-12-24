@@ -109,7 +109,7 @@ export function createTable<T extends Record<string, any>>(
         {
             const column = columnsById.get(columnId) as Column;
 
-            if (columnId.charAt(0) === '_')
+            if (columnId.charAt(0) === '_' || columnId === '$')
             {
                 column.width = 0;
                 continue;
@@ -118,7 +118,7 @@ export function createTable<T extends Record<string, any>>(
             const cellSize = measureText(JSON.stringify(row.get(columnId)), fontSize);
             const columnHeadingSize = measureText(columnId, fontSize);
 
-            column.width = Math.min(maxColumnWidth, Math.max(cellSize.width, column.width, columnHeadingSize.width));
+            column.width = Math.min(maxColumnWidth, Math.max(cellSize.width * 0.75, column.width, columnHeadingSize.width));
         }
     });
 
@@ -164,6 +164,8 @@ export function renderTable(
     let x = 0;
     let y = 0;
 
+    const renderRowMap: Map<number, Row> = new Map();
+
     painter
         .size(w, h)
         .clear()
@@ -193,7 +195,7 @@ export function renderTable(
     // render column headers
     columns.forEach((column) =>
     {
-        if (column.id.charAt(0) === '_')
+        if (column.id.charAt(0) === '_' || column.id === '$')
         {
             return;
         }
@@ -228,9 +230,11 @@ export function renderTable(
 
         x = 0;
 
+        renderRowMap.set(y, row);
+
         for (const column of columns)
         {
-            if (column.id.charAt(0) === '_')
+            if (column.id.charAt(0) === '_' || column.id === '$')
             {
                 continue;
             }
@@ -265,7 +269,11 @@ export function renderTable(
 
         if (y > h)
         {
-            return;
+            break;
         }
     }
+
+    return {
+        renderRowMap,
+    };
 }

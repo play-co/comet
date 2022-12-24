@@ -4,7 +4,6 @@
     position: absolute;
     top: 0;
     left: 0;
-    cursor: move;
     box-shadow: 5px 5px 13px 1px rgba(0,0,0,0.3);
     box-sizing: border-box;
     user-select: none;
@@ -28,6 +27,7 @@
 
 .dev-inspector > label > span {
     flex-grow: 1;
+    cursor: move;
 }
 
 .dev-inspector .inspect {

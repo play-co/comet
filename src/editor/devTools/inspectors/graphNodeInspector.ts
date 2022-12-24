@@ -10,6 +10,7 @@ import { type CellStyle, type Column, type Row, tableIndexKey } from '../tableRe
 
 export interface GraphNodeDetail
 {
+    $: ClonableNode;
     _depth: number;
     _cloaked: boolean;
     name: string;
@@ -92,6 +93,7 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
         app.project.walk<ClonableNode>((node, options) =>
         {
             const detail: GraphNodeDetail = {
+                $: node,
                 _depth: options.depth,
                 _cloaked: node.isCloaked,
                 model: node.model.id,
