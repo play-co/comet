@@ -380,7 +380,10 @@ export class EditableViewport
     public setRoot(node: DisplayObjectNode, savePrefs = true)
     {
         this.nodeLayer.removeChild(this.rootNode.view);
+
         this.rootNode = node;
+        node.updateRecursive();
+
         this.nodeLayer.addChild(this.rootNode.view);
 
         if (savePrefs)

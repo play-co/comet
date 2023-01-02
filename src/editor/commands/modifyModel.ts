@@ -31,6 +31,11 @@ export class ModifyModelCommand<M extends ModelBase>
         if (updateMode === 'full')
         {
             datastore.modifyModel(nodeId, values);
+
+            if (sourceNode.id !== nodeId)
+            {
+                datastore.modifyModel(sourceNode.id, values);
+            }
         }
 
         // update graph node

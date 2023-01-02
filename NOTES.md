@@ -39,10 +39,12 @@ High Priority
     - Delete prefab asset - need to delete all clones and be undoable
     - Add/Modify child items to clones needs investigating, didn't update properly
         - AddChildCommand needs modified version (new command?) which takes a Node instead of schema (which only does a single child) and propagates to all clone descendants
-* Cloaking - needs overhaul, perhaps rename to "markForDeletion" and "unmarkForDeletion"
+* Cloaking - needs overhaul, perhaps rename to "trash" and "untrash"
     - only root node should be marked, don't walk all child nodes
     - restore node currently brings back too many nodes, needs to be tightened
 * Multi-user testing - once the above is checked, we need to validate and patch multi-user cases
+* Text
+* Masks
 
 Low Priority
 * Transform gizmo uses statusbar items instead of message
@@ -61,6 +63,7 @@ Fix
 * Menubar rollover set active
 
 Try:
+* Refactor Convergence datastore to be as generic as possible
 * Replace Interface with Type definitions for models, may loosen generic polymorphism
 * Reduce grid lines when zoomed out
 

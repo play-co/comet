@@ -170,7 +170,6 @@ export abstract class ItemSelection<T extends ClonableNode>
 
                 if ((this.items as ClonableNode[]).indexOf(node) > -1)
                 {
-                    console.log('X');
                     options.data.include = false;
                     options.cancel = true;
                 }

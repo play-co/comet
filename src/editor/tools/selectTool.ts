@@ -20,7 +20,6 @@ export class SelectTool extends Tool
             ...defaultFullTransformGizmoConfig,
             pivotView: app.selection.hierarchy.isSingle ? bluePivot : yellowPivot,
         });
-        // gizmo.isInteractive = true;
     }
 
     public mouseDown(event: ToolEvent): void

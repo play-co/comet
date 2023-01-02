@@ -72,7 +72,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
                     };
 
                     options.data.model.push(item);
-                    options.cancel = true;
+                    // options.cancel = true;
 
                     return;
                 }

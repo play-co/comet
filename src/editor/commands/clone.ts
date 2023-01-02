@@ -95,7 +95,7 @@ export class CloneCommand
         // set parent if provided
         if (newParentId)
         {
-            new SetParentCommand({ parentId: newParentId, nodeId: clonedNode.id, updateMode: 'full' }).run();
+            new SetParentCommand({ parentId: newParentId, nodeId: clonedNode.id, updateMode: 'full', preserveTransform: true }).run();
         }
 
         cache.sourceNode = sourceNode;

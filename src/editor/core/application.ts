@@ -11,7 +11,7 @@ import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObjectN
 import type { MetaNode } from '../../core/nodes/abstract/metaNode';
 import { ProjectNode } from '../../core/nodes/concrete/meta/projectNode';
 import { clearInstances, getInstance } from '../../core/nodes/instances';
-import { nextTick } from '../../core/util';
+import { delay, nextTick } from '../../core/util';
 import { RemoveNodeCommand } from '../commands/removeNode';
 import { DatastoreNodeInspector } from '../devTools/inspectors/datastoreNodeInspector';
 import { GraphNodeInspector } from '../devTools/inspectors/graphNodeInspector';
@@ -166,8 +166,6 @@ export class Application
 
         this.project.isReady = true;
         Events.project.ready.emit();
-
-        nextTick().then(() => this.initPersistentSelection());
     }
 
     public async createProject(name: string)
@@ -256,7 +254,8 @@ export class Application
 
         this.viewport.setRoot(root, false);
 
-        this.project.updateRecursive();
+        // allow main layout fade time to start
+        delay(100).then(() => this.initPersistentSelection());
     }
 
     protected clear()
@@ -329,7 +328,7 @@ export class Application
         }
 
         // listen to selection events
-        Events.$('selection.', saveUserSelectionPrefs);
+        Events.$('selection.', () => saveUserSelectionPrefs());
     }
 
     protected initDevInspectors()

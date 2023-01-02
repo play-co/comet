@@ -549,19 +549,25 @@ export class TransformGizmo extends Container
 
         if (this.operation && this.dragInfo)
         {
-            // start the operation
-            this.operation.init(this.dragInfo);
-            this.operation.drag(this.dragInfo);
+            if (this.dragInfo)
+            {
+                // start the operation
+                this.operation.init(this.dragInfo);
+                this.operation.drag(this.dragInfo);
 
-            this.update();
+                this.frame.startOperation(this.dragInfo);
 
-            this.frame.startOperation(this.dragInfo);
+                this.lastClick = Date.now();
 
-            this.lastClick = Date.now();
+                document.body.classList.add('no_splitter_hover');
 
-            document.body.classList.add('no_splitter_hover');
+                Events.transform.start.emit(this);
+            }
 
-            Events.transform.start.emit(this);
+            if (this.operation instanceof TranslatePivotOperation)
+            {
+                this.update();
+            }
         }
     }
 

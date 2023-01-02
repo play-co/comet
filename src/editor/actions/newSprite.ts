@@ -68,10 +68,15 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
 
         const { nodes } = app.undoStack.exec<AddChildCommandReturn>(new AddChildCommand({ parentId, nodeSchema }));
 
-        const node = nodes[0] as unknown as SpriteNode;
+        const node = nodes.find((node) => node.parent?.id === parentId);
+
+        if (!node)
+        {
+            throw new Error('Failed to create sprite node');
+        }
 
         app.selection.hierarchy.set(node.asClonableNode());
 
-        return node;
+        return node.cast<SpriteNode>();
     }
 }
