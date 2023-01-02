@@ -209,8 +209,8 @@ export class Application
         const project = await this.datastore.openProject(id);
 
         this.project.copy(project);
-        this.linkDeferredCloners();
 
+        this.linkDeferredCloners();
         this.initProject();
 
         Events.project.open.success.emit();
@@ -223,6 +223,11 @@ export class Application
             if (node.deferredCloner)
             {
                 const cloner = getInstance<ClonableNode>(node.deferredCloner);
+
+                if (node.cloneInfo.cloneMode === 'reference')
+                {
+                    node.model = cloner.model;
+                }
 
                 node.cloneInfo.cloner = cloner;
                 node.initCloning();

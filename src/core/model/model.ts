@@ -23,9 +23,9 @@ export class Model<M> extends GraphNode
 
     protected readonly emitter: EventEmitter<'modified'>;
 
-    constructor(schema: ModelSchema<M>, data: Partial<M>)
+    constructor(schema: ModelSchema<M>, data: Partial<M>, id?: string)
     {
-        super(newId('Model'));
+        super(id ?? newId('Model'));
 
         this.schema = schema;
         this.data = data;
@@ -270,11 +270,12 @@ export class Model<M> extends GraphNode
 export function createModel<M>(
     schema: ModelSchema<M>,
     values: Partial<M> = {},
+    id?: string,
 ): Model<M> & M
 {
     const { keys } = schema;
 
-    const model = new Model(schema, values) as Model<M> & M;
+    const model = new Model(schema, values, id) as Model<M> & M;
 
     keys.forEach((k) =>
     {

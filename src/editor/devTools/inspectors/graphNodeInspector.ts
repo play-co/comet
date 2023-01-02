@@ -99,10 +99,10 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
                 name: node.model.getValue<string>('name'),
                 parent: node.parent ? node.parent.id : '#empty#',
                 children: node.children.length === 0 ? '#empty#' : node.children.map((node) => node.id).join(','),
-                model: node.model.id,
                 cloneMode: node.cloneInfo.cloneMode,
                 cloner: node.cloneInfo.cloner ? node.cloneInfo.cloner.id : '#empty#',
                 cloned: node.cloneInfo.cloned ? node.cloneInfo.cloned.map((node) => node.id).join(',') : '#empty#',
+                model: node.model.id,
             };
 
             details[node.id] = detail;

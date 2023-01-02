@@ -31,6 +31,9 @@ export interface NewNodeOptions<M>
     cloneInfo?: CloneInfo;
 }
 
+// Singleton used when hydrating a reference node, before deferred cloner is resolved
+const tempModel = createModel(clonableNodeSchema, {}, 'Model:0');
+
 export abstract class ClonableNode<
     /** Model */
     M extends ClonableNodeModel = ClonableNodeModel,
@@ -59,9 +62,18 @@ export abstract class ClonableNode<
 
         const cloner = cloneInfo.getCloner<ClonableNode>();
 
-        if (cloner && cloneInfo.isReference)
+        if (cloneInfo.isReference)
         {
-            this.model = cloner.model as unknown as Model<M> & M;
+            if (cloner)
+            {
+                // cloning case, model is shared
+                this.model = cloner.model as unknown as Model<M> & M;
+            }
+            else
+            {
+                // hydration case, temp assignment, app will re-link after all nodes are created
+                this.model = tempModel as unknown as Model<M> & M;
+            }
         }
         else
         {
@@ -77,12 +89,9 @@ export abstract class ClonableNode<
         this.assignedCustomProperties = new Map();
 
         this.view = this.createView();
+
         this.initView();
-
-        this.model.bind(this.onModelModified);
-
         this.initCloning();
-
         this.init();
     }
 
@@ -113,6 +122,8 @@ export abstract class ClonableNode<
                 }
             }
         }
+
+        this.model.bind(this.onModelModified);
     }
 
     protected init()
