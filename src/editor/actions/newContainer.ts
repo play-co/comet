@@ -37,7 +37,7 @@ export class NewContainerAction extends Action<NewContainerOptions, ContainerNod
 
         if (options.addToSelected && selection.hasSelection)
         {
-            parentId = selection.lastNode.id;
+            parentId = selection.lastItem.id;
         }
 
         const nodeSchema = createNodeSchema('Container', {

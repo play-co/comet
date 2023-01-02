@@ -63,7 +63,7 @@
 
   const onButtonUpdater = (callback: (items: ButtonBarItem[]) => void) => {
     Events.selection.project.setSingle.bind(() => {
-      const node = selection.firstNode;
+      const node = selection.firstItem;
       const isFolder = selection.isSelected(FolderNode);
       const isScene = selection.isSelected(SceneNode);
 
@@ -76,7 +76,7 @@
   };
 
   const onDeleteAssetNode = () => {
-    const node = selection.firstNode;
+    const node = selection.firstItem;
     if (app.project.getRootFolder("Textures").contains(node)) {
       Actions.deleteTexture.dispatch({ nodeId: node.id });
     } else if (app.project.getRootFolder("Prefabs").contains(node)) {
@@ -85,7 +85,7 @@
   };
 
   const onCreateVariant = () => {
-    Actions.newPrefabVariant.dispatch({ nodeId: selection.firstNode.id });
+    Actions.newPrefabVariant.dispatch({ nodeId: selection.firstItem.id });
   };
 
   const treeMenu = new Menu(
@@ -111,7 +111,7 @@
         if (!selection.hasSelection) {
           item.isHidden = true;
         } else {
-          const node = selection.firstNode;
+          const node = selection.firstItem;
           if (
             (node.is(FolderNode) && node.cast<FolderNode>().isRootFolder()) ||
             (node.is(SceneNode) &&
@@ -122,7 +122,7 @@
           }
         }
       } else if (item.id === "createVariant") {
-        const node = selection.firstNode;
+        const node = selection.firstItem;
         item.isHidden = true;
         if (app.project.getRootFolder("Prefabs").contains(node) && !node.is(FolderNode)) {
           item.isHidden = false;

@@ -21,7 +21,7 @@ import { ScaleByPivotOperation } from './operations/scaleByPivot';
 import { TranslateOperation } from './operations/translate';
 import { TranslatePivotOperation } from './operations/translatePivot';
 import type { TransformGizmoConfig } from './types';
-import { defaultTransformGizmoConfig } from './types';
+import { defaultFullTransformGizmoConfig } from './types';
 import type { InitialGizmoTransform } from './util';
 import {
     bluePivot,
@@ -69,7 +69,7 @@ export class TransformGizmo extends Container
         this.isDirty = false;
 
         this.config = {
-            ...defaultTransformGizmoConfig,
+            ...defaultFullTransformGizmoConfig,
             ...config,
         };
 
@@ -389,6 +389,8 @@ export class TransformGizmo extends Container
         {
             this.frame.setPivotView(config.pivotView);
         }
+
+        this.update();
     }
 
     public setActiveVertex(vertex: HandleVertex)
@@ -645,9 +647,7 @@ export class TransformGizmo extends Container
 
     get matrix()
     {
-        const m = this.worldTransform.clone();
-
-        return m;
+        return this.worldTransform;
     }
 
     public onRootContainerChanged()
@@ -737,7 +737,7 @@ export class TransformGizmo extends Container
             const node = selection.items[0];
             const cachedMatrix = this.getCachedMatrix(node);
 
-            if (node instanceof DisplayObjectNode)
+            if (node instanceof DisplayObjectNode && node.isSceneNode)
             {
                 const view = node.view;
 
@@ -757,7 +757,7 @@ export class TransformGizmo extends Container
             {
                 const cachedMatrix = this.getCachedMatrix(node);
 
-                if (node instanceof DisplayObjectNode)
+                if (node instanceof DisplayObjectNode && node.isSceneNode)
                 {
                     const view = node.cast<DisplayObjectNode>().getView();
 
@@ -776,7 +776,7 @@ export class TransformGizmo extends Container
 
     protected updateSelectedModels(updateMode: UpdateMode = 'full')
     {
-        const { selection } = this;
+        const { selection, config } = this;
         const modifications: ModifyModelCommandParams<any>[] = [];
 
         selection.forEach((node) =>
@@ -798,7 +798,7 @@ export class TransformGizmo extends Container
             }
         });
 
-        if (updateMode === 'full')
+        if (updateMode === 'full' && config.updateMode === 'full')
         {
             Application.instance.undoStack.exec(new ModifyModelsCommand({ modifications }));
         }

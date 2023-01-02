@@ -435,9 +435,9 @@ export abstract class TreeViewModel<ItemType extends ClonableNode, SelectionType
             if (canReOrder && (operation.value === Operation.ReOrder))
             {
                 // re-ordering
-                const isSibling = this.isSiblingOf(item.data, selection.firstNode);
+                const isSibling = this.isSiblingOf(item.data, selection.firstItem);
 
-                let target = isSibling || item.data === this.getParent(selection.firstNode)
+                let target = isSibling || item.data === this.getParent(selection.firstItem)
                     ? item
                     : undefined;
 
@@ -448,7 +448,7 @@ export abstract class TreeViewModel<ItemType extends ClonableNode, SelectionType
 
                 dragTarget.value = target;
 
-                this.onHintReOrderTarget(selection.firstNode, target?.data);
+                this.onHintReOrderTarget(selection.firstItem, target?.data);
             }
             else if (canReParent)
             {
@@ -464,7 +464,7 @@ export abstract class TreeViewModel<ItemType extends ClonableNode, SelectionType
 
                 dragTarget.value = target;
 
-                this.onHintReParentTarget(selection.firstNode, target?.data);
+                this.onHintReParentTarget(selection.firstItem, target?.data);
             }
         }
     }
@@ -528,7 +528,7 @@ export abstract class TreeViewModel<ItemType extends ClonableNode, SelectionType
 
         if (selection.hasSelection)
         {
-            const index = this.model.value.findIndex((item) => item.data === selection.firstNode);
+            const index = this.model.value.findIndex((item) => item.data === selection.firstItem);
 
             if (index > 0)
             {
@@ -547,7 +547,7 @@ export abstract class TreeViewModel<ItemType extends ClonableNode, SelectionType
 
         if (selection.hasSelection)
         {
-            const index = this.model.value.findIndex((item) => item.data === selection.firstNode);
+            const index = this.model.value.findIndex((item) => item.data === selection.firstItem);
 
             if (index < this.model.value.length - 1)
             {

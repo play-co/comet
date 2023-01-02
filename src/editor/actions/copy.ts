@@ -15,7 +15,7 @@ export class CopyAction extends Action<void, void>
     {
         const app = getApp();
         const selection = app.selection.hierarchy;
-        const isOnlySceneSelected = selection.length === 1 && selection.firstNode.is(SceneNode);
+        const isOnlySceneSelected = selection.length === 1 && selection.firstItem.is(SceneNode);
 
         return super.shouldRun() && app.isAreaFocussed('viewport', 'hierarchy') && !isOnlySceneSelected;
     }

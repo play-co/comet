@@ -14,7 +14,7 @@ export class NewPrefabAssetAction extends Action<void, void>
     {
         const app = getApp();
         const selection = app.selection.hierarchy;
-        const isOnlySceneSelected = selection.isSingle && selection.firstNode.is(SceneNode);
+        const isOnlySceneSelected = selection.isSingle && selection.firstItem.is(SceneNode);
         const isViewportFocussed = app.isAreaFocussed('viewport', 'hierarchy');
 
         return super.shouldRun()
@@ -28,6 +28,6 @@ export class NewPrefabAssetAction extends Action<void, void>
         const app = getApp();
         const selection = app.selection.hierarchy;
 
-        app.undoStack.exec(new CreatePrefabAssetCommand({ nodeId: selection.firstNode.id }));
+        app.undoStack.exec(new CreatePrefabAssetCommand({ nodeId: selection.firstItem.id }));
     }
 }

@@ -737,6 +737,11 @@ export abstract class ClonableNode<
         return false;
     }
 
+    public get isSceneNode()
+    {
+        return !this.isMetaNode;
+    }
+
     public abstract modelSchema(): ModelSchema<M>;
 
     public abstract createView(): V;

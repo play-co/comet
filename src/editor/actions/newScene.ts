@@ -25,9 +25,9 @@ export class NewSceneAction extends Action<void, SceneNode>
         const selection = app.selection.project;
         let parentId = app.project.getRootFolder('Scenes').id;
 
-        if (selection.hasSelection && selection.firstNode.is(FolderNode) && selection.firstNode.cast<FolderNode>().isWithinRootFolder('Scenes'))
+        if (selection.hasSelection && selection.firstItem.is(FolderNode) && selection.firstItem.cast<FolderNode>().isWithinRootFolder('Scenes'))
         {
-            parentId = selection.firstNode.cast<FolderNode>().id;
+            parentId = selection.firstItem.cast<FolderNode>().id;
         }
 
         const nodeSchema = createNodeSchema('Scene', {

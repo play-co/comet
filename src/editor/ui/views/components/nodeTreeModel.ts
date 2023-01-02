@@ -116,7 +116,7 @@ export abstract class NodeTreeModel<
 
     protected canReParentTarget(target: TreeItem<ClonableNode>)
     {
-        const sourceNode = this.selection.firstNode;
+        const sourceNode = this.selection.firstItem;
         const targetNode = target.data;
 
         return targetNode !== sourceNode.parent

@@ -41,7 +41,7 @@ export class PasteCommand
 
             if (selection.length === 1)
             {
-                newParentId = selection.firstNode.id;
+                newParentId = selection.firstItem.id;
             }
 
             if (newParentId === sourceNode.id && sourceNode.parent)

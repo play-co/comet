@@ -25,7 +25,7 @@ export class NewFolderAction extends Action<void, FolderNode | null>
 
         if (selection.hasSelection)
         {
-            const selectedFolder = selection.firstNode.cast<FolderNode>();
+            const selectedFolder = selection.firstItem.cast<FolderNode>();
             const nodeSchema = createNodeSchema('Folder', {
                 parent: selectedFolder.id,
             });

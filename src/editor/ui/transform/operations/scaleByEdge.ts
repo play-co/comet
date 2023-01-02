@@ -73,7 +73,7 @@ export class ScaleByEdgeOperation extends ScaleOperation
     public end(dragInfo: DragInfo): void
     {
         const { gizmo: { initialTransform: { width, height, localBounds }, selection } } = this;
-        const isContainerSelected = selection.isSingle && selection.firstNode.nodeType() === 'Container';
+        const isContainerSelected = selection.isSingle && selection.firstItem.nodeType() === 'Container';
 
         let pivotX = this.readCache('pivotX');
         let pivotY = this.readCache('pivotY');

@@ -1,5 +1,5 @@
-import { NewContainerTool } from './newContainer';
-import { NewSpriteTool } from './newSprite';
+import { NewContainerTool } from './newContainerTool';
+import { NewSpriteTool } from './newSpriteTool';
 import { SelectTool } from './selectTool';
 
 export const Tools = {

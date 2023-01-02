@@ -123,7 +123,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
 
     protected canReParentTarget(target: TreeItem<MetaNode>)
     {
-        const sourceNode = this.selection.firstNode;
+        const sourceNode = this.selection.firstItem;
         const targetNode = target.data;
 
         if (targetNode.is(FolderNode))
@@ -162,7 +162,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
 
             if (app.selection.hierarchy.hasSelection)
             {
-                let targetNode = app.selection.hierarchy.firstNode.cast<DisplayObjectNode>();
+                let targetNode = app.selection.hierarchy.firstItem.cast<DisplayObjectNode>();
 
                 if (targetNode.cloneInfo.cloner?.id === node.id)
                 {

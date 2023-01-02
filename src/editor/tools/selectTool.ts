@@ -1,5 +1,7 @@
 import { getApp } from '../core/application';
 import { type ToolEvent, Tool } from '../core/tool';
+import { defaultFullTransformGizmoConfig } from '../ui/transform/types';
+import { bluePivot, yellowPivot } from '../ui/transform/util';
 import { Icons } from '../ui/views/icons';
 
 export class SelectTool extends Tool
@@ -9,9 +11,16 @@ export class SelectTool extends Tool
         super('select', { icon: Icons.Select, tip: 'Select' });
     }
 
-    public deselect(): void
+    public select(): void
     {
-        getApp().selection.hierarchy.deselect();
+        const app = getApp();
+        const gizmo = app.viewport.gizmo;
+
+        gizmo.setConfig({
+            ...defaultFullTransformGizmoConfig,
+            pivotView: app.selection.hierarchy.isSingle ? bluePivot : yellowPivot,
+        });
+        // gizmo.isInteractive = true;
     }
 
     public mouseDown(event: ToolEvent): void

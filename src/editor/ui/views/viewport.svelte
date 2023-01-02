@@ -20,7 +20,7 @@
     (item) => {
       const app = getApp();
       const selection = app.selection.hierarchy;
-      const isOnlySceneSelected = selection.isSingle && selection.firstNode.is(SceneNode);
+      const isOnlySceneSelected = selection.isSingle && selection.firstItem.is(SceneNode);
       const id = item.id;
 
       if (id === "copy") {
@@ -31,7 +31,7 @@
         item.isEnabled =
           selection.isSingle &&
           !isOnlySceneSelected &&
-          selection.firstNode.cloneInfo.cloneMode === CloneMode.Original;
+          selection.firstItem.cloneInfo.cloneMode === CloneMode.Original;
       }
     }
   );

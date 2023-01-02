@@ -47,7 +47,7 @@ export abstract class ItemSelection<T extends ClonableNode>
             this.onSetSingle(item);
         }
 
-        (window as any)[this.debugId] = this.firstNode;
+        (window as any)[this.debugId] = this.firstItem;
     }
 
     public add(item: T)
@@ -126,7 +126,7 @@ export abstract class ItemSelection<T extends ClonableNode>
         return this.items.length > 1;
     }
 
-    public get firstNode(): T
+    public get firstItem(): T
     {
         const { items } = this;
 
@@ -138,7 +138,7 @@ export abstract class ItemSelection<T extends ClonableNode>
         return items[0];
     }
 
-    public get lastNode(): T
+    public get lastItem(): T
     {
         const { items } = this;
 

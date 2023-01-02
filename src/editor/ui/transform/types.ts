@@ -1,5 +1,6 @@
 import type { DisplayObject } from 'pixi.js';
 
+import type { UpdateMode } from '../../core/command';
 import { yellowPivot } from './util';
 
 export interface TransformGizmoConfig
@@ -17,9 +18,10 @@ export interface TransformGizmoConfig
     pivotView: DisplayObject;
     handlePrimarySize: number;
     handleSecondarySize: number;
+    updateMode: UpdateMode;
 }
 
-export const defaultTransformGizmoConfig: Omit<TransformGizmoConfig, 'container'> = {
+export const defaultFullTransformGizmoConfig: Omit<TransformGizmoConfig, 'container'> = {
     showEncompassingBorder: true,
     showTransformBorder: true,
     showPrimaryHandles: true,
@@ -33,4 +35,22 @@ export const defaultTransformGizmoConfig: Omit<TransformGizmoConfig, 'container'
     pivotView: yellowPivot,
     handlePrimarySize: 5,
     handleSecondarySize: 4,
+    updateMode: 'full',
+};
+
+export const defaultSelectTransformGizmoConfig: Omit<TransformGizmoConfig, 'container'> = {
+    showEncompassingBorder: false,
+    showTransformBorder: true,
+    showPrimaryHandles: false,
+    showSecondaryHandles: false,
+    showPivot: false,
+    enablePivotTranslation: false,
+    enableTranslation: false,
+    enableRotation: false,
+    enableScaling: false,
+    defaultScaleMode: 'edge',
+    pivotView: yellowPivot,
+    handlePrimarySize: 5,
+    handleSecondarySize: 4,
+    updateMode: 'full',
 };

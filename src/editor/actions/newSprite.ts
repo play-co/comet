@@ -58,7 +58,7 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
         }
         else if (actionOptions.addToSelected && selection.hasSelection)
         {
-            parentId = selection.lastNode.id;
+            parentId = selection.lastItem.id;
             x = 10;
             y = 10;
         }

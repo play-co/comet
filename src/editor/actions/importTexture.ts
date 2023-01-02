@@ -32,10 +32,10 @@ export class ImportTextureAction extends Action<ImportTextureActionOptions, void
         let folderParentId: string | undefined;
 
         if (selection.hasSelection
-            && selection.firstNode.is(FolderNode)
-            && selection.firstNode.cast<FolderNode>().isWithinRootFolder('Textures'))
+            && selection.firstItem.is(FolderNode)
+            && selection.firstItem.cast<FolderNode>().isWithinRootFolder('Textures'))
         {
-            folderParentId = selection.firstNode.id;
+            folderParentId = selection.firstItem.id;
         }
 
         app.undoStack.exec<CreateTextureAssetCommandReturn>(

@@ -46,11 +46,11 @@ export class CreatePrefabAssetCommand
         // 1. determine target asset folder
         if (
             projectSelection.hasSelection
-            && projectSelection.firstNode.cast<MetaNode>().is(FolderNode)
-            && projectSelection.firstNode.cast<FolderNode>().isWithinRootFolder('Prefabs')
+            && projectSelection.firstItem.cast<MetaNode>().is(FolderNode)
+            && projectSelection.firstItem.cast<FolderNode>().isWithinRootFolder('Prefabs')
         )
         {
-            assetFolderId = projectSelection.firstNode.cast<FolderNode>().id;
+            assetFolderId = projectSelection.firstItem.cast<FolderNode>().id;
         }
 
         // 2. remove sourceNode from scene parent by re-parenting to to asset folder
