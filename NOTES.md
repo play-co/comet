@@ -45,6 +45,8 @@ High Priority
 * Multi-user testing - once the above is checked, we need to validate and patch multi-user cases
 
 Low Priority
+* Transform gizmo uses statusbar items instead of message
+* Rename cloaked to trashed
 * Project properties panel
     - name
     - created
@@ -56,7 +58,16 @@ Low Priority
 
 Fix
 * overflow for project panel
+* Menubar rollover set active
 
 Try:
 * Replace Interface with Type definitions for models, may loosen generic polymorphism
 * Reduce grid lines when zoomed out
+
+Rollout:
+* Fix cloning and prefab create/edit
+* Investigate prod log and replay capabilities
+* Investigate using Convergence for alpha storage solution
+* Upgrade to Svelte-kit
+* Investigate Analytics
+* Investigate Cloudflare + YJS
