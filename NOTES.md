@@ -54,7 +54,7 @@ Low Priority
     - visible check
     - inc values (small, medium, large)
 * Texture asset settings, global in project preview? use properties panel?
-* Re-parent preserves global transform (via key modifier during drag operation)
+* Numeric input mouse drag for values
 
 Fix
 * overflow for project panel

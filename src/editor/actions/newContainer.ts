@@ -5,8 +5,12 @@ import { Action } from '../core/action';
 import { Application, getApp } from '../core/application';
 
 export type NewContainerOptions = {
-    addToSelected?: boolean;
+    parentId?: string;
     model?: Partial<ContainerModel>;
+};
+
+export const defaultNewContainerOptions: NewContainerOptions = {
+    model: {},
 };
 
 export class NewContainerAction extends Action<NewContainerOptions, ContainerNode>
@@ -27,18 +31,16 @@ export class NewContainerAction extends Action<NewContainerOptions, ContainerNod
 
     protected exec(options: NewContainerOptions = {
         model: {},
-        addToSelected: true,
     }): ContainerNode
     {
+        const actionOptions = {
+            ...defaultNewContainerOptions,
+            ...options,
+        };
         const app = Application.instance;
         const { selection: { hierarchy: selection } } = app;
 
-        let parentId = app.viewport.rootNode.id;
-
-        if (options.addToSelected && selection.hasSelection)
-        {
-            parentId = selection.lastItem.id;
-        }
+        const parentId = actionOptions.parentId ?? (selection.hasSelection ? selection.lastItem.id : app.viewport.rootNode.id);
 
         const nodeSchema = createNodeSchema('Container', {
             parent: parentId,

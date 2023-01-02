@@ -7,14 +7,12 @@ import { Action } from '../core/action';
 import { Application, getApp } from '../core/application';
 
 export type NewSpriteOptions = {
-    addToSelected?: boolean;
     parentId?: string;
     model?: Partial<SpriteModel>;
 };
 
 export const defaultNewSpriteOptions: NewSpriteOptions = {
     model: {},
-    addToSelected: true,
 };
 
 export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
@@ -47,21 +45,10 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
         const app = Application.instance;
         const { selection: { hierarchy: selection } } = app;
         const visibleBounds = app.viewport.getVisibleBounds();
-        let x = visibleBounds.left + (visibleBounds.width / 2) - (defaultSpriteWidth / 2);
-        let y = visibleBounds.top + (visibleBounds.height / 2) - (defaultSpriteHeight / 2);
+        const x = visibleBounds.left + (visibleBounds.width / 2) - (defaultSpriteWidth / 2);
+        const y = visibleBounds.top + (visibleBounds.height / 2) - (defaultSpriteHeight / 2);
 
-        let parentId = app.viewport.rootNode.id;
-
-        if (actionOptions.parentId)
-        {
-            parentId = actionOptions.parentId;
-        }
-        else if (actionOptions.addToSelected && selection.hasSelection)
-        {
-            parentId = selection.lastItem.id;
-            x = 10;
-            y = 10;
-        }
+        const parentId = actionOptions.parentId ?? (selection.hasSelection ? selection.lastItem.id : app.viewport.rootNode.id);
 
         const tint = Color.rgb(this.rnd255(), this.rnd255(), this.rnd255());
 

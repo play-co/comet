@@ -1,3 +1,5 @@
+import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObjectNode';
+import { getInstance } from '../../core/nodes/instances';
 import { Actions } from '../actions';
 import { getApp } from '../core/application';
 import { type ToolEvent, Tool } from '../core/tool';
@@ -13,11 +15,17 @@ export class NewContainerTool extends Tool
 
     public mouseDown(event: ToolEvent): void
     {
+        const app = getApp();
+        const selection = app.selection.hierarchy;
+        const parentId = selection.hasSelection ? selection.lastItem.id : app.viewport.rootNode.id;
+        const parent = getInstance<DisplayObjectNode>(parentId);
+        const localPos = parent.globalToLocal(event.globalX, event.globalY);
+
         Actions.newContainer.dispatch({
-            addToSelected: false,
+            parentId,
             model: {
-                x: event.localX,
-                y: event.localY,
+                x: localPos.x,
+                y: localPos.y,
             },
         });
     }

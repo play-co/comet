@@ -1,5 +1,6 @@
+import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObjectNode';
+import { getInstance } from '../../core/nodes/instances';
 import { Actions } from '../actions';
-import { SetParentCommand } from '../commands/setParent';
 import { getApp } from '../core/application';
 import { type ToolEvent, Tool } from '../core/tool';
 import { ScaleByEdgeOperation } from '../ui/transform/operations/scaleByEdge';
@@ -38,12 +39,14 @@ export class NewSpriteTool extends Tool
         const app = getApp();
         const selection = app.selection.hierarchy;
         const parentId = selection.hasSelection ? selection.lastItem.id : app.viewport.rootNode.id;
+        const parent = getInstance<DisplayObjectNode>(parentId);
+        const localPos = parent.globalToLocal(event.globalX, event.globalY);
 
         const sprite = Actions.newSprite.dispatch({
-            addToSelected: false,
+            parentId,
             model: {
-                x: event.localX,
-                y: event.localY,
+                x: localPos.x,
+                y: localPos.y,
                 scaleX: 0.1,
                 scaleY: 0.1,
             },
@@ -54,13 +57,6 @@ export class NewSpriteTool extends Tool
             const viewport = app.viewport;
 
             const gizmo = viewport.gizmo;
-
-            new SetParentCommand({
-                nodeId: sprite.id,
-                parentId,
-                updateMode: 'full',
-                preserveTransform: false,
-            }).run();
 
             gizmo.isInteractive = true;
             gizmo.setActiveVertex({ h: 'right', v: 'bottom' });
