@@ -67,43 +67,63 @@ function readStorage<T>(id: UserPrefStorageKey): T | null
     return null;
 }
 
-export function saveUserLayoutPrefs()
+export function getUserLayoutPrefs()
 {
     const app = getApp();
     const layout = app.getLayout().saveLayout();
 
-    writeStorage('layout', { layout } as UserLayoutPrefs);
+    return { layout } as UserLayoutPrefs;
 }
 
-export function saveUserSelectionPrefs()
+export function saveUserLayoutPrefs(data = getUserLayoutPrefs())
+{
+    writeStorage('layout', data);
+}
+
+export function getUserSelectionPrefs()
 {
     const app = getApp();
     const { hierarchy, project } = app.selection;
 
-    writeStorage('selection', {
+    return {
         hierarchy: hierarchy.hasSelection ? hierarchy.items.map((item) => item.id) : [],
         project: project.items.map((item) => item.id),
-    } as UserSelectionPrefs);
+    } as UserSelectionPrefs;
 }
 
-export function saveUserViewportPrefs()
+export function saveUserSelectionPrefs(data = getUserSelectionPrefs())
+{
+    writeStorage('selection', data);
+}
+
+export function getUserViewportPrefs()
 {
     const app = getApp();
 
-    writeStorage('viewport', {
+    return {
         x: app.viewport.x,
         y: app.viewport.y,
         scale: app.viewport.scale,
-    } as UserViewportPrefs);
+    } as UserViewportPrefs;
 }
 
-export function saveUserEditPrefs()
+export function saveUserViewportPrefs(data = getUserViewportPrefs())
+{
+    writeStorage('viewport', data);
+}
+
+export function getUserEditPrefs()
 {
     const app = getApp();
 
-    writeStorage('edit', {
+    return {
         viewportRoot: app.viewport.rootNode.id,
-    } as UserEditPrefs);
+    } as UserEditPrefs;
+}
+
+export function saveUserEditPrefs(data = getUserEditPrefs())
+{
+    writeStorage('edit', data);
 }
 
 export function loadUserLayoutPrefs()

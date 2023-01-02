@@ -40,7 +40,7 @@ export const defaultFullTransformGizmoConfig: Omit<TransformGizmoConfig, 'contai
 
 export const defaultSelectTransformGizmoConfig: Omit<TransformGizmoConfig, 'container'> = {
     showEncompassingBorder: false,
-    showTransformBorder: true,
+    showTransformBorder: false,
     showPrimaryHandles: false,
     showSecondaryHandles: false,
     showPivot: false,

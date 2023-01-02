@@ -146,6 +146,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
 
             app.itemDrag.startDrag('project', event, draggable[0]);
             app.statusBar.setMessage(`Create instance of <${assetName}>`);
+            app.viewport.gizmo.isInteractive = false;
         }
     }
 
@@ -159,6 +160,8 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
             let parentId: string | undefined;
             let x = viewportLocalPos.x;
             let y = viewportLocalPos.y;
+
+            app.viewport.gizmo.isInteractive = true;
 
             if (app.selection.hierarchy.hasSelection)
             {

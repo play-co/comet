@@ -73,6 +73,19 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
         return this.gizmo.matrix;
     }
 
+    public setInteractive(value: boolean)
+    {
+        this.container.interactive = value;
+        this.topLeftHandle.interactive = value;
+        this.topRightHandle.interactive = value;
+        this.bottomRightHandle.interactive = value;
+        this.bottomLeftHandle.interactive = value;
+        this.topCenterHandle.interactive = value;
+        this.rightCenterHandle.interactive = value;
+        this.bottomCenterHandle.interactive = value;
+        this.leftCenterHandle.interactive = value;
+    }
+
     protected createHandle(size: number, h: HandleVertexHorizontal, v: HandleVertexVertical, isPrimary = true)
     {
         const vertex = { h, v };

@@ -318,12 +318,12 @@ export class TransformGizmo extends Container
 
     public get isInteractive()
     {
-        return this.frame.border.interactive;
+        return this.frame.container.interactive;
     }
 
     public set isInteractive(value: boolean)
     {
-        this.frame.border.interactive = value;
+        this.frame.setInteractive(value);
     }
 
     public get isVisible()
