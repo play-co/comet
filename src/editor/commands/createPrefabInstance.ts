@@ -1,7 +1,6 @@
 import type { ModelBase } from '../../core/model/model';
 import type { ClonableNode, ClonableNodeModel } from '../../core/nodes/abstract/clonableNode';
 import { CloneMode } from '../../core/nodes/cloneInfo';
-import { getApp } from '../core/application';
 import { Command } from '../core/command';
 import { CloneCommand } from './clone';
 import { ModifyModelCommand } from './modifyModel';
@@ -61,8 +60,6 @@ export class CreatePrefabInstanceCommand
                 modifyModel: modifyModelCommand,
             },
         };
-
-        getApp().selection.hierarchy.set(clonedNode);
 
         return { node: clonedNode };
     }

@@ -38,7 +38,7 @@ export class CreatePrefabVariantCommand
 
         const { clonedNode } = cloneCommand.run();
 
-        app.selection.hierarchy.set(clonedNode);
+        app.selection.project.set(clonedNode);
 
         return { node: clonedNode };
     }

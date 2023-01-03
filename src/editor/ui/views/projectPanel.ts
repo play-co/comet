@@ -61,6 +61,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
 
                 if (isChildOfPrefab && !node.is(FolderNode))
                 {
+                    const { isVariantRoot } = node.cloneInfo;
                     const item: TreeItem<ClonableNode> = {
                         id: node.id,
                         depth: options.depth,
@@ -68,7 +69,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
                         isExpanded: false,
                         isVisible: true,
                         data: node,
-                        icon: Icons.Prefab,
+                        icon: isVariantRoot ? Icons.PrefabAssetVariant : Icons.PrefabAsset,
                     };
 
                     options.data.model.push(item);

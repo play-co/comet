@@ -43,6 +43,14 @@ export class HierarchyTree extends NodeTreeModel<HierarchySelection>
                     return;
                 }
 
+                const { isReferenceOrRoot, isVariantOrRoot } = node.cloneInfo;
+                let icon = isReferenceOrRoot
+                    ? Icons.PrefabInstanceReference
+                    : Icons[node.nodeType() as keyof typeof Icons];
+
+                icon = isVariantOrRoot
+                    ? Icons.PrefabInstanceVariant
+                    : icon;
                 const item: TreeItem<ClonableNode> = {
                     id: node.id,
                     depth: options.depth,
@@ -50,7 +58,7 @@ export class HierarchyTree extends NodeTreeModel<HierarchySelection>
                     isExpanded: true,
                     isVisible: true,
                     data: node,
-                    icon: Icons[node.nodeType() as keyof typeof Icons],
+                    icon,
                 };
 
                 options.data.model.push(item);

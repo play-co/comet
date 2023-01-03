@@ -2,6 +2,11 @@
   export const spriteMenu = new Menu(
     [
       {
+        id: "delete",
+        label: "Delete",
+        onClick: () => Actions.deleteNode.dispatch(),
+      },
+      {
         id: "copy",
         label: "Copy",
         onClick: () => Actions.copy.dispatch(),
@@ -23,7 +28,7 @@
       const isOnlySceneSelected = selection.isSingle && selection.firstItem.is(SceneNode);
       const id = item.id;
 
-      if (id === "copy") {
+      if (id === "copy" || id === "delete") {
         item.isEnabled = !isOnlySceneSelected && selection.length > 0;
       } else if (id === "paste") {
         item.isEnabled = app.hasClipboard();
