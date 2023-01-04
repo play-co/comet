@@ -191,7 +191,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    background: #454343;
+    background: #252525;
     display: flex;
     flex-direction: column;
     white-space: nowrap;
@@ -208,7 +208,7 @@
     display: flex;
     align-items: center;
     position: relative;
-    border: 1px outset #828282;
+    border: 1px outset #454545;
     padding: 0 10px;
     font-size: 12px;
     cursor: default;
@@ -218,14 +218,18 @@
 
   menu-item:hover,
   menu-item.selected {
-    background: #696868;
-    border: 1px outset #a4a4a4;
+    background: #191919;
     color: white;
   }
 
   menu-item.disabled {
     font-style: italic;
-    color: #8a8a8a;
+    color: #606060;
+    text-shadow: -1px -1px black;
+  }
+
+  menu-item.selected.disabled {
+    background: transparent;
   }
 
   menu-item.prompt {

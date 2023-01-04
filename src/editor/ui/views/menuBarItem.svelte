@@ -45,7 +45,7 @@
 
   a:hover,
   a.selected {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: #2b2b2b;
     color: white;
   }
 </style>

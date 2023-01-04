@@ -75,6 +75,10 @@
     });
   };
 
+  const onNewAssetFolder = () => {
+    Actions.newFolder.dispatch();
+  };
+
   const onDeleteAssetNode = () => {
     const node = selection.firstItem;
     if (app.project.getRootFolder("Textures").contains(node)) {
@@ -91,6 +95,11 @@
   const treeMenu = new Menu(
     [
       {
+        id: "newFolder",
+        label: "New Folder",
+        onClick: onNewAssetFolder,
+      },
+      {
         id: "delete",
         label: "Delete",
         onClick: onDeleteAssetNode,
@@ -102,15 +111,21 @@
       },
     ],
     (item) => {
+      const { id } = item;
+
       if (!app.project.isReady) {
         return;
       }
 
-      if (item.id === "delete") {
+      if (id === "newFolder") {
+        item.isHidden = !(selection.isSingle && selection.isSelected(FolderNode));
+      } else if (id === "delete") {
         item.isHidden = false;
         if (!selection.hasSelection) {
+          // no items selected, item is disabled
           item.isHidden = true;
         } else {
+          // check whether item is root folder or last scene
           const node = selection.firstItem;
           if (
             (node.is(FolderNode) && node.cast<FolderNode>().isRootFolder()) ||

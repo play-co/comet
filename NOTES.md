@@ -57,6 +57,7 @@ Low Priority
     - inc values (small, medium, large)
 * Texture asset settings, global in project preview? use properties panel?
 * Numeric input mouse drag for values
+* Custom icons
 
 Fix
 * overflow for project panel

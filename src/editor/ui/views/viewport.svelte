@@ -28,6 +28,10 @@
       const isOnlySceneSelected = selection.isSingle && selection.firstItem.is(SceneNode);
       const id = item.id;
 
+      if (!app.project.isReady) {
+        return;
+      }
+
       if (id === "copy" || id === "delete") {
         item.isEnabled = !isOnlySceneSelected && selection.length > 0;
       } else if (id === "paste") {
