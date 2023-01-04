@@ -69,6 +69,11 @@ export class CloneInfo
         return this.cloneMode === CloneMode.Duplicate;
     }
 
+    public get isVariantInstance()
+    {
+        return !!(this.cloner?.cloneInfo.isVariantOrRoot);
+    }
+
     public get isVariantRoot()
     {
         return this.cloneMode === CloneMode.VariantRoot;

@@ -212,7 +212,7 @@
     padding: 0 10px;
     font-size: 12px;
     cursor: default;
-    color: #d3d3d3;
+    color: #b7b7b7;
     user-select: none;
   }
 
