@@ -22,8 +22,8 @@ export const PropertyPanelComponents: Partial<Record<PropertyCategory, Component
 };
 
 export const PropertyCategoryOrder: PropertyCategory[] = [
-    'transform',
     'display',
+    'transform',
     'texture',
     'text',
 ];

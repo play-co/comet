@@ -1,9 +1,12 @@
 <script lang="ts">
   import Color from "color";
   import type { ModifyModelCommandParams } from "../../../../commands/modifyModel";
-  import { ModifyModelsCommand } from "../../../../commands/modifyModels";
+  import {
+    ModifyModelsCommand,
+    type ModifyModelsCommandParams,
+  } from "../../../../commands/modifyModels";
   import { Application } from "../../../../core/application";
-  import type { UpdateMode } from "../../../../core/command";
+  import type { Command, UpdateMode } from "../../../../core/command";
   import Events from "../../../../events";
   import type { PropertyBinding } from "../../propertiesPanel";
   import ColorPickerButton from "./colorPickerButton.svelte";
@@ -105,6 +108,21 @@
     const color = Color(e.detail);
     setValue(color, "full");
   };
+
+  Events.command.undo.bind((command: Command) => {
+    const params = command.params as ModifyModelsCommandParams;
+
+    if (command instanceof ModifyModelsCommand) {
+      console.log(command);
+      params.modifications.forEach((modification, i) => {
+        const node = property.nodes[i];
+        if (modification.nodeId === node.id) {
+          // color = Color(modification.prevValues?.tint).fade(modification.prevValues?.alpha).hexa();
+          // console.log(color);
+        }
+      });
+    }
+  });
 </script>
 
 <color-picker-control>

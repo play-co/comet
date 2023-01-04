@@ -3,6 +3,7 @@
   import { createEventDispatcher, onDestroy, onMount } from "svelte";
   import "toolcool-color-picker";
   import type ColorPicker from "toolcool-color-picker";
+  import { pollUntil } from "../../../../../core/util";
   import { getApp } from "../../../../core/application";
   import Events from "../../../../events";
   import { mouseDrag } from "../../../components/dragger";
@@ -21,9 +22,10 @@
   let mouseArea: HTMLDivElement;
   let lastColor = color;
   let hasAccepted = false;
+  let isDragging = false;
 
   onMount(() => {
-    // keep 3rd party component open
+    // continuously poll to keep 3rd party component open
     setInterval(() => {
       if (picker && !picker.opened) {
         picker.color = color;
@@ -43,6 +45,33 @@
       setTimeout(open, 10);
       return;
     }
+
+    (window as any).picker = picker;
+
+    const getPopup = () =>
+      (picker as any).shadowRoot
+        .querySelector("toolcool-color-picker-popup")
+        .shadowRoot.querySelector(".popup");
+
+    const getFields = () =>
+      getPopup().querySelector("toolcool-color-picker-fields").shadowRoot.querySelectorAll("input");
+
+    pollUntil(() => getFields().length > 0)
+      .then(() => {
+        getPopup().addEventListener("mousedown", (e: MouseEvent) => {
+          isDragging = doesMouseAreaContain(e);
+        });
+
+        getFields().forEach((field: HTMLInputElement) => {
+          field.addEventListener("blur", () => {
+            accept(picker.hex8);
+          });
+          field.addEventListener("keyup", onKeyUp);
+        });
+      })
+      .catch((e) => {
+        throw new Error(`Failed to initialise color picker: ${e}`);
+      });
 
     app.isColorPickerOpen = true;
 
@@ -71,7 +100,15 @@
 
   function accept(color: string) {
     dispatch("accept", color);
+    lastColor = color;
     hasAccepted = true;
+  }
+
+  function doesMouseAreaContain(e: MouseEvent) {
+    const bounds = mouseArea.getBoundingClientRect();
+    const rect = new Rectangle(bounds.left, bounds.top, bounds.width, bounds.height);
+
+    return rect.contains(e.clientX, e.clientY);
   }
 
   const onMouseDown = (event: MouseEvent) => {
@@ -90,13 +127,9 @@
     );
   };
 
-  const onMouseUp = (e: MouseEvent) => {
-    const bounds = mouseArea.getBoundingClientRect();
-    const { clientX, clientY } = e;
-    const rect = new Rectangle(bounds.left, bounds.top, bounds.width, bounds.height);
-
-    if (rect.contains(clientX, clientY)) {
-      // accept(picker.hex8);
+  const onMouseUp = () => {
+    if (isDragging) {
+      accept(picker.hex8);
     }
   };
 
@@ -123,14 +156,16 @@
 
   const onKeyUp = (e: KeyboardEvent) => {
     const { key } = e;
-    const isValidKey = isNumeric(key) || isAcceptKey(key) || isArrowKey(key);
+    const isValidKey = isNumeric(key) || isAcceptKey(key) || isArrowKey(key) || isDeleteKey(key);
+    const isValidInput = !isNaN(parseFloat((e.target as HTMLInputElement).value));
 
-    if (!isValidKey) {
+    console.log(e.key, isValidKey, isValidInput);
+
+    if (!isValidKey || !isValidInput) {
       return;
     }
 
     accept(picker.hex8);
-    close();
   };
 
   const onCloseClick = (e: MouseEvent) => {
@@ -140,7 +175,7 @@
 </script>
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<color-picker-dialog style={`left:${left}px;top:${top}px`} on:keydown={onKeyUp}>
+<color-picker-dialog style={`left:${left}px;top:${top}px`}>
   <div bind:this={titleBar} class="titlebar">
     <button class="close" on:click={onCloseClick}>x</button>
   </div>

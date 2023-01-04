@@ -19,7 +19,8 @@
   <button
     bind:this={button}
     on:click={onClick}
-    style={`background:${color};border-color:${Color(color).lighten(0.5)}`} />
+    style={`background:${color};border-color:${Color(color).lighten(0.5)}`}
+  />
   {#if isOpened}
     <ColorPickerDialog
       {color}
@@ -29,7 +30,8 @@
       on:close={() => (isOpened = false)}
       on:change
       on:accept
-      on:close />
+      on:close
+    />
   {/if}
 </color-picker-button>
 

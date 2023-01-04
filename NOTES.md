@@ -29,7 +29,6 @@
 
 High Priority
 * Prefab
-    - Variant children added to instances not updating other instances
     - Investigate ReferenceRoot constraint to only keep unique transform props, all others go to parent model
 * Copy paste
     - Paste logic needs tightening:
@@ -39,11 +38,17 @@ High Priority
 * Cloaking - needs overhaul, perhaps rename to "trash" and "untrash"
     - only root node should be marked, don't walk all child nodes
     - restore node currently brings back too many nodes, needs to be tightened
+    - to replicate:
+        - create asset under folder
+        - delete asset
+        - delete folder
+        - undo delete folder: all children come back, should only be deleted node
 * Text
 * Masks
 * Multi-user testing - once the above is checked, we need to validate and patch multi-user cases
 
 Low Priority
+* Multi-selection as last node with strongest tint
 * Transform gizmo uses statusbar items instead of message
 * Rename cloaked to trashed
 * Project properties panel

@@ -5,7 +5,9 @@ const mousePos = {
     clientY: 0,
 };
 
-window.addEventListener('mousedown', (e: MouseEvent) =>
+const root = document.body;
+
+root.addEventListener('mousedown', (e: MouseEvent) =>
 {
     mousePos.clientX = e.clientX;
     mousePos.clientY = e.clientY;
@@ -13,7 +15,7 @@ window.addEventListener('mousedown', (e: MouseEvent) =>
     Events.mouse.down.emit(e);
 });
 
-window.addEventListener('mousemove', (e: MouseEvent) =>
+root.addEventListener('mousemove', (e: MouseEvent) =>
 {
     mousePos.clientX = e.clientX;
     mousePos.clientY = e.clientY;
@@ -21,7 +23,7 @@ window.addEventListener('mousemove', (e: MouseEvent) =>
     Events.mouse.move.emit(e);
 });
 
-window.addEventListener('mouseup', (e: MouseEvent) =>
+root.addEventListener('mouseup', (e: MouseEvent) =>
 {
     mousePos.clientX = e.clientX;
     mousePos.clientY = e.clientY;
