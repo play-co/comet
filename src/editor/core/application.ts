@@ -16,6 +16,7 @@ import { RemoveNodeCommand } from '../commands/removeNode';
 import { DatastoreNodeInspector } from '../devTools/inspectors/datastoreNodeInspector';
 import { GraphNodeInspector } from '../devTools/inspectors/graphNodeInspector';
 import { LogInspector } from '../devTools/inspectors/logInspector';
+import { ModelInspector } from '../devTools/inspectors/modelInspector';
 import { UndoStackInspector } from '../devTools/inspectors/undoStackInspector';
 import Events from '../events';
 import { LocalStorageProvider } from '../storage/localStorageProvider';
@@ -346,21 +347,24 @@ export class Application
 
             const graphNodeInspector = new GraphNodeInspector('Graph Nodes', 'blue');
             const datastoreNodeInspector = new DatastoreNodeInspector('Datastore Nodes', 'green');
-            const logInspector = new LogInspector('Log', 'darkslategrey');
             const undoStackInspector = new UndoStackInspector('UndoStack', 'purple');
+            const modelInspector = new ModelInspector('Models', 'brown');
+            const logInspector = new LogInspector('Log', 'darkslategrey');
 
             const mediumMaxHeight = Math.round(screen.availHeight * 0.4);
             const shortMaxHeight = Math.round(screen.availHeight * 0.3);
 
             graphNodeInspector.maxHeight = mediumMaxHeight;
             datastoreNodeInspector.maxHeight = mediumMaxHeight;
-            logInspector.maxHeight = shortMaxHeight;
             undoStackInspector.maxHeight = mediumMaxHeight;
+            modelInspector.maxHeight = mediumMaxHeight;
+            logInspector.maxHeight = shortMaxHeight;
 
             graphNodeInspector.mount(container);
             datastoreNodeInspector.mount(container);
             logInspector.mount(container);
             undoStackInspector.mount(container);
+            modelInspector.mount(container);
         }
     }
 

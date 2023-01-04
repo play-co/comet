@@ -1,28 +1,25 @@
 import Color from 'color';
 
 import type { ClonableNode } from '../../../core';
+import type { Model } from '../../../core/model/model';
 import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
 import type { CloneMode } from '../../../core/nodes/cloneInfo';
 import { getInstance, hasInstance } from '../../../core/nodes/instances';
 import { Application, getApp } from '../../core/application';
 import { DevInspector } from '../devInspector';
-import { type CellStyle, type Column, type Row, tableIndexKey } from '../tableRenderer';
+import type { CellStyle, Column, Row } from '../tableRenderer';
 
-export interface GraphNodeDetail
+export interface ModelDetail
 {
-    $: ClonableNode;
-    _depth: number;
-    _cloaked: boolean;
-    name: string;
+    $: Model<any>;
+    owner: string;
+    values: string;
     parent: string;
     children: string;
-    model: string;
     cloneMode: CloneMode;
-    cloner: string;
-    cloned: string;
 }
 
-export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
+export class ModelInspector extends DevInspector<ModelDetail>
 {
     protected init(): void
     {
@@ -34,15 +31,8 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
 
     public onCellStyle = (row: Row, column: Column, cellStyle: CellStyle) =>
     {
-        const app = getApp();
         const currentCell = this.getCell(column.id, row);
-        const cloakedCell = this.getCell('_cloaked', row);
-
-        if (cloakedCell.value as boolean === true)
-        {
-            cellStyle.fillColor = Color(this.painter.backgroundColor).darken(0.35).hex();
-            cellStyle.fontColor = '#aaa';
-        }
+        const app = getApp();
 
         if (currentCell.value === '#empty#')
         {
@@ -51,7 +41,7 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
             cellStyle.text = 'none';
         }
 
-        const id = this.getCell(tableIndexKey, row).value as string;
+        const id = this.getCell('owner', row).value as string;
 
         if (hasInstance(id))
         {
@@ -75,31 +65,40 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
     protected getDetails()
     {
         const app = Application.instance;
-        const details: Record<string, GraphNodeDetail> = {};
+        const details: Record<string, ModelDetail> = {};
 
-        app.project.walk<ClonableNode>((node, options) =>
+        app.project.walk<ClonableNode>((node) =>
         {
-            let pad = '';
+            const model = node.model;
+            const keys = Object.keys(model.ownValues);
 
-            if (options.depth > 0)
+            let values = '#empty#';
+
+            if (keys.length > 0)
             {
-                pad = `${'│'.repeat(options.depth - 1)}└`;
+                values = keys.map((key) =>
+                {
+                    let value = model.ownValues[key];
+
+                    if (typeof value === 'number')
+                    {
+                        value = value.toFixed(1);
+                    }
+
+                    return `${key}: ${value}`;
+                }).join(', ');
             }
 
-            const detail: GraphNodeDetail = {
-                $: node,
-                _depth: options.depth,
-                _cloaked: node.isCloaked,
-                name:  `${pad}${node.model.getValue<string>('name')}`,
-                parent: node.parent ? node.parent.id : '#empty#',
-                children: node.children.length === 0 ? '#empty#' : node.children.map((node) => node.id).join(','),
-                cloneMode: node.cloneInfo.cloneMode,
-                cloner: node.cloneInfo.cloner ? node.cloneInfo.cloner.id : '#empty#',
-                cloned: node.cloneInfo.cloned ? node.cloneInfo.cloned.map((node) => node.id).join(',') : '#empty#',
-                model: node.model.id,
+            const detail: ModelDetail = {
+                $: model,
+                owner: node.id,
+                parent: model.parent ? model.parent.id : '#empty#',
+                children: model.children.length === 0 ? '#empty#' : model.children.map((model) => model.id).join(','),
+                cloneMode: model.cloneMode,
+                values,
             };
 
-            details[node.id] = detail;
+            details[model.id] = detail;
         });
 
         return details;
@@ -108,14 +107,14 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
     protected inspect()
     {
         const app = Application.instance;
-        const nodes: ClonableNode[] = [];
+        const models: Model<any>[] = [];
 
         app.project.walk<ClonableNode>((node) =>
         {
-            nodes.push(node);
+            models.push(node.model);
         });
 
-        console.log(nodes);
+        console.log(models);
     }
 
     protected indexColumnLabel()

@@ -99,7 +99,7 @@ export function createTable<T extends Record<string, any>>(
 
     // detect sizes
     const cellSize = measureText(tableIndexKey, fontSize);
-    const maxColumnWidth = Math.round(document.body.clientWidth * 0.25);
+    const maxColumnWidth = Math.round(document.body.clientWidth);
 
     indexColumn.width = cellSize.width;
 
@@ -118,7 +118,7 @@ export function createTable<T extends Record<string, any>>(
             const cellSize = measureText(JSON.stringify(row.get(columnId)), fontSize);
             const columnHeadingSize = measureText(columnId, fontSize);
 
-            column.width = Math.min(maxColumnWidth, Math.max(cellSize.width * 0.75, column.width, columnHeadingSize.width));
+            column.width = Math.min(maxColumnWidth, Math.max(cellSize.width - 20, column.width, columnHeadingSize.width));
         }
     });
 

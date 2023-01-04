@@ -94,7 +94,7 @@ export class CloneInfo
         return this.cloneMode === CloneMode.Variant || this.cloneMode === CloneMode.VariantRoot;
     }
 
-    public get isVariantLike()
+    public get isInstanceRoot()
     {
         return this.isVariantOrRoot || this.isReferenceRoot;
     }

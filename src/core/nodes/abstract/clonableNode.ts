@@ -99,7 +99,7 @@ export abstract class ClonableNode<
 
     public initCloning()
     {
-        const { cloneInfo, cloneInfo: { isVariantLike, isReferenceRoot } } = this;
+        const { cloneInfo, cloneInfo: { isInstanceRoot } } = this;
 
         const cloner = cloneInfo.getCloner<ClonableNode>();
 
@@ -111,15 +111,9 @@ export abstract class ClonableNode<
 
             // note: Reference case is handled immediately in Node constructor as model is shared
 
-            if (isVariantLike)
+            if (isInstanceRoot)
             {
                 this.model.link(sourceModel, this.cloneInfo.cloneMode);
-
-                if (isReferenceRoot)
-                {
-                    cloner.model.isInstanceRoot = true;
-                    this.model.isInstanceRoot = true;
-                }
             }
         }
 
@@ -450,9 +444,9 @@ export abstract class ClonableNode<
 
     public getModificationCloneTarget(): ClonableNode
     {
-        const { isVariantLike, isOriginal } = this.cloneInfo;
+        const { isInstanceRoot, isOriginal } = this.cloneInfo;
 
-        return (isVariantLike || isOriginal) ? this as unknown as ClonableNode : this.cloneInfo.getCloner();
+        return (isInstanceRoot || isOriginal) ? this as unknown as ClonableNode : this.cloneInfo.getCloner();
     }
 
     public getAddChildCloneTarget(): ClonableNode

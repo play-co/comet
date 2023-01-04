@@ -24,10 +24,12 @@ export const displayObjectSchema = new ModelSchema<DisplayObjectModel>({
     x: {
         defaultValue: 0,
         category: 'transform',
+        ownValue: true,
     },
     y: {
         defaultValue: 0,
         category: 'transform',
+        ownValue: true,
     },
     pivotX: {
         defaultValue: 0,

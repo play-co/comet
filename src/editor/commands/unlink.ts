@@ -64,7 +64,7 @@ export class UnlinkCommand
                 {
                     node.model = cloner.model;
                 }
-                else if (nodeSchemaCloneInfo.isVariantLike)
+                else if (nodeSchemaCloneInfo.isInstanceRoot)
                 {
                     node.model.link(cloner.model);
                 }

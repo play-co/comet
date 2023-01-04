@@ -29,26 +29,3 @@ export class NumericRangeLimitConstraint extends ModelConstraint<number>
         return Math.min(max, Math.max(min, value));
     }
 }
-
-// todo: needed any more?
-export class ReferenceConstraint<M extends object> extends ModelConstraint<unknown>
-{
-    constructor()
-    {
-        super();
-    }
-
-    public applyToValue(value: any, key: string, model: Model<M>): unknown
-    {
-        const modelKey = key as keyof M;
-
-        const ref = model.getReferenceParent();
-
-        if (ref)
-        {
-            ref.rawSetValue(modelKey, value);
-        }
-
-        return value;
-    }
-}

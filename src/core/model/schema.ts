@@ -13,6 +13,7 @@ export interface PropertyDescriptor<M>
     defaultValue: M[keyof M];
     category: PropertyCategory;
     constraints?: ModelConstraint<any>[];
+    ownValue?: boolean;
 }
 
 export type PropertyDescriptors<M> = Record<keyof M, PropertyDescriptor<M>>;

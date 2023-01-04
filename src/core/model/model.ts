@@ -18,7 +18,6 @@ export class Model<M> extends GraphNode
 {
     public readonly schema: ModelSchema<M>;
     public readonly data: Partial<M>;
-    public isInstanceRoot: boolean;
     public cloneMode: CloneMode;
 
     protected readonly emitter: EventEmitter<'modified'>;
@@ -30,7 +29,6 @@ export class Model<M> extends GraphNode
         this.schema = schema;
         this.data = data;
         this.children = [];
-        this.isInstanceRoot = false;
         this.cloneMode = CloneMode.Original;
 
         this.emitter = new EventEmitter();
@@ -106,6 +104,18 @@ export class Model<M> extends GraphNode
     {
         const { data, schema, schema: { keys } } = this;
 
+        const propDesc = schema.properties[key];
+
+        if (!propDesc.ownValue)
+        {
+            const ref = this.getReferenceParent();
+
+            if (ref && ref !== this)
+            {
+                return ref.setValue(key, newValue);
+            }
+        }
+
         const oldValue = Reflect.get(data, key);
 
         let value = newValue === undefined ? data[key] : newValue;
@@ -162,7 +172,7 @@ export class Model<M> extends GraphNode
 
     public setValues(values: Partial<M>)
     {
-        const { ownValues } = this;
+        const { values: allValues } = this;
         const keys = Object.getOwnPropertyNames(values) as (keyof M)[];
         const prevValues: Partial<M> = {};
 
@@ -170,9 +180,9 @@ export class Model<M> extends GraphNode
         {
             const value = values[key] as M[keyof M];
 
-            if (value !== ownValues[key])
+            if (value !== allValues[key])
             {
-                prevValues[key] = this.ownValues[key];
+                prevValues[key] = allValues[key];
                 this.setValue(key, value);
             }
         });
@@ -238,7 +248,7 @@ export class Model<M> extends GraphNode
 
     public getReferenceParent(): Model<M> | undefined
     {
-        if (this.isInstanceRoot)
+        if (this.cloneMode === 'reference_root' || this.children.length > 0)
         {
             if (this.parent)
             {
