@@ -33,13 +33,9 @@ export class NumericRangeLimitConstraint extends ModelConstraint<number>
 // todo: needed any more?
 export class ReferenceConstraint<M extends object> extends ModelConstraint<unknown>
 {
-    public mutableKeys: (keyof M)[];
-
-    constructor(mutableKeys: (keyof M)[])
+    constructor()
     {
         super();
-
-        this.mutableKeys = mutableKeys;
     }
 
     public applyToValue(value: any, key: string, model: Model<M>): unknown
@@ -48,7 +44,7 @@ export class ReferenceConstraint<M extends object> extends ModelConstraint<unkno
 
         const ref = model.getReferenceParent();
 
-        if (ref && this.mutableKeys.indexOf(modelKey) === -1)
+        if (ref)
         {
             ref.rawSetValue(modelKey, value);
         }

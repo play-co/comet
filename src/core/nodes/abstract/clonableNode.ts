@@ -117,8 +117,8 @@ export abstract class ClonableNode<
 
                 if (isReferenceRoot)
                 {
-                    cloner.model.isReference = true;
-                    this.model.isReference = true;
+                    cloner.model.isInstanceRoot = true;
+                    this.model.isInstanceRoot = true;
                 }
             }
         }

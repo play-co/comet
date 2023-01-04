@@ -18,7 +18,7 @@ export class Model<M> extends GraphNode
 {
     public readonly schema: ModelSchema<M>;
     public readonly data: Partial<M>;
-    public isReference: boolean;
+    public isInstanceRoot: boolean;
     public cloneMode: CloneMode;
 
     protected readonly emitter: EventEmitter<'modified'>;
@@ -30,7 +30,7 @@ export class Model<M> extends GraphNode
         this.schema = schema;
         this.data = data;
         this.children = [];
-        this.isReference = false;
+        this.isInstanceRoot = false;
         this.cloneMode = CloneMode.Original;
 
         this.emitter = new EventEmitter();
@@ -238,7 +238,7 @@ export class Model<M> extends GraphNode
 
     public getReferenceParent(): Model<M> | undefined
     {
-        if (this.isReference)
+        if (this.isInstanceRoot)
         {
             if (this.parent)
             {
