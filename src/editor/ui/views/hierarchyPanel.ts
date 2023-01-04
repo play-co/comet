@@ -43,15 +43,19 @@ export class HierarchyTree extends NodeTreeModel<HierarchySelection>
                     return;
                 }
 
-                const { isReferenceOrRoot, isVariantInstance } = node.cloneInfo;
+                const { isReferenceOrRoot } = node.cloneInfo;
 
-                let icon = isReferenceOrRoot
-                    ? Icons.PrefabInstanceReference
-                    : Icons[node.nodeType() as keyof typeof Icons];
+                let icon = Icons[node.nodeType() as keyof typeof Icons];
 
-                icon = isVariantInstance
-                    ? Icons.PrefabInstanceVariant
-                    : icon;
+                if (isReferenceOrRoot)
+                {
+                    const root = node.getCloneRoot();
+                    const { isVariantInstance } = root.cloneInfo;
+
+                    icon = isVariantInstance
+                        ? Icons.PrefabInstanceVariant
+                        : Icons.PrefabInstanceReference;
+                }
 
                 const item: TreeItem<ClonableNode> = {
                     id: node.id,
