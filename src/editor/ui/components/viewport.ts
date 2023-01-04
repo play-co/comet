@@ -160,10 +160,6 @@ export class EditableViewport
             this.viewport.cursor = 'grab';
             this.gizmo.isInteractive = false;
         }
-        else if (e.key === 'Escape')
-        {
-            Application.instance.selection.hierarchy.deselect();
-        }
     };
 
     protected onKeyUp = (e: KeyboardEvent) =>

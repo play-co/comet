@@ -72,8 +72,9 @@ export class Application
     public layout?: GoldenLayout;
     protected focusArea: FocusAreaId | null;
     protected focusAreaElements: Map<FocusAreaId, HTMLElement>;
-    public isColorPickerOpen: boolean;
     protected clipboard: ClonableNode[];
+
+    public colorPickerMode: 'hex' | 'rgb' | 'hsv' = 'hex';
 
     private static _instance: Application;
 
@@ -110,7 +111,6 @@ export class Application
         this.clipboard = [];
         this.focusArea = null;
         this.focusAreaElements = new Map();
-        this.isColorPickerOpen = false;
 
         this.storageProvider = new LocalStorageProvider();
         this.project = new ProjectNode();
@@ -245,7 +245,9 @@ export class Application
 
         if (prefs)
         {
-            const { viewportRoot } = prefs;
+            const { viewportRoot, colorPickerMode } = prefs;
+
+            this.colorPickerMode = colorPickerMode;
 
             try
             {

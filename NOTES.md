@@ -69,6 +69,7 @@ Try:
 * Refactor Convergence datastore to be as generic as possible
 * Replace Interface with Type definitions for models, may loosen generic polymorphism
 * Reduce grid lines when zoomed out
+* Replace Color with colord
 
 Rollout:
 * Fix cloning and prefab create/edit

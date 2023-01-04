@@ -14,6 +14,7 @@ specifiers:
   '@typescript-eslint/eslint-plugin': ^5.33.0
   '@typescript-eslint/parser': ^5.34.0
   color: ^4.2.3
+  colord: ^2.9.3
   commitizen: ^4.2.4
   commitlint: ^17.0.3
   cz-conventional-changelog: ^3.3.0
@@ -35,6 +36,7 @@ specifiers:
   rollup-plugin-copy: ^3.4.0
   rollup-plugin-delete: ^2.0.0
   svelte: ~3.49.0
+  svelte-awesome-color-picker: ^2.2.2
   svelte-check: ~2.8.0
   svelte-preprocess: ~4.10.7
   svelte-routing: ^1.6.0
@@ -53,6 +55,7 @@ dependencies:
   '@convergence/convergence': 1.0.0-rc.12
   '@pixi/graphics-smooth': 0.0.30
   color: 4.2.3
+  colord: 2.9.3
   dropzone: 6.0.0-beta.2
   eventemitter3: 4.0.7
   fast-equals: 4.0.3
@@ -61,6 +64,7 @@ dependencies:
   lz-string: 1.4.4
   pixi-viewport: 4.37.0
   pixi.js: 6.5.2
+  svelte-awesome-color-picker: 2.2.2
   svelte-routing: 1.6.0_ueozcsexptisi2awlbuwt6eqmq
   toolcool-color-picker: 1.0.13
   tslib: 2.4.0
@@ -2762,6 +2766,10 @@ packages:
     dependencies:
       color-convert: 2.0.1
       color-string: 1.9.1
+    dev: false
+
+  /colord/2.9.3:
+    resolution: {integrity: sha512-jeC1axXpnb0/2nn/Y1LPuLdgXBLH7aDcHu4KEKfqw3CUhX7ZpfBSlPKyqXE6btIgEzfWtrX3/tyBCaCvXvMkOw==}
     dev: false
 
   /colorette/1.4.0:
@@ -7226,6 +7234,12 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
     dev: true
+
+  /svelte-awesome-color-picker/2.2.2:
+    resolution: {integrity: sha512-1Py/k0aVt8BG8qnWRxHzOguc7vGxsPZOS+Fz6J4mZ6AViNkE+RB/2Sz4mfbfkijUjBwaRo43VzJDyXBlsUPNQw==}
+    dependencies:
+      colord: 2.9.3
+    dev: false
 
   /svelte-check/2.8.1_svelte@3.49.0:
     resolution: {integrity: sha512-cibyY1sgt3ONIDnQbSgV2X9AJFhwEslRHNo95lijrYfPzVEvTvbmL2ohsUyqB5L7j1GhLXtQbjCJ4lZZ/fwbeQ==}

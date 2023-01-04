@@ -1,6 +1,9 @@
 <script lang="ts">
   import Color from "color";
+
   import { nextTick } from "../../../../../core/util";
+  import { getApp } from "../../../../core/application";
+  import Events from "../../../../events";
   import ColorPickerDialog from "./colorPickerDialog.svelte";
 
   export let color: string;
@@ -30,16 +33,23 @@
       button.blur();
     }
   };
+
+  Events.key.down.bind((e) => {
+    if (e.key === "Escape" && isOpened) {
+      isOpened = false;
+    }
+  });
 </script>
 
 <color-picker-button>
   <button
     bind:this={button}
     on:click={onClick}
-    style={`background:${color};border-color:${Color(color).lighten(0.5)}`}
+    style={`background:${color};border-color:${Color(color).alpha(1).lighten(0.5)}`}
   />
   {#if isOpened}
     <ColorPickerDialog
+      mode={getApp().colorPickerMode}
       bind:this={dialog}
       {color}
       on:change={(e) => {

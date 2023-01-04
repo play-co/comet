@@ -1,123 +1,82 @@
 <script lang="ts">
-  import { Rectangle } from "pixi.js";
-  import { createEventDispatcher, onDestroy, onMount } from "svelte";
-  import "toolcool-color-picker";
-  import type ColorPicker from "toolcool-color-picker";
-  import { pollUntil } from "../../../../../core/util";
-  import { getApp } from "../../../../core/application";
-  import Events from "../../../../events";
+  import ColorPicker from "svelte-awesome-color-picker";
+  import { createEventDispatcher, onMount } from "svelte";
+
   import { mouseDrag } from "../../../components/dragger";
-  import { isAcceptKey, isArrowKey, isDeleteKey, isNumeric } from "../../../components/filters";
+  import Events from "../../../../events";
+  import { saveUserEditPrefs } from "../../../../core/userPrefs";
+  import { getApp } from "../../../../core/application";
+  import { nextTick } from "../../../../../core/util";
+
+  type ColorPickerMode = "hex" | "rgb" | "hsv";
 
   export let color: string;
+  export let mode: ColorPickerMode = "rgb";
 
-  export function setColor(c: string) {
-    color = c;
-    picker.color = c;
-  }
-
-  const app = getApp();
   const dispatch = createEventDispatcher();
 
+  let picker: HTMLElement;
+  let isEditing = false;
   let left: number = 100;
   let top: number = 100;
-  let picker: ColorPicker;
+
   let titleBar: HTMLDivElement;
-  let colorBox: HTMLButtonElement;
-  let mouseArea: HTMLDivElement;
-  let lastColor = color;
-  let hasAccepted = false;
-  let isDragging = false;
 
-  onMount(() => {
-    // continuously poll to keep 3rd party component open
-    setInterval(() => {
-      if (picker && !picker.opened) {
-        picker.color = color;
-        picker.opened = true;
-        colorBox.style.background = color;
-      }
-    }, 10);
-
-    open();
-  });
-
-  onDestroy(close);
-
-  function open() {
-    if (!picker) {
-      // shadow-dom of 3rd party lib is not immediately available, short poll until its available
-      setTimeout(open, 10);
-      return;
-    }
-
-    (window as any).picker = picker;
-
-    const getPopup = () =>
-      (picker as any).shadowRoot
-        .querySelector("toolcool-color-picker-popup")
-        .shadowRoot.querySelector(".popup");
-
-    const getFields = () =>
-      getPopup().querySelector("toolcool-color-picker-fields").shadowRoot.querySelectorAll("input");
-
-    pollUntil(() => getFields().length > 0)
-      .then(() => {
-        getPopup().addEventListener("mousedown", (e: MouseEvent) => {
-          isDragging = doesMouseAreaContain(e);
-          console.log(isDragging);
-        });
-
-        getFields().forEach((field: HTMLInputElement) => {
-          field.addEventListener("blur", () => {
-            accept(picker.hex8);
-          });
-          field.addEventListener("keyup", onKeyUp);
-        });
-      })
-      .catch((e) => {
-        throw new Error(`Failed to initialise color picker: ${e}`);
-      });
-
-    app.isColorPickerOpen = true;
-
-    // bind to events
-    window.addEventListener("mouseup", onMouseUp);
-    titleBar.addEventListener("mousedown", onMouseDown);
-    picker.addEventListener("change", onChange);
-    Events.key.down.bind(onKeyDown);
-  }
+  function open() {}
 
   function close() {
-    app.isColorPickerOpen = false;
-
-    // unbind to events
-    window.removeEventListener("mouseup", onMouseUp);
-    titleBar.removeEventListener("mousedown", onMouseDown);
-    picker.removeEventListener("change", onChange);
-    Events.key.down.unbind(onKeyDown);
-
-    // if (!hasAccepted) {
-    //   accept(picker.hex8);
-    // }
-
     dispatch("close");
   }
 
-  function accept(color: string) {
-    dispatch("accept", color);
-    lastColor = color;
-    hasAccepted = true;
-  }
+  onMount(() => {
+    titleBar.addEventListener("mousedown", onTitleBarMouseDown);
 
-  function doesMouseAreaContain(e: MouseEvent) {
-    const bounds = mouseArea.getBoundingClientRect();
-    const rect = new Rectangle(bounds.left, bounds.top, bounds.width, bounds.height);
+    const wrapper = picker.querySelector(".wrapper") as HTMLElement;
+    const colorBox = wrapper.querySelector(".picker") as HTMLElement;
+    const colorSlider = wrapper.querySelector(".slider") as HTMLElement;
+    const alphaSlider = wrapper.querySelector(".alpha") as HTMLElement;
+    const button = wrapper.querySelector("button") as HTMLButtonElement;
 
-    return rect.contains(e.clientX, e.clientY);
-  }
+    const beginEditing = () => (isEditing = true);
 
-  const onMouseDown = (event: MouseEvent) => {
+    colorBox.onmousedown = beginEditing;
+    colorSlider.onmousedown = beginEditing;
+    alphaSlider.onmousedown = beginEditing;
+
+    // listen to button change events
+    button.onmouseup = () => {
+      // allow ui to update
+      nextTick().then(() => {
+        mode = button.innerText.toLowerCase() as ColorPickerMode;
+        getApp().colorPickerMode = mode;
+        saveUserEditPrefs();
+      });
+    };
+
+    // force the view to change to the desired mode
+    if (mode === "rgb") {
+      button.click();
+    } else if (mode === "hsv") {
+      button.click();
+      button.click();
+    }
+
+    // catch mouseup outside of dialog
+    Events.mouse.up.bind(() => {
+      if (isEditing) {
+        dispatch("accept", color);
+      }
+      isEditing = false;
+    });
+    open();
+  });
+
+  const onChange = (event: CustomEvent) => {
+    color = event.detail.hex;
+    dispatch("change", color);
+  };
+
+  const onTitleBarMouseDown = (event: MouseEvent) => {
     event.stopPropagation();
 
     mouseDrag(
@@ -133,48 +92,6 @@
     );
   };
 
-  const onMouseUp = () => {
-    if (isDragging) {
-      accept(picker.hex8);
-    }
-    isDragging = false;
-  };
-
-  const onChange = () => {
-    const color = picker.hex8;
-
-    if (color === lastColor) {
-      return;
-    }
-
-    colorBox.style.background = color;
-    lastColor = color;
-
-    dispatch("change", color);
-  };
-
-  const onKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "Escape") {
-      close();
-    } else if (isDeleteKey(e.key)) {
-      e.stopPropagation();
-    }
-  };
-
-  const onKeyUp = (e: KeyboardEvent) => {
-    const { key } = e;
-    const isValidKey = isNumeric(key) || isAcceptKey(key) || isArrowKey(key) || isDeleteKey(key);
-    const isValidInput = !isNaN(parseFloat((e.target as HTMLInputElement).value));
-
-    console.log(e.key, isValidKey, isValidInput);
-
-    if (!isValidKey || !isValidInput) {
-      return;
-    }
-
-    accept(picker.hex8);
-  };
-
   const onCloseClick = (e: MouseEvent) => {
     e.stopPropagation();
     close();
@@ -186,13 +103,9 @@
   <div bind:this={titleBar} class="titlebar">
     <button class="close" on:click={onCloseClick}>x</button>
   </div>
-  <div class="picker">
-    <toolcool-color-picker bind:this={picker} color="#e76ff1" button-padding="1px" />
+  <div class="picker" bind:this={picker}>
+    <ColorPicker hex={color} isOpen={true} isInput={false} isPopup={false} on:input={onChange} />
   </div>
-  <button bind:this={colorBox} class="color" on:mousedown={(e) => e.stopPropagation()}
-    >&nbsp;</button
-  >
-  <div bind:this={mouseArea} class="mousearea" />
 </color-picker-dialog>
 
 <style>
@@ -200,7 +113,7 @@
     position: fixed;
     display: flex;
     flex-direction: column;
-    box-shadow: 4px 5px 9px #00000082;
+    box-shadow: 3px 7px 13px #00000082;
     z-index: 100;
   }
 
@@ -217,13 +130,12 @@
   .close {
     width: 20px;
     height: 20px;
-    background-color: #4a4a4a;
+    background-color: #6d6d6d;
     border: 1px outset #878585;
     font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #ececec;
     font-family: sans-serif;
     cursor: pointer;
     padding-bottom: 3px;
@@ -235,31 +147,20 @@
   }
 
   .picker {
-    width: 228px;
-    height: 248px;
     overflow: hidden;
     border: 1px outset #888;
   }
 
-  .color {
-    height: 50px;
-    border: 1px outset #888;
+  .picker :global(.wrapper) {
+    margin: 0;
+    background-color: #424242;
+    border-radius: 0;
+    border: none;
   }
 
-  toolcool-color-picker {
-    position: relative;
-    top: -29px;
-    left: -2px;
-  }
-
-  .mousearea {
-    position: absolute;
-    z-index: 100;
-    opacity: 0.5;
-    top: 29px;
-    left: 8px;
-    width: 214px;
-    height: 172px;
-    pointer-events: none;
+  .picker :global(input),
+  .picker :global(button) {
+    color: #c0c0c0;
+    background-color: #323030;
   }
 </style>

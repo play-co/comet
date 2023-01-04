@@ -25,6 +25,7 @@ export interface UserViewportPrefs
 export interface UserEditPrefs
 {
     viewportRoot: string;
+    colorPickerMode: 'hex' | 'rgb' | 'hsv';
 }
 
 function storageKey(id: UserPrefStorageKey)
@@ -118,6 +119,7 @@ export function getUserEditPrefs()
 
     return {
         viewportRoot: app.viewport.rootNode.id,
+        colorPickerMode: app.colorPickerMode,
     } as UserEditPrefs;
 }
 
