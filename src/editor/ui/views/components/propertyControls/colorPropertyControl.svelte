@@ -1,12 +1,9 @@
 <script lang="ts">
   import Color from "color";
   import type { ModifyModelCommandParams } from "../../../../commands/modifyModel";
-  import {
-    ModifyModelsCommand,
-    type ModifyModelsCommandParams,
-  } from "../../../../commands/modifyModels";
-  import { Application } from "../../../../core/application";
-  import type { Command, UpdateMode } from "../../../../core/command";
+  import { ModifyModelsCommand } from "../../../../commands/modifyModels";
+  import { Application, getApp } from "../../../../core/application";
+  import type { UpdateMode } from "../../../../core/command";
   import Events from "../../../../events";
   import type { PropertyBinding } from "../../propertiesPanel";
   import ColorPickerButton from "./colorPickerButton.svelte";
@@ -14,7 +11,17 @@
   export let property: PropertyBinding;
   export let setAlpha = true;
 
+  const app = getApp();
+
+  type ColorInfo = {
+    prev: string;
+    next: string;
+  };
+
+  let button: ColorPickerButton;
+
   const initialValues: Map<string, object> = new Map();
+  const undoStack: Map<number, ColorInfo> = new Map();
 
   function getInitialColor() {
     const firstNodeColor = property.nodes[0].model.getValue<number>(property.key);
@@ -86,16 +93,31 @@
       modifications.push(modification);
     });
 
+    const command = new ModifyModelsCommand({ modifications });
+
     if (updateMode === "graphOnly") {
-      new ModifyModelsCommand({ modifications }).run();
+      command.run();
     } else {
-      Application.instance.undoStack.exec(new ModifyModelsCommand({ modifications }));
+      const head = app.undoStack.head + 1;
+
+      if (!undoStack.has(head)) {
+        undoStack.set(head, {
+          prev: lastColor,
+          next: color.hexa(),
+        });
+        lastColor = color.hexa();
+      }
+
+      console.log("set", color.rgbNumber());
+
+      Application.instance.undoStack.exec(command);
     }
 
     Events.editor.propertyModified.emit(property);
   }
 
   let color: string;
+  let lastColor = getInitialColor();
 
   $: (color = getInitialColor()), property;
 
@@ -109,24 +131,32 @@
     setValue(color, "full");
   };
 
-  Events.command.undo.bind((command: Command) => {
-    const params = command.params as ModifyModelsCommandParams;
-
-    if (command instanceof ModifyModelsCommand) {
-      console.log(command);
-      params.modifications.forEach((modification, i) => {
-        const node = property.nodes[i];
-        if (modification.nodeId === node.id) {
-          // color = Color(modification.prevValues?.tint).fade(modification.prevValues?.alpha).hexa();
-          // console.log(color);
-        }
-      });
-    }
+  Events.command.undo.bind(() => {
+    // const head = app.undoStack.head;
+    // console.log("undo", head);
+    // if (undoStack.has(head)) {
+    //   button.reload((undoStack.get(head) as ColorInfo).prev);
+    // }
+    // button.reload(getInitialColor());
   });
+  Events.command.redo.bind(() => {
+    // const head = app.undoStack.head + 1;
+    // console.log("redo", head);
+    // if (undoStack.has(head)) {
+    //   button.reload((undoStack.get(head) as ColorInfo).next);
+    // }
+    // button.reload(getInitialColor());
+  });
+
+  // Events.$("command.(undo|redo)", () => {
+  //   if (button.isOpen()) {
+  //     button.reload(getInitialColor());
+  //   }
+  // });
 </script>
 
 <color-picker-control>
-  <ColorPickerButton {color} on:change={onChange} on:accept={onAccept} />
+  <ColorPickerButton bind:this={button} {color} on:change={onChange} on:accept={onAccept} />
 </color-picker-control>
 
 <style>

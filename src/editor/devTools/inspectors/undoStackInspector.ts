@@ -1,5 +1,6 @@
 import Color from 'color';
 
+import { nextTick } from '../../../core/util';
 import { Application } from '../../core/application';
 import Events from '../../events';
 import { DevInspector } from '../devInspector';
@@ -14,7 +15,10 @@ export class UndoStackInspector extends DevInspector<UndoStackDetail>
 {
     protected init(): void
     {
-        const onUpdate = () => this.scrollToEnd();
+        const onUpdate = () =>
+        {
+            nextTick().then(() => this.scrollToEnd());
+        };
 
         Events.command.exec.bind(onUpdate);
         Events.command.undo.bind(onUpdate);
@@ -63,7 +67,7 @@ export class UndoStackInspector extends DevInspector<UndoStackDetail>
     {
         const undoStack = Application.instance.undoStack;
 
-        console.log(undoStack.stack);
+        console.log(undoStack.length, undoStack.stack);
     }
 
     protected indexColumnLabel()

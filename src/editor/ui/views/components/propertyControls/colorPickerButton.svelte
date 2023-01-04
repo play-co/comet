@@ -1,14 +1,31 @@
 <script lang="ts">
   import Color from "color";
+  import { nextTick } from "../../../../../core/util";
   import ColorPickerDialog from "./colorPickerDialog.svelte";
 
   export let color: string;
 
+  let dialog: ColorPickerDialog;
   let isOpened = false;
   let button: HTMLButtonElement;
 
+  export function reload(newColor: string) {
+    color = newColor;
+    dialog.setColor(newColor);
+    isOpened = false;
+
+    nextTick().then(() => {
+      isOpened = true;
+    });
+  }
+
+  export function isOpen() {
+    return isOpened;
+  }
+
   const onClick = () => {
     isOpened = !isOpened;
+
     if (!isOpened) {
       button.blur();
     }
@@ -23,6 +40,7 @@
   />
   {#if isOpened}
     <ColorPickerDialog
+      bind:this={dialog}
       {color}
       on:change={(e) => {
         color = e.detail;

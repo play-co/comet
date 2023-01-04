@@ -11,6 +11,11 @@
 
   export let color: string;
 
+  export function setColor(c: string) {
+    color = c;
+    picker.color = c;
+  }
+
   const app = getApp();
   const dispatch = createEventDispatcher();
 
@@ -60,6 +65,7 @@
       .then(() => {
         getPopup().addEventListener("mousedown", (e: MouseEvent) => {
           isDragging = doesMouseAreaContain(e);
+          console.log(isDragging);
         });
 
         getFields().forEach((field: HTMLInputElement) => {
@@ -91,9 +97,9 @@
     picker.removeEventListener("change", onChange);
     Events.key.down.unbind(onKeyDown);
 
-    if (!hasAccepted) {
-      accept(picker.hex8);
-    }
+    // if (!hasAccepted) {
+    //   accept(picker.hex8);
+    // }
 
     dispatch("close");
   }
@@ -131,6 +137,7 @@
     if (isDragging) {
       accept(picker.hex8);
     }
+    isDragging = false;
   };
 
   const onChange = () => {
