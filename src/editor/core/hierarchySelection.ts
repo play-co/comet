@@ -1,25 +1,10 @@
 import type { ClonableNode } from '../../core';
 import type { ModelBase } from '../../core/model/model';
 import Events from '../events';
-import { ItemSelection } from './itemSelection';
+import { NodeSelection } from './nodeSelection';
 
-export class HierarchySelection extends ItemSelection<ClonableNode>
+export class HierarchySelection extends NodeSelection<ClonableNode>
 {
-    public deepContains(node: ClonableNode)
-    {
-        const allNodes: Map<ClonableNode, true> = new Map();
-
-        this.items.forEach((selectedNode) =>
-        {
-            selectedNode.walk<ClonableNode>((node) =>
-            {
-                allNodes.set(node, true);
-            });
-        });
-
-        return allNodes.has(node);
-    }
-
     protected onSetSingle(item: ClonableNode<ModelBase, object>): void
     {
         Events.selection.hierarchy.setSingle.emit(item);

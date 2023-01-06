@@ -33,6 +33,13 @@ export class ModelInspector extends DevInspector<ModelDetail>
     {
         const currentCell = this.getCell(column.id, row);
         const app = getApp();
+        const owner = getInstance<ClonableNode>(this.getCell('owner', row).value as string);
+
+        if (owner.isCloaked)
+        {
+            cellStyle.fillColor = Color(this.painter.backgroundColor).darken(0.35).hex();
+            cellStyle.fontColor = '#aaa';
+        }
 
         if (currentCell.value === '#empty#')
         {

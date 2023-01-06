@@ -3,11 +3,11 @@ import { ModifyModelCommand } from '../../../commands/modifyModel';
 import { SetNodeIndexCommand } from '../../../commands/setNodeIndex';
 import { SetParentCommand } from '../../../commands/setParent';
 import { Application, getApp } from '../../../core/application';
-import type { ItemSelection } from '../../../core/itemSelection';
+import type { NodeSelection } from '../../../core/nodeSelection';
 import { type TreeItem, TreeViewModel } from './treeModel';
 
 export abstract class NodeTreeModel<
-    NodeSelectionType extends ItemSelection<ClonableNode>,
+    NodeSelectionType extends NodeSelection<ClonableNode>,
 > extends TreeViewModel<ClonableNode, NodeSelectionType>
 {
     public getLabel(obj: ClonableNode)

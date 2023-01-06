@@ -1,20 +1,9 @@
 import type { ClonableNode } from '../../core';
-import type { MetaNode } from '../../core/nodes/abstract/metaNode';
 import Events from '../events';
-import { ItemSelection } from './itemSelection';
+import { NodeSelection } from './nodeSelection';
 
-export class ProjectSelection extends ItemSelection<ClonableNode>
+export class ProjectSelection extends NodeSelection<ClonableNode>
 {
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public deepContains(node: MetaNode)
-    {
-        // TODO...
-        console.log('@!@#!#!@#');
-
-        return false;
-    }
-
     protected onSetSingle(item: ClonableNode): void
     {
         Events.selection.project.setSingle.emit(item);

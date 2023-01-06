@@ -1,6 +1,6 @@
 import type { ClonableNode } from '../../core';
 
-export abstract class ItemSelection<T extends ClonableNode>
+export abstract class NodeSelection<T extends ClonableNode>
 {
     public readonly items: T[];
 
@@ -89,7 +89,27 @@ export abstract class ItemSelection<T extends ClonableNode>
         return this.items.indexOf(item) > -1;
     }
 
-    public abstract deepContains(item: T): boolean;
+    public deepContains(node: ClonableNode)
+    {
+        for (const selectedNode of this.items)
+        {
+            const hasNode = selectedNode.walk<ClonableNode, {hasNode: boolean}>((subNode, options) =>
+            {
+                if (subNode === node)
+                {
+                    options.cancel = true;
+                    options.data.hasNode = true;
+                }
+            }).hasNode;
+
+            if (hasNode)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public onlyContains(item: T)
     {

@@ -45,14 +45,15 @@ export class RemoveNodeCommand
 
         node.cloak();
 
-        if (node instanceof DisplayObjectNode && app.selection.hierarchy.deepContains(node.cast()))
+        if (app.selection.hierarchy.deepContains(node.cast()))
         {
             cache.wasSelected = true;
-
-            if (app.selection.hierarchy.shallowContains(node.cast()))
-            {
-                app.selection.hierarchy.remove(node.cast());
-            }
+            app.selection.hierarchy.remove(node.cast());
+        }
+        else if (app.selection.project.deepContains(node.cast()))
+        {
+            cache.wasSelected = true;
+            app.selection.project.remove(node.cast());
         }
 
         Events.datastore.node.local.cloaked.emit(node.cast());

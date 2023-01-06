@@ -1,7 +1,7 @@
 import type { ClonableNode } from '../../../../core';
 import { nextTick } from '../../../../core/util';
 import { Application, getApp } from '../../../core/application';
-import type { ItemSelection } from '../../../core/itemSelection';
+import type { NodeSelection } from '../../../core/nodeSelection';
 import Events from '../../../events';
 import { mouseDrag } from '../../components/dragger';
 import { WritableStore } from '../store';
@@ -41,7 +41,7 @@ export const defaultOptions: TreeViewModelOptions = {
 export const dblClickTimeout = 300;
 export const indentationWidth = 10;
 
-export abstract class TreeViewModel<ItemType extends ClonableNode, SelectionType extends ItemSelection<ItemType> = ItemSelection<ItemType>>
+export abstract class TreeViewModel<ItemType extends ClonableNode, SelectionType extends NodeSelection<ItemType> = NodeSelection<ItemType>>
 {
     protected model: WritableStore<TreeItem<ItemType>[]>;
     protected dragTarget: WritableStore<TreeItem<ItemType> | undefined>;
