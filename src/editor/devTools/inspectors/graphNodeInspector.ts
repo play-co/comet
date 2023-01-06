@@ -69,6 +69,11 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
                 cellStyle.fillColor = Color('#2e66c8').hex();
                 cellStyle.fontStyle = 'bold';
             }
+
+            if (node.isMetaNode)
+            {
+                cellStyle.fillColor = Color(cellStyle.fillColor).darken(0.2).hex();
+            }
         }
     };
 
@@ -91,12 +96,12 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
                 _depth: options.depth,
                 _cloaked: node.isCloaked,
                 name:  `${pad}${node.model.getValue<string>('name')}`,
+                model: node.model.id,
                 parent: node.parent ? node.parent.id : '#empty#',
                 children: node.children.length === 0 ? '#empty#' : node.children.map((node) => node.id).join(','),
                 cloneMode: node.cloneInfo.cloneMode,
                 cloner: node.cloneInfo.cloner ? node.cloneInfo.cloner.id : '#empty#',
                 cloned: node.cloneInfo.cloned ? node.cloneInfo.cloned.map((node) => node.id).join(',') : '#empty#',
-                model: node.model.id,
             };
 
             details[node.id] = detail;

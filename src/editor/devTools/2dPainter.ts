@@ -68,7 +68,7 @@ export default class Canvas2DPainter
     constructor(canvas?: HTMLCanvasElement, backgroundColor = 'black')
     {
         this._fontColor = 'white';
-        this._fontSize = 11;
+        this._fontSize = 10;
         this._fontStyle = 'normal';
         this._fontFamily = 'sans-serif';
 

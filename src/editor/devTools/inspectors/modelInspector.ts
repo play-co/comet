@@ -66,6 +66,11 @@ export class ModelInspector extends DevInspector<ModelDetail>
                 cellStyle.fillColor = Color('#2e66c8').hex();
                 cellStyle.fontStyle = 'bold';
             }
+
+            if (node.isMetaNode)
+            {
+                cellStyle.fillColor = Color(cellStyle.fillColor).darken(0.2).hex();
+            }
         }
     };
 
@@ -89,10 +94,10 @@ export class ModelInspector extends DevInspector<ModelDetail>
 
                     if (typeof value === 'number')
                     {
-                        value = value.toFixed(1);
+                        value = value.toFixed(1).replace(/.0$/, '');
                     }
 
-                    return `${key}: ${value}`;
+                    return `${key}:${value}`;
                 }).join(', ');
             }
 

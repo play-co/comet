@@ -1,3 +1,4 @@
+import type { ModelSchema, PropertyDescriptor } from '../../core/model/schema';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { MetaNode } from '../../core/nodes/abstract/metaNode';
 import { CloneMode } from '../../core/nodes/cloneInfo';
@@ -70,10 +71,24 @@ export class CreatePrefabAssetCommand
 
         const values = sourceNode.model.ownValues;
 
+        // remove values which are not ownValues
+        const schema = sourceNode.model.schema as ModelSchema<unknown>;
+
+        for (const [key, propDesc] of Object.entries(schema.properties))
+        {
+            if (!(propDesc as PropertyDescriptor<unknown>).ownValue && values[key] !== undefined)
+            {
+                delete values[key];
+            }
+        }
+
         const modifyCommand = new ModifyModelCommand({
             nodeId: clonedNode.id,
             updateMode: 'full',
-            values,
+            values: {
+                ...values,
+                name: clonedNode.id,
+            },
         });
 
         modifyCommand.run();

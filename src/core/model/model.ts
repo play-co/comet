@@ -81,9 +81,30 @@ export class Model<M> extends GraphNode
         return values;
     }
 
+    public getOwner(key: keyof M): Model<M>
+    {
+        const { schema } = this;
+
+        const propDesc = schema.properties[key];
+
+        if (!propDesc.ownValue)
+        {
+            const ref = this.getReferenceParent();
+
+            if (ref && ref !== this)
+            {
+                return ref.getOwner(key);
+            }
+        }
+
+        return this;
+    }
+
     public getValue<T extends M[keyof M]>(key: keyof M): T
     {
-        const { data, parent, schema: { properties } } = this;
+        const { data, parent, schema, schema: { properties } } = this;
+
+        const propDesc = schema.properties[key];
 
         const value = (data as M)[key];
 
@@ -91,10 +112,19 @@ export class Model<M> extends GraphNode
         {
             if (parent)
             {
-                return (parent as Model<any>).getValue(key);
+                return (parent as Model<M>).getValue(key);
             }
 
             return properties[key].defaultValue as T;
+        }
+        else if (!propDesc.ownValue)
+        {
+            const ref = this.getReferenceParent();
+
+            if (ref && ref !== this)
+            {
+                return ref.getValue(key);
+            }
         }
 
         return value as T;
@@ -145,6 +175,23 @@ export class Model<M> extends GraphNode
         return rtn;
     }
 
+    public setValues(values: Partial<M>)
+    {
+        const { ownValues } = this;
+        const keys = Object.getOwnPropertyNames(values) as (keyof M)[];
+        const prevValues: Partial<M> = {};
+
+        keys.forEach((key) =>
+        {
+            const value = values[key] as M[keyof M];
+
+            prevValues[key] = ownValues[key];
+            this.setValue(key, value);
+        });
+
+        return prevValues;
+    }
+
     public rawSetValue<T>(key: keyof M, newValue: T)
     {
         const { data, schema: { keys } } = this;
@@ -168,26 +215,6 @@ export class Model<M> extends GraphNode
         }
 
         return rtn;
-    }
-
-    public setValues(values: Partial<M>)
-    {
-        const { values: allValues } = this;
-        const keys = Object.getOwnPropertyNames(values) as (keyof M)[];
-        const prevValues: Partial<M> = {};
-
-        keys.forEach((key) =>
-        {
-            const value = values[key] as M[keyof M];
-
-            if (value !== allValues[key])
-            {
-                prevValues[key] = allValues[key];
-                this.setValue(key, value);
-            }
-        });
-
-        return prevValues;
     }
 
     public clearValue(key: keyof M)
@@ -248,7 +275,7 @@ export class Model<M> extends GraphNode
 
     public getReferenceParent(): Model<M> | undefined
     {
-        if (this.cloneMode === 'reference_root' || this.children.length > 0)
+        if (this.cloneMode === 'reference_root' || this.cloneMode === 'variant_root' || this.children.length > 0)
         {
             if (this.parent)
             {

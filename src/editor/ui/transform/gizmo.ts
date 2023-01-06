@@ -36,6 +36,7 @@ export const dblClickMsThreshold = 250;
 
 type CachedNode = {
     worldTransform: Matrix;
+    values: DisplayObjectModel;
     ownValues: Partial<DisplayObjectModel>;
 };
 
@@ -724,6 +725,7 @@ export class TransformGizmo extends Container
 
                 this.nodeCache.set(node, {
                     worldTransform: view.worldTransform.clone(),
+                    values: { ...node.model.values }, // take a copy as graphOnly updates will modify the values
                     ownValues: { ...node.model.ownValues },
                 });
             }
@@ -790,25 +792,24 @@ export class TransformGizmo extends Container
             if (node.is(DisplayObjectNode))
             {
                 const displayNode = node.cast<DisplayObjectNode>();
-                const modelValues = displayNode.model.values;
 
                 const values = getLocalTransform(displayNode.view, this.pivot, selection.isSingle);
+                const prevValues = this.getCachedMatrix(node.cast()).values;
+                const prevOwnValues = this.getCachedMatrix(node.cast()).ownValues;
 
                 for (const [key] of Object.entries(values))
                 {
-                    if (modelValues[key] === values[key])
+                    if (prevValues[key] === values[key])
                     {
                         delete values[key];
                     }
                 }
 
-                const prevValues = this.getCachedMatrix(node.cast()).ownValues;
-
                 modifications.push({
                     nodeId: node.id,
                     values,
                     updateMode,
-                    prevValues,
+                    prevValues: prevOwnValues,
                 });
             }
         });

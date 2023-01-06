@@ -47,6 +47,7 @@
     on:click={onClick}
     style={`background:${color};border-color:${Color(color).alpha(1).lighten(0.5)}`}
   />
+  <span class="debug">{Color(color).rgbNumber()}</span>
   {#if isOpened}
     <ColorPickerDialog
       mode={getApp().colorPickerMode}
@@ -70,6 +71,7 @@
     display: flex;
     border-radius: 5px;
     margin: 0 1px;
+    position: relative;
   }
 
   button {
@@ -85,5 +87,13 @@
 
   button:focus {
     border: 2px inset #333;
+  }
+
+  .debug {
+    position: absolute;
+    left: 37px;
+    top: 0;
+    font-size: 11px;
+    color: #959595;
   }
 </style>

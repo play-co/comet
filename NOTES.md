@@ -47,7 +47,7 @@ High Priority
 * Masks
 * Multi-user testing - once the above is checked, we need to validate and patch multi-user cases
 
-Low Priority
+Low Priority Fix/Improve/Add
 * Multi-selection as last node with strongest tint
 * Transform gizmo uses statusbar items instead of message
 * Rename cloaked to trashed
@@ -59,22 +59,20 @@ Low Priority
     - inc values (small, medium, large)
 * Texture asset settings, global in project preview? use properties panel?
 * Numeric input mouse drag for values
-* Custom icons
-
-Fix
 * overflow for project panel
 * Menubar rollover set active
+* Custom icons
 
-Try:
-* Refactor Convergence datastore to be as generic as possible
-* Replace Interface with Type definitions for models, may loosen generic polymorphism
+Tech Debt:
+* Refactor Convergence datastore to be even more generic as possible to help future backend swaps
+* Replace ClonableNode generics from Interfaces to Types for models, may loosen generic polymorphism
 * Reduce grid lines when zoomed out
 * Replace Color with colord
 
 Rollout:
 * Fix cloning and prefab create/edit
-* Investigate prod log and replay capabilities
 * Investigate using Convergence for alpha storage solution
+* Investigate prod log and replay capabilities
 * Upgrade to Svelte-kit
 * Investigate Analytics
 * Investigate Cloudflare + YJS

@@ -21,6 +21,7 @@ export const clonableNodeSchema = new ModelSchema<ClonableNodeModel>({
     name: {
         defaultValue: '',
         category: 'node',
+        ownValue: true,
     },
 });
 
@@ -444,9 +445,13 @@ export abstract class ClonableNode<
 
     public getModificationCloneTarget(): ClonableNode
     {
-        const { isInstanceRoot, isOriginal } = this.cloneInfo;
+        // const { isInstanceRoot, isOriginal } = this.cloneInfo;
 
-        return (isInstanceRoot || isOriginal) ? this as unknown as ClonableNode : this.cloneInfo.getCloner();
+        // return (isInstanceRoot || isOriginal) ? this as unknown as ClonableNode : this.cloneInfo.getCloner();
+
+        const { isOriginal } = this.cloneInfo;
+
+        return (isOriginal) ? this as unknown as ClonableNode : this.cloneInfo.getCloner();
     }
 
     public getAddChildCloneTarget(): ClonableNode

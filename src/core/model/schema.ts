@@ -41,4 +41,22 @@ export class ModelSchema<M>
 
         return array;
     }
+
+    public getOwnValues()
+    {
+        const { properties } = this;
+        const ownValues = {} as PropertyDescriptors<M>;
+
+        Object.keys(properties).forEach((key) =>
+        {
+            const k = key as keyof M;
+
+            if (properties[k].ownValue === true)
+            {
+                ownValues[k] = properties[k];
+            }
+        });
+
+        return ownValues;
+    }
 }

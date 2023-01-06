@@ -27,7 +27,10 @@ export function restore()
         saveUserSelectionPrefs(selectionPrefs);
         saveUserLayoutPrefs(layoutPrefs);
 
-        window.location.href = window.location.href.replace(window.location.hash, '');
+        setTimeout(() =>
+        {
+            window.location.href = window.location.href.replace(window.location.hash, '');
+        }, 1000);
     }
 }
 

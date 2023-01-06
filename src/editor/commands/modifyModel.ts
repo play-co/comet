@@ -24,22 +24,16 @@ export class ModifyModelCommand<M extends ModelBase>
     {
         const { datastore, params, params: { values, updateMode, prevValues }, cache } = this;
         const sourceNode = this.getInstance(params.nodeId);
-        const node = sourceNode.getModificationCloneTarget();
-        const nodeId = node.id;
+        const targetNode = sourceNode.getModificationCloneTarget();
 
         // update datastore
         if (updateMode === 'full')
         {
-            datastore.modifyModel(nodeId, values);
-
-            if (sourceNode.id !== nodeId)
-            {
-                datastore.modifyModel(sourceNode.id, values);
-            }
+            datastore.modifyModel(targetNode.id, values);
         }
 
         // update graph node
-        const setValuesResult = node.model.setValues(values) as Partial<M>;
+        const setValuesResult = targetNode.model.setValues(values) as Partial<M>;
         const previousValues = prevValues ?? setValuesResult;
 
         // update cache only if not set (otherwise its part of undo stack already)
@@ -59,7 +53,7 @@ export class ModifyModelCommand<M extends ModelBase>
             this.cache.prevValues = values;
         }
 
-        Events.datastore.node.local.modified.emit({ nodeId, values });
+        Events.datastore.node.local.modified.emit({ nodeId: sourceNode.id, values });
     }
 
     public undo(): void

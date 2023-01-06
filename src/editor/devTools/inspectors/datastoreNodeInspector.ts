@@ -44,6 +44,10 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
 
         for (const [nodeId, node] of Object.entries(project.nodes))
         {
+            const values = Object.keys(node.model)
+                .map((key) =>
+                    `${key}:${typeof node.model[key] === 'number' ? node.model[key].toFixed(1).replace(/.0$/, '') : node.model[key]}`).join(', ');
+
             details[nodeId] = {
                 $: nodeId,
                 parent: node.parent ? node.parent : '#empty#',
@@ -51,7 +55,7 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
                 cloneMode: node.cloneInfo.cloneMode,
                 cloner: node.cloneInfo.cloner ?? '#empty#',
                 cloned: node.cloneInfo.cloned.length ? node.cloneInfo.cloned.join(',') : '#empty#',
-                model: Object.keys(node.model).join(','),
+                model: values,
             };
         }
 
@@ -87,6 +91,11 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
             {
                 cellStyle.fillColor = Color('#2e66c8').hex();
                 cellStyle.fontStyle = 'bold';
+            }
+
+            if (node.isMetaNode)
+            {
+                cellStyle.fillColor = Color(cellStyle.fillColor).darken(0.2).hex();
             }
         }
     };
