@@ -17,6 +17,7 @@ export interface DatastoreNodeDetail
     cloneMode: string;
     cloner: string;
     cloned: string;
+    model: string;
 }
 
 export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
@@ -50,6 +51,7 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
                 cloneMode: node.cloneInfo.cloneMode,
                 cloner: node.cloneInfo.cloner ?? '#empty#',
                 cloned: node.cloneInfo.cloned.length ? node.cloneInfo.cloned.join(',') : '#empty#',
+                model: Object.keys(node.model).join(','),
             };
         }
 

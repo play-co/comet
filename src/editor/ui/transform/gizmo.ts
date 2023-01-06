@@ -787,11 +787,20 @@ export class TransformGizmo extends Container
 
         selection.forEach((node) =>
         {
-            if (node instanceof DisplayObjectNode)
+            if (node.is(DisplayObjectNode))
             {
-                const view = node.view;
+                const displayNode = node.cast<DisplayObjectNode>();
+                const modelValues = displayNode.model.values;
 
-                const values = getLocalTransform(view, this.pivot, selection.isSingle);
+                const values = getLocalTransform(displayNode.view, this.pivot, selection.isSingle);
+
+                for (const [key] of Object.entries(values))
+                {
+                    if (modelValues[key] === values[key])
+                    {
+                        delete values[key];
+                    }
+                }
 
                 const prevValues = this.getCachedMatrix(node.cast()).ownValues;
 

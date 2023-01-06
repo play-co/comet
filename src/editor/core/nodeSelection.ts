@@ -84,11 +84,6 @@ export abstract class NodeSelection<T extends ClonableNode>
         this.onDeselect();
     }
 
-    public shallowContains(item: T)
-    {
-        return this.items.indexOf(item) > -1;
-    }
-
     public deepContains(node: ClonableNode)
     {
         for (const selectedNode of this.items)
@@ -109,6 +104,11 @@ export abstract class NodeSelection<T extends ClonableNode>
         }
 
         return false;
+    }
+
+    public shallowContains(item: T)
+    {
+        return this.items.indexOf(item) > -1;
     }
 
     public onlyContains(item: T)

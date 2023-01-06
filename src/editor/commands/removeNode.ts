@@ -45,12 +45,12 @@ export class RemoveNodeCommand
 
         node.cloak();
 
-        if (app.selection.hierarchy.deepContains(node.cast()))
+        if (app.selection.hierarchy.shallowContains(node.cast()))
         {
             cache.wasSelected = true;
             app.selection.hierarchy.remove(node.cast());
         }
-        else if (app.selection.project.deepContains(node.cast()))
+        else if (app.selection.project.shallowContains(node.cast()))
         {
             cache.wasSelected = true;
             app.selection.project.remove(node.cast());
