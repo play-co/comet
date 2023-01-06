@@ -17,6 +17,7 @@ export interface ModelDetail
     parent: string;
     children: string;
     cloneMode: CloneMode;
+    isAsset: boolean;
 }
 
 export class ModelInspector extends DevInspector<ModelDetail>
@@ -31,8 +32,14 @@ export class ModelInspector extends DevInspector<ModelDetail>
 
     public onCellStyle = (row: Row, column: Column, cellStyle: CellStyle) =>
     {
-        const currentCell = this.getCell(column.id, row);
         const app = getApp();
+
+        if (!app.project.isReady)
+        {
+            return;
+        }
+
+        const currentCell = this.getCell(column.id, row);
         const owner = getInstance<ClonableNode>(this.getCell('owner', row).value as string);
 
         if (owner.isCloaked)
@@ -107,6 +114,7 @@ export class ModelInspector extends DevInspector<ModelDetail>
                 parent: model.parent ? model.parent.id : '#empty#',
                 children: model.children.length === 0 ? '#empty#' : model.children.map((model) => model.id).join(','),
                 cloneMode: model.cloneMode,
+                isAsset: model.isAsset,
                 values,
             };
 

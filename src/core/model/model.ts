@@ -36,6 +36,11 @@ export class Model<M> extends GraphNode
         this.setValues(data);
     }
 
+    public get isAsset()
+    {
+        return this.cloneMode !== 'original' || this.childCount > 0;
+    }
+
     public link(sourceModel: Model<M>, cloneMode: CloneMode = CloneMode.Original)
     {
         this.parent = sourceModel;

@@ -35,6 +35,12 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
     public onCellStyle = (row: Row, column: Column, cellStyle: CellStyle) =>
     {
         const app = getApp();
+
+        if (!app.project.isReady)
+        {
+            return;
+        }
+
         const currentCell = this.getCell(column.id, row);
         const cloakedCell = this.getCell('_cloaked', row);
 

@@ -29,7 +29,8 @@
 
 High Priority
 * Prefab
-    - Investigate ReferenceRoot constraint to only keep unique transform props, all others go to parent model
+    - Delete node is too aggressive
+    - need to rethink variant and reference root, datastore model updates are mode tricky than graphOnly
 * Copy paste
     - Paste logic needs tightening:
         - need to support prefab instances (currently only duplicate)
