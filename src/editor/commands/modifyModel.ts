@@ -33,21 +33,26 @@ export class ModifyModelCommand<M extends ModelBase>
         const { datastore, params, params: { values, updateMode, prevValues }, cache } = this;
         const sourceNode = this.getInstance(params.nodeId);
         const sourceModel = sourceNode.model as Model<M>;
-
         const updates = new Map<ClonableNode, UpdateInfo<M>[]>();
 
         Object.keys(values).forEach((key) =>
         {
             const node = sourceModel.getOwner(key);
+            const nodeModel = node.model as unknown as Model<M>;
+            const schema = node.model.schema as unknown as ModelSchema<M>;
             const value = values[key];
+            const existingValue = prevValues?.[key] ?? nodeModel.values[key as keyof M];
+            const isSameValueAsDefault = value === schema.properties[key].defaultValue;
+            const isSameValueAsCurrent = value === existingValue;
 
-            if (value !== sourceModel.values[key as keyof M])
+            if (!(isSameValueAsCurrent && isSameValueAsDefault))
             {
                 if (!updates.has(node))
                 {
                     updates.set(node, []);
                 }
-                const prevValue = prevValues ? prevValues[key] : sourceModel.ownValues[key as keyof M];
+
+                const prevValue = prevValues ? prevValues[key] : nodeModel.ownValues[key as keyof M];
 
                 (updates.get(node) as UpdateInfo<M>[]).push({
                     key: key as keyof M,
