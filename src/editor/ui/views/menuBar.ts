@@ -1,3 +1,5 @@
+import { clearInstances } from '../../../core/nodes/instances';
+import { createProjectSchema } from '../../../core/nodes/schema';
 import { getApp } from '../../core/application';
 import {
     getUserEditPrefs,
@@ -57,6 +59,25 @@ function subMenu(prefix: string)
 }
 
 const fileMenu = new Menu([
+    {
+        label: 'Clear',
+        onClick: () =>
+        {
+            const app = getApp();
+
+            clearInstances();
+            const schema = createProjectSchema('Test');
+
+            app.datastore.fromProjectSchema(schema);
+
+            app.statusBar.setMessage('Project nodes cleared, reloading...');
+
+            setTimeout(() =>
+            {
+                window.location.href = window.location.href.replace(window.location.hash, '');
+            }, 1000);
+        },
+    },
     {
         label: 'Save',
         onClick: () =>

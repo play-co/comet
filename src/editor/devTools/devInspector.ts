@@ -92,10 +92,11 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         if (data)
         {
-            const { x, y, isExpanded } = JSON.parse(data);
+            const { x, y, isExpanded, zIndex } = JSON.parse(data);
 
             container.style.left = `${x}px`;
             container.style.top = `${y}px`;
+            container.style.zIndex = `${zIndex}px`;
 
             this.isExpanded = isExpanded;
 
@@ -233,6 +234,7 @@ export abstract class DevInspector<T extends Record<string, any> >
             x: container.offsetLeft,
             y: container.offsetTop,
             isExpanded: this.isExpanded,
+            zIndex: container.style.zIndex,
         }));
     }
 
@@ -338,6 +340,21 @@ export abstract class DevInspector<T extends Record<string, any> >
         this.painter.canvas.style.display = this.isExpanded ? 'block' : 'none';
 
         this.render();
+
+        const left = this.container.offsetLeft;
+        const top = this.container.offsetTop;
+
+        if (left < 0)
+        {
+            this.container.style.left = '0px';
+            this.storeState();
+        }
+
+        if (top < 0)
+        {
+            this.container.style.top = '0px';
+            this.storeState();
+        }
     }
 
     // @ts-ignore

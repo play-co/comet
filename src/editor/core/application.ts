@@ -266,7 +266,7 @@ export class Application
         delay(100).then(() => this.initPersistentSelection());
     }
 
-    protected clear()
+    public clear()
     {
         clearInstances();
 
