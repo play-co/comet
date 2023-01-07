@@ -252,7 +252,7 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
     {
         this.nodeProxies.clear();
 
-        delete this._model;
+        // delete this._model;
     }
 
     public toProjectSchema()

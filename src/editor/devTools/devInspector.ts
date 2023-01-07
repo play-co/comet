@@ -1,6 +1,7 @@
 import Color from 'color';
 
 import { nextTick } from '../../core/util';
+import { getApp } from '../core/application';
 import { getUserName } from '../sync/user';
 import { mouseDrag } from '../ui/components/dragger';
 import Canvas2DPainter from './2dPainter';
@@ -285,6 +286,11 @@ export abstract class DevInspector<T extends Record<string, any> >
     protected render()
     {
         const table = this.table = this.createTable();
+
+        if (!getApp().project.isReady)
+        {
+            return;
+        }
 
         if (table.rows.length === 0)
         {

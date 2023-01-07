@@ -272,6 +272,7 @@ export class Application
 
         this.undoStack.clear();
         this.datastore.reset();
+        this.project.isReady = false;
     }
 
     public restoreNode(nodeId: string)

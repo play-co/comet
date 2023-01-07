@@ -47,6 +47,8 @@ const fileMenu = new Menu([
             clearInstances();
             const schema = createProjectSchema('Test');
 
+            app.clear();
+
             app.datastore.fromProjectSchema(schema);
 
             app.statusBar.setMessage('Project nodes cleared, reloading...');
@@ -54,7 +56,7 @@ const fileMenu = new Menu([
             setTimeout(() =>
             {
                 window.location.href = window.location.href.replace(window.location.hash, '');
-            }, 1000);
+            }, 500);
         },
     },
     {
