@@ -164,7 +164,7 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
                 const p3 = matrix.apply({ x: width, y: height });
                 const p4 = matrix.apply({ x: 0, y: height });
 
-                border.lineStyle(2, Color('cyan').rgbNumber(), 1);
+                border.lineStyle(2, Color('cyan').rgbNumber(), 0.5);
                 border.moveTo(p1.x, p1.y); border.lineTo(p2.x, p2.y);
                 border.moveTo(p2.x, p2.y); border.lineTo(p3.x, p3.y);
                 border.moveTo(p3.x, p3.y); border.lineTo(p4.x, p4.y);

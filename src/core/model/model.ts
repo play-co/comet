@@ -114,14 +114,13 @@ export abstract class Model<M> extends GraphNode
     public setValue<K extends keyof M>(key: K, newValue: M[K])
     {
         const { data, schema } = this;
-        const propDesc = schema.properties[key];
         const constraints = schema.getConstraints(key);
 
-        if (newValue === propDesc.defaultValue)
-        {
-            // don't set default values to optimise storage
-            return;
-        }
+        // if ((newValue === this.values[key as keyof M]))
+        // {
+        //     // don't set default values to optimise storage
+        //     return;
+        // }
 
         let value = newValue;
 

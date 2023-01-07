@@ -39,8 +39,9 @@ export class ModifyModelCommand<M extends ModelBase>
         Object.keys(values).forEach((key) =>
         {
             const node = sourceModel.getOwner(key);
+            const value = values[key];
 
-            if (values[key] !== sourceModel.schema.properties[key].defaultValue)
+            if (value !== sourceModel.values[key as keyof M])
             {
                 if (!updates.has(node))
                 {

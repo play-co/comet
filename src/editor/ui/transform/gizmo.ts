@@ -818,6 +818,8 @@ export class TransformGizmo extends Container
         if (updateMode === 'full' && config.updateMode === 'full')
         {
             Application.instance.undoStack.exec(new ModifyModelsCommand({ modifications }));
+
+            this.update();
         }
         else
         {

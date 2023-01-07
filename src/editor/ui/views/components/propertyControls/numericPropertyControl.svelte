@@ -26,7 +26,6 @@
   let value: string;
   let mixedValue = false;
   let prevValue: string;
-  let timeout: number | undefined = undefined;
 
   $: (value = getValue()), property;
   $: mixed = mixedValue && value.length === 0;
@@ -181,23 +180,6 @@
     return false;
   };
 
-  const onKeyUp = (e: KeyboardEvent) => {
-    if (timeout) {
-      clearTimeout(timeout);
-    }
-
-    timeout = setTimeout(() => {
-      const { key } = e;
-      const element = e.target as HTMLInputElement;
-      const value = parseFloat(element.value);
-      const isValidKey = isNumericInput(key) || key === ".";
-
-      if (isValidKey && !isNaN(value)) {
-        setValue(value);
-      }
-    }, 1000) as unknown as number;
-  };
-
   Events.datastore.node.local.modified.bind(update);
 </script>
 
@@ -209,7 +191,6 @@
     {value}
     on:focus={onFocus}
     on:keydown={onKeyDown}
-    on:keyup={onKeyUp}
     on:change={onChange}
   />
 </numeric-control>
