@@ -409,26 +409,6 @@ export class TransformGizmo extends Container
         localPoint.y = Math.min(height, Math.max(0, localPoint.y));
     }
 
-    public setPivot(localX: number, localY: number)
-    {
-        this.updateTransform();
-
-        const p1 = this.localTransform.apply({ x: localX, y: localY });
-
-        this.transform.pivot.x = localX;
-        this.transform.pivot.y = localY;
-
-        this.updateTransform();
-
-        const p2 = this.localTransform.apply({ x: localX, y: localY });
-
-        const deltaX = p1.x - p2.x;
-        const deltaY = p1.y - p2.y;
-
-        this.x += deltaX;
-        this.y += deltaY;
-    }
-
     protected updateDragInfoFromEvent(event: InteractionEvent)
     {
         const { dragInfo } = this;
@@ -735,6 +715,26 @@ export class TransformGizmo extends Container
         this.setConfig({ pivotView });
 
         this.update();
+    }
+
+    public setPivot(localX: number, localY: number)
+    {
+        this.updateTransform();
+
+        const p1 = this.localTransform.apply({ x: localX, y: localY });
+
+        this.transform.pivot.x = localX;
+        this.transform.pivot.y = localY;
+
+        this.updateTransform();
+
+        const p2 = this.localTransform.apply({ x: localX, y: localY });
+
+        const deltaX = p1.x - p2.x;
+        const deltaY = p1.y - p2.y;
+
+        this.x += deltaX;
+        this.y += deltaY;
     }
 
     protected updateSelectedTransforms()
