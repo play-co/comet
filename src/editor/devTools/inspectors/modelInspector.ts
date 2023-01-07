@@ -56,16 +56,15 @@ export class ModelInspector extends DevInspector<ModelDetail>
         }
 
         const id = this.getCell('owner', row).value as string;
+        const model = this.getCell('$', row).value as Model<any>;
 
         if (hasInstance(id))
         {
             const node = getInstance<ClonableNode>(id);
 
-            if (app.selection.hierarchy.shallowContains(node))
+            if (node.isMetaNode)
             {
-                cellStyle.fillColor = Color('#2eb2c8').hex();
-                cellStyle.fontStyle = 'bold';
-                cellStyle.fontColor = 'white';
+                cellStyle.fillColor = Color(cellStyle.fillColor).darken(0.2).hex();
             }
 
             if (app.selection.project.shallowContains(node.cast<MetaNode>()))
@@ -73,12 +72,17 @@ export class ModelInspector extends DevInspector<ModelDetail>
                 cellStyle.fillColor = Color('#2e66c8').hex();
                 cellStyle.fontStyle = 'bold';
             }
-
-            if (node.isMetaNode)
-            {
-                cellStyle.fillColor = Color(cellStyle.fillColor).darken(0.2).hex();
-            }
         }
+
+        app.selection.hierarchy.items.forEach((item) =>
+        {
+            if (item.model === model)
+            {
+                cellStyle.fillColor = Color('#2eb2c8').hex();
+                cellStyle.fontStyle = 'bold';
+                cellStyle.fontColor = 'white';
+            }
+        });
     };
 
     protected getDetails()
