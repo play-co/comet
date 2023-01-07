@@ -92,11 +92,13 @@ export class ModifyModelCommand<M extends ModelBase>
         for (const [node, properties] of updates.entries())
         {
             const values: Partial<M> = {};
-            const schema = node.model.schema as unknown as ModelSchema<M>;
 
             properties.forEach((info) =>
             {
-                values[info.key] = info.prevValue ?? schema.properties[info.key].defaultValue;
+                if (info.prevValue)
+                {
+                    values[info.key] = info.prevValue;
+                }
             });
 
             node.model.setValues(values);
