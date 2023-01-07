@@ -32,6 +32,39 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
         }, 500);
     }
 
+    protected getDetails()
+    {
+        const app = Application.instance;
+        const details: Record<string, GraphNodeDetail> = {};
+
+        app.project.walk<ClonableNode>((node, options) =>
+        {
+            let pad = '';
+
+            if (options.depth > 0)
+            {
+                pad = `${'│'.repeat(options.depth - 1)}└`;
+            }
+
+            const detail: GraphNodeDetail = {
+                $: node,
+                _depth: options.depth,
+                _cloaked: node.isCloaked,
+                name:  `${pad}${node.model.getValue<string>('name')}`,
+                parent: node.parent ? node.parent.id : '#empty#',
+                children: node.children.length === 0 ? '#empty#' : node.children.map((node) => node.id).join(','),
+                cloneMode: node.cloneInfo.cloneMode,
+                cloner: node.cloneInfo.cloner ? node.cloneInfo.cloner.id : '#empty#',
+                cloned: node.cloneInfo.cloned ? node.cloneInfo.cloned.map((node) => node.id).join(',') : '#empty#',
+                model: node.model.id,
+            };
+
+            details[node.id] = detail;
+        });
+
+        return details;
+    }
+
     public onCellStyle = (row: Row, column: Column, cellStyle: CellStyle) =>
     {
         const app = getApp();
@@ -78,43 +111,10 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
 
             if (node.isMetaNode)
             {
-                cellStyle.fillColor = Color(cellStyle.fillColor).darken(0.2).hex();
+                cellStyle.fillColor = Color(cellStyle.fillColor).darken(0.1).hex();
             }
         }
     };
-
-    protected getDetails()
-    {
-        const app = Application.instance;
-        const details: Record<string, GraphNodeDetail> = {};
-
-        app.project.walk<ClonableNode>((node, options) =>
-        {
-            let pad = '';
-
-            if (options.depth > 0)
-            {
-                pad = `${'│'.repeat(options.depth - 1)}└`;
-            }
-
-            const detail: GraphNodeDetail = {
-                $: node,
-                _depth: options.depth,
-                _cloaked: node.isCloaked,
-                name:  `${pad}${node.model.getValue<string>('name')}`,
-                model: node.model.id,
-                parent: node.parent ? node.parent.id : '#empty#',
-                children: node.children.length === 0 ? '#empty#' : node.children.map((node) => node.id).join(','),
-                cloneMode: node.cloneInfo.cloneMode,
-                cloner: node.cloneInfo.cloner ? node.cloneInfo.cloner.id : '#empty#',
-                cloned: node.cloneInfo.cloned ? node.cloneInfo.cloned.map((node) => node.id).join(',') : '#empty#',
-            };
-
-            details[node.id] = detail;
-        });
-
-        return details;
-    }
 
     protected inspect()
     {

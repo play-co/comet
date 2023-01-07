@@ -571,4 +571,16 @@ export abstract class TreeViewModel<ItemType extends ClonableNode, SelectionType
     {
         return true;
     }
+
+    public isPrimarySelection(item: TreeItem<ItemType>)
+    {
+        const { selection } = this;
+
+        if (selection.hasSelection)
+        {
+            return selection.firstItem === item.data;
+        }
+
+        return false;
+    }
 }

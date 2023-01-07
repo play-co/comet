@@ -46,7 +46,6 @@ export class CreatePrefabInstanceCommand
             updateMode: 'full',
             values: {
                 ...values,
-                name: clonedNode.id,
                 ...model,
             },
         });

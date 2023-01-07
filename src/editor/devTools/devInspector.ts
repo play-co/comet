@@ -338,7 +338,7 @@ export abstract class DevInspector<T extends Record<string, any> >
         scrollVTrack.style.display = this.isExpanded ? 'block' : 'none';
 
         this.painter.canvas.style.display = this.isExpanded ? 'block' : 'none';
-
+        this.scrollTop = 0;
         this.render();
 
         const left = this.container.offsetLeft;

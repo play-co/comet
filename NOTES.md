@@ -29,7 +29,6 @@
 
 High Priority
 * Prefab
-    - Need to prevent recursive parenting
     - QA Variants, Variant Instances
 * Copy paste
     - Paste logic needs tightening:

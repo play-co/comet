@@ -36,6 +36,7 @@
     <div
       class="tree-item"
       class:selected={item.isSelected}
+      class:isPrimary={tree.isPrimarySelection(item)}
       class:visible={item.isVisible}
       class:hidden={!item.isVisible}
       class:dragTargetRow={$dragTarget === item && !tree.doesSelectionContainItem(item)}
@@ -110,6 +111,10 @@
   }
 
   .tree-item.selected {
+    background-color: #2eb2c8b3;
+  }
+
+  .tree-item.selected.isPrimary {
     background-color: #2eb2c8;
   }
 

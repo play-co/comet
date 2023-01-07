@@ -85,10 +85,7 @@ export class CreatePrefabAssetCommand
         const modifyCommand = new ModifyModelCommand({
             nodeId: clonedNode.id,
             updateMode: 'full',
-            values: {
-                ...values,
-                name: clonedNode.id,
-            },
+            values,
         });
 
         modifyCommand.run();
