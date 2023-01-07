@@ -1,8 +1,8 @@
 import EventEmitter from 'eventemitter3';
 
+import type { ClonableNode } from '../nodes/abstract/clonableNode';
 import { GraphNode } from '../nodes/abstract/graphNode';
 import { CloneMode } from '../nodes/cloneInfo';
-import { newId } from '../nodes/instances';
 import type { ModelSchema } from './schema';
 
 export type ModelValue = string | number | boolean | object | null;
@@ -12,20 +12,26 @@ export interface ModelBase
     [key: string]: ModelValue;
 }
 
-export type ModelModifiedHandler = (key: string, value: ModelValue, oldValue: ModelValue) => void;
+export type ModelModifiedHandler = (key: string, value: ModelValue) => void;
+
+export type ModelConstructor<M> = {
+    new (owner: GraphNode, schema: ModelSchema<M>, data: Partial<M>, id?: string): Model<M>;
+};
 
 export class Model<M> extends GraphNode
 {
+    public readonly owner: GraphNode;
     public readonly schema: ModelSchema<M>;
     public readonly data: Partial<M>;
     public cloneMode: CloneMode;
 
     protected readonly emitter: EventEmitter<'modified'>;
 
-    constructor(schema: ModelSchema<M>, data: Partial<M>, id?: string)
+    constructor(owner: GraphNode, schema: ModelSchema<M>, data: Partial<M>, id?: string)
     {
-        super(id ?? newId('Model'));
+        super(id);
 
+        this.owner = owner;
         this.schema = schema;
         this.data = data;
         this.children = [];
@@ -36,9 +42,14 @@ export class Model<M> extends GraphNode
         this.setValues(data);
     }
 
+    public nodeType(): string
+    {
+        return 'Model';
+    }
+
     public get isAsset()
     {
-        return this.cloneMode !== 'original' || this.childCount > 0;
+        return false;
     }
 
     public link(sourceModel: Model<M>, cloneMode: CloneMode = CloneMode.Original)
@@ -58,9 +69,7 @@ export class Model<M> extends GraphNode
         {
             const key = keys[i] as keyof M;
 
-            const value = this.getValue(key);
-
-            values[key] = value;
+            values[key] = this.getValue(key);
         }
 
         return values;
@@ -68,116 +77,67 @@ export class Model<M> extends GraphNode
 
     public get ownValues(): M
     {
-        const { data, schema: { keys, keys: { length: l } } } = this;
-        const values: M = {} as M;
-
-        for (let i = 0; i < l; i++)
-        {
-            const key = keys[i] as keyof M;
-
-            const value = (data as unknown as M)[key];
-
-            if (value !== undefined)
-            {
-                values[key] = value;
-            }
-        }
-
-        return values;
+        return {
+            ...this.data,
+        } as M;
     }
 
-    public getOwner(key: keyof M): Model<M>
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public getOwner(key: keyof M): ClonableNode
     {
-        const { schema } = this;
-
-        const propDesc = schema.properties[key];
-
-        if (!propDesc.ownValue)
-        {
-            const ref = this.getReferenceParent();
-
-            if (ref && ref !== this)
-            {
-                return ref.getOwner(key);
-            }
-        }
-
-        return this;
+        return this.owner.cast<ClonableNode>();
     }
 
     public getValue<T extends M[keyof M]>(key: keyof M): T
     {
-        const { data, parent, schema, schema: { properties } } = this;
-
-        const propDesc = schema.properties[key];
-
+        const { data, parent, schema: { properties } } = this;
         const value = (data as M)[key];
 
         if (value === undefined)
         {
+            // for undefined values (note: use null in model for "no value", undefined is reserved
             if (parent)
             {
+                // lookup parents value
                 return (parent as Model<M>).getValue(key);
             }
 
+            // return default value if no parent and no own value
             return properties[key].defaultValue as T;
         }
-        else if (!propDesc.ownValue)
-        {
-            const ref = this.getReferenceParent();
 
-            if (ref && ref !== this)
-            {
-                return ref.getValue(key);
-            }
-        }
-
+        // return own value
         return value as T;
     }
 
-    public setValue<K extends keyof M>(key: K, newValue: M[K]): boolean
+    public setValue<K extends keyof M>(key: K, newValue: M[K])
     {
-        const { data, schema, schema: { keys } } = this;
-
+        const { data, schema } = this;
         const propDesc = schema.properties[key];
-
-        if (!propDesc.ownValue)
-        {
-            const ref = this.getReferenceParent();
-
-            if (ref && ref !== this)
-            {
-                return ref.setValue(key, newValue);
-            }
-        }
-
-        const oldValue = Reflect.get(data, key);
-
-        let value = newValue === undefined ? data[key] : newValue;
-
-        if (value === oldValue)
-        {
-            return false;
-        }
-
         const constraints = schema.getConstraints(key);
+
+        if (newValue === propDesc.defaultValue)
+        {
+            // don't set default values to optimise storage
+            return;
+        }
+
+        let value = newValue;
 
         if (constraints)
         {
             constraints.forEach((constraint) =>
             {
+                // apply each constraint to the value
                 value = constraint.applyToValue(value, String(key), this);
             });
         }
 
-        const rtn = Reflect.set(data, key, value);
+        // set own value and notify listeners
+        Reflect.set(data, key, value);
 
-        if (keys.indexOf(String(key)) > -1)
-        {
-            this.notifyModified(key, value as M[keyof M], oldValue as unknown as M[keyof M]);
-        }
-
-        return rtn;
+        this.notifyModified(key, value as M[keyof M]);
     }
 
     public setValues(values: Partial<M>)
@@ -186,6 +146,7 @@ export class Model<M> extends GraphNode
         const keys = Object.getOwnPropertyNames(values) as (keyof M)[];
         const prevValues: Partial<M> = {};
 
+        // for each key call this.setValue and return the previous values
         keys.forEach((key) =>
         {
             const value = values[key] as M[keyof M];
@@ -195,39 +156,6 @@ export class Model<M> extends GraphNode
         });
 
         return prevValues;
-    }
-
-    public rawSetValue<T>(key: keyof M, newValue: T)
-    {
-        const { data, schema: { keys } } = this;
-
-        let oldValue = Reflect.get(data, key) as T;
-
-        if (oldValue === undefined)
-        {
-            oldValue = this.getValue(key) as unknown as T;
-        }
-
-        const value = newValue === undefined ? data[key] : newValue;
-
-        const rtn = Reflect.set(data, key, value);
-
-        if (keys.indexOf(String(key)) > -1)
-        {
-            this.emitter.emit('modified', key, value, oldValue);
-
-            this.children.forEach((childModel) => (childModel as Model<any>).rawSetValue(key, value));
-        }
-
-        return rtn;
-    }
-
-    public clearValue(key: keyof M)
-    {
-        const oldValue = this.ownValues[key];
-
-        delete this.data[key];
-        this.notifyModified(key, undefined, oldValue);
     }
 
     public flatten()
@@ -252,9 +180,9 @@ export class Model<M> extends GraphNode
         }
     }
 
-    public clone<T extends Model<M>>(): T
+    public clone<T extends Model<M>>(owner: GraphNode): T
     {
-        return createModel(this.schema, this.ownValues) as unknown as T;
+        return createModel(this.constructor as ModelConstructor<M>, owner, this.schema, this.ownValues) as unknown as T;
     }
 
     public reset()
@@ -271,31 +199,11 @@ export class Model<M> extends GraphNode
         this.emitter.emit('modified');
     }
 
-    protected notifyModified(key: keyof M, value: M[keyof M] | undefined, oldValue: M[keyof M]): void
+    protected notifyModified(key: keyof M, value: M[keyof M] | undefined): void
     {
-        this.emitter.emit('modified', key, value, oldValue);
+        this.emitter.emit('modified', key, value);
 
-        this.forEach<Model<any>>((childModel) => childModel.notifyModified(key, value, oldValue));
-    }
-
-    public getReferenceParent(): Model<M> | undefined
-    {
-        if (this.cloneMode === 'reference_root' || this.cloneMode === 'variant_root' || this.children.length > 0)
-        {
-            if (this.parent)
-            {
-                return this.getParent<Model<any>>().getReferenceParent();
-            }
-
-            return this;
-        }
-
-        return undefined;
-    }
-
-    public nodeType(): string
-    {
-        return 'Model';
+        this.forEach<Model<any>>((childModel) => childModel.notifyModified(key, value));
     }
 
     public bind(handler: ModelModifiedHandler)
@@ -310,6 +218,8 @@ export class Model<M> extends GraphNode
 }
 
 export function createModel<M>(
+    Ctor: ModelConstructor<M>,
+    owner: GraphNode,
     schema: ModelSchema<M>,
     values: Partial<M> = {},
     id?: string,
@@ -317,7 +227,7 @@ export function createModel<M>(
 {
     const { keys } = schema;
 
-    const model = new Model(schema, values, id) as Model<M> & M;
+    const model = new Ctor(owner, schema, values, id) as Model<M> & M;
 
     keys.forEach((k) =>
     {

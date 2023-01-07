@@ -60,6 +60,7 @@ export class TransformGizmo extends Container
 
     protected lastClick: number;
     public isDirty: boolean;
+    public createCommand: boolean;
 
     constructor(editableView: EditableViewport, config: Partial<TransformGizmoConfig> = {})
     {
@@ -68,6 +69,7 @@ export class TransformGizmo extends Container
         this.editableView = editableView;
         this.lastClick = -1;
         this.isDirty = false;
+        this.createCommand = true;
 
         this.config = {
             ...defaultFullTransformGizmoConfig,
@@ -719,11 +721,10 @@ export class TransformGizmo extends Container
             {
                 const view = node.view;
 
+                view.interactive = true;
                 view.updateTransform();
 
-                view.interactive = true;
-
-                this.nodeCache.set(node, {
+                this.nodeCache.set(node.cast(), {
                     worldTransform: view.worldTransform.clone(),
                     values: { ...node.model.values }, // take a copy as graphOnly updates will modify the values
                     ownValues: { ...node.model.ownValues },
@@ -794,16 +795,7 @@ export class TransformGizmo extends Container
                 const displayNode = node.cast<DisplayObjectNode>();
 
                 const values = getLocalTransform(displayNode.view, this.pivot, selection.isSingle);
-                const prevValues = this.getCachedMatrix(node.cast()).values;
                 const prevOwnValues = this.getCachedMatrix(node.cast()).ownValues;
-
-                for (const [key] of Object.entries(values))
-                {
-                    if (prevValues[key] === values[key])
-                    {
-                        delete values[key];
-                    }
-                }
 
                 modifications.push({
                     nodeId: node.id,
@@ -811,6 +803,15 @@ export class TransformGizmo extends Container
                     updateMode,
                     prevValues: prevOwnValues,
                 });
+
+                if (updateMode === 'full')
+                {
+                    const displayNode = node.cast<DisplayObjectNode>();
+                    const cacheInfo = this.nodeCache.get(node) as CachedNode;
+
+                    cacheInfo.values = displayNode.model.values;
+                    cacheInfo.ownValues = displayNode.model.ownValues;
+                }
             }
         });
 

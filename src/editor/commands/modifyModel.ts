@@ -1,4 +1,5 @@
-import type { ModelBase } from '../../core/model/model';
+import type { ClonableNode } from '../../core';
+import type { Model, ModelBase } from '../../core/model/model';
 import { type UpdateMode, Command } from '../core/command';
 import Events from '../events';
 
@@ -24,16 +25,35 @@ export class ModifyModelCommand<M extends ModelBase>
     {
         const { datastore, params, params: { values, updateMode, prevValues }, cache } = this;
         const sourceNode = this.getInstance(params.nodeId);
+        const sourceModel = sourceNode.model as Model<M>;
+
         const targetNode = sourceNode.getModificationCloneTarget();
+
+        const updates = new Map<string, ClonableNode>();
+        const prunedValues = { ...values };
+
+        Object.keys(values).forEach((key) =>
+        {
+            const node = sourceModel.getOwner(key);
+
+            if (sourceModel.schema.properties[key].defaultValue === values[key])
+            {
+                delete prunedValues[key];
+            }
+            else
+            {
+                updates.set(key, node);
+            }
+        });
 
         // update datastore
         if (updateMode === 'full')
         {
-            datastore.modifyModel(targetNode.id, values);
+            datastore.modifyModel(targetNode.id, prunedValues);
         }
 
         // update graph node
-        const setValuesResult = targetNode.model.setValues(values) as Partial<M>;
+        const setValuesResult = targetNode.model.setValues(prunedValues) as Partial<M>;
         const previousValues = prevValues ?? setValuesResult;
 
         // update cache only if not set (otherwise its part of undo stack already)

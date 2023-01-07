@@ -1,5 +1,8 @@
-import { type Model, type ModelBase, createModel } from '../../model/model';
+import { type ModelBase, createModel, Model } from '../../model/model';
+import { ReferenceModel } from '../../model/referenceModel';
+import { ReferenceRootModel } from '../../model/referenceRootModel';
 import { ModelSchema } from '../../model/schema';
+import { VariantModel } from '../../model/variantModel';
 import { type Clonable, CloneInfo, CloneMode } from '../cloneInfo';
 import { getAllCloned, getDependants, getDependencies, getRestoreDependencies } from '../cloneUtils';
 import { sortNodesByDepth } from '../const';
@@ -33,7 +36,25 @@ export interface NewNodeOptions<M>
 }
 
 // Singleton used when hydrating a reference node, before deferred cloner is resolved
-const tempModel = createModel(clonableNodeSchema, {}, 'Model:0');
+const tempModel = createModel(Model, {} as GraphNode, clonableNodeSchema, {}, 'Model:0');
+
+function getModelConstructor(cloneMode: CloneMode)
+{
+    if (cloneMode === CloneMode.Reference)
+    {
+        return ReferenceModel;
+    }
+    else if (cloneMode === CloneMode.ReferenceRoot)
+    {
+        return ReferenceRootModel;
+    }
+    else if (cloneMode === CloneMode.VariantRoot || cloneMode === CloneMode.Variant)
+    {
+        return VariantModel;
+    }
+
+    return Model;
+}
 
 export abstract class ClonableNode<
     /** Model */
@@ -80,7 +101,7 @@ export abstract class ClonableNode<
         {
             const schema = this.modelSchema();
 
-            this.model = createModel(schema, {
+            this.model = createModel(getModelConstructor(cloneInfo.cloneMode), this, schema, {
                 ...model,
             });
         }
@@ -198,7 +219,7 @@ export abstract class ClonableNode<
             {
                 const values = this.model.values;
 
-                this.model = cloner.model.clone() as unknown as Model<M> & M;
+                this.model = cloner.model.clone(this) as unknown as Model<M> & M;
                 this.model.setValues(values);
             }
             else
@@ -288,7 +309,7 @@ export abstract class ClonableNode<
 
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected onModelModified = <T>(key: string, value: T, oldValue: T) =>
+    protected onModelModified = <T>(key: string, value: T) =>
     {
         this.update();
     };

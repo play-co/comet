@@ -1,5 +1,6 @@
 import type { DisplayObjectNode } from '../../core/nodes/abstract/displayObjectNode';
 import { getInstance } from '../../core/nodes/instances';
+import { nextTick } from '../../core/util';
 import { Actions } from '../actions';
 import { getApp } from '../core/application';
 import { type ToolEvent, Tool } from '../core/tool';
@@ -72,7 +73,10 @@ export class NewSpriteTool extends Tool
 
         if (app.isAreaFocussed('viewport') && this.hasCreatedSprite)
         {
-            app.setTool(Tools.select);
+            nextTick().then(() =>
+            {
+                app.setTool(Tools.select);
+            });
         }
     }
 }

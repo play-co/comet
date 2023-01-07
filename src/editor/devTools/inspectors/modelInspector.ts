@@ -110,7 +110,7 @@ export class ModelInspector extends DevInspector<ModelDetail>
 
             const detail: ModelDetail = {
                 $: model,
-                owner: node.id,
+                owner: model.owner.id,
                 parent: model.parent ? model.parent.id : '#empty#',
                 children: model.children.length === 0 ? '#empty#' : model.children.map((model) => model.id).join(','),
                 cloneMode: model.cloneMode,
