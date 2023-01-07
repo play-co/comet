@@ -18,7 +18,7 @@ export type ModelConstructor<M> = {
     new (owner: GraphNode, schema: ModelSchema<M>, data: Partial<M>, id?: string): Model<M>;
 };
 
-export class Model<M> extends GraphNode
+export abstract class Model<M> extends GraphNode
 {
     public readonly owner: GraphNode;
     public readonly schema: ModelSchema<M>;

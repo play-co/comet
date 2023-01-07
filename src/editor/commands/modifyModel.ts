@@ -1,5 +1,6 @@
 import type { ClonableNode } from '../../core';
 import type { Model, ModelBase } from '../../core/model/model';
+import type { ModelSchema } from '../../core/model/schema';
 import { type UpdateMode, Command } from '../core/command';
 import Events from '../events';
 
@@ -11,9 +12,15 @@ export interface ModifyModelCommandParams<M>
     prevValues?: Partial<M>;
 }
 
+type UpdateInfo<M> = {
+    key: keyof M;
+    value: M[keyof M];
+    prevValue?: M[keyof M];
+};
+
 export interface ModifyModelCommandCache<M>
 {
-    prevValues?: Partial<M>;
+    updates: Map<ClonableNode, UpdateInfo<M>[]>;
 }
 
 export class ModifyModelCommand<M extends ModelBase>
@@ -27,62 +34,72 @@ export class ModifyModelCommand<M extends ModelBase>
         const sourceNode = this.getInstance(params.nodeId);
         const sourceModel = sourceNode.model as Model<M>;
 
-        const targetNode = sourceNode.getModificationCloneTarget();
-
-        const updates = new Map<string, ClonableNode>();
-        const prunedValues = { ...values };
+        const updates = new Map<ClonableNode, UpdateInfo<M>[]>();
 
         Object.keys(values).forEach((key) =>
         {
             const node = sourceModel.getOwner(key);
 
-            if (sourceModel.schema.properties[key].defaultValue === values[key])
+            if (values[key] !== sourceModel.schema.properties[key].defaultValue)
             {
-                delete prunedValues[key];
-            }
-            else
-            {
-                updates.set(key, node);
+                if (!updates.has(node))
+                {
+                    updates.set(node, []);
+                }
+                const prevValue = prevValues ? prevValues[key] : sourceModel.ownValues[key as keyof M];
+
+                (updates.get(node) as UpdateInfo<M>[]).push({
+                    key: key as keyof M,
+                    value: values[key] as M[keyof M],
+                    prevValue,
+                });
             }
         });
 
-        // update datastore
-        if (updateMode === 'full')
+        for (const [node, properties] of updates.entries())
         {
-            datastore.modifyModel(targetNode.id, prunedValues);
-        }
+            const values: Partial<M> = {};
 
-        // update graph node
-        const setValuesResult = targetNode.model.setValues(prunedValues) as Partial<M>;
-        const previousValues = prevValues ?? setValuesResult;
-
-        // update cache only if not set (otherwise its part of undo stack already)
-        if (!cache.prevValues)
-        {
-            const values = {} as Partial<M>;
-
-            for (const [k, v] of Object.entries(previousValues))
+            properties.forEach((info) =>
             {
-                if (v !== undefined)
-                {
-                    // don't sore undefined values
-                    values[k as keyof M] = v;
-                }
-            }
+                values[info.key] = info.value;
+            });
 
-            this.cache.prevValues = values;
+            node.model.setValues(values);
+
+            // update datastore
+            if (updateMode === 'full')
+            {
+                datastore.modifyModel(node.id, values);
+            }
         }
+
+        cache.updates = updates;
 
         Events.datastore.node.local.modified.emit({ nodeId: sourceNode.id, values });
     }
 
     public undo(): void
     {
-        const { cache: { prevValues }, params: { nodeId, updateMode } } = this;
+        const { datastore, cache: { updates }, params: { updateMode } } = this;
 
-        if (prevValues && Object.values(prevValues).length > 0)
+        for (const [node, properties] of updates.entries())
         {
-            new ModifyModelCommand({ nodeId, values: prevValues, updateMode }).run();
+            const values: Partial<M> = {};
+            const schema = node.model.schema as unknown as ModelSchema<M>;
+
+            properties.forEach((info) =>
+            {
+                values[info.key] = info.prevValue ?? schema.properties[info.key].defaultValue;
+            });
+
+            node.model.setValues(values);
+
+            // update datastore
+            if (updateMode === 'full')
+            {
+                datastore.modifyModel(node.id, values);
+            }
         }
     }
 }

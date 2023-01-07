@@ -1,4 +1,6 @@
-import { type ModelBase, createModel, Model } from '../../model/model';
+import type { Model } from '../../model/model';
+import { type ModelBase, createModel } from '../../model/model';
+import { OriginalModel } from '../../model/originalModel';
 import { ReferenceModel } from '../../model/referenceModel';
 import { ReferenceRootModel } from '../../model/referenceRootModel';
 import { ModelSchema } from '../../model/schema';
@@ -36,7 +38,7 @@ export interface NewNodeOptions<M>
 }
 
 // Singleton used when hydrating a reference node, before deferred cloner is resolved
-const tempModel = createModel(Model, {} as GraphNode, clonableNodeSchema, {}, 'Model:0');
+const tempModel = createModel(OriginalModel, {} as GraphNode, clonableNodeSchema, {}, 'Model:0');
 
 function getModelConstructor(cloneMode: CloneMode)
 {
@@ -53,7 +55,7 @@ function getModelConstructor(cloneMode: CloneMode)
         return VariantModel;
     }
 
-    return Model;
+    return OriginalModel;
 }
 
 export abstract class ClonableNode<
@@ -464,15 +466,16 @@ export abstract class ClonableNode<
         return node;
     }
 
-    public getModificationCloneTarget(): ClonableNode
+    public getDeleteNodeTarget(): ClonableNode
     {
-        // const { isInstanceRoot, isOriginal } = this.cloneInfo;
+        const { isReference } = this.cloneInfo;
 
-        // return (isInstanceRoot || isOriginal) ? this as unknown as ClonableNode : this.cloneInfo.getCloner();
+        if (isReference)
+        {
+            return this.cloneInfo.getCloner();
+        }
 
-        const { isOriginal } = this.cloneInfo;
-
-        return (isOriginal) ? this as unknown as ClonableNode : this.cloneInfo.getCloner();
+        return this as unknown as ClonableNode;
     }
 
     public getAddChildCloneTarget(): ClonableNode
