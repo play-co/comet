@@ -11,6 +11,11 @@ export class RedoAction extends Action<void, void>
         });
     }
 
+    protected shouldRun(): boolean
+    {
+        return Application.instance.undoStack.canRedo;
+    }
+
     protected exec()
     {
         writeCommandList('redo');

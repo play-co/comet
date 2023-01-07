@@ -136,6 +136,16 @@ export default class UndoStack
         return this.head > -1;
     }
 
+    public get canUndo()
+    {
+        return this.head > -1;
+    }
+
+    public get canRedo()
+    {
+        return this.head < this.stack.length - 1;
+    }
+
     public get lastCommand()
     {
         return this.stack[this.head];

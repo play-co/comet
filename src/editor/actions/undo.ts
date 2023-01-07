@@ -11,6 +11,11 @@ export class UndoAction extends Action<void, void>
         });
     }
 
+    protected shouldRun(): boolean
+    {
+        return Application.instance.undoStack.canUndo;
+    }
+
     protected exec()
     {
         writeCommandList('undo');

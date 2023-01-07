@@ -1,5 +1,6 @@
 import { clearInstances } from '../../../core/nodes/instances';
 import { createProjectSchema } from '../../../core/nodes/schema';
+import { Actions } from '../../actions';
 import { getApp } from '../../core/application';
 import {
     getUserEditPrefs,
@@ -34,28 +35,6 @@ export function restore()
             window.location.href = window.location.href.replace(window.location.hash, '');
         }, 1000);
     }
-}
-
-function subMenu(prefix: string)
-{
-    const subMenuA = new Menu([{ label: 'Item Sub 4' }, { label: 'Item 5' }, { label: 'Item 6' }]);
-    const subMenuB = new Menu([
-        { label: 'Item Longer 7' },
-        { label: 'Item 8' },
-        { label: 'Item 9', menu: subMenuA },
-    ]);
-
-    return new Menu([
-        { data: 1, label: `${prefix}Item 1` },
-        { label: `${prefix}Item 2`, menu: subMenuB },
-        { label: `${prefix}Item 3` },
-    ], (item, index) =>
-    {
-        if (index === 0)
-        {
-            item.isEnabled = getApp().isAreaFocussed('viewport');
-        }
-    });
 }
 
 const fileMenu = new Menu([
@@ -106,6 +85,37 @@ const fileMenu = new Menu([
     },
 ]);
 
+const editMenu = new Menu([
+    {
+        id: 'undo',
+        label: 'Undo',
+        onClick: () =>
+        {
+            Actions.undo.dispatch();
+        },
+    },
+    {
+        id: 'redo',
+        label: 'Redo',
+        onClick: () =>
+        {
+            Actions.redo.dispatch();
+        },
+    },
+], (item) =>
+{
+    const { id } = item;
+
+    if (id === 'undo')
+    {
+        item.isEnabled = getApp().undoStack.canUndo;
+    }
+    else if (id === 'redo')
+    {
+        item.isEnabled = getApp().undoStack.canRedo;
+    }
+});
+
 export const menu = new Menu([
     {
         label: 'File',
@@ -113,7 +123,7 @@ export const menu = new Menu([
     },
     {
         label: 'Edit',
-        menu: subMenu('Edit'),
+        menu: editMenu,
     },
 ]);
 

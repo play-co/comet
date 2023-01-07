@@ -33,6 +33,7 @@ High Priority
 * Copy paste
     - Paste logic needs tightening:
         - need to support prefab instances (currently only duplicate)
+            - support variants
         - single vs multi:
             - if all from same parent, paste into that parent
             - if from different parents, paste into selected parent
@@ -49,9 +50,8 @@ High Priority
 * Multi-user testing - once the above is checked, we need to validate and patch multi-user cases
 
 Low Priority Fix/Improve/Add
-* Multi-selection as last node with strongest tint
+* Unlink
 * Transform gizmo uses statusbar items instead of message
-* Rename cloaked to trashed
 * Project properties panel
     - name
     - created
@@ -63,17 +63,17 @@ Low Priority Fix/Improve/Add
 * overflow for project panel
 * Menubar rollover set active
 * Custom icons
+* Reduce grid lines when zoomed out
 
 Tech Debt:
 * Refactor Convergence datastore to be even more generic as possible to help future backend swaps
 * Replace ClonableNode generics from Interfaces to Types for models, may loosen generic polymorphism
-* Reduce grid lines when zoomed out
 * Replace Color with colord
+* Investigate Cloudflare + YJS
 
 Rollout:
 * Fix cloning and prefab create/edit
 * Investigate using Convergence for alpha storage solution
-* Investigate prod log and replay capabilities
 * Upgrade to Svelte-kit
+* Investigate prod log and replay capabilities
 * Investigate Analytics
-* Investigate Cloudflare + YJS
