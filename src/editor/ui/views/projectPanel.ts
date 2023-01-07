@@ -8,6 +8,7 @@ import { Actions } from '../../actions';
 import { Application, getApp } from '../../core/application';
 import type { ProjectSelection } from '../../core/projectSelection';
 import Events from '../../events';
+import type { MouseDragUpdate } from '../components/dragger';
 import { NodeTreeModel } from './components/nodeTreeModel';
 import type { TreeItem } from './components/treeModel';
 import { Icons } from './icons';
@@ -151,6 +152,23 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
         }
     }
 
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected onDragItemMove(update: MouseDragUpdate): void
+    {
+        const isValid = getApp().isAreaFocussed('viewport');
+        const body = document.body;
+
+        if (!isValid && !body.classList.contains('invalid'))
+        {
+            body.classList.add('invalid');
+        }
+        else if (isValid && body.classList.contains('invalid'))
+        {
+            body.classList.remove('invalid');
+        }
+    }
+
     protected onItemDragEnd = ({ focusAreaId, item, event }: typeof Events.itemDrag.endDrag.type) =>
     {
         if (focusAreaId === 'viewport')
@@ -167,10 +185,11 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
             if (app.selection.hierarchy.hasSelection)
             {
                 let targetNode = app.selection.hierarchy.firstItem.cast<DisplayObjectNode>();
+                const root = targetNode.getRootNode();
 
-                if (targetNode.cloneInfo.cloner?.id === node.id)
+                if (root.isReferencingNode(node))
                 {
-                    targetNode = targetNode.parent as DisplayObjectNode;
+                    targetNode = root.parent as DisplayObjectNode;
                 }
 
                 const mousePos = app.viewport.getMousePos(event.clientX, event.clientY);
@@ -203,6 +222,8 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
                         y,
                     } });
             }
+
+            app.selection.hierarchy.update();
         }
     };
 

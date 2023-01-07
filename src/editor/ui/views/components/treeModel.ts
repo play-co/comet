@@ -289,6 +289,13 @@ export abstract class TreeViewModel<ItemType extends ClonableNode, SelectionType
         // subclasses
     }
 
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected onDragItemMove(update: MouseDragUpdate)
+    {
+        // subclasses
+    }
+
     public onKeyDown = (event: KeyboardEvent) =>
     {
         if (event.key === 'Escape')
@@ -355,7 +362,7 @@ export abstract class TreeViewModel<ItemType extends ClonableNode, SelectionType
 
         if (canReOrder || canReParent)
         {
-            mouseDrag({ event }).then(({ event, deltaX, deltaY }) =>
+            mouseDrag({ event }, this.onDragItemMove).then(({ event, deltaX, deltaY }) =>
             {
                 const dragTargetValue = dragTarget.value;
 

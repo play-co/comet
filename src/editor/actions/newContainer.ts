@@ -47,7 +47,6 @@ export class NewContainerAction extends Action<NewContainerOptions, ContainerNod
             model: {
                 x: 10,
                 y: 10,
-                tint: Math.round(Math.random() * 100000),
                 ...options.model,
             },
         });

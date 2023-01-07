@@ -56,7 +56,7 @@ export class SelectTool extends Tool
         }
         else
         {
-            const selectedNode = topNode.getCloneRoot();
+            const selectedNode = topNode.getRootNode();
 
             if (isAddKey)
             {

@@ -289,7 +289,6 @@ export abstract class ClonableNode<
         if (this.view)
         {
             this.updateView();
-            this.postUpdateView();
         }
 
         if (recursive)
@@ -367,7 +366,7 @@ export abstract class ClonableNode<
         {
             const original = this.getOriginal();
             const originalCloned = original.getClonedDescendants();
-            const cloneRoot = this.getCloneRoot();
+            const cloneRoot = this.getRootNode();
 
             if (cloneRoot)
             {
@@ -403,9 +402,9 @@ export abstract class ClonableNode<
         return nodes;
     }
 
-    public getCloneRoot(): ClonableNode
+    public getRootNode(): ClonableNode
     {
-        return this.walk<ClonableNode, { node?: ClonableNode }>((node, options) =>
+        return this.walk<ClonableNode, { node: ClonableNode }>((node, options) =>
         {
             const isParentMetaNode = node.parent ? node.getParent<ClonableNode>().isMetaNode : false;
 
@@ -419,7 +418,7 @@ export abstract class ClonableNode<
             data: {
                 node: this,
             },
-        }).node as ClonableNode;
+        }).node;
     }
 
     public getMetaNode(): MetaNode
@@ -591,7 +590,7 @@ export abstract class ClonableNode<
      */
     public getRestoreDependencies(): ClonableNode[]
     {
-        let array = getRestoreDependencies(this.getCloneRoot());
+        let array = getRestoreDependencies(this.getRootNode());
 
         if (this.cloneInfo.isReference)
         {
@@ -781,10 +780,5 @@ export abstract class ClonableNode<
     public abstract createView(): V;
 
     public abstract updateView(): void;
-
-    public postUpdateView()
-    {
-        //
-    }
 }
 

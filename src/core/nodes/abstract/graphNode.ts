@@ -77,23 +77,6 @@ export abstract class GraphNode
         return this.parent as unknown as T;
     }
 
-    public getRoot<T extends GraphNode>(): T
-    {
-        if (!this.parent)
-        {
-            return this as unknown as T;
-        }
-
-        let ref: GraphNode | undefined = this.parent;
-
-        while (ref)
-        {
-            ref = ref.parent;
-        }
-
-        return ref as unknown as T;
-    }
-
     public isReferencingNode<T extends GraphNode>(refNode: T)
     {
         if (refNode.contains(this) || this.contains(refNode))

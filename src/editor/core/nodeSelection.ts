@@ -25,6 +25,14 @@ export abstract class NodeSelection<T extends ClonableNode>
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected onDeselect() { /** */ }
 
+    public update()
+    {
+        if (this.items.length > 0)
+        {
+            this.set([...this.items]);
+        }
+    }
+
     public set(item: T | T[])
     {
         if (!this.isEmpty)

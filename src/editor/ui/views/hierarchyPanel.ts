@@ -49,7 +49,7 @@ export class HierarchyTree extends NodeTreeModel<HierarchySelection>
 
                 if (isReferenceOrRoot)
                 {
-                    const root = node.getCloneRoot();
+                    const root = node.getRootNode();
                     const { isVariantInstance } = root.cloneInfo;
 
                     icon = isVariantInstance

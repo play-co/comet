@@ -54,7 +54,7 @@ export function getRestoreDependencies(cloneRoot: ClonableNode, array: ClonableN
 
     if (cloneInfo.cloner)
     {
-        getRestoreDependencies(cloneInfo.getCloner<ClonableNode>().getCloneRoot(), array);
+        getRestoreDependencies(cloneInfo.getCloner<ClonableNode>().getRootNode(), array);
     }
 
     return array;

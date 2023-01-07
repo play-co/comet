@@ -29,8 +29,8 @@
 
 High Priority
 * Prefab
-    - Delete node is too aggressive
-    - need to rethink variant and reference root, datastore model updates are mode tricky than graphOnly
+    - Need to prevent recursive parenting
+    - QA Variants, Variant Instances
 * Copy paste
     - Paste logic needs tightening:
         - need to support prefab instances (currently only duplicate)

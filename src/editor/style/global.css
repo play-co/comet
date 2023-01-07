@@ -28,6 +28,10 @@ body.isDragging {
   cursor: copy;
 }
 
+body.isDragging.invalid {
+  cursor: not-allowed;
+}
+
 html, body {
   overflow: hidden;
 }
