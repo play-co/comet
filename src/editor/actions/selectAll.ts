@@ -20,13 +20,24 @@ export class SelectAllAction extends Action<void, void>
 
     protected exec()
     {
-        const nodes: Set<ClonableNode> = new Set();
         const app = Application.instance;
 
-        app.viewport.rootNode.walk<ClonableNode>((node) =>
+        const nodes = app.viewport.rootNode.walk<ClonableNode, {nodes: Set<ClonableNode>}>((node, options) =>
         {
-            nodes.add(node);
-        });
+            if (node.isCloaked)
+            {
+                options.cancel = true;
+
+                return;
+            }
+
+            options.data.nodes.add(node);
+        }, {
+            includeSelf: false,
+            data: {
+                nodes: new Set(),
+            },
+        }).nodes;
 
         app.selection.hierarchy.set([...nodes]);
     }

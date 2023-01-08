@@ -38,23 +38,23 @@ export class TransformGizmoInfo extends Container
 
         if (operation instanceof RotateOperation)
         {
-            this.drawRotation();
+            this.showRotationInfo();
         }
         else if (operation instanceof TranslateOperation)
         {
-            this.drawTranslation();
+            this.showTranslationInfo();
         }
         else if (operation instanceof TranslatePivotOperation)
         {
-            this.drawTranslatePivot();
+            this.showTranslatePivotInfo();
         }
         else if (operation instanceof ScaleOperation)
         {
-            this.drawScale();
+            this.showScaleInfo();
         }
     }
 
-    protected drawRotation()
+    protected showRotationInfo()
     {
         const { frame: { gizmo: { pivotGlobalPos, rotation, operation } }, rotationShape } = this;
         const p0 = pivotGlobalPos;
@@ -76,7 +76,7 @@ export class TransformGizmoInfo extends Container
         getApp().statusBar.setMessage(`ROTATION ${absAngle} (relative: ${relAngle}°)`);
     }
 
-    protected drawTranslation()
+    protected showTranslationInfo()
     {
         const { frame: { gizmo: { x, y, localX, localY } } } = this;
 
@@ -90,7 +90,7 @@ export class TransformGizmoInfo extends Container
         getApp().statusBar.setMessage(`${globalInfo} ${localInfo}`);
     }
 
-    protected drawTranslatePivot()
+    protected showTranslatePivotInfo()
     {
         const { frame: { gizmo: { pivotX, pivotY, initialTransform: { naturalWidth, naturalHeight } } } } = this;
 
@@ -104,7 +104,7 @@ export class TransformGizmoInfo extends Container
         getApp().statusBar.setMessage(`PIVOT ${xInfo} (relative: ${yInfo})`);
     }
 
-    protected drawScale()
+    protected showScaleInfo()
     {
         const { frame: { gizmo: { scaleX, scaleY, initialTransform: { naturalWidth, naturalHeight } } } } = this;
 

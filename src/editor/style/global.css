@@ -90,5 +90,6 @@ canvas.hide-viewport {
 }
 
 .loading {
+  pointer-events: none;
   cursor: wait;
 }

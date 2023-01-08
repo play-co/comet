@@ -214,6 +214,7 @@ export function getLocalTransform(view: DisplayObject, pivot?: ObservablePoint, 
     const angle = radToDeg(transform.rotation);
     const skewX = transform.skew.x;
     const skewY = transform.skew.y;
+    const precision = 2;
 
     const values: Partial<DisplayObjectModel> = {
         x,
@@ -238,6 +239,16 @@ export function getLocalTransform(view: DisplayObject, pivot?: ObservablePoint, 
         values.x = x + deltaX;
         values.y = y + deltaY;
     }
+
+    values.x = round(values.x as number, precision);
+    values.y = round(values.y as number, precision);
+    values.scaleX = round(values.scaleX as number, precision);
+    values.scaleY = round(values.scaleY as number, precision);
+    values.angle = round(values.angle as number, precision);
+    values.skewX = round(values.skewX as number, precision);
+    values.skewY = round(values.skewY as number, precision);
+    values.pivotX = round(values.pivotX as number, precision);
+    values.pivotY = round(values.pivotY as number, precision);
 
     return values;
 }
