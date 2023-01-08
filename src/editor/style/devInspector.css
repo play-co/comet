@@ -16,6 +16,8 @@
     user-select: none;
     display: none; 
     z-index: 10000;
+    border: 1px solid #717171;
+    background: #717171;
 }
 
 .dev-inspector > label {
@@ -29,7 +31,6 @@
     justify-content: space-between;
     padding: 0 5px;
     position: relative;
-    top: 1px;
 }
 
 .dev-inspector > label > span {
