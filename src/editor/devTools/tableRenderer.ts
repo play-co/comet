@@ -33,7 +33,7 @@ export function createTable<T extends Record<string, any>>(
     data: Record<string, T> | T[],
     indexColumnLabel: string,
     fontSize: number,
-    rowHeight = 20,
+    rowHeight = 17,
 ): Table
 {
     const indexColumn: Column = {
@@ -187,7 +187,7 @@ export function renderTable(
             .fontStyle(cellStyle.fontStyle)
             .save()
             .clip(x, y, columnWidth, rowHeight)
-            .drawText(text, left, y + ((rowHeight - textInfo.height) * 0.5) + (rowHeight * 0.35))
+            .drawText(text, left, y + textInfo.height + ((rowHeight - textInfo.height) * 0.5))
             .restore()
             .line(x + columnWidth, y, x + columnWidth, y + rowHeight);
     };

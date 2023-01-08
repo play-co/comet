@@ -3,9 +3,6 @@
 * Multi-selection undo does not reset gizmo transform correctly, it resets it
     - May need to store transform gizmo state with each command in undo stack?
     - Also need a way to recalculate multi-transform gizmo when remote nodes move
-* Empty (Container) icon needs to be selectable, but not scale with viewport
-    - Also needs to select all children, not itself when clicked so transform gizmo can manipulate
-* Undoing nested nodes restores children which were also removed, could be an uncloaking problem
 
 # Enhancements
 
@@ -38,6 +35,7 @@ High Priority
             - if all from same parent, paste into that parent
             - if from different parents, paste into selected parent
 * Cloaking - needs overhaul, perhaps rename to "trash" and "untrash"
+    - Undoing nested nodes restores children which were also removed, could be an uncloaking problem
     - only root node should be marked, don't walk all child nodes
     - restore node currently brings back too many nodes, needs to be tightened
     - to replicate:
