@@ -29,6 +29,24 @@ export interface Table
 
 export const tableIndexKey = '$$index';
 
+function stringify(value: any)
+{
+    if (value === undefined)
+    {
+        return 'undefined';
+    }
+    else if (value === null)
+    {
+        return 'null';
+    }
+    else if (typeof value === 'string')
+    {
+        return value;
+    }
+
+    return JSON.stringify(value).replace(/^\{|\}$/g, '');
+}
+
 export function createTable<T extends Record<string, any>>(
     data: Record<string, T> | T[],
     indexColumnLabel: string,
@@ -115,10 +133,10 @@ export function createTable<T extends Record<string, any>>(
                 continue;
             }
 
-            const cellSize = measureText(JSON.stringify(row.get(columnId)), fontSize);
+            const cellSize = measureText(stringify(row.get(columnId)), fontSize);
             const columnHeadingSize = measureText(columnId, fontSize);
 
-            column.width = Math.min(maxColumnWidth, Math.max(cellSize.width - 20, column.width, columnHeadingSize.width));
+            column.width = Math.min(maxColumnWidth, Math.max(cellSize.width, column.width, columnHeadingSize.width));
         }
     });
 
@@ -176,10 +194,6 @@ export function renderTable(
     const drawCell = (cellStyle: CellStyle, x: number, y: number, columnWidth: number) =>
     {
         const textInfo = measureText(cellStyle.text, fontSize);
-
-        const text = cellStyle.text.replace(/^"|"$/g, '');
-
-        // const left = x + ((columnWidth - textInfo.width) * 0.5);
         const left = x + 5;
 
         painter
@@ -187,7 +201,7 @@ export function renderTable(
             .fontStyle(cellStyle.fontStyle)
             .save()
             .clip(x, y, columnWidth, rowHeight)
-            .drawText(text, left, y + textInfo.height + ((rowHeight - textInfo.height) * 0.5))
+            .drawText(cellStyle.text, left, y + textInfo.height + ((rowHeight - textInfo.height) * 0.5))
             .restore()
             .line(x + columnWidth, y, x + columnWidth, y + rowHeight);
     };
@@ -246,7 +260,7 @@ export function renderTable(
                 .strokeColor('#999');
 
             const cellStyle: CellStyle = {
-                text: JSON.stringify(cell.value),
+                text: stringify(cell.value),
                 fillColor: painter.backgroundColor,
                 fontColor: 'white',
                 fontStyle: 'normal',

@@ -13,7 +13,7 @@ export interface ModelDetail
 {
     $: Model<any>;
     owner: string;
-    values: string;
+    values: {};
     parent: string;
     children: string;
     cloneMode: CloneMode;
@@ -28,6 +28,31 @@ export class ModelInspector extends DevInspector<ModelDetail>
         {
             this.render();
         }, 500);
+    }
+
+    protected getDetails()
+    {
+        const app = Application.instance;
+        const details: Record<string, ModelDetail> = {};
+
+        app.project.walk<ClonableNode>((node) =>
+        {
+            const model = node.model;
+
+            const detail: ModelDetail = {
+                $: model,
+                owner: model.owner.id,
+                parent: model.parent ? model.parent.id : '#empty#',
+                children: model.children.length === 0 ? '#empty#' : model.children.map((model) => model.id).join(','),
+                cloneMode: model.cloneMode,
+                isAsset: model.isAsset,
+                values: model.ownValues,
+            };
+
+            details[model.id] = detail;
+        });
+
+        return details;
     }
 
     public onCellStyle = (row: Row, column: Column, cellStyle: CellStyle) =>
@@ -84,49 +109,6 @@ export class ModelInspector extends DevInspector<ModelDetail>
             }
         });
     };
-
-    protected getDetails()
-    {
-        const app = Application.instance;
-        const details: Record<string, ModelDetail> = {};
-
-        app.project.walk<ClonableNode>((node) =>
-        {
-            const model = node.model;
-            const keys = Object.keys(model.ownValues);
-
-            let values = '#empty#';
-
-            if (keys.length > 0)
-            {
-                values = keys.map((key) =>
-                {
-                    let value = model.ownValues[key];
-
-                    if (typeof value === 'number')
-                    {
-                        value = value.toFixed(1).replace(/.0$/, '');
-                    }
-
-                    return `${key}:${value}`;
-                }).join(', ');
-            }
-
-            const detail: ModelDetail = {
-                $: model,
-                owner: model.owner.id,
-                parent: model.parent ? model.parent.id : '#empty#',
-                children: model.children.length === 0 ? '#empty#' : model.children.map((model) => model.id).join(','),
-                cloneMode: model.cloneMode,
-                isAsset: model.isAsset,
-                values,
-            };
-
-            details[model.id] = detail;
-        });
-
-        return details;
-    }
 
     protected inspect()
     {

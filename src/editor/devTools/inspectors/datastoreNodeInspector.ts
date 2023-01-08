@@ -17,7 +17,7 @@ export interface DatastoreNodeDetail
     cloneMode: string;
     cloner: string;
     cloned: string;
-    model: string;
+    model: {};
 }
 
 export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
@@ -44,10 +44,6 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
 
         for (const [nodeId, node] of Object.entries(project.nodes))
         {
-            const values = Object.keys(node.model)
-                .map((key) =>
-                    `${key}:${typeof node.model[key] === 'number' ? node.model[key].toFixed(1).replace(/.0$/, '') : node.model[key]}`).join(', ');
-
             details[nodeId] = {
                 $: nodeId,
                 parent: node.parent ? node.parent : '#empty#',
@@ -55,7 +51,7 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
                 cloneMode: node.cloneInfo.cloneMode,
                 cloner: node.cloneInfo.cloner ?? '#empty#',
                 cloned: node.cloneInfo.cloned.length ? node.cloneInfo.cloned.join(',') : '#empty#',
-                model: values,
+                model: node.model,
             };
         }
 
