@@ -46,7 +46,7 @@ export class AddChildCommand<
 
         clonedParentNodes.forEach((clonedParent) =>
         {
-            const cloneMode = clonedParent.getNewChildCloneMode();
+            const cloneMode = clonedParent.getAddChildCloneMode();
 
             const { clonedNode } = new CloneCommand({
                 newParentId: clonedParent.id,

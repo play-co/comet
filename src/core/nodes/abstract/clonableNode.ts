@@ -248,42 +248,6 @@ export abstract class ClonableNode<
         }
     }
 
-    public isReferencingNode<T extends GraphNode>(refNode: T): boolean
-    {
-        if (super.isReferencingNode(refNode))
-        {
-            return true;
-        }
-
-        const node = refNode.asClonableNode();
-
-        // check original
-        if (this.getOriginal() === node)
-        {
-            return true;
-        }
-
-        // check clone ancestors
-        for (const ancestor of node.getCloneAncestors())
-        {
-            if (ancestor === node)
-            {
-                return true;
-            }
-        }
-
-        // check cloned descendants
-        for (const descendant of node.getClonedDescendants())
-        {
-            if (descendant === node)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public update(recursive = false)
     {
         if (this.view)
@@ -356,6 +320,132 @@ export abstract class ClonableNode<
         this.model.setValue(modelKey, value);
     }
 
+    public getMetaNode(): MetaNode
+    {
+        return this.walk<ClonableNode, { node: ClonableNode }>((node, options) =>
+        {
+            if (node.isMetaNode)
+            {
+                options.data.node = node.cast<MetaNode>();
+                options.cancel = true;
+            }
+        }, {
+            includeSelf: false,
+            direction: 'up',
+            data: {
+                node: this,
+            },
+        }).node as MetaNode;
+    }
+
+    public getRootNode(): ClonableNode
+    {
+        return this.walk<ClonableNode, { node: ClonableNode }>((node, options) =>
+        {
+            const isParentMetaNode = node.parent ? node.getParent<ClonableNode>().isMetaNode : false;
+
+            if (node.cloneInfo.isRoot || isParentMetaNode)
+            {
+                options.data.node = node;
+                options.cancel = true;
+            }
+        }, {
+            direction: 'up',
+            data: {
+                node: this,
+            },
+        }).node;
+    }
+
+    public getOriginal(): ClonableNode
+    {
+        const { cloneInfo: { isOriginal } } = this;
+
+        if (isOriginal)
+        {
+            return this as unknown as ClonableNode;
+        }
+
+        let node: ClonableNode = this as unknown as ClonableNode;
+
+        while (!node.cloneInfo.isOriginal)
+        {
+            if (node.cloneInfo.cloner)
+            {
+                node = node.cloneInfo.cloner as ClonableNode;
+            }
+            else
+            {
+                throw new Error('Could find original cloned node as parent undefined');
+            }
+        }
+
+        return node;
+    }
+
+    public getAddChildCloneMode()
+    {
+        const { isReferenceOrRoot, isVariantOrRoot, cloneMode } = this.cloneInfo;
+
+        if (isReferenceOrRoot)
+        {
+            return CloneMode.Reference;
+        }
+        else if (isVariantOrRoot)
+        {
+            return CloneMode.Variant;
+        }
+
+        return cloneMode;
+    }
+
+    public getAddChildCloneTarget(): ClonableNode
+    {
+        const { cloner, isReferenceOrRoot } = this.cloneInfo;
+
+        if (cloner && isReferenceOrRoot)
+        {
+            return cloner as unknown as ClonableNode;
+        }
+
+        return this as unknown as ClonableNode;
+    }
+
+    public getRemoveChildTarget(): ClonableNode
+    {
+        const { isReference } = this.cloneInfo;
+
+        if (isReference)
+        {
+            return this.cloneInfo.getCloner();
+        }
+
+        return this as unknown as ClonableNode;
+    }
+
+    public getCloneTarget(): ClonableNode
+    {
+        const { isVariantOrRoot, isReferenceRoot, cloner } = this.cloneInfo;
+
+        if (cloner)
+        {
+            if (isReferenceRoot)
+            {
+                return cloner as ClonableNode;
+            }
+            else if (isVariantOrRoot)
+            {
+                return this as unknown as ClonableNode;
+            }
+        }
+
+        return this.getOriginal();
+    }
+
+    /**
+     * return a list of nodes which were a result of a direct or indirect clone of this node
+     * eg. a reference of a variant of this original
+     */
     public getClonedDescendants()
     {
         const { isVariant } = this.cloneInfo;
@@ -400,128 +490,6 @@ export abstract class ClonableNode<
         sortNodesByDepth(nodes);
 
         return nodes;
-    }
-
-    public getRootNode(): ClonableNode
-    {
-        return this.walk<ClonableNode, { node: ClonableNode }>((node, options) =>
-        {
-            const isParentMetaNode = node.parent ? node.getParent<ClonableNode>().isMetaNode : false;
-
-            if (node.cloneInfo.isRoot || isParentMetaNode)
-            {
-                options.data.node = node;
-                options.cancel = true;
-            }
-        }, {
-            direction: 'up',
-            data: {
-                node: this,
-            },
-        }).node;
-    }
-
-    public getMetaNode(): MetaNode
-    {
-        return this.walk<ClonableNode, { node: ClonableNode }>((node, options) =>
-        {
-            if (node.isMetaNode)
-            {
-                options.data.node = node.cast<MetaNode>();
-                options.cancel = true;
-            }
-        }, {
-            includeSelf: false,
-            direction: 'up',
-            data: {
-                node: this,
-            },
-        }).node as MetaNode;
-    }
-
-    public getOriginal(): ClonableNode
-    {
-        const { cloneInfo: { isOriginal } } = this;
-
-        if (isOriginal)
-        {
-            return this as unknown as ClonableNode;
-        }
-
-        let node: ClonableNode = this as unknown as ClonableNode;
-
-        while (!node.cloneInfo.isOriginal)
-        {
-            if (node.cloneInfo.cloner)
-            {
-                node = node.cloneInfo.cloner as ClonableNode;
-            }
-            else
-            {
-                throw new Error('Could find original cloned node as parent undefined');
-            }
-        }
-
-        return node;
-    }
-
-    public getDeleteNodeTarget(): ClonableNode
-    {
-        const { isReference } = this.cloneInfo;
-
-        if (isReference)
-        {
-            return this.cloneInfo.getCloner();
-        }
-
-        return this as unknown as ClonableNode;
-    }
-
-    public getAddChildCloneTarget(): ClonableNode
-    {
-        const { cloner, isReferenceOrRoot } = this.cloneInfo;
-
-        if (cloner && isReferenceOrRoot)
-        {
-            return cloner as unknown as ClonableNode;
-        }
-
-        return this as unknown as ClonableNode;
-    }
-
-    public getCloneTarget(): ClonableNode
-    {
-        const { isVariantOrRoot, isReferenceRoot, cloner } = this.cloneInfo;
-
-        if (cloner)
-        {
-            if (isReferenceRoot)
-            {
-                return cloner as ClonableNode;
-            }
-            else if (isVariantOrRoot)
-            {
-                return this as unknown as ClonableNode;
-            }
-        }
-
-        return this.getOriginal();
-    }
-
-    public getNewChildCloneMode()
-    {
-        const { isReferenceOrRoot, isVariantOrRoot, cloneMode } = this.cloneInfo;
-
-        if (isReferenceOrRoot)
-        {
-            return CloneMode.Reference;
-        }
-        else if (isVariantOrRoot)
-        {
-            return CloneMode.Variant;
-        }
-
-        return cloneMode;
     }
 
     public getCloneAncestors(): ClonableNode[]
@@ -782,3 +750,9 @@ export abstract class ClonableNode<
     public abstract updateView(): void;
 }
 
+(window as any).id = (nodeOrArray: GraphNode | GraphNode[]) =>
+{
+    const array = Array.isArray(nodeOrArray) ? nodeOrArray : [nodeOrArray];
+
+    console.log(array.map((node) => node.id));
+};

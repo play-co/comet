@@ -28,7 +28,7 @@ export class RemoveChildCommand
         const { cache, datastore, params: { nodeId } } = this;
 
         const sourceNode = this.getInstance(nodeId);
-        const originalNode = sourceNode.getDeleteNodeTarget();
+        const originalNode = sourceNode.getRemoveChildTarget();
         const dependantNodes = originalNode.getDependants().filter((node) => !node.isCloaked);
 
         const nodes: ClonableNode[] = [originalNode, ...dependantNodes];

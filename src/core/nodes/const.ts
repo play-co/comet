@@ -57,3 +57,8 @@ export function sortNodesByDepth(nodes: GraphNode[])
     return nodes.sort((a, b) => (depths.get(a) as number) - (depths.get(b) as number));
 }
 
+export function sortNodesByCreationId(nodes: GraphNode[])
+{
+    return nodes.sort((a, b) => a.creationId - b.creationId);
+}
+

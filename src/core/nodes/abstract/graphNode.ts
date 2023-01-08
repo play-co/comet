@@ -81,16 +81,6 @@ export abstract class GraphNode
         return this.parent as unknown as T;
     }
 
-    public isReferencingNode<T extends GraphNode>(refNode: T)
-    {
-        if (refNode.contains(this) || this.contains(refNode))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
     public getParents<T extends GraphNode>(breakType = Function, includeBreak = false): T[]
     {
         const nodes: T[] = [];
