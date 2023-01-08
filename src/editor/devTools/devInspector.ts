@@ -132,20 +132,24 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         label.onmousedown = onMouseDown;
 
-        toggleButton.onclick = () =>
+        toggleButton.onmousedown = (e: MouseEvent) =>
         {
             this.isExpanded = !this.isExpanded;
             this.storeState();
             this.updateExpandedState();
+
+            e.stopPropagation();
         };
 
-        inspectButton.onclick = (e: MouseEvent) =>
+        inspectButton.onmousedown = (e: MouseEvent) =>
         {
             if (e.shiftKey)
             {
                 console.clear();
             }
+
             this.inspect();
+            e.stopPropagation();
         };
 
         canvas.onwheel = (e: WheelEvent) =>
@@ -177,6 +181,22 @@ export abstract class DevInspector<T extends Record<string, any> >
 
                 this.setScrollTop(Math.round(this.table.rows.length * t));
             });
+        };
+
+        container.onmousemove = (e: MouseEvent) =>
+        {
+            if (e.shiftKey)
+            {
+                if (!container.classList.contains('select'))
+                {
+                    container.classList.add('select');
+                }
+            }
+            else
+            if (container.classList.contains('select'))
+            {
+                container.classList.remove('select');
+            }
         };
 
         canvas.onmousedown = (e: MouseEvent) =>

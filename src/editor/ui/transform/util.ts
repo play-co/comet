@@ -5,6 +5,7 @@ import { Matrix, Rectangle, Transform } from 'pixi.js';
 import type { ClonableNode } from '../../../core';
 import { type DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
 import { angleBetween, radToDeg } from '../../../core/util/geom';
+import { getApp } from '../../core/application';
 
 export interface InitialGizmoTransform
 {
@@ -214,7 +215,7 @@ export function getLocalTransform(view: DisplayObject, pivot?: ObservablePoint, 
     const angle = radToDeg(transform.rotation);
     const skewX = transform.skew.x;
     const skewY = transform.skew.y;
-    const precision = 2;
+    const precision = getApp().gridSettings.precision;
 
     const values: Partial<DisplayObjectModel> = {
         x,

@@ -49,12 +49,14 @@ export type AppOptions = {};
 
 export interface GridSettings
 {
+    precision: number;
     bigUnit: number;
     mediumUnit: number;
     smallUnit: number;
 }
 
 export const defaultGridSettings: GridSettings = {
+    precision: 2,
     bigUnit: 100,
     mediumUnit: 50,
     smallUnit: 10,

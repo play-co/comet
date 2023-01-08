@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ModifyModelCommandParams } from "../../../../commands/modifyModel";
   import { ModifyModelsCommand } from "../../../../commands/modifyModels";
-  import { Application } from "../../../../core/application";
+  import { getApp } from "../../../../core/application";
   import type { PropertyBinding } from "../../propertiesPanel";
   import {
     isNumericInput,
@@ -13,6 +13,7 @@
   import { Actions } from "../../../../actions";
   import type { DisplayObjectNode } from "../../../../../core/nodes/abstract/displayObjectNode";
   import Events from "../../../../events";
+  import { round } from "../../../transform/util";
 
   // component props
   export let property: PropertyBinding;
@@ -32,7 +33,7 @@
 
   // component functions
   function format(value: number) {
-    return value.toFixed(1).replace(/\.0+$/, "").replace(/^-0/, "0");
+    return round(value, 1).toString().replace(/\.0+$/, "").replace(/^-0/, "0");
   }
 
   function getValue() {
@@ -101,7 +102,7 @@
       });
     });
 
-    Application.instance.undoStack.exec(new ModifyModelsCommand({ modifications }));
+    getApp().undoStack.exec(new ModifyModelsCommand({ modifications }));
 
     Events.editor.propertyModified.emit(property);
   }

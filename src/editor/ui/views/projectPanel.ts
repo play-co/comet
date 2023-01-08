@@ -9,6 +9,7 @@ import { Application, getApp } from '../../core/application';
 import type { ProjectSelection } from '../../core/projectSelection';
 import Events from '../../events';
 import type { MouseDragUpdate } from '../components/dragger';
+import { round } from '../transform/util';
 import { NodeTreeModel } from './components/nodeTreeModel';
 import type { TreeItem } from './components/treeModel';
 import { Icons } from './icons';
@@ -177,6 +178,8 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
             const node = item as ClonableNode;
             const viewportLocalPos = app.viewport.getMouseLocalPoint(event);
             let parentId: string | undefined;
+            const precision = app.gridSettings.precision;
+
             let x = viewportLocalPos.x;
             let y = viewportLocalPos.y;
 
@@ -200,6 +203,9 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
 
                 parentId = targetNode.id;
             }
+
+            x = round(x, precision);
+            y = round(y, precision);
 
             if (node.is(TextureAssetNode))
             {

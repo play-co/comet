@@ -18,6 +18,11 @@
     z-index: 10000;
     border: 1px solid #717171;
     background: #717171;
+    cursor: move;
+}
+
+.dev-inspector.select {
+    cursor: pointer;
 }
 
 .dev-inspector > label {
@@ -35,7 +40,6 @@
 
 .dev-inspector > label > span {
     flex-grow: 1;
-    cursor: move;
 }
 
 .dev-inspector .inspect {
