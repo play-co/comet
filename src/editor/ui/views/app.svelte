@@ -5,9 +5,19 @@
   import { getUrlParam } from "../../util";
   import MainLayout from "./mainLayout.svelte";
   import ModalDialog from "./components/modalDialog.svelte";
+  import Events from "../../events";
 
   let isConnected = false;
   let connectionError: Error | undefined;
+  let isReady = false;
+
+  onMount(() => {
+    // Events.dialog.modal.open.emit("splash");
+
+    Events.project.ready.bind(() => {
+      isReady = true;
+    });
+  });
 
   function connect() {
     Application.instance
@@ -30,7 +40,7 @@
   });
 </script>
 
-<main>
+<main class:loading={!isReady}>
   {#if connectionError}
     <div class="error">{connectionError}</div>
   {:else if isConnected}

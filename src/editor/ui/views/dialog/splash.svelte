@@ -1,20 +1,26 @@
 <script lang="ts">
   import Events from "../../../events";
   let message = "Connecting...";
+  let isReady = false;
 
   const onClick = () => {
     Events.dialog.modal.close.emit();
   };
 
+  Events.project.open.attempt.bind(() => {
+    message = "Opening project...";
+  });
+
   Events.project.ready.bind(() => {
-    message = "Connected and ready";
+    message = "Let's go!";
+    isReady = true;
     setTimeout(() => {
       Events.dialog.modal.close.emit();
-    }, 1500);
+    }, 250);
   });
 </script>
 
-<dialog-splash on:click={onClick}>
+<dialog-splash on:click={onClick} on:click={onClick} class:isReady>
   <img src="/assets/logo.png" alt="Comet" />
   <div class="message">{message}</div>
 </dialog-splash>
@@ -23,24 +29,26 @@
   dialog-splash {
     width: 500px;
     height: 500px;
-    background-color: #d4d4d4;
+    background-color: #232323;
+    border: 3px outset #2e2e2e;
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
-    border: 5px outset #fff;
-    box-shadow: 7px 13px 20px #000;
-    cursor: wait;
+    box-shadow: 7px 13px 20px #0000003d;
     position: relative;
     border-radius: 10px;
+  }
+
+  .isReady {
+    cursor: pointer;
   }
 
   img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    transform: rotate(170deg);
   }
 
   .message {

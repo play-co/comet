@@ -7,9 +7,20 @@
   import { fade, scale } from "svelte/transition";
 
   import ItemDrag from "./components/itemDrag.svelte";
+  import Events from "../../events";
+
+  let blur = true;
+
+  function unblur() {
+    blur = false;
+  }
+
+  Events.dialog.modal.open.bind(unblur);
+  Events.dialog.modal.close.bind(unblur);
+  Events.project.ready.bind(unblur);
 </script>
 
-<main-layout transition:fade={{ duration: 1000 }}>
+<main-layout transition:fade={{ duration: 1000 }} class:blur>
   <MenuBar />
   <img
     transition:scale={{ duration: 5000 }}
@@ -44,9 +55,10 @@
 
   #logo {
     position: absolute;
-    top: 4px;
-    left: 0px;
-    z-index: 100;
-    width: 50px;
+    top: 17px;
+    left: -8px;
+    z-index: 10;
+    width: 65px;
+    transform: rotateZ(337deg);
   }
 </style>

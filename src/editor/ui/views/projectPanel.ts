@@ -184,13 +184,13 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
 
             if (app.selection.hierarchy.hasSelection)
             {
-                let targetNode = app.selection.hierarchy.firstItem.cast<DisplayObjectNode>();
-                const root = targetNode.getRootNode();
+                const targetNode = app.selection.hierarchy.firstItem.cast<DisplayObjectNode>();
+                // const root = targetNode.getRootNode();
 
-                if (root.isReferencingNode(node))
-                {
-                    targetNode = root.parent as DisplayObjectNode;
-                }
+                // if (root.isReferencingNode(node))
+                // {
+                //     targetNode = root.parent as DisplayObjectNode;
+                // }
 
                 const mousePos = app.viewport.getMousePos(event.clientX, event.clientY);
                 const localPoint = targetNode.globalToLocal(mousePos.x, mousePos.y);

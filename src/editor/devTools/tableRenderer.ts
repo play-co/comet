@@ -150,7 +150,7 @@ export function createTable<T extends Record<string, any>>(
     {
         const columnHeadingSize = measureText(column.id, fontSize);
 
-        column.width = Math.max(column.width, columnHeadingSize.width) + 10;
+        column.width = Math.max(column.width, columnHeadingSize.width) + 12;
         column.width = Math.min(maxColumnWidth, column.width);
         tableWidth += column.width;
     });

@@ -84,3 +84,11 @@ canvas.viewport {
 canvas.hide-viewport {
   opacity: 0;
 }
+
+.blur {
+  filter: blur(3px);
+}
+
+.loading {
+  cursor: wait;
+}
