@@ -823,7 +823,7 @@ export class TransformGizmo extends Container
         }
         else
         {
-            // new ModifyModelsCommand({ modifications }).run();
+            new ModifyModelsCommand({ modifications }).run();
         }
     }
 }
