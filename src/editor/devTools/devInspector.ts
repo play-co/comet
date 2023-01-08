@@ -36,10 +36,9 @@ export abstract class DevInspector<T extends Record<string, any> >
     public static toggle()
     {
         const { inspectors } = DevInspector;
-
-        let isExpanded = true;
-
-        inspectors.forEach((inspector) => (isExpanded = isExpanded && inspector.isExpanded));
+        const groupContainer = document.getElementById('dev-inspectors') as HTMLDivElement;
+        const topInspector = inspectors.get(groupContainer.lastElementChild?.getAttribute('data-id') as string);
+        const isExpanded = topInspector ? topInspector.isExpanded : false;
 
         for (const inspector of inspectors.values())
         {

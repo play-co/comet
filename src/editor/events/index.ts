@@ -4,6 +4,7 @@ import contextMenuEvents from './modules/contextMenuEvents';
 import datastoreEvents from './modules/datastoreEvents';
 import dialogEvents from './modules/dialogEvents';
 import editorEvents from './modules/editorEvents';
+import errorEvents from './modules/errorEvents';
 import focusEvents from './modules/focusEvents';
 import hierarchySelectionEvents from './modules/hierarchySelectionEvents';
 import itemDragEvents from './modules/itemDragEvents';
@@ -34,6 +35,7 @@ const Events = EventMap({
     dialog: dialogEvents,
     itemDrag: itemDragEvents,
     tool: toolEvents,
+    error: errorEvents,
 });
 
 export default Events;

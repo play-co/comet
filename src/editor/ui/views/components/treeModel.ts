@@ -274,10 +274,9 @@ export abstract class TreeViewModel<ItemType extends ClonableNode, SelectionType
         this.isMouseOver = false;
         this.dragTarget.value = undefined;
 
-        getApp().statusBar.clearMessage();
-
         if (this.isDragging)
         {
+            getApp().statusBar.clearMessage();
             this.onDragItemOut(event);
         }
     };

@@ -106,7 +106,7 @@ export class Application
         const win = window as any;
 
         win.app = this;
-        win.$ = getInstance;
+        win.$ = getInstance; // todo: remove, only for development
 
         enableLog();
 
@@ -530,3 +530,13 @@ export function getApp()
 {
     return Application.instance;
 }
+
+window.addEventListener('error', (e) =>
+{
+    Events.error.global.emit(e);
+});
+
+window.addEventListener('unhandledrejection', (e) =>
+{
+    Events.error.unhandledrejection.emit(e);
+});

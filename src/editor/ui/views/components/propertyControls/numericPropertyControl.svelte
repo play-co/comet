@@ -112,13 +112,13 @@
   }
 
   // handlers
-  const onFocus = (e: Event) => {
-    const element = e.target as HTMLInputElement;
-    prevValue = element.value;
+  // const onFocus = (e: Event) => {
+  //   const element = e.target as HTMLInputElement;
+  //   prevValue = element.value;
 
-    // select all text
-    element.setSelectionRange(0, element.value.length);
-  };
+  //   // select all text
+  //   element.setSelectionRange(0, element.value.length);
+  // };
 
   const onChange = (e: Event) => {
     const element = e.target as HTMLInputElement;
@@ -190,7 +190,6 @@
     class:mixed
     placeholder={mixed ? "mixed" : undefined}
     {value}
-    on:focus={onFocus}
     on:keydown={onKeyDown}
     on:change={onChange}
   />
