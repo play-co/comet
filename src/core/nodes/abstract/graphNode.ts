@@ -2,8 +2,11 @@ import { type WalkOptions, type WalkReturnData, defaultWalkOptions } from '../co
 import { newId } from '../instances';
 import type { ClonableNode } from './clonableNode';
 
+let creationId = 0;
+
 export abstract class GraphNode
 {
+    public creationId: number;
     public id: string;
     public parent?: GraphNode;
     public children: GraphNode[];
@@ -11,6 +14,7 @@ export abstract class GraphNode
 
     constructor(id?: string)
     {
+        this.creationId = creationId++;
         this.id = id ?? newId(this.nodeType());
         this.children = [];
         this.created = Date.now();

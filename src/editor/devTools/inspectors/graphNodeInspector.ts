@@ -13,6 +13,7 @@ export interface GraphNodeDetail
     $: ClonableNode;
     _depth: number;
     _cloaked: boolean;
+    cId: number;
     name: string;
     parent: string;
     children: string;
@@ -50,6 +51,7 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
                 $: node,
                 _depth: options.depth,
                 _cloaked: node.isCloaked,
+                cId: node.creationId,
                 name:  `${pad}${node.model.getValue<string>('name')}`,
                 parent: node.parent ? node.parent.id : '#empty#',
                 children: node.children.length === 0 ? '#empty#' : node.children.map((node) => node.id).join(','),

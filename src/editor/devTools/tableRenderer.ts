@@ -133,10 +133,14 @@ export function createTable<T extends Record<string, any>>(
                 continue;
             }
 
-            const cellSize = measureText(stringify(row.get(columnId)), fontSize);
-            const columnHeadingSize = measureText(columnId, fontSize);
+            const value = row.get(columnId)?.value;
 
-            column.width = Math.min(maxColumnWidth, Math.max(cellSize.width, column.width, columnHeadingSize.width));
+            if (value)
+            {
+                const cellSize = measureText(stringify(value), fontSize);
+
+                column.width = Math.max(cellSize.width, column.width);
+            }
         }
     });
 
@@ -144,6 +148,10 @@ export function createTable<T extends Record<string, any>>(
 
     columns.forEach((column) =>
     {
+        const columnHeadingSize = measureText(column.id, fontSize);
+
+        column.width = Math.max(column.width, columnHeadingSize.width) + 10;
+        column.width = Math.min(maxColumnWidth, column.width);
         tableWidth += column.width;
     });
 
