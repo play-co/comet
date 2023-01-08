@@ -47,11 +47,6 @@ export abstract class Model<M> extends GraphNode
         return 'Model';
     }
 
-    public get isAsset()
-    {
-        return false;
-    }
-
     public link(sourceModel: Model<M>, cloneMode: CloneMode = CloneMode.Original)
     {
         this.parent = sourceModel;

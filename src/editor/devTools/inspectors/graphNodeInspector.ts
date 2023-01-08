@@ -12,7 +12,7 @@ export interface GraphNodeDetail
 {
     $: ClonableNode;
     _depth: number;
-    _cloaked: boolean;
+    isCloaked: boolean;
     cId: number;
     name: string;
     parent: string;
@@ -50,7 +50,6 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
             const detail: GraphNodeDetail = {
                 $: node,
                 _depth: options.depth,
-                _cloaked: node.isCloaked,
                 cId: node.creationId,
                 name:  `${pad}${node.model.getValue<string>('name')}`,
                 parent: node.parent ? node.parent.id : '#empty#',
@@ -58,6 +57,7 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
                 cloneMode: node.cloneInfo.cloneMode,
                 cloner: node.cloneInfo.cloner ? node.cloneInfo.cloner.id : '#empty#',
                 cloned: node.cloneInfo.cloned ? node.cloneInfo.cloned.map((node) => node.id).join(',') : '#empty#',
+                isCloaked: node.isCloaked,
                 model: node.model.id,
             };
 
@@ -77,7 +77,7 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
         }
 
         const currentCell = this.getCell(column.id, row);
-        const cloakedCell = this.getCell('_cloaked', row);
+        const cloakedCell = this.getCell('isCloaked', row);
 
         if (cloakedCell.value as boolean === true)
         {

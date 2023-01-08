@@ -64,6 +64,7 @@ Low Priority Fix/Improve/Add
 * Reduce grid lines when zoomed out
 
 Tech Debt:
+* Rename all actions and commands with Action and Command suffixes (files too), normalise new vs create
 * Refactor customProperties from ClonableNode to separate class
 * Refactor Convergence datastore to be even more generic as possible to help future backend swaps
 * Replace ClonableNode generics from Interfaces to Types for models, may loosen generic polymorphism

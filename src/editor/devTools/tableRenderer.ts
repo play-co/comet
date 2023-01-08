@@ -152,7 +152,11 @@ export function createTable<T extends Record<string, any>>(
 
         column.width = Math.max(column.width, columnHeadingSize.width) + 15;
         column.width = Math.min(maxColumnWidth, column.width);
-        tableWidth += column.width;
+
+        if (column.id.charAt(0) !== '_' && column.id !== '$')
+        {
+            tableWidth += column.width;
+        }
     });
 
     return {
