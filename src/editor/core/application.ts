@@ -392,8 +392,16 @@ export class Application
                 datastoreNodeInspector.mount();
                 undoStackInspector.mount();
                 modelInspector.mount();
-                logInspector.mount();
+                // logInspector.mount();
             }
+
+            Events.key.down.bind((event) =>
+            {
+                if (event.key === '\\' && event.ctrlKey)
+                {
+                    DevInspector.toggle();
+                }
+            });
         }
     }
 

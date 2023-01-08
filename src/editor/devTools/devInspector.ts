@@ -25,11 +25,27 @@ export abstract class DevInspector<T extends Record<string, any> >
     public maxHeight: number;
     public scrollTop: number;
 
+    protected isMounted: boolean;
+
     protected renderRowMap?: Map<number, Row>;
 
     protected isExpanded: boolean;
 
     public static inspectors: Map<string, DevInspector<Record<string, any>>> = new Map();
+
+    public static toggle()
+    {
+        const { inspectors } = DevInspector;
+
+        let isExpanded = true;
+
+        inspectors.forEach((inspector) => (isExpanded = isExpanded && inspector.isExpanded));
+
+        for (const inspector of inspectors.values())
+        {
+            inspector.toggleExpandedState(!isExpanded);
+        }
+    }
 
     constructor(id: string, backgroundColor = 'blue')
     {
@@ -39,6 +55,7 @@ export abstract class DevInspector<T extends Record<string, any> >
         this.isExpanded = true;
         this.maxHeight = -1;
         this.scrollTop = 0;
+        this.isMounted = false;
 
         DevInspector.inspectors.set(id, this);
 
@@ -51,9 +68,9 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         container.innerHTML = `
             <label>
-                <span>${this.id}</span>
-                <div class="inspect"><a title="Inspect (Shift-click to clear console)">?</a></div>
-                <div class="toggle"><a title="Expand/Collapse">+</a></div>
+            <div class="toggle"><a title="Expand/Collapse">+</a></div>
+            <span>${this.id}</span>
+            <div class="inspect"><a title="Inspect (Shift-click to clear console)">?</a></div>
             </label>
             `;
 
@@ -134,9 +151,7 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         toggleButton.onmousedown = (e: MouseEvent) =>
         {
-            this.isExpanded = !this.isExpanded;
-            this.storeState();
-            this.updateExpandedState();
+            this.toggleExpandedState();
 
             e.stopPropagation();
         };
@@ -305,6 +320,14 @@ export abstract class DevInspector<T extends Record<string, any> >
         return Math.floor(diffSpace / table.rowHeight);
     }
 
+    public toggleExpandedState(isExpanded?: boolean)
+    {
+        this.isExpanded = isExpanded !== undefined ? isExpanded : !this.isExpanded;
+
+        this.storeState();
+        this.updateExpandedState();
+    }
+
     public scrollToEnd()
     {
         this.scrollTop = this.maxScrollTop;
@@ -321,6 +344,11 @@ export abstract class DevInspector<T extends Record<string, any> >
 
     protected render()
     {
+        if (!this.isMounted)
+        {
+            return;
+        }
+
         const table = this.table = this.createTable();
 
         if (table.rows.length === 0)
@@ -404,6 +432,7 @@ export abstract class DevInspector<T extends Record<string, any> >
     public mount()
     {
         this.groupContainer.appendChild(this.container);
+        this.isMounted = true;
     }
 
     protected getCell(columnId: string, row: Row)
