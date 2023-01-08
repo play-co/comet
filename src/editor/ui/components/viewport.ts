@@ -8,7 +8,7 @@ import { ContainerNode } from '../../../core/nodes/concrete/display/containerNod
 import { SceneNode } from '../../../core/nodes/concrete/meta/sceneNode';
 import { Application, getApp } from '../../core/application';
 import type { ToolEvent } from '../../core/tool';
-import { loadUserViewportPrefs, saveUserViewportPrefs } from '../../core/userPrefs';
+import { type UserViewportPrefs, loadPrefs, saveUserViewportPrefs } from '../../core/userPrefs';
 import Events from '../../events';
 import { TransformGizmo } from '../transform/gizmo';
 import { BoxSelection } from './boxSelection';
@@ -140,7 +140,7 @@ export class EditableViewport
 
     protected loadPrefs()
     {
-        const prefs = loadUserViewportPrefs();
+        const prefs = loadPrefs<UserViewportPrefs>('viewport');
 
         if (prefs)
         {

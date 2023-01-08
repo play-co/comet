@@ -13,6 +13,7 @@ import { ProjectNode } from '../../core/nodes/concrete/meta/projectNode';
 import { clearInstances, getInstance } from '../../core/nodes/instances';
 import { delay, nextTick } from '../../core/util';
 import { RemoveNodeCommand } from '../commands/removeNode';
+import { DevInspector } from '../devTools/devInspector';
 import { DatastoreNodeInspector } from '../devTools/inspectors/datastoreNodeInspector';
 import { GraphNodeInspector } from '../devTools/inspectors/graphNodeInspector';
 import { LogInspector } from '../devTools/inspectors/logInspector';
@@ -35,7 +36,14 @@ import { initHistory, writeUndoStack } from './history';
 import { ProjectSelection } from './projectSelection';
 import type { Tool } from './tool';
 import UndoStack from './undoStack';
-import { loadUserEditPrefs, loadUserSelectionPrefs, saveUserEditPrefs, saveUserSelectionPrefs } from './userPrefs';
+import {
+    type DevInspectorPrefs,
+    type UserEditPrefs,
+    type UserSelectionPrefs,
+    loadPrefs,
+    saveUserEditPrefs,
+    saveUserSelectionPrefs,
+} from './userPrefs';
 
 export type AppOptions = {};
 
@@ -242,7 +250,7 @@ export class Application
         const scene = this.project.getRootFolder('Scenes').getChildAt(0);
         let root = scene.cast<DisplayObjectNode>();
 
-        const prefs = loadUserEditPrefs();
+        const prefs = loadPrefs<UserEditPrefs>('edit');
 
         if (prefs)
         {
@@ -300,7 +308,7 @@ export class Application
 
     protected initPersistentSelection()
     {
-        const prefs = loadUserSelectionPrefs();
+        const prefs = loadPrefs<UserSelectionPrefs>('selection');
 
         // load selection prefs if found
         if (prefs)
@@ -344,7 +352,10 @@ export class Application
     {
         if (getUrlParam<number>('devtools') === 1)
         {
-            const container = document.body;
+            const container = document.createElement('div');
+
+            container.setAttribute('id', 'dev-inspectors');
+            document.body.appendChild(container);
 
             const graphNodeInspector = new GraphNodeInspector('Graph Nodes', 'blue');
             const datastoreNodeInspector = new DatastoreNodeInspector('Datastore Nodes', 'green');
@@ -361,11 +372,28 @@ export class Application
             modelInspector.maxHeight = mediumMaxHeight;
             logInspector.maxHeight = shortMaxHeight;
 
-            graphNodeInspector.mount(container);
-            datastoreNodeInspector.mount(container);
-            logInspector.mount(container);
-            undoStackInspector.mount(container);
-            modelInspector.mount(container);
+            const prefs = loadPrefs<DevInspectorPrefs>('dev-inspectors');
+
+            if (prefs)
+            {
+                prefs.order.forEach((id) =>
+                {
+                    const inspector = DevInspector.inspectors.get(id);
+
+                    if (inspector)
+                    {
+                        inspector.mount();
+                    }
+                });
+            }
+            else
+            {
+                graphNodeInspector.mount();
+                datastoreNodeInspector.mount();
+                undoStackInspector.mount();
+                modelInspector.mount();
+                logInspector.mount();
+            }
         }
     }
 

@@ -2,7 +2,7 @@ import { type ResolvedLayoutConfig, LayoutConfig } from 'golden-layout';
 
 import { getApp } from './application';
 
-export type UserPrefStorageKey = 'layout' | 'selection' | 'viewport' | 'edit';
+export type UserPrefStorageKey = 'layout' | 'selection' | 'viewport' | 'edit' | 'dev-inspectors';
 
 export interface UserLayoutPrefs
 {
@@ -26,6 +26,11 @@ export interface UserEditPrefs
 {
     viewportRoot: string;
     colorPickerMode: 'hex' | 'rgb' | 'hsv';
+}
+
+export interface DevInspectorPrefs
+{
+    order: string[];
 }
 
 function storageKey(id: UserPrefStorageKey)
@@ -68,6 +73,20 @@ function readStorage<T>(id: UserPrefStorageKey): T | null
     return null;
 }
 
+export function loadPrefs<T>(storageKey: UserPrefStorageKey)
+{
+    const prefs = readStorage<T>(storageKey);
+
+    if (prefs)
+    {
+        return prefs;
+    }
+
+    return null;
+}
+
+// Layout
+
 export function getUserLayoutPrefs()
 {
     const app = getApp();
@@ -79,53 +98,6 @@ export function getUserLayoutPrefs()
 export function saveUserLayoutPrefs(data = getUserLayoutPrefs())
 {
     writeStorage('layout', data);
-}
-
-export function getUserSelectionPrefs()
-{
-    const app = getApp();
-    const { hierarchy, project } = app.selection;
-
-    return {
-        hierarchy: hierarchy.hasSelection ? hierarchy.items.map((item) => item.id) : [],
-        project: project.items.map((item) => item.id),
-    } as UserSelectionPrefs;
-}
-
-export function saveUserSelectionPrefs(data = getUserSelectionPrefs())
-{
-    writeStorage('selection', data);
-}
-
-export function getUserViewportPrefs()
-{
-    const app = getApp();
-
-    return {
-        x: app.viewport.x,
-        y: app.viewport.y,
-        scale: app.viewport.scale,
-    } as UserViewportPrefs;
-}
-
-export function saveUserViewportPrefs(data = getUserViewportPrefs())
-{
-    writeStorage('viewport', data);
-}
-
-export function getUserEditPrefs()
-{
-    const app = getApp();
-
-    return {
-        viewportRoot: app.viewport.rootNode.id,
-        colorPickerMode: app.colorPickerMode,
-    } as UserEditPrefs;
-}
-
-export function saveUserEditPrefs(data = getUserEditPrefs())
-{
-    writeStorage('edit', data);
 }
 
 export function loadUserLayoutPrefs()
@@ -163,6 +135,24 @@ export function loadUserLayoutPrefs()
     return null;
 }
 
+// Selection
+
+export function getUserSelectionPrefs()
+{
+    const app = getApp();
+    const { hierarchy, project } = app.selection;
+
+    return {
+        hierarchy: hierarchy.hasSelection ? hierarchy.items.map((item) => item.id) : [],
+        project: project.items.map((item) => item.id),
+    } as UserSelectionPrefs;
+}
+
+export function saveUserSelectionPrefs(data = getUserSelectionPrefs())
+{
+    writeStorage('selection', data);
+}
+
 export function loadUserSelectionPrefs()
 {
     const prefs = readStorage<UserSelectionPrefs>('selection');
@@ -175,26 +165,62 @@ export function loadUserSelectionPrefs()
     return null;
 }
 
-export function loadUserViewportPrefs()
+// Viewport
+
+export function getUserViewportPrefs()
 {
-    const prefs = readStorage<UserViewportPrefs>('viewport');
+    const app = getApp();
 
-    if (prefs)
-    {
-        return prefs;
-    }
-
-    return null;
+    return {
+        x: app.viewport.x,
+        y: app.viewport.y,
+        scale: app.viewport.scale,
+    } as UserViewportPrefs;
 }
 
-export function loadUserEditPrefs()
+export function saveUserViewportPrefs(data = getUserViewportPrefs())
 {
-    const prefs = readStorage<UserEditPrefs>('edit');
+    writeStorage('viewport', data);
+}
 
-    if (prefs)
+// Edit
+
+export function getUserEditPrefs()
+{
+    const app = getApp();
+
+    return {
+        viewportRoot: app.viewport.rootNode.id,
+        colorPickerMode: app.colorPickerMode,
+    } as UserEditPrefs;
+}
+
+export function saveUserEditPrefs(data = getUserEditPrefs())
+{
+    writeStorage('edit', data);
+}
+
+// DevInspectors
+
+export function getDevInspectorPrefs()
+{
+    const inspectors = document.querySelectorAll('#dev-inspectors .dev-inspector');
+    const order: string[] = [];
+
+    for (let i = 0; i < inspectors.length; i++)
     {
-        return prefs;
+        const element = inspectors[i] as HTMLElement;
+
+        order.push(element.getAttribute('data-id') as string);
     }
 
-    return null;
+    return {
+        order,
+    } as DevInspectorPrefs;
 }
+
+export function saveDevInspectorPrefs(data = getDevInspectorPrefs())
+{
+    writeStorage('dev-inspectors', data);
+}
+

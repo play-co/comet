@@ -1,6 +1,7 @@
 import Color from 'color';
 
-import { nextTick } from '../../core/util';
+import {  nextTick } from '../../core/util';
+import { saveDevInspectorPrefs } from '../core/userPrefs';
 import { getUserName } from '../sync/user';
 import { mouseDrag } from '../ui/components/dragger';
 import Canvas2DPainter from './2dPainter';
@@ -23,11 +24,12 @@ export abstract class DevInspector<T extends Record<string, any> >
     public label: HTMLSpanElement;
     public maxHeight: number;
     public scrollTop: number;
-    public zIndex: number;
 
     protected renderRowMap?: Map<number, Row>;
 
     protected isExpanded: boolean;
+
+    public static inspectors: Map<string, DevInspector<Record<string, any>>> = new Map();
 
     constructor(id: string, backgroundColor = 'blue')
     {
@@ -37,13 +39,15 @@ export abstract class DevInspector<T extends Record<string, any> >
         this.isExpanded = true;
         this.maxHeight = -1;
         this.scrollTop = 0;
-        this.zIndex = 100000;
+
+        DevInspector.inspectors.set(id, this);
 
         const canvas = this.painter.canvas;
 
         const container = this.container = document.createElement('div');
 
         container.setAttribute('class', 'dev-inspector');
+        container.setAttribute('data-id', id);
 
         container.innerHTML = `
             <label>
@@ -92,22 +96,24 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         if (data)
         {
-            const { x, y, isExpanded, zIndex } = JSON.parse(data);
+            const { x, y, isExpanded } = JSON.parse(data);
 
             container.style.left = `${x}px`;
             container.style.top = `${y}px`;
-            container.style.zIndex = `${zIndex}px`;
 
             this.isExpanded = isExpanded;
 
             this.updateExpandedState();
         }
 
-        label.onmousedown = (event: MouseEvent) =>
+        const onMouseDown = (event: MouseEvent) =>
         {
-            this.zIndex++;
+            const { groupContainer } = this;
 
-            container.style.zIndex = `${this.zIndex}`;
+            groupContainer.removeChild(this.container);
+            groupContainer.appendChild(this.container);
+
+            saveDevInspectorPrefs();
 
             mouseDrag({
                 startX: container.offsetLeft,
@@ -124,14 +130,7 @@ export abstract class DevInspector<T extends Record<string, any> >
             });
         };
 
-        label.onclick = (e: MouseEvent) =>
-        {
-            e.stopImmediatePropagation();
-            e.stopPropagation();
-            e.preventDefault();
-
-            return false;
-        };
+        label.onmousedown = onMouseDown;
 
         toggleButton.onclick = () =>
         {
@@ -182,32 +181,44 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         canvas.onmousedown = (e: MouseEvent) =>
         {
-            const { renderRowMap } = this;
-
-            if (renderRowMap)
+            if (e.altKey)
             {
-                const { clientY } = e;
-                const bounds = canvas.getBoundingClientRect();
-                const y = clientY - bounds.top;
+                const { renderRowMap } = this;
 
-                for (const [renderY, row] of renderRowMap.entries())
+                if (renderRowMap)
                 {
-                    if (y >= renderY && y < renderY + this.table.rowHeight)
+                    const { clientY } = e;
+                    const bounds = canvas.getBoundingClientRect();
+                    const y = clientY - bounds.top;
+
+                    for (const [renderY, row] of renderRowMap.entries())
                     {
-                        const value = this.getRowValue(row);
-
-                        if (value)
+                        if (y >= renderY && y < renderY + this.table.rowHeight)
                         {
-                            console.log(value);
-                        }
+                            const value = this.getRowValue(row);
 
-                        break;
+                            if (value)
+                            {
+                                console.log(value);
+                            }
+
+                            break;
+                        }
                     }
                 }
+            }
+            else
+            {
+                onMouseDown(e);
             }
         };
 
         nextTick().then(() => this.init());
+    }
+
+    protected get groupContainer()
+    {
+        return document.getElementById('dev-inspectors') as HTMLDivElement;
     }
 
     protected getRowValue(row: Row): any | undefined
@@ -234,7 +245,6 @@ export abstract class DevInspector<T extends Record<string, any> >
             x: container.offsetLeft,
             y: container.offsetTop,
             isExpanded: this.isExpanded,
-            zIndex: container.style.zIndex,
         }));
     }
 
@@ -364,9 +374,9 @@ export abstract class DevInspector<T extends Record<string, any> >
         //
     };
 
-    public mount(container: HTMLElement)
+    public mount()
     {
-        container.appendChild(this.container);
+        this.groupContainer.appendChild(this.container);
     }
 
     protected getCell(columnId: string, row: Row)
