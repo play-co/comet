@@ -135,4 +135,19 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
     {
         return 'id';
     }
+
+    protected onClickRow(row: Row)
+    {
+        const app = getApp();
+        const value = super.onClickRow(row);
+
+        if (value && app.viewport.rootNode.contains(value))
+        {
+            app.selection.hierarchy.set(value);
+        }
+        else
+        {
+            app.selection.project.set(value);
+        }
+    }
 }

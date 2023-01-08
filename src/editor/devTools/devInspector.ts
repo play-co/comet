@@ -181,7 +181,7 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         canvas.onmousedown = (e: MouseEvent) =>
         {
-            if (e.altKey)
+            if (e.shiftKey)
             {
                 const { renderRowMap } = this;
 
@@ -195,12 +195,7 @@ export abstract class DevInspector<T extends Record<string, any> >
                     {
                         if (y >= renderY && y < renderY + this.table.rowHeight)
                         {
-                            const value = this.getRowValue(row);
-
-                            if (value)
-                            {
-                                console.log(value);
-                            }
+                            this.onClickRow(row);
 
                             break;
                         }
@@ -224,6 +219,18 @@ export abstract class DevInspector<T extends Record<string, any> >
     protected getRowValue(row: Row): any | undefined
     {
         return row.get('$')?.value;
+    }
+
+    protected onClickRow(row: Row): any
+    {
+        const value = this.getRowValue(row);
+
+        if (value)
+        {
+            console.log(value);
+        }
+
+        return value;
     }
 
     get localStorageKey()
