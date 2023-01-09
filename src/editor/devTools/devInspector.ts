@@ -124,12 +124,7 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         const onMouseDown = (event: MouseEvent) =>
         {
-            const { groupContainer } = this;
-
-            groupContainer.removeChild(this.container);
-            groupContainer.appendChild(this.container);
-
-            saveDevInspectorPrefs();
+            this.bringToFront();
 
             mouseDrag({
                 startX: container.offsetLeft,
@@ -151,6 +146,7 @@ export abstract class DevInspector<T extends Record<string, any> >
         toggleButton.onmousedown = (e: MouseEvent) =>
         {
             this.toggleExpandedState();
+            this.bringToFront();
 
             e.stopPropagation();
         };
@@ -437,5 +433,15 @@ export abstract class DevInspector<T extends Record<string, any> >
     protected getCell(columnId: string, row: Row)
     {
         return row.get(columnId) as Cell;
+    }
+
+    protected bringToFront()
+    {
+        const { groupContainer } = this;
+
+        groupContainer.removeChild(this.container);
+        groupContainer.appendChild(this.container);
+
+        saveDevInspectorPrefs();
     }
 }

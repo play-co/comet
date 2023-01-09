@@ -46,12 +46,14 @@
     flex-grow: 1;
     color: #90b7c1;
     padding-left: 10px;
+    margin-right: 10px;
   }
 
   .error {
     background-color: #970000;
+    border: 1px outset #f00;
     color: #fff;
     font-weight: bold;
-    border: 1px outset #f00;
+    border-radius: 3px;
   }
 </style>

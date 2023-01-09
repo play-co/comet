@@ -16,7 +16,7 @@ export interface ModelDetail
     values: {};
     parent: string;
     children: string;
-    cloneMode: string;
+    mode: string;
 }
 
 export class ModelInspector extends DevInspector<ModelDetail>
@@ -43,7 +43,7 @@ export class ModelInspector extends DevInspector<ModelDetail>
                 owner: model.owner.id,
                 parent: model.parent ? model.parent.id : '#empty#',
                 children: model.children.length === 0 ? '#empty#' : model.children.map((model) => model.id).join(','),
-                cloneMode: shortCloneMode(model.cloneMode),
+                mode: shortCloneMode(model.cloneMode),
                 values: model.ownValues,
             };
 
@@ -87,7 +87,7 @@ export class ModelInspector extends DevInspector<ModelDetail>
 
             if (node.isMetaNode)
             {
-                cellStyle.fillColor = Color(cellStyle.fillColor).darken(0.2).hex();
+                cellStyle.fillColor = Color(cellStyle.fillColor).darken(0.05).hex();
             }
 
             if (app.selection.project.shallowContains(node.cast<MetaNode>()))

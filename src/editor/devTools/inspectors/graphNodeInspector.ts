@@ -11,13 +11,13 @@ export interface GraphNodeDetail
 {
     $: ClonableNode;
     _depth: number;
-    isCloaked: boolean;
+    cloaked: boolean;
     cId: number;
     name: string;
     parent: string;
     children: string;
     model: string;
-    cloneMode: string;
+    mode: string;
     cloner: string;
     cloned: string;
 }
@@ -39,24 +39,24 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
 
         app.project.walk<ClonableNode>((node, options) =>
         {
-            let pad = '';
+            // let pad = '';
 
-            if (options.depth > 0)
-            {
-                pad = `${'│'.repeat(options.depth - 1)}└`;
-            }
+            // if (options.depth > 0)
+            // {
+            //     pad = `${'│'.repeat(options.depth - 1)}└`;
+            // }
 
             const detail: GraphNodeDetail = {
                 $: node,
                 _depth: options.depth,
                 cId: node.creationId,
-                name:  `${pad}${node.model.getValue<string>('name')}`,
+                name:  `${node.model.getValue<string>('name')}`,
                 parent: node.parent ? node.parent.id : '#empty#',
                 children: node.children.length === 0 ? '#empty#' : node.children.map((node) => node.id).join(','),
-                cloneMode: node.cloneInfo.shortMode,
+                mode: node.cloneInfo.shortMode,
                 cloner: node.cloneInfo.cloner ? node.cloneInfo.cloner.id : '#empty#',
                 cloned: node.cloneInfo.cloned ? node.cloneInfo.cloned.map((node) => node.id).join(',') : '#empty#',
-                isCloaked: node.isCloaked,
+                cloaked: node.isCloaked,
                 model: node.model.id,
             };
 
@@ -76,7 +76,7 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
         }
 
         const currentCell = this.getCell(column.id, row);
-        const cloakedCell = this.getCell('isCloaked', row);
+        const cloakedCell = this.getCell('cloaked', row);
 
         if (cloakedCell.value as boolean === true)
         {

@@ -131,7 +131,14 @@ const helpMenu = new Menu([
         label: 'Report a bug',
         onClick: () =>
         {
-            window.open('https://github.com/play-co/comet/issues/new', '_blank');
+            window.open('https://github.com/play-co/comet/issues/new?assignees=&labels=&template=bug_report.md&title=', '_blank');
+        },
+    },
+    {
+        label: 'Request a feature',
+        onClick: () =>
+        {
+            window.open('https://github.com/play-co/comet/issues/new?assignees=&labels=&template=feature_request.md&title=', '_blank');
         },
     },
 ]);
