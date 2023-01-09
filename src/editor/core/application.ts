@@ -401,9 +401,16 @@ export class Application
 
             Events.key.down.bind((event) =>
             {
-                if (event.key === '\\' && event.ctrlKey)
+                if (event.key === '\\')
                 {
-                    DevInspector.toggle();
+                    if (event.ctrlKey)
+                    {
+                        DevInspector.toggleExpanded();
+                    }
+                    else if (event.shiftKey)
+                    {
+                        DevInspector.toggleVisible();
+                    }
                 }
             });
         }
