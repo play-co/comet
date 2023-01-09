@@ -2,16 +2,17 @@ import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { CloneMode } from '../../core/nodes/cloneInfo';
 import { registerInstance } from '../../core/nodes/instances';
 import { getCloneInfoSchema, getNodeSchema } from '../../core/nodes/schema';
-import { Command } from '../core/command';
+import { type UpdateMode, Command } from '../core/command';
 import { RemoveNodeCommand } from './removeNode';
 import { SetParentCommand } from './setParent';
 
 export interface CloneCommandParams
 {
     nodeId: string;
-    cloneMode: CloneMode;
     newParentId?: string;
+    cloneMode: CloneMode;
     depth?: number;
+    updateMode?: UpdateMode;
 }
 
 export interface CloneCommandReturn
@@ -35,7 +36,7 @@ export class CloneCommand
 
     public apply(): CloneCommandReturn
     {
-        const { datastore, params: { nodeId, cloneMode, newParentId, depth }, cache } = this;
+        const { datastore, params: { nodeId, cloneMode, newParentId, depth, updateMode = 'full' }, cache } = this;
 
         const sourceNode = this.getInstance(nodeId);
         const originalNode = sourceNode.getCloneTarget();
@@ -46,8 +47,11 @@ export class CloneCommand
         // clone original
         const clonedNode = originalNode.clone(cloneMode, depth);
 
-        // update originals new cloneInfo
-        datastore.updateCloneInfo(originalNode.id, cloneInfoSchema);
+        if (updateMode === 'full')
+        {
+            // update originals new cloneInfo
+            datastore.updateCloneInfo(originalNode.id, cloneInfoSchema);
+        }
 
         // prepare cache
         cache.commands = [];
@@ -62,27 +66,33 @@ export class CloneCommand
                 cloneInfo: getCloneInfoSchema(node),
             };
 
-            // create the datastore version of the cloned graph node
-            datastore.createNode(nodeSchema);
-
-            // update parenting info in datastore to trigger remote users
-            if (node.parent)
+            if (updateMode === 'full')
             {
-                datastore.setParent(node.id, node.parent.id);
+                // create the datastore version of the cloned graph node
+                datastore.createNode(nodeSchema);
+
+                // update parenting info in datastore to trigger remote users
+                if (node.parent)
+                {
+                    datastore.setParent(node.id, node.parent.id);
+                }
             }
 
             // register the graph node
             registerInstance(node);
 
-            // update the cloners cloneInfo in the datastore
-            const clonerId = nodeSchema.cloneInfo.cloner;
-
-            if (clonerId)
+            if (updateMode === 'full')
             {
-                const cloner = this.getInstance(clonerId);
-                const cloneInfoSchema = getCloneInfoSchema(cloner);
+                // update the cloners cloneInfo in the datastore
+                const clonerId = nodeSchema.cloneInfo.cloner;
 
-                datastore.updateCloneInfo(clonerId, cloneInfoSchema);
+                if (clonerId)
+                {
+                    const cloner = this.getInstance(clonerId);
+                    const cloneInfoSchema = getCloneInfoSchema(cloner);
+
+                    datastore.updateCloneInfo(clonerId, cloneInfoSchema);
+                }
             }
 
             // track for return
@@ -95,7 +105,7 @@ export class CloneCommand
         // set parent if provided
         if (newParentId)
         {
-            new SetParentCommand({ parentId: newParentId, nodeId: clonedNode.id, updateMode: 'full', preserveTransform: true }).run();
+            new SetParentCommand({ parentId: newParentId, nodeId: clonedNode.id, updateMode, preserveTransform: true }).run();
         }
 
         cache.sourceNode = sourceNode;
@@ -111,12 +121,16 @@ export class CloneCommand
 
     public undo(): void
     {
-        const { datastore, cache: { commands, originalNode, clonedNode } } = this;
+        const { datastore, params: { updateMode = 'full' }, cache: { commands, originalNode, clonedNode } } = this;
 
         originalNode.cloneInfo.removeCloned(clonedNode);
-        const cloneInfoSchema = getCloneInfoSchema(originalNode);
 
-        datastore.updateCloneInfo(originalNode.id, cloneInfoSchema);
+        if (updateMode === 'full')
+        {
+            const cloneInfoSchema = getCloneInfoSchema(originalNode);
+
+            datastore.updateCloneInfo(originalNode.id, cloneInfoSchema);
+        }
 
         for (let i = commands.length - 1; i >= 0; i--)
         {
@@ -126,12 +140,16 @@ export class CloneCommand
 
     public redo()
     {
-        const { datastore, cache: { commands, originalNode, clonedNode } } = this;
+        const { datastore, params: { updateMode = 'full' }, cache: { commands, originalNode, clonedNode } } = this;
 
         originalNode.cloneInfo.addCloned(clonedNode);
-        const cloneInfoSchema = getCloneInfoSchema(originalNode);
 
-        datastore.updateCloneInfo(originalNode.id, cloneInfoSchema);
+        if (updateMode === 'full')
+        {
+            const cloneInfoSchema = getCloneInfoSchema(originalNode);
+
+            datastore.updateCloneInfo(originalNode.id, cloneInfoSchema);
+        }
 
         for (let i = 0; i < commands.length; i++)
         {

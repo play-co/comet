@@ -48,7 +48,6 @@ High Priority
 * Multi-user testing - once the above is checked, we need to validate and patch multi-user cases
 
 Low Priority Fix/Improve/Add
-* Unlink
 * Transform gizmo uses statusbar items instead of message
 * Project properties panel
     - name
@@ -62,6 +61,7 @@ Low Priority Fix/Improve/Add
 * Menubar rollover set active
 * Custom icons
 * Reduce grid lines when zoomed out
+* Unlink
 
 Tech Debt:
 * Rename all actions and commands with Action and Command suffixes (files too), normalise new vs create

@@ -4,7 +4,7 @@ import { CloneInfo } from '../../core/nodes/cloneInfo';
 import { getInstance, hasInstance } from '../../core/nodes/instances';
 import { createNode } from '../../core/nodes/nodeFactory';
 import type { NodeSchema } from '../../core/nodes/schema';
-import { Command } from '../core/command';
+import { type UpdateMode, Command } from '../core/command';
 import Events from '../events';
 import { AssignCustomPropCommand } from './assignCustomProp';
 import { SetCustomPropCommand } from './setCustomProp';
@@ -13,6 +13,7 @@ export interface CreateNodeCommandParams<M extends ModelBase>
 {
     nodeSchema: NodeSchema<M>;
     deferCloneInfo?: boolean;
+    updateMode?: UpdateMode;
 }
 
 export interface CreateNodeCommandReturn
@@ -28,22 +29,25 @@ export class CreateNodeCommand<
 
     public apply(): CreateNodeCommandReturn
     {
-        const { datastore, params: { nodeSchema, deferCloneInfo } } = this;
+        const { datastore, params: { nodeSchema, deferCloneInfo, updateMode = 'full' } } = this;
 
         const { id, type, model, cloneInfo: { cloneMode, cloner }, customProperties } = nodeSchema;
         const cloneInfo = deferCloneInfo === true
             ? new CloneInfo(cloneMode)
             : new CloneInfo(cloneMode, cloner ? this.getInstance(cloner) : undefined);
 
-        if (!datastore.hasNode(id))
+        if (updateMode === 'full')
         {
-            // create datastore entry
-            datastore.createNode(nodeSchema);
-        }
-        else
-        {
-            // just register the model, we are loading existing nodes
-            datastore.registerNode(id);
+            if (!datastore.hasNode(id))
+            {
+                // create datastore entry
+                datastore.createNode(nodeSchema);
+            }
+            else
+            {
+                // just register the model, we are loading existing nodes
+                datastore.registerNode(id);
+            }
         }
 
         const node = createNode<ClonableNode>(type, { id, model, cloneInfo });

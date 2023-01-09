@@ -1,8 +1,9 @@
 import type { ModelBase } from '../../core/model/model';
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
-import { CloneMode } from '../../core/nodes/cloneInfo';
-import type { NodeSchema } from '../../core/nodes/schema';
+import type { GraphNode } from '../../core/nodes/abstract/graphNode';
+import { type NodeSchema, getNodeSchema } from '../../core/nodes/schema';
 import { Command } from '../core/command';
+import Events from '../events';
 import { CloneCommand } from './clone';
 import { CreateNodeCommand } from './createNode';
 import { RemoveChildCommand } from './removeChild';
@@ -31,36 +32,100 @@ export class AddChildCommand<
 
     public apply(): AddChildCommandReturn
     {
-        const { cache, params, params: { nodeSchema } } = this;
+        const { datastore, cache, params, params: { nodeSchema } } = this;
 
+        const nodes: ClonableNode[] = [];
         const sourceNode = this.getInstance(params.parentId);
-        const originalParentNode = sourceNode.getAddChildCloneTarget();
-        const clonedParentNodes = originalParentNode.getClonedDescendants();
+        const cloneTarget = sourceNode.getAddChildCloneTarget();
+        const clonedParentDescendants = cloneTarget.getClonedDescendants();
+        const newChildByParent = new Map<ClonableNode, ClonableNode>();
 
-        nodeSchema.parent = originalParentNode.id;
+        // find the clone target and create initial node
 
-        const { node } = new CreateNodeCommand({ nodeSchema }).run();
-        const nodes: ClonableNode[] = [node];
+        nodeSchema.parent = cloneTarget.id;
 
-        let lastCloneSource = node;
+        const { node } = new CreateNodeCommand({ nodeSchema, updateMode: 'graphOnly' }).run();
+        const initialNode = node;
 
-        clonedParentNodes.forEach((clonedParent) =>
+        nodes.push(initialNode);
+        newChildByParent.set(cloneTarget, initialNode);
+
+        clonedParentDescendants.forEach((cloneDescendant) =>
         {
-            const cloneMode = clonedParent.getAddChildCloneMode();
+            const cloneMode = cloneDescendant.getAddChildCloneMode();
 
             const { clonedNode } = new CloneCommand({
-                newParentId: clonedParent.id,
-                nodeId: lastCloneSource.id,
+                nodeId: initialNode.id,
+                newParentId: cloneDescendant.id,
                 cloneMode,
                 depth: 1,
+                updateMode: 'graphOnly',
             }).run();
 
-            if (cloneMode === CloneMode.Variant)
-            {
-                lastCloneSource = clonedNode;
-            }
+            newChildByParent.set(cloneDescendant, clonedNode);
 
             nodes.push(clonedNode);
+        });
+
+        // update the node clone details
+
+        initialNode.cloneInfo.cloned = [];
+
+        nodes.forEach((clonedNode) =>
+        {
+            const parentNode = clonedNode.getParent<ClonableNode>();
+            const parentCloneTarget = parentNode.getCloneTarget();
+            const targetNode = newChildByParent.get(parentCloneTarget) as ClonableNode;
+
+            if (targetNode !== clonedNode)
+            {
+                // update nodes clone info
+                clonedNode.setCloneReference(targetNode);
+            }
+        });
+
+        // update model hierarchy
+
+        const models: GraphNode[] = [initialNode.model];
+
+        models.push(...initialNode.model.children);
+
+        initialNode.model.children = [];
+
+        for (let i = models.length - 1; i > 0; i--)
+        {
+            const child = models[i];
+            const parent = models[i - 1];
+
+            child.parent = parent;
+            if (parent.children.indexOf(child) === -1)
+            {
+                parent.children.push(child);
+            }
+        }
+
+        // update datastore, create nodes which are currently graphOnly
+
+        nodes.forEach((node) =>
+        {
+            const schema = getNodeSchema(node);
+            const { cloneInfo } = node;
+            let model = schema.model;
+
+            if (cloneInfo.isReference)
+            {
+                model = {};
+            }
+            else if (cloneInfo.isVariant)
+            {
+                model = node.model.ownValues;
+            }
+
+            schema.model = model;
+
+            datastore.createNode(schema);
+
+            Events.datastore.node.local.created.emit({ nodeId: node.id });
         });
 
         // prepare cache

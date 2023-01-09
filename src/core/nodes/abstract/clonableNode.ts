@@ -7,7 +7,7 @@ import { ModelSchema } from '../../model/schema';
 import { VariantModel } from '../../model/variantModel';
 import { type Clonable, CloneInfo, CloneMode } from '../cloneInfo';
 import { getAllCloned, getDependants, getDependencies, getRestoreDependencies } from '../cloneUtils';
-import { sortNodesByDepth } from '../const';
+import { sortNodesByCreationId, sortNodesByDepth } from '../const';
 import type {
     CustomProperty,
     CustomPropertyType,
@@ -141,6 +141,18 @@ export abstract class ClonableNode<
             }
         }
 
+        this.model.bind(this.onModelModified);
+    }
+
+    public setCloneReference(targetNode: ClonableNode)
+    {
+        const { cloneInfo } = this;
+
+        cloneInfo.cloner = targetNode;
+        targetNode.cloneInfo.addCloned(this);
+
+        this.model.unbind(this.onModelModified);
+        this.model = targetNode.model as unknown as Model<M> & M;
         this.model.bind(this.onModelModified);
     }
 
@@ -320,6 +332,10 @@ export abstract class ClonableNode<
         this.model.setValue(modelKey, value);
     }
 
+    /**
+     *
+     * @returns the first node which is a meta node parent of this node
+     */
     public getMetaNode(): MetaNode
     {
         return this.walk<ClonableNode, { node: ClonableNode }>((node, options) =>
@@ -338,6 +354,10 @@ export abstract class ClonableNode<
         }).node as MetaNode;
     }
 
+    /**
+     *
+     * @returns the node which is either a direct child of a meta node, or the reference or variant root of this node
+     */
     public getRootNode(): ClonableNode
     {
         return this.walk<ClonableNode, { node: ClonableNode }>((node, options) =>
@@ -357,6 +377,10 @@ export abstract class ClonableNode<
         }).node;
     }
 
+    /**
+     *
+     * @returns the original node that this node was cloned from (which may be further up the clone ancestor list), or self
+     */
     public getOriginal(): ClonableNode
     {
         const { cloneInfo: { isOriginal } } = this;
@@ -383,6 +407,10 @@ export abstract class ClonableNode<
         return node;
     }
 
+    /**
+     *
+     * @returns the cloneMode required as a new child of this node
+     */
     public getAddChildCloneMode()
     {
         const { isReferenceOrRoot, isVariantOrRoot, cloneMode } = this.cloneInfo;
@@ -401,14 +429,7 @@ export abstract class ClonableNode<
 
     public getAddChildCloneTarget(): ClonableNode
     {
-        const { cloner, isReferenceOrRoot } = this.cloneInfo;
-
-        if (cloner && isReferenceOrRoot)
-        {
-            return cloner as unknown as ClonableNode;
-        }
-
-        return this as unknown as ClonableNode;
+        return this.getCloneTarget();
     }
 
     public getRemoveChildTarget(): ClonableNode
@@ -423,23 +444,20 @@ export abstract class ClonableNode<
         return this as unknown as ClonableNode;
     }
 
+    /**
+     *
+     * @returns the node which should be cloned
+     */
     public getCloneTarget(): ClonableNode
     {
-        const { isVariantOrRoot, isReferenceRoot, cloner } = this.cloneInfo;
+        const { cloner, isReferenceOrRoot } = this.cloneInfo;
 
-        if (cloner)
+        if (cloner && isReferenceOrRoot)
         {
-            if (isReferenceRoot)
-            {
-                return cloner as ClonableNode;
-            }
-            else if (isVariantOrRoot)
-            {
-                return this as unknown as ClonableNode;
-            }
+            return cloner as unknown as ClonableNode;
         }
 
-        return this.getOriginal();
+        return this as unknown as ClonableNode;
     }
 
     /**
@@ -487,7 +505,8 @@ export abstract class ClonableNode<
             nodes.push(...getAllCloned(this as unknown as ClonableNode));
         }
 
-        sortNodesByDepth(nodes);
+        // sortNodesByDepth(nodes);
+        sortNodesByCreationId(nodes);
 
         return nodes;
     }
@@ -540,8 +559,7 @@ export abstract class ClonableNode<
     }
 
     /**
-     * return the nodes which are required for this node to exist
-     * @returns array of nodes
+     * @returns array of nodes which are required for this node to exist
      */
     public getDependencies(): ClonableNode[]
     {

@@ -795,13 +795,13 @@ export class TransformGizmo extends Container
                 const displayNode = node.cast<DisplayObjectNode>();
 
                 const values = getLocalTransform(displayNode.view, this.pivot, selection.isSingle);
-                const prevOwnValues = this.getCachedMatrix(node.cast()).ownValues;
+                const prevValues = this.getCachedMatrix(node.cast()).values;
 
                 modifications.push({
                     nodeId: node.id,
                     values,
                     updateMode,
-                    prevValues: prevOwnValues,
+                    prevValues,
                 });
 
                 if (updateMode === 'full')

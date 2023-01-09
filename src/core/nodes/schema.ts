@@ -180,3 +180,19 @@ export function getCloneInfoSchema(node: ClonableNode)
 
     return schema;
 }
+
+// export type CopyNodeSchemaOptions = Omit<NodeOptionsSchema<any>, 'name' | 'cloneInfo' | 'model'>;
+
+// export function copyNodeSchema(nodeSchema: NodeSchema, options: Partial<CopyNodeSchemaOptions> = {}): NodeSchema
+// {
+//     const schema = createNodeSchema(nodeSchema.type, {
+//         id: options.id,
+//         cloneInfo: nodeSchema.cloneInfo,
+//         model: nodeSchema.model,
+//         parent: options.parent,
+//     });
+
+//     schema.created = Date.now();
+
+//     return schema;
+// }
