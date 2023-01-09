@@ -12,6 +12,7 @@ import {
     saveUserSelectionPrefs,
     saveUserViewportPrefs,
 } from '../../core/userPrefs';
+import Events from '../../events';
 import { Menu } from './components/menu';
 
 export function restore()
@@ -37,7 +38,7 @@ export function restore()
     }
 }
 
-const fileMenu = new Menu([
+const devMenu = new Menu([
     {
         label: 'Clear',
         onClick: () =>
@@ -118,14 +119,35 @@ const editMenu = new Menu([
     }
 });
 
+const helpMenu = new Menu([
+    {
+        label: 'About',
+        onClick: () =>
+        {
+            Events.dialog.modal.open.emit('splash');
+        },
+    },
+    {
+        label: 'Report a bug',
+        onClick: () =>
+        {
+            window.open('https://github.com/play-co/comet/issues/new', '_blank');
+        },
+    },
+]);
+
 export const menu = new Menu([
     {
-        label: 'File',
-        menu: fileMenu,
+        label: 'Dev',
+        menu: devMenu,
     },
     {
         label: 'Edit',
         menu: editMenu,
+    },
+    {
+        label: 'Help',
+        menu: helpMenu,
     },
 ]);
 

@@ -135,7 +135,7 @@ export class CloneInspector extends DevInspector<CloneDetail>
 
             if (app.selection.hierarchy.shallowContains(node))
             {
-                cellStyle.fillColor = Color('#2eb2c8').hex();
+                cellStyle.fillColor = Color('#2eb2c8').darken(0.2).hex();
                 cellStyle.fontStyle = 'bold';
                 cellStyle.fontColor = 'white';
             }
