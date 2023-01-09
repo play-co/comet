@@ -3,7 +3,7 @@ import Color from 'color';
 import type { ClonableNode } from '../../../core';
 import type { Model } from '../../../core/model/model';
 import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
-import type { CloneMode } from '../../../core/nodes/cloneInfo';
+import { shortCloneMode } from '../../../core/nodes/cloneInfo';
 import { getInstance, hasInstance } from '../../../core/nodes/instances';
 import { Application, getApp } from '../../core/application';
 import { DevInspector } from '../devInspector';
@@ -16,7 +16,7 @@ export interface ModelDetail
     values: {};
     parent: string;
     children: string;
-    cloneMode: CloneMode;
+    cloneMode: string;
 }
 
 export class ModelInspector extends DevInspector<ModelDetail>
@@ -43,7 +43,7 @@ export class ModelInspector extends DevInspector<ModelDetail>
                 owner: model.owner.id,
                 parent: model.parent ? model.parent.id : '#empty#',
                 children: model.children.length === 0 ? '#empty#' : model.children.map((model) => model.id).join(','),
-                cloneMode: model.cloneMode,
+                cloneMode: shortCloneMode(model.cloneMode),
                 values: model.ownValues,
             };
 

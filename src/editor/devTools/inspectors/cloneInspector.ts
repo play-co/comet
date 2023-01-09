@@ -3,6 +3,7 @@ import Color from 'color';
 import type { ClonableNode } from '../../../core';
 import type { GraphNode } from '../../../core/nodes/abstract/graphNode';
 import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
+import { shortCloneMode } from '../../../core/nodes/cloneInfo';
 import { getInstance, hasInstance } from '../../../core/nodes/instances';
 import { Application, getApp } from '../../core/application';
 import { DevInspector } from '../devInspector';
@@ -28,6 +29,7 @@ export interface CloneDetail extends Omit<CloneInfo, 'cloneTreeAnc' | 'dependant
 {
     $: ClonableNode;
     _isCloaked: boolean;
+    mode: string;
     root: string;
     original: string;
     addMode: string;
@@ -63,8 +65,8 @@ export class CloneInspector extends DevInspector<CloneDetail>
         return {
             root: node.getRootNode().id,
             original: node.getOriginal().id,
-            addMode: node.getAddChildCloneMode().toString(),
             addTarget: node.getAddChildCloneTarget().id,
+            addMode: shortCloneMode(node.getAddChildCloneMode()),
             removeTarget: node.getRemoveChildTarget().id,
             cloneTarget: node.getCloneTarget().id,
             cloneAnc: ids(node.getCloneAncestors()),
@@ -93,6 +95,7 @@ export class CloneInspector extends DevInspector<CloneDetail>
             const detail: CloneDetail = {
                 $: node,
                 _isCloaked: node.isCloaked,
+                mode: node.cloneInfo.shortMode,
                 ...cloneInfo,
             };
 
@@ -148,7 +151,7 @@ export class CloneInspector extends DevInspector<CloneDetail>
 
             if (node.isMetaNode)
             {
-                cellStyle.fillColor = Color(cellStyle.fillColor).darken(0.1).hex();
+                cellStyle.fillColor = Color(cellStyle.fillColor).darken(0.05).hex();
             }
         }
     };

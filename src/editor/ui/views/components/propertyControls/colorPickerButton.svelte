@@ -91,7 +91,7 @@
 
   .debug {
     position: absolute;
-    left: 37px;
+    left: calc(100% + 5px);
     top: 0;
     font-size: 11px;
     color: #959595;

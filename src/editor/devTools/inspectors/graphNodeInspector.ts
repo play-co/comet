@@ -2,7 +2,6 @@ import Color from 'color';
 
 import type { ClonableNode } from '../../../core';
 import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
-import type { CloneMode } from '../../../core/nodes/cloneInfo';
 import { getInstance, hasInstance } from '../../../core/nodes/instances';
 import { Application, getApp } from '../../core/application';
 import { DevInspector } from '../devInspector';
@@ -18,7 +17,7 @@ export interface GraphNodeDetail
     parent: string;
     children: string;
     model: string;
-    cloneMode: CloneMode;
+    cloneMode: string;
     cloner: string;
     cloned: string;
 }
@@ -54,7 +53,7 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
                 name:  `${pad}${node.model.getValue<string>('name')}`,
                 parent: node.parent ? node.parent.id : '#empty#',
                 children: node.children.length === 0 ? '#empty#' : node.children.map((node) => node.id).join(','),
-                cloneMode: node.cloneInfo.cloneMode,
+                cloneMode: node.cloneInfo.shortMode,
                 cloner: node.cloneInfo.cloner ? node.cloneInfo.cloner.id : '#empty#',
                 cloned: node.cloneInfo.cloned ? node.cloneInfo.cloned.map((node) => node.id).join(',') : '#empty#',
                 isCloaked: node.isCloaked,

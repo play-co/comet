@@ -61,7 +61,7 @@ const devMenu = new Menu([
         },
     },
     {
-        label: 'Save',
+        label: 'Backup',
         onClick: () =>
         {
             const app = getApp();
