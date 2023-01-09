@@ -208,7 +208,7 @@
     display: flex;
     align-items: center;
     position: relative;
-    border: 1px outset #454545;
+    border: 1px outset #4545458a;
     padding: 0 10px;
     font-size: 12px;
     cursor: default;
@@ -234,6 +234,13 @@
 
   menu-item.prompt {
     font-style: italic;
+  }
+
+  menu-item.separator {
+    color: transparent;
+    height: 2px;
+    border-bottom: 1px solid #3f3f3f;
+    pointer-events: none;
   }
 
   .label {

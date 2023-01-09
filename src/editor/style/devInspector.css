@@ -39,6 +39,10 @@
     white-space: nowrap;
 }
 
+.dev-inspector.hidden {
+    display: none !important;
+}
+
 .dev-inspector > label > span {
     flex-grow: 1;
 }

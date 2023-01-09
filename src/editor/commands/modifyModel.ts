@@ -42,10 +42,16 @@ export class ModifyModelCommand<M extends ModelBase>
             const schema = node.model.schema as unknown as ModelSchema<M>;
             const value = values[key];
             const existingValue = prevValues?.[key] ?? nodeModel.values[key as keyof M];
+
             const isSameValueAsDefault = value === schema.properties[key].defaultValue;
             const isSameValueAsCurrent = value === existingValue;
 
-            if (!(isSameValueAsCurrent && isSameValueAsDefault))
+            let valid = true;
+
+            valid = valid && !isSameValueAsCurrent;
+            valid = valid && !isSameValueAsDefault;
+
+            if (valid)
             {
                 if (!updates.has(node))
                 {

@@ -110,14 +110,6 @@ export abstract class Model<M> extends GraphNode
     {
         const { data, schema } = this;
         const constraints = schema.getConstraints(key);
-        // const isSameValueAsDefault = newValue === schema.properties[key].defaultValue;
-        // const isSameValueAsCurrent = newValue === this.values[key as keyof M];
-
-        // if (isSameValueAsCurrent && isSameValueAsDefault)
-        // {
-        //     // don't update if the value is the same
-        //     return;
-        // }
 
         let value = newValue;
 

@@ -12,6 +12,7 @@ import {
     saveUserSelectionPrefs,
     saveUserViewportPrefs,
 } from '../../core/userPrefs';
+import Events from '../../events';
 import { Menu } from './components/menu';
 
 export function restore()
@@ -37,7 +38,7 @@ export function restore()
     }
 }
 
-const fileMenu = new Menu([
+const devMenu = new Menu([
     {
         label: 'Clear',
         onClick: () =>
@@ -60,7 +61,7 @@ const fileMenu = new Menu([
         },
     },
     {
-        label: 'Save',
+        label: 'Backup',
         onClick: () =>
         {
             const app = getApp();
@@ -118,14 +119,42 @@ const editMenu = new Menu([
     }
 });
 
+const helpMenu = new Menu([
+    {
+        label: 'About',
+        onClick: () =>
+        {
+            Events.dialog.modal.open.emit('splash');
+        },
+    },
+    {
+        label: 'Report a bug',
+        onClick: () =>
+        {
+            window.open('https://github.com/play-co/comet/issues/new?assignees=&labels=&template=bug_report.md&title=', '_blank');
+        },
+    },
+    {
+        label: 'Request a feature',
+        onClick: () =>
+        {
+            window.open('https://github.com/play-co/comet/issues/new?assignees=&labels=&template=feature_request.md&title=', '_blank');
+        },
+    },
+]);
+
 export const menu = new Menu([
     {
-        label: 'File',
-        menu: fileMenu,
+        label: 'Dev',
+        menu: devMenu,
     },
     {
         label: 'Edit',
         menu: editMenu,
+    },
+    {
+        label: 'Help',
+        menu: helpMenu,
     },
 ]);
 

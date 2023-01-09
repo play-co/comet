@@ -146,11 +146,11 @@ export function createTable<T extends Record<string, any>>(
 
     let tableWidth = 0;
 
-    columns.forEach((column) =>
+    columns.forEach((column, i) =>
     {
         const columnHeadingSize = measureText(column.id, fontSize);
 
-        column.width = Math.max(column.width, columnHeadingSize.width) + 15;
+        column.width = Math.max(column.width, columnHeadingSize.width) + (i === columns.length - 1 ? 30 : 15);
         column.width = Math.min(maxColumnWidth, column.width);
 
         if (column.id.charAt(0) !== '_' && column.id !== '$')

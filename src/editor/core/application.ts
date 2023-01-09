@@ -14,6 +14,7 @@ import { clearInstances, getInstance } from '../../core/nodes/instances';
 import { delay, nextTick } from '../../core/util';
 import { RemoveNodeCommand } from '../commands/removeNode';
 import { DevInspector } from '../devTools/devInspector';
+import { CloneInspector } from '../devTools/inspectors/cloneInspector';
 import { DatastoreNodeInspector } from '../devTools/inspectors/datastoreNodeInspector';
 import { GraphNodeInspector } from '../devTools/inspectors/graphNodeInspector';
 import { LogInspector } from '../devTools/inspectors/logInspector';
@@ -358,6 +359,7 @@ export class Application
             document.body.appendChild(container);
 
             const graphNodeInspector = new GraphNodeInspector('Graph Nodes', 'blue');
+            const cloneInspector = new CloneInspector('Clone Info', 'slateblue');
             const datastoreNodeInspector = new DatastoreNodeInspector('Datastore Nodes', 'green');
             const undoStackInspector = new UndoStackInspector('UndoStack', 'purple');
             const modelInspector = new ModelInspector('Models', 'brown');
@@ -367,6 +369,7 @@ export class Application
             const shortMaxHeight = Math.round(screen.availHeight * 0.3);
 
             graphNodeInspector.maxHeight = mediumMaxHeight;
+            cloneInspector.maxHeight = mediumMaxHeight;
             datastoreNodeInspector.maxHeight = mediumMaxHeight;
             undoStackInspector.maxHeight = mediumMaxHeight;
             modelInspector.maxHeight = mediumMaxHeight;
@@ -389,6 +392,7 @@ export class Application
             else
             {
                 graphNodeInspector.mount();
+                cloneInspector.mount();
                 datastoreNodeInspector.mount();
                 undoStackInspector.mount();
                 modelInspector.mount();
@@ -397,9 +401,16 @@ export class Application
 
             Events.key.down.bind((event) =>
             {
-                if (event.key === '\\' && event.ctrlKey)
+                if (event.key === '\\')
                 {
-                    DevInspector.toggle();
+                    if (event.ctrlKey)
+                    {
+                        DevInspector.toggleExpanded();
+                    }
+                    else if (event.shiftKey)
+                    {
+                        DevInspector.toggleVisible();
+                    }
                 }
             });
         }

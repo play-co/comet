@@ -17,6 +17,36 @@ export interface Clonable
     cloneInfo: CloneInfo;
 }
 
+export function shortCloneMode(cloneMode: CloneMode)
+{
+    if (cloneMode === CloneMode.Original)
+    {
+        return 'O';
+    }
+    else if (cloneMode === CloneMode.Duplicate)
+    {
+        return 'D';
+    }
+    else if (cloneMode === CloneMode.ReferenceRoot)
+    {
+        return 'RR';
+    }
+    else if (cloneMode === CloneMode.Reference)
+    {
+        return 'R';
+    }
+    else if (cloneMode === CloneMode.VariantRoot)
+    {
+        return 'VR';
+    }
+    else if (cloneMode === CloneMode.Variant)
+    {
+        return 'V';
+    }
+
+    return '?';
+}
+
 export class CloneInfo
 {
     public cloneMode: CloneMode;
@@ -112,6 +142,11 @@ export class CloneInfo
     public get isReferenceRoot()
     {
         return this.cloneMode === CloneMode.ReferenceRoot;
+    }
+
+    public get shortMode()
+    {
+        return shortCloneMode(this.cloneMode);
     }
 
     public getClonedAt<T>(index: number)

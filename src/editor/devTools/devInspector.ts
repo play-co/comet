@@ -25,6 +25,7 @@ export abstract class DevInspector<T extends Record<string, any> >
     public maxHeight: number;
     public scrollTop: number;
 
+    public isVisible: boolean;
     protected isMounted: boolean;
 
     protected renderRowMap?: Map<number, Row>;
@@ -33,7 +34,7 @@ export abstract class DevInspector<T extends Record<string, any> >
 
     public static inspectors: Map<string, DevInspector<Record<string, any>>> = new Map();
 
-    public static toggle()
+    public static toggleExpanded()
     {
         const { inspectors } = DevInspector;
         const groupContainer = document.getElementById('dev-inspectors') as HTMLDivElement;
@@ -46,6 +47,16 @@ export abstract class DevInspector<T extends Record<string, any> >
         }
     }
 
+    public static toggleVisible()
+    {
+        const { inspectors } = DevInspector;
+
+        for (const inspector of inspectors.values())
+        {
+            inspector.toggleVisible();
+        }
+    }
+
     constructor(id: string, backgroundColor = 'blue')
     {
         this.id = id;
@@ -55,6 +66,7 @@ export abstract class DevInspector<T extends Record<string, any> >
         this.maxHeight = -1;
         this.scrollTop = 0;
         this.isMounted = false;
+        this.isVisible = true;
 
         DevInspector.inspectors.set(id, this);
 
@@ -124,12 +136,7 @@ export abstract class DevInspector<T extends Record<string, any> >
 
         const onMouseDown = (event: MouseEvent) =>
         {
-            const { groupContainer } = this;
-
-            groupContainer.removeChild(this.container);
-            groupContainer.appendChild(this.container);
-
-            saveDevInspectorPrefs();
+            this.bringToFront();
 
             mouseDrag({
                 startX: container.offsetLeft,
@@ -151,6 +158,7 @@ export abstract class DevInspector<T extends Record<string, any> >
         toggleButton.onmousedown = (e: MouseEvent) =>
         {
             this.toggleExpandedState();
+            this.bringToFront();
 
             e.stopPropagation();
         };
@@ -327,6 +335,20 @@ export abstract class DevInspector<T extends Record<string, any> >
         this.updateExpandedState();
     }
 
+    public toggleVisible()
+    {
+        this.isVisible = !this.isVisible;
+
+        if (this.isVisible)
+        {
+            this.container.classList.remove('hidden');
+        }
+        else
+        {
+            this.container.classList.add('hidden');
+        }
+    }
+
     public scrollToEnd()
     {
         this.scrollTop = this.maxScrollTop;
@@ -437,5 +459,15 @@ export abstract class DevInspector<T extends Record<string, any> >
     protected getCell(columnId: string, row: Row)
     {
         return row.get(columnId) as Cell;
+    }
+
+    protected bringToFront()
+    {
+        const { groupContainer } = this;
+
+        groupContainer.removeChild(this.container);
+        groupContainer.appendChild(this.container);
+
+        saveDevInspectorPrefs();
     }
 }

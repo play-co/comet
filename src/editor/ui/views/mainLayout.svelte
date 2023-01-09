@@ -15,7 +15,7 @@
     blur = false;
   }
 
-  Events.dialog.modal.open.bind(unblur);
+  Events.dialog.modal.open.bind(() => (blur = true));
   Events.dialog.modal.close.bind(unblur);
   Events.project.ready.bind(unblur);
 </script>

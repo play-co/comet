@@ -91,7 +91,7 @@ export class DatastoreNodeInspector extends DevInspector<DatastoreNodeDetail>
 
             if (node.isMetaNode)
             {
-                cellStyle.fillColor = Color(cellStyle.fillColor).darken(0.2).hex();
+                cellStyle.fillColor = Color(cellStyle.fillColor).darken(0.05).hex();
             }
         }
     };

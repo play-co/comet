@@ -1,28 +1,56 @@
 import Color from 'color';
 
 import type { ClonableNode } from '../../../core';
+import type { GraphNode } from '../../../core/nodes/abstract/graphNode';
 import type { MetaNode } from '../../../core/nodes/abstract/metaNode';
+import { shortCloneMode } from '../../../core/nodes/cloneInfo';
 import { getInstance, hasInstance } from '../../../core/nodes/instances';
 import { Application, getApp } from '../../core/application';
 import { DevInspector } from '../devInspector';
 import { type CellStyle, type Column, type Row, tableIndexKey } from '../tableRenderer';
 
-export interface GraphNodeDetail
+export interface CloneInfo
 {
-    $: ClonableNode;
-    _depth: number;
-    cloaked: boolean;
-    cId: number;
-    name: string;
-    parent: string;
-    children: string;
-    model: string;
-    mode: string;
-    cloner: string;
-    cloned: string;
+    root: string;
+    original: string;
+    addMode: string;
+    addTarget: string;
+    removeTarget: string;
+    cloneTarget: string;
+    cloneDesc: string;
+    cloneAnc: string;
+    cloneTreeAnc: string;
+    dependants: string;
+    dependencies: string;
+    restoreDeps: string;
 }
 
-export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
+export interface CloneDetail extends Omit<CloneInfo, 'cloneTreeAnc' | 'dependants' | 'dependencies' | 'restoreDeps'>
+{
+    $: ClonableNode;
+    _isCloaked: boolean;
+    mode: string;
+    root: string;
+    original: string;
+    addMode: string;
+    addTarget: string;
+    removeTarget: string;
+    cloneTarget: string;
+    cloneDesc: string;
+    cloneAnc: string;
+}
+
+const ids = (nodes: GraphNode[]) =>
+{
+    if (nodes.length === 0)
+    {
+        return '#empty#';
+    }
+
+    return nodes.map((node) => node.id).join(', ');
+};
+
+export class CloneInspector extends DevInspector<CloneDetail>
 {
     protected init(): void
     {
@@ -32,32 +60,43 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
         }, 500);
     }
 
+    protected getCloneInfo(node: ClonableNode): CloneInfo
+    {
+        return {
+            root: node.getRootNode().id,
+            original: node.getOriginal().id,
+            addTarget: node.getAddChildCloneTarget().id,
+            addMode: shortCloneMode(node.getAddChildCloneMode()),
+            removeTarget: node.getRemoveChildTarget().id,
+            cloneTarget: node.getCloneTarget().id,
+            cloneAnc: ids(node.getCloneAncestors()),
+            cloneDesc: ids(node.getClonedDescendants()),
+            cloneTreeAnc: ids(node.getCloneTreeAncestors()),
+            dependants: ids(node.getDependants()),
+            dependencies: ids(node.getDependencies()),
+            restoreDeps: ids(node.getRestoreDependencies()),
+        };
+    }
+
     protected getDetails()
     {
         const app = Application.instance;
-        const details: Record<string, GraphNodeDetail> = {};
+        const details: Record<string, CloneDetail> = {};
 
-        app.project.walk<ClonableNode>((node, options) =>
+        app.project.walk<ClonableNode>((node) =>
         {
-            // let pad = '';
+            const cloneInfo = this.getCloneInfo(node) as any;
 
-            // if (options.depth > 0)
-            // {
-            //     pad = `${'│'.repeat(options.depth - 1)}└`;
-            // }
+            delete cloneInfo.cloneTreeAnc;
+            delete cloneInfo.dependants;
+            delete cloneInfo.dependencies;
+            delete cloneInfo.restoreDeps;
 
-            const detail: GraphNodeDetail = {
+            const detail: CloneDetail = {
                 $: node,
-                _depth: options.depth,
-                cId: node.creationId,
-                name:  `${node.model.getValue<string>('name')}`,
-                parent: node.parent ? node.parent.id : '#empty#',
-                children: node.children.length === 0 ? '#empty#' : node.children.map((node) => node.id).join(','),
+                _isCloaked: node.isCloaked,
                 mode: node.cloneInfo.shortMode,
-                cloner: node.cloneInfo.cloner ? node.cloneInfo.cloner.id : '#empty#',
-                cloned: node.cloneInfo.cloned ? node.cloneInfo.cloned.map((node) => node.id).join(',') : '#empty#',
-                cloaked: node.isCloaked,
-                model: node.model.id,
+                ...cloneInfo,
             };
 
             details[node.id] = detail;
@@ -76,7 +115,7 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
         }
 
         const currentCell = this.getCell(column.id, row);
-        const cloakedCell = this.getCell('cloaked', row);
+        const cloakedCell = this.getCell('_isCloaked', row);
 
         if (cloakedCell.value as boolean === true)
         {
@@ -99,7 +138,7 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
 
             if (app.selection.hierarchy.shallowContains(node))
             {
-                cellStyle.fillColor = Color('#2eb2c8').hex();
+                cellStyle.fillColor = Color('#2eb2c8').darken(0.2).hex();
                 cellStyle.fontStyle = 'bold';
                 cellStyle.fontColor = 'white';
             }
@@ -112,7 +151,7 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
 
             if (node.isMetaNode)
             {
-                cellStyle.fillColor = Color(cellStyle.fillColor).darken(0.1).hex();
+                cellStyle.fillColor = Color(cellStyle.fillColor).darken(0.05).hex();
             }
         }
     };
@@ -138,7 +177,12 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
     protected onClickRow(row: Row)
     {
         const app = getApp();
-        const value = super.onClickRow(row);
+        const value = this.getRowValue(row);
+
+        if (value)
+        {
+            console.log(this.getCloneInfo(value));
+        }
 
         if (value && app.viewport.rootNode.contains(value))
         {
