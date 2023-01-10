@@ -587,13 +587,14 @@ export class TransformGizmo extends Container
             this.operation.end(this.dragInfo);
             this.update();
             this.frame.endOperation(this.dragInfo);
-            this.clearOperation();
 
             if (this.isDirty)
             {
                 this.updateSelectedModels();
                 this.isDirty = false;
             }
+
+            this.clearOperation();
 
             Events.transform.end.emit(this);
         }
@@ -796,6 +797,13 @@ export class TransformGizmo extends Container
 
                 const values = getLocalTransform(displayNode.view, this.pivot, selection.isSingle);
                 const prevValues = this.getCachedMatrix(node.cast()).values;
+
+                if (selection.isMulti)
+                {
+                    // ignore pivot changes
+                    delete values.pivotX;
+                    delete values.pivotY;
+                }
 
                 modifications.push({
                     nodeId: node.id,

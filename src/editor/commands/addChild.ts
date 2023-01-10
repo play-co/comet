@@ -75,20 +75,31 @@ export class AddChildCommand<
             const parentNode = clonedNode.getParent<ClonableNode>();
             const parentCloneTarget = parentNode.getCloneTarget();
             const targetNode = newChildByParent.get(parentCloneTarget) as ClonableNode;
-            const cloner = clonedNode.cloneInfo.getCloner<ClonableNode>();
 
-            console.log('?', clonedNode.id, clonedNode.cloneInfo.cloner?.id);
-
-            if (targetNode !== clonedNode)
+            if (targetNode === clonedNode)
             {
-                // update nodes clone info
-                clonedNode.setClonerAsReference(targetNode);
+                if (clonedNode.cloneInfo.isClone)
+                {
+                    const parentCloner = parentCloneTarget.cloneInfo.getCloner<ClonableNode>();
+
+                    if (parentCloner)
+                    {
+                        // variant case, update nodes clone info
+                        const targetNode = newChildByParent.get(parentCloner) as ClonableNode;
+
+                        // targetNode.cloneInfo.cloned.push(clonedNode);
+                        clonedNode.setClonerAsReference(targetNode);
+                    }
+                    else
+                    {
+                        throw new Error('No cloner found');
+                    }
+                }
             }
-
-            if (cloner && !cloner.cloneInfo.cloned.includes(clonedNode))
+            else
             {
-                // cloner.cloneInfo.cloned.push(clonedNode);
-                console.log('addCloned', cloner.id, clonedNode.id);
+                // reference case, update nodes clone info
+                clonedNode.setClonerAsReference(targetNode);
             }
         });
 

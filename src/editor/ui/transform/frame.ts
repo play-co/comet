@@ -321,6 +321,7 @@ export class TransformGizmoFrame extends EventEmitter<TransformGizmoFrameEvent>
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public startOperation(dragInfo: DragInfo)
     {
+        this.info.clear();
         this.info.visible = true;
     }
 

@@ -1,6 +1,5 @@
 import type { ClonableNode } from '../../core';
 import type { Model, ModelBase } from '../../core/model/model';
-import type { ModelSchema } from '../../core/model/schema';
 import { type UpdateMode, Command } from '../core/command';
 import Events from '../events';
 
@@ -39,33 +38,19 @@ export class ModifyModelCommand<M extends ModelBase>
         {
             const node = sourceModel.getOwner(key);
             const nodeModel = node.model as unknown as Model<M>;
-            const schema = node.model.schema as unknown as ModelSchema<M>;
-            const value = values[key];
-            const existingValue = prevValues?.[key] ?? nodeModel.values[key as keyof M];
 
-            const isSameValueAsDefault = value === schema.properties[key].defaultValue;
-            const isSameValueAsCurrent = value === existingValue;
-
-            let valid = true;
-
-            valid = valid && !isSameValueAsCurrent;
-            valid = valid && !isSameValueAsDefault;
-
-            if (valid)
+            if (!updates.has(node))
             {
-                if (!updates.has(node))
-                {
-                    updates.set(node, []);
-                }
-
-                const prevValue = prevValues ? prevValues[key] : nodeModel.ownValues[key as keyof M];
-
-                (updates.get(node) as UpdateInfo<M>[]).push({
-                    key: key as keyof M,
-                    value: values[key] as M[keyof M],
-                    prevValue,
-                });
+                updates.set(node, []);
             }
+
+            const prevValue = prevValues ? prevValues[key] : nodeModel.ownValues[key as keyof M];
+
+            (updates.get(node) as UpdateInfo<M>[]).push({
+                key: key as keyof M,
+                value: values[key] as M[keyof M],
+                prevValue,
+            });
         });
 
         for (const [node, properties] of updates.entries())

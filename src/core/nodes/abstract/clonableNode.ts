@@ -148,19 +148,17 @@ export abstract class ClonableNode<
     {
         const { cloneInfo } = this;
 
-        if (!cloneInfo.isReference)
-        {
-            throw new Error('Can only update cloner on reference nodes');
-        }
-
         console.log('setClonerAsReference', this.id, targetNode.id);
 
         cloneInfo.cloner = targetNode;
         targetNode.cloneInfo.addCloned(this);
 
-        this.model.unbind(this.onModelModified);
-        this.model = targetNode.model as unknown as Model<M> & M;
-        this.model.bind(this.onModelModified);
+        if (cloneInfo.isReference)
+        {
+            this.model.unbind(this.onModelModified);
+            this.model = targetNode.model as unknown as Model<M> & M;
+            this.model.bind(this.onModelModified);
+        }
     }
 
     protected init()

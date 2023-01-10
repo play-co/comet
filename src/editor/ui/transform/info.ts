@@ -27,6 +27,11 @@ export class TransformGizmoInfo extends Container
         this.addChild(this.rotationShape);
     }
 
+    public clear()
+    {
+        this.rotationShape.clear();
+    }
+
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public update(dragInfo: DragInfo)
@@ -59,6 +64,7 @@ export class TransformGizmoInfo extends Container
         const { frame: { gizmo: { pivotGlobalPos, rotation, operation } }, rotationShape } = this;
         const p0 = pivotGlobalPos;
         const p1 = { x: p0.x + rotationRadius, y: p0.y };
+
         const color = 0x66ff66;
 
         rotationShape.lineStyle(1, color, 1);
@@ -73,7 +79,7 @@ export class TransformGizmoInfo extends Container
         const absAngle = `${rotation.toFixed(2)}°`.padEnd(8, ' ');
         const relAngle = round((rotationOp.readCache('rotation') - rotation) * -1, 2);
 
-        getApp().statusBar.setMessage(`ROTATION ${absAngle} (relative: ${relAngle}°)`);
+        getApp().statusBar.setMessage(`GLOBAL ${absAngle} RELATIVE: ${relAngle}°`);
     }
 
     protected showTranslationInfo()
