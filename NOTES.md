@@ -27,7 +27,7 @@
 
 High Priority
 * Prefab
-    - QA Variants, Variant Instances
+    - Create instance, avoid recursion
 * Copy paste
     - Paste logic needs tightening:
         - need to support prefab instances (currently only duplicate)

@@ -50,6 +50,23 @@ export class ResetModelCommand
 
     public undo(): void
     {
+        const { datastore, cache: { prevValues }, params: { updateMode = 'full' } } = this;
 
+        for (const [nodeId, values] of prevValues.entries())
+        {
+            const node = this.getInstance(nodeId);
+
+            node.model.setValues(values);
+
+            // update datastore if full update mode
+            if (updateMode === 'full')
+            {
+                datastore.modifyModel(nodeId, values);
+            }
+
+            node.updateRecursiveWithClones();
+
+            Events.datastore.node.local.modified.emit({ nodeId, values });
+        }
     }
 }
