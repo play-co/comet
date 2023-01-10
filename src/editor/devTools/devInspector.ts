@@ -370,15 +370,15 @@ export abstract class DevInspector<T extends Record<string, any> >
             return;
         }
 
-        const table = this.table = this.createTable();
+        if (this.isExpanded)
+        {
+            const table = this.table = this.createTable();
 
-        if (table.rows.length === 0)
-        {
-            this.painter.size(0, 0);
-        }
-        else
-        {
-            if (this.isExpanded)
+            if (table.rows.length === 0)
+            {
+                this.painter.size(0, 0);
+            }
+            else
             {
                 const { maxHeight } = this;
                 const width = table.width;
@@ -391,8 +391,12 @@ export abstract class DevInspector<T extends Record<string, any> >
                 this.renderRowMap = renderRowMap;
 
                 this.label.innerHTML = `${this.id} (${this.table.rows.length})`;
-            }
 
+                this.updateScrollBars();
+            }
+        }
+        else
+        {
             this.updateScrollBars();
         }
     }
