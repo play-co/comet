@@ -36,9 +36,11 @@ export function getDependencies(node: ClonableNode, includeSelf = false, array: 
         array.push(node);
     }
 
-    if (cloneInfo.cloner)
+    const cloner = cloneInfo.getCloner<ClonableNode>();
+
+    if (cloner)
     {
-        getDependencies(cloneInfo.getCloner<ClonableNode>(), true, array);
+        getDependencies(cloner, true, array);
     }
 
     node.getParents<ClonableNode>().forEach((parent) => getDependencies(parent, true, array));
@@ -52,9 +54,11 @@ export function getRestoreDependencies(cloneRoot: ClonableNode, array: ClonableN
 
     array.push(cloneRoot, ...cloneRoot.getAllChildren<ClonableNode>());
 
-    if (cloneInfo.cloner)
+    const cloner = cloneInfo.getCloner<ClonableNode>();
+
+    if (cloner)
     {
-        getRestoreDependencies(cloneInfo.getCloner<ClonableNode>().getRootNode(), array);
+        getRestoreDependencies(cloner.getRootNode(), array);
     }
 
     return array;

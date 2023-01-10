@@ -44,8 +44,7 @@ export class AddChildCommand<
 
         nodeSchema.parent = cloneTarget.id;
 
-        const { node } = new CreateNodeCommand({ nodeSchema, updateMode: 'graphOnly' }).run();
-        const initialNode = node;
+        const { node: initialNode } = new CreateNodeCommand({ nodeSchema, updateMode: 'graphOnly' }).run();
 
         nodes.push(initialNode);
         newChildByParent.set(cloneTarget, initialNode);
@@ -76,11 +75,20 @@ export class AddChildCommand<
             const parentNode = clonedNode.getParent<ClonableNode>();
             const parentCloneTarget = parentNode.getCloneTarget();
             const targetNode = newChildByParent.get(parentCloneTarget) as ClonableNode;
+            const cloner = clonedNode.cloneInfo.getCloner<ClonableNode>();
+
+            console.log('?', clonedNode.id, clonedNode.cloneInfo.cloner?.id);
 
             if (targetNode !== clonedNode)
             {
                 // update nodes clone info
-                clonedNode.setCloneReference(targetNode);
+                clonedNode.setClonerAsReference(targetNode);
+            }
+
+            if (cloner && !cloner.cloneInfo.cloned.includes(clonedNode))
+            {
+                // cloner.cloneInfo.cloned.push(clonedNode);
+                console.log('addCloned', cloner.id, clonedNode.id);
             }
         });
 

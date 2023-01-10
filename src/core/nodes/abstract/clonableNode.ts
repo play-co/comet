@@ -144,9 +144,16 @@ export abstract class ClonableNode<
         this.model.bind(this.onModelModified);
     }
 
-    public setCloneReference(targetNode: ClonableNode)
+    public setClonerAsReference(targetNode: ClonableNode)
     {
         const { cloneInfo } = this;
+
+        if (!cloneInfo.isReference)
+        {
+            throw new Error('Can only update cloner on reference nodes');
+        }
+
+        console.log('setClonerAsReference', this.id, targetNode.id);
 
         cloneInfo.cloner = targetNode;
         targetNode.cloneInfo.addCloned(this);
@@ -438,7 +445,7 @@ export abstract class ClonableNode<
 
         if (isReference)
         {
-            return this.cloneInfo.getCloner();
+            return this.cloneInfo.cloner as ClonableNode;
         }
 
         return this as unknown as ClonableNode;
@@ -515,7 +522,12 @@ export abstract class ClonableNode<
     {
         const array: ClonableNode[] = [];
 
-        let node: ClonableNode = this.cloneInfo.getCloner<ClonableNode>();
+        let node = this.cloneInfo.getCloner<ClonableNode>();
+
+        if (!node)
+        {
+            return array;
+        }
 
         while (node !== undefined)
         {

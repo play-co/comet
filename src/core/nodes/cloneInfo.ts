@@ -149,6 +149,16 @@ export class CloneInfo
         return shortCloneMode(this.cloneMode);
     }
 
+    public getCloner<T = unknown>(): T | undefined
+    {
+        if (this.cloner)
+        {
+            return this.cloner as unknown as T;
+        }
+
+        return undefined;
+    }
+
     public getClonedAt<T>(index: number)
     {
         return this.cloned[index] as unknown as T;
@@ -189,11 +199,6 @@ export class CloneInfo
         }
 
         return this;
-    }
-
-    public getCloner<T = unknown>()
-    {
-        return this.cloner as unknown as T;
     }
 
     public forEachCloned<T>(fn: (clone: T) => void)

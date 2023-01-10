@@ -3,6 +3,7 @@
 * Multi-selection undo does not reset gizmo transform correctly, it resets it
     - May need to store transform gizmo state with each command in undo stack?
     - Also need a way to recalculate multi-transform gizmo when remote nodes move
+* Gizmo is only setting pivot adjustments for active node, needs to update all clone descendants
 
 # Enhancements
 
