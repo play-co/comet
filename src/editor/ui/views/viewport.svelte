@@ -21,6 +21,11 @@
         label: "Create Prefab",
         onClick: () => Actions.newPrefabAsset.dispatch(),
       },
+      {
+        id: "resetModel",
+        label: "Reset Model",
+        onClick: () => Actions.resetModel.dispatch(),
+      },
     ],
     (item) => {
       const app = getApp();
@@ -35,12 +40,14 @@
       if (id === "copy" || id === "delete") {
         item.isEnabled = !isOnlySceneSelected && selection.length > 0;
       } else if (id === "paste") {
-        item.isEnabled = app.hasClipboard();
+        item.isEnabled = app.hasClipboard() && selection.isSingle;
       } else if (id === "createPrefab") {
         item.isEnabled =
           selection.isSingle &&
           !isOnlySceneSelected &&
           selection.firstItem.cloneInfo.cloneMode === CloneMode.Original;
+      } else if (id === "resetModel") {
+        item.isEnabled = selection.hasSelection;
       }
     }
   );

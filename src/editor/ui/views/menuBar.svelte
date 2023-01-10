@@ -1,11 +1,15 @@
 <script lang="ts">
   import { nextTick } from "../../../core/util";
+  import { getApp } from "../../core/application";
   import Events from "../../events";
   import type { MenuItem } from "./components/menu";
   import { menu } from "./menuBar";
   import MenuBarItem from "./menuBarItem.svelte";
 
+  const app = getApp();
+
   let selected: MenuItem | undefined = undefined;
+  let projectId = "";
 
   $: items = menu.getItems();
 
@@ -21,6 +25,10 @@
       selected = item;
     });
   };
+
+  Events.project.ready.bind(() => {
+    projectId = app.datastore.getProjectId();
+  });
 </script>
 
 <menu-bar>
@@ -32,6 +40,7 @@
       on:close={() => (selected = undefined)}
     />
   {/each}
+  <div class="project-info">{projectId}</div>
 </menu-bar>
 
 <style>
@@ -43,5 +52,14 @@
     display: flex;
     padding-left: 60px;
     align-items: center;
+    position: relative;
+  }
+
+  .project-info {
+    position: absolute;
+    right: 7px;
+    top: 1px;
+    font-size: 11px;
+    color: #aaa;
   }
 </style>

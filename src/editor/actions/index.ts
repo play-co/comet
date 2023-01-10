@@ -14,6 +14,7 @@ import { NewSpriteAction } from './newSprite';
 import { NudgeAction } from './nudge';
 import { PasteAction } from './paste';
 import { RedoAction } from './redo';
+import { ResetModelAction } from './resetModel';
 import { SelectAllAction } from './selectAll';
 import { UndoAction } from './undo';
 
@@ -36,4 +37,5 @@ export const Actions = {
     redo: new RedoAction(),
     copy: new CopyAction(),
     paste: new PasteAction(),
+    resetModel: new ResetModelAction(),
 };

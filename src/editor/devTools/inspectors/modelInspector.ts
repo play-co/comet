@@ -87,7 +87,7 @@ export class ModelInspector extends DevInspector<ModelDetail>
 
             if (node.isMetaNode)
             {
-                cellStyle.fillColor = Color(cellStyle.fillColor).darken(0.05).hex();
+                cellStyle.fillColor = Color(cellStyle.fillColor).darken(0.1).hex();
             }
 
             if (app.selection.project.shallowContains(node.cast<MetaNode>()))
