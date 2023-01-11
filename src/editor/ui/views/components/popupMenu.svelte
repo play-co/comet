@@ -90,7 +90,11 @@
 
   const onMenuItemClick = (item: MenuItem) => {
     if (!item.menu && item.isEnabled !== false) {
-      item.onClick && item.onClick(item);
+      if (item.action) {
+        item.action.dispatch();
+      } else if (item.onClick) {
+        item.onClick(item);
+      }
       close();
     }
   };

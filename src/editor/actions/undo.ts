@@ -2,7 +2,7 @@ import { Action } from '../core/action';
 import { Application } from '../core/application';
 import { writeCommandList } from '../core/history';
 
-export class UndoAction extends Action<void, void>
+export class UndoAction extends Action
 {
     constructor()
     {
@@ -11,7 +11,7 @@ export class UndoAction extends Action<void, void>
         });
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         return Application.instance.undoStack.canUndo;
     }

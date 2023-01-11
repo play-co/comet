@@ -8,14 +8,14 @@ export type ImportTextureActionOptions = {
     createSpriteAtPoint?: {x: number; y: number};
 };
 
-export class ImportTextureAction extends Action<ImportTextureActionOptions, void>
+export class ImportTextureAction extends Action<ImportTextureActionOptions>
 {
     constructor()
     {
         super('importTexture');
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         const app = getApp();
 

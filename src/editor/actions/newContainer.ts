@@ -22,7 +22,7 @@ export class NewContainerAction extends Action<NewContainerOptions, ContainerNod
         });
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         const app = getApp();
 

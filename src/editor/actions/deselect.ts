@@ -1,7 +1,7 @@
 import { Action } from '../core/action';
 import { Application, getApp } from '../core/application';
 
-export class DeselectAction extends Action<void, void>
+export class DeselectAction extends Action
 {
     constructor()
     {
@@ -10,11 +10,11 @@ export class DeselectAction extends Action<void, void>
         });
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         const app = getApp();
 
-        return super.shouldRun() && app.isAreaFocussed('viewport');
+        return super.shouldRun() && app.isAreaFocussed('viewport', 'hierarchy');
     }
 
     protected exec()

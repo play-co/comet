@@ -2,14 +2,14 @@ import { UnlinkCommand } from '../commands/unlink';
 import { Action } from '../core/action';
 import { getApp } from '../core/application';
 
-export class UnlinkAction extends Action<void, void>
+export class UnlinkAction extends Action
 {
     constructor()
     {
         super('unlink');
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         const app = getApp();
         const selection = app.selection.hierarchy;

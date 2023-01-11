@@ -36,7 +36,7 @@ export interface DatastoreCommandProvider
     assignCustomProperty: (nodeId: string, modelKey: string, customKey: string) => void;
     unassignCustomProperty: (nodeId: string, modelKey: string) => void;
     setChildren: (nodeId: string, childIds: string[]) => void;
-    resetModel: (nodeId: string) => void;
+    resetModel: (nodeId: string, initValues: {}) => void;
 }
 
 export interface DatastoreChangeEventHandler<RemoteChangeEvent>
@@ -99,7 +99,7 @@ implements Datastore, DatastoreCommandProvider, DatastoreChangeEventHandler<Remo
     public abstract assignCustomProperty(nodeId: string, modelKey: string, customKey: string): void;
     public abstract unassignCustomProperty(nodeId: string, modelKey: string): void;
     public abstract setChildren(nodeId: string, childIds: string[]): void;
-    public abstract resetModel(nodeId: string): void;
+    public abstract resetModel(nodeId: string, initValues: {}): void;
 
     // remote change event handles
     public abstract onRemoteNodeCreated(event: RemoteChangeEvent): void;

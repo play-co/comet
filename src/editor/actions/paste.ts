@@ -1,8 +1,9 @@
+import { SceneNode } from '../../core/nodes/concrete/meta/sceneNode';
 import { PasteCommand } from '../commands/paste';
 import { Action } from '../core/action';
 import { getApp } from '../core/application';
 
-export class PasteAction extends Action<void, void>
+export class PasteAction extends Action
 {
     constructor()
     {
@@ -11,11 +12,17 @@ export class PasteAction extends Action<void, void>
         });
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         const app = getApp();
+        const selection = app.selection.hierarchy;
+        const isOnlySceneSelected = selection.isSingle && selection.firstItem.is(SceneNode);
 
-        return super.shouldRun() && app.isAreaFocussed('viewport', 'hierarchy');
+        return super.shouldRun()
+            && app.hasClipboard()
+            && selection.isSingle
+            && app.isAreaFocussed('viewport', 'hierarchy')
+            && !isOnlySceneSelected;
     }
 
     protected exec()

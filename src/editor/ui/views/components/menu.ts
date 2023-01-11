@@ -1,3 +1,5 @@
+import type { Action } from '../../../core/action';
+
 export interface MenuItem
 {
     id?: string;
@@ -9,9 +11,10 @@ export interface MenuItem
     isHidden?: boolean;
     menu?: Menu;
     onClick?: (item: MenuItem) => void;
+    action?: Action;
 }
 
-export type RefreshCallback = (item: MenuItem, index: number, array: MenuItem[]) => void;
+export type RefreshCallback = (item: MenuItem, index: number, array: MenuItem[]) => false | void;
 
 export class Menu
 {
@@ -32,6 +35,11 @@ export class Menu
         {
             this.items.forEach((item, i, array) =>
             {
+                if (item.action)
+                {
+                    item.isEnabled = item.action.shouldRun();
+                }
+
                 refreshFn(item, i, array);
 
                 if (item.menu)

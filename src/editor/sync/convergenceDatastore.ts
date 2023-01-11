@@ -422,11 +422,11 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
         childArray.value(childIds);
     }
 
-    public resetModel(nodeId: string): void
+    public resetModel(nodeId: string, initValues: {} = {}): void
     {
         const nodeElement = this.getNodeElement(nodeId);
 
-        nodeElement.get('model').value({});
+        nodeElement.get('model').value(initValues);
     }
 
     // remote change event handles

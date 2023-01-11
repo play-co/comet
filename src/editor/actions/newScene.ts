@@ -12,7 +12,7 @@ export class NewSceneAction extends Action<void, SceneNode>
         super('newScene');
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         const app = getApp();
 

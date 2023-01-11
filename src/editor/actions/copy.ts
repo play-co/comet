@@ -2,7 +2,7 @@ import { SceneNode } from '../../core/nodes/concrete/meta/sceneNode';
 import { Action } from '../core/action';
 import { getApp } from '../core/application';
 
-export class CopyAction extends Action<void, void>
+export class CopyAction extends Action
 {
     constructor()
     {
@@ -11,13 +11,16 @@ export class CopyAction extends Action<void, void>
         });
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         const app = getApp();
         const selection = app.selection.hierarchy;
         const isOnlySceneSelected = selection.length === 1 && selection.firstItem.is(SceneNode);
 
-        return super.shouldRun() && app.isAreaFocussed('viewport', 'hierarchy') && !isOnlySceneSelected;
+        return super.shouldRun()
+            && app.isAreaFocussed('viewport', 'hierarchy')
+            && selection.hasSelection
+            && !isOnlySceneSelected;
     }
 
     protected exec()

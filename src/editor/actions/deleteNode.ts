@@ -1,4 +1,5 @@
 import type { ClonableNode } from '../../core';
+import { SceneNode } from '../../core/nodes/concrete/meta/sceneNode';
 import { getInstance } from '../../core/nodes/instances';
 import { RemoveNodesCommand } from '../commands/removeNodes';
 import { Action } from '../core/action';
@@ -8,7 +9,7 @@ export type DeleteNodeOptions = {
     nodeId?: string;
 };
 
-export class DeleteNodeAction extends Action<DeleteNodeOptions, void>
+export class DeleteNodeAction extends Action<DeleteNodeOptions>
 {
     constructor()
     {
@@ -17,11 +18,16 @@ export class DeleteNodeAction extends Action<DeleteNodeOptions, void>
         });
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         const app = getApp();
+        const selection = app.selection.hierarchy;
+        const isOnlySceneSelected = selection.isSingle && selection.firstItem.is(SceneNode);
 
-        return super.shouldRun() && app.isAreaFocussed('viewport', 'project', 'hierarchy');
+        return super.shouldRun()
+            && app.isAreaFocussed('viewport', 'project', 'hierarchy')
+            && selection.hasSelection
+            && !isOnlySceneSelected;
     }
 
     protected exec(options: DeleteNodeOptions): void

@@ -24,7 +24,7 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
         });
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         const app = getApp();
 

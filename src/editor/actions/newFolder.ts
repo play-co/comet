@@ -4,14 +4,14 @@ import { type CreateNodeCommandReturn, CreateNodeCommand } from '../commands/cre
 import { Action } from '../core/action';
 import { Application, getApp } from '../core/application';
 
-export class NewFolderAction extends Action<void, FolderNode | null>
+export class NewFolderAction extends Action<{}, FolderNode | null>
 {
     constructor()
     {
         super('newFolder');
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         const app = getApp();
 

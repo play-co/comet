@@ -20,12 +20,12 @@ export type ModelConstructor<M> = {
 
 export abstract class Model<M> extends GraphNode
 {
-    public readonly owner: GraphNode;
-    public readonly schema: ModelSchema<M>;
-    public readonly data: Partial<M>;
+    public owner: GraphNode;
+    public schema: ModelSchema<M>;
+    public data: Partial<M>;
     public cloneMode: CloneMode;
 
-    protected readonly emitter: EventEmitter<'modified'>;
+    protected emitter: EventEmitter<'modified'>;
 
     constructor(owner: GraphNode, schema: ModelSchema<M>, data: Partial<M>, id?: string)
     {
@@ -173,16 +173,9 @@ export abstract class Model<M> extends GraphNode
         return createModel(this.constructor as ModelConstructor<M>, owner, this.schema, this.ownValues) as unknown as T;
     }
 
-    public reset()
+    public reset(initValues: Partial<M> = {}): void
     {
-        const { schema: { keys, keys: { length: l } } } = this;
-
-        for (let i = 0; i < l; i++)
-        {
-            const key = keys[i] as keyof M;
-
-            delete this.data[key];
-        }
+        this.data = initValues;
 
         this.emitter.emit('modified');
     }

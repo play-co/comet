@@ -3,25 +3,25 @@ import { type CreatePrefabVariantCommandReturn, CreatePrefabVariantCommand } fro
 import { Action } from '../core/action';
 import { Application, getApp } from '../core/application';
 
-export type NewPrefabVariantOptions = {
+export type CreatePrefabVariantOptions = {
     nodeId: string;
 };
 
-export class NewPrefabVariantAction extends Action<NewPrefabVariantOptions, ClonableNode>
+export class CreatePrefabVariantAction extends Action<CreatePrefabVariantOptions, ClonableNode>
 {
     constructor()
     {
-        super('NewPrefabVariant');
+        super('createPrefabVariant');
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         const app = getApp();
 
         return super.shouldRun() && app.isAreaFocussed('project');
     }
 
-    protected exec(options: NewPrefabVariantOptions): ClonableNode
+    protected exec(options: CreatePrefabVariantOptions): ClonableNode
     {
         const app = Application.instance;
 

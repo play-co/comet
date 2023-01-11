@@ -89,7 +89,7 @@
   };
 
   const onCreateVariant = () => {
-    Actions.newPrefabVariant.dispatch({ nodeId: selection.firstItem.id });
+    Actions.createPrefabVariant.dispatch({ nodeId: selection.firstItem.id });
   };
 
   const treeMenu = new Menu(

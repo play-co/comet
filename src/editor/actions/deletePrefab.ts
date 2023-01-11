@@ -6,14 +6,14 @@ export type DeletePrefabOptions = {
     nodeId: string;
 };
 
-export class DeletePrefabAction extends Action<DeletePrefabOptions, void>
+export class DeletePrefabAction extends Action<DeletePrefabOptions>
 {
     constructor()
     {
-        super('DeletePrefab');
+        super('deletePrefab');
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         const app = getApp();
 

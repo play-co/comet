@@ -5,7 +5,7 @@ import { Application, getApp } from '../core/application';
 import Events from '../events';
 import { snapToIncrement } from '../ui/transform/util';
 
-export class NudgeAction extends Action<void, void>
+export class NudgeAction extends Action
 {
     constructor()
     {
@@ -14,14 +14,14 @@ export class NudgeAction extends Action<void, void>
         });
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         const app = getApp();
 
         return super.shouldRun() && app.isAreaFocussed('viewport');
     }
 
-    protected exec(_options: void, event: KeyboardEvent)
+    protected exec(_options: {}, event: KeyboardEvent)
     {
         const app = getApp();
         const { hierarchy: selection } = app.selection;

@@ -6,14 +6,14 @@ export type DeleteTextureOptions = {
     nodeId: string;
 };
 
-export class DeleteTextureAction extends Action<DeleteTextureOptions, void>
+export class DeleteTextureAction extends Action<DeleteTextureOptions>
 {
     constructor()
     {
-        super('DeleteTexture');
+        super('deleteTexture');
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         const app = getApp();
 

@@ -220,7 +220,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
             }
             else if (app.project.getRootFolder('Prefabs').contains(node))
             {
-                Actions.newPrefabInstance.dispatch({
+                Actions.createPrefabInstance.dispatch({
                     clonerId: node.id,
                     parentId,
                     model: {

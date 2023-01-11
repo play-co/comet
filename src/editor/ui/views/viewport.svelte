@@ -4,55 +4,37 @@
       {
         id: "delete",
         label: "Delete",
-        onClick: () => Actions.deleteNode.dispatch(),
+        action: Actions.deleteNode,
       },
       {
         id: "copy",
         label: "Copy",
-        onClick: () => Actions.copy.dispatch(),
+        action: Actions.copy,
       },
       {
         id: "paste",
         label: "Paste",
-        onClick: () => Actions.paste.dispatch(),
+        action: Actions.paste,
       },
       {
         id: "createPrefab",
         label: "Create Prefab",
-        onClick: () => Actions.newPrefabAsset.dispatch(),
+        action: Actions.createPrefabAsset,
       },
       {
         id: "resetModel",
         label: "Reset Model",
-        onClick: () => Actions.resetModel.dispatch(),
+        action: Actions.resetModel,
       },
       {
         id: "unlink",
         label: "Unlink",
-        onClick: () => Actions.unlink.dispatch(),
+        action: Actions.unlink,
       },
     ],
     (item) => {
-      const app = getApp();
-      const selection = app.selection.hierarchy;
-      const isOnlySceneSelected = selection.isSingle && selection.firstItem.is(SceneNode);
-      const id = item.id;
-
-      if (!app.project.isReady) {
-        return;
-      }
-
-      if (id === "copy" || id === "delete") {
-        item.isEnabled = !isOnlySceneSelected && selection.length > 0;
-      } else if (id === "paste") {
-        item.isEnabled = app.hasClipboard() && selection.isSingle;
-      } else if (id === "createPrefab") {
-        item.isEnabled =
-          selection.isSingle &&
-          !isOnlySceneSelected &&
-          selection.firstItem.cloneInfo.cloneMode === CloneMode.Original;
-      } else if (id === "resetModel") {
-        item.isEnabled = selection.hasSelection;
+      if (!getApp().project.isReady) {
+        item.isEnabled = false;
       }
     }
   );
@@ -66,8 +48,6 @@
   import { DropZone } from "../components/dropzone";
   import FocusArea from "./components/focusArea.svelte";
   import { Actions } from "../../actions";
-  import { SceneNode } from "../../../core/nodes/concrete/meta/sceneNode";
-  import { CloneMode } from "../../../core/nodes/cloneInfo";
 
   const app = Application.instance;
   const viewport = app.viewport;

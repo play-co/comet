@@ -2,18 +2,21 @@ import { ResetModelCommand } from '../commands/resetModel';
 import { Action } from '../core/action';
 import { getApp } from '../core/application';
 
-export class ResetModelAction extends Action<void, void>
+export class ResetModelAction extends Action
 {
     constructor()
     {
         super('resetModel');
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         const app = getApp();
+        const selection = app.selection.hierarchy;
 
-        return super.shouldRun() && app.isAreaFocussed('viewport', 'hierarchy');
+        return super.shouldRun()
+            && app.isAreaFocussed('viewport', 'hierarchy')
+            && selection.hasSelection;
     }
 
     protected exec()

@@ -21,7 +21,7 @@ export const defaultActionOptions: Omit<ActionOptions, 'hotkey'> = {
 
 export type ActionConstructorOptions = Partial<ActionOptions> & { hotkey: string };
 
-export abstract class Action<OptionsType, ReturnType>
+export abstract class Action<OptionsType extends {} = {}, ReturnType = void>
 {
     public id: string;
     public isEnabled: boolean;
@@ -128,7 +128,7 @@ export abstract class Action<OptionsType, ReturnType>
         return this.exec(options, event);
     }
 
-    protected shouldRun()
+    public shouldRun()
     {
         return true;
     }

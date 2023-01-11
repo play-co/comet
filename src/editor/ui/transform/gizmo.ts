@@ -4,6 +4,7 @@ import { Container, Graphics, Matrix } from 'pixi.js';
 
 import type { ClonableNode } from '../../../core';
 import { type DisplayObjectModel, DisplayObjectNode } from '../../../core/nodes/abstract/displayObjectNode';
+import { SceneNode } from '../../../core/nodes/concrete/meta/sceneNode';
 import { type Point, degToRad, radToDeg } from '../../../core/util/geom';
 import type { ModifyModelCommandParams } from '../../commands/modifyModel';
 import { ModifyModelsCommand } from '../../commands/modifyModels';
@@ -647,13 +648,17 @@ export class TransformGizmo extends Container
 
     public selectNode<T extends ClonableNode>(node: T)
     {
-        const viewportContainsNode = getApp().viewport.rootNode.contains(node);
-
-        if (viewportContainsNode && node instanceof DisplayObjectNode)
+        if (node instanceof DisplayObjectNode)
         {
-            const initialTransform = getGizmoInitialTransformFromView(node.view, node.width, node.width, this.parent.worldTransform);
+            const rootNode = getApp().viewport.rootNode;
+            const viewportContainsNode = rootNode === node || rootNode.contains(node);
 
-            this.initNodes([node], initialTransform, bluePivot);
+            if (viewportContainsNode)
+            {
+                const initialTransform = getGizmoInitialTransformFromView(node.view, node.width, node.width, this.parent.worldTransform);
+
+                this.initNodes([node], initialTransform, bluePivot);
+            }
         }
     }
 
@@ -744,10 +749,10 @@ export class TransformGizmo extends Container
 
         if (selection.length === 1)
         {
-            const node = selection.items[0];
+            const node = selection.firstItem;
             const cachedMatrix = this.getCachedMatrix(node);
 
-            if (node instanceof DisplayObjectNode && node.isSceneNode)
+            if ((node instanceof DisplayObjectNode && node.isSceneNode) || node.is(SceneNode))
             {
                 const view = node.view;
 
@@ -767,7 +772,7 @@ export class TransformGizmo extends Container
             {
                 const cachedMatrix = this.getCachedMatrix(node);
 
-                if (node instanceof DisplayObjectNode && node.isSceneNode)
+                if ((node instanceof DisplayObjectNode && node.isSceneNode) || node.is(SceneNode))
                 {
                     const view = node.cast<DisplayObjectNode>().getView();
 

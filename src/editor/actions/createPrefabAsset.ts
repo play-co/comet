@@ -1,16 +1,17 @@
+import { CloneMode } from '../../core/nodes/cloneInfo';
 import { SceneNode } from '../../core/nodes/concrete/meta/sceneNode';
 import { CreatePrefabAssetCommand } from '../commands/createPrefabAsset';
 import { Action } from '../core/action';
 import { getApp } from '../core/application';
 
-export class NewPrefabAssetAction extends Action<void, void>
+export class CreatePrefabAssetAction extends Action
 {
     constructor()
     {
-        super('newPrefabAsset');
+        super('createPrefabAsset');
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         const app = getApp();
         const selection = app.selection.hierarchy;
@@ -20,7 +21,8 @@ export class NewPrefabAssetAction extends Action<void, void>
         return super.shouldRun()
             && isViewportFocussed
             && !isOnlySceneSelected
-            && selection.isSingle;
+            && selection.isSingle
+            && selection.firstItem.cloneInfo.cloneMode === CloneMode.Original;
     }
 
     protected exec()

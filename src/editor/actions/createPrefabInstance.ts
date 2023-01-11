@@ -4,27 +4,27 @@ import { type CreatePrefabInstanceCommandReturn, CreatePrefabInstanceCommand } f
 import { Action } from '../core/action';
 import { Application, getApp } from '../core/application';
 
-export type NewPrefabOptions = {
+export type CreatePrefabOptions = {
     clonerId: string;
     parentId?: string;
     model?: Partial<ModelBase>;
 };
 
-export class NewPrefabInstanceAction extends Action<NewPrefabOptions, ClonableNode>
+export class CreatePrefabInstanceAction extends Action<CreatePrefabOptions, ClonableNode>
 {
     constructor()
     {
-        super('NewPrefabInstance');
+        super('createPrefabInstance');
     }
 
-    protected shouldRun(): boolean
+    public shouldRun(): boolean
     {
         const app = getApp();
 
         return super.shouldRun() && app.isAreaFocussed('viewport');
     }
 
-    protected exec(options: NewPrefabOptions): ClonableNode
+    protected exec(options: CreatePrefabOptions): ClonableNode
     {
         const app = Application.instance;
 

@@ -33,13 +33,18 @@ export class ResetModelCommand
             // cache existing own values
             cache.prevValues.set(nodeId, targetNode.model.ownValues);
 
+            // preserve name value
+            const initValues = {
+                name: targetNode.model.ownValues.name,
+            };
+
             // reset the model (clear own values, revert to inheriting parent or default values)
-            targetNode.model.reset();
+            targetNode.model.reset(initValues);
 
             // update datastore if full update mode
             if (updateMode === 'full')
             {
-                datastore.resetModel(nodeId);
+                datastore.resetModel(nodeId, initValues);
             }
 
             targetNode.updateRecursiveWithClones();
