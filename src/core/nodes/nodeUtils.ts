@@ -1,3 +1,4 @@
+import type { ClonableNode } from './abstract/clonableNode';
 import type { GraphNode } from './abstract/graphNode';
 
 export type WalkReturnData = Record<string, any>;
@@ -62,3 +63,47 @@ export function sortNodesByCreationId(nodes: GraphNode[])
     return nodes.sort((a, b) => a.creationId - b.creationId);
 }
 
+export function isSiblingOf(targetNode: ClonableNode, nodes: ClonableNode[])
+{
+    return nodes.some((node) => node.isSiblingOf(targetNode));
+}
+
+export function groupSiblings(nodes: ClonableNode[])
+{
+    type Group = {
+        depth: number;
+        nodes: ClonableNode[];
+    };
+
+    const siblings: Group[] = [];
+
+    for (let i = 0; i < nodes.length; i++)
+    {
+        const sourceNode = nodes[i];
+        const group: Group = { depth: sourceNode.getDepth(), nodes: [sourceNode] };
+
+        siblings.push(group);
+
+        for (let j = 0; j < nodes.length; j++)
+        {
+            const targetNode = nodes[j];
+
+            if (sourceNode.isSiblingOf(targetNode) && sourceNode !== targetNode)
+            {
+                group.nodes.push(targetNode);
+            }
+        }
+    }
+
+    siblings.sort((a, b) =>
+    {
+        if (a.nodes.length !== b.nodes.length)
+        {
+            return b.nodes.length - a.nodes.length;
+        }
+
+        return a.depth - b.depth;
+    });
+
+    return siblings[0].nodes;
+}

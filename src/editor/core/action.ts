@@ -54,12 +54,15 @@ export abstract class Action<OptionsType extends {} = {}, ReturnType = void>
         this.register();
     }
 
-    get printShortcut()
+    public printShortcut()
     {
-        return this.hotkey
+        const { hotkey } = this;
+
+        return hotkey ? hotkey
+            .split(',')[0]
             .split('+')
             .map((part) => part[0].toUpperCase() + part.substring(1))
-            .join(' ');
+            .join(' ') : '';
     }
 
     protected register()

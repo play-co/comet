@@ -7,12 +7,12 @@ import { ModelSchema } from '../../model/schema';
 import { VariantModel } from '../../model/variantModel';
 import { type Clonable, CloneInfo, CloneMode } from '../cloneInfo';
 import { getAllCloned, getDependants, getDependencies, getRestoreDependencies } from '../cloneUtils';
-import { sortNodesByDepth } from '../const';
 import type {
     CustomProperty,
     CustomPropertyType,
     CustomPropertyValueType,
 } from '../customProperties';
+import { sortNodesByDepth } from '../nodeUtils';
 import { GraphNode } from './graphNode';
 import type { MetaNode } from './metaNode';
 

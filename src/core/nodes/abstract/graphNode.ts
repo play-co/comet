@@ -1,4 +1,4 @@
-import { type WalkOptions, type WalkReturnData, defaultWalkOptions } from '../const';
+import { type WalkOptions, type WalkReturnData, defaultWalkOptions } from '../nodeUtils';
 import { newId } from '../instances';
 import type { ClonableNode } from './clonableNode';
 

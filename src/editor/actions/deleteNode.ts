@@ -14,7 +14,7 @@ export class DeleteNodeAction extends Action<DeleteNodeOptions>
     constructor()
     {
         super('deleteNode', {
-            hotkey: 'backspace,delete,del',
+            hotkey: 'del,backspace,delete',
         });
     }
 

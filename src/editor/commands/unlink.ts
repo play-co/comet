@@ -1,6 +1,6 @@
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import { CloneInfo } from '../../core/nodes/cloneInfo';
-import { sortNodesByDepth } from '../../core/nodes/const';
+import { sortNodesByDepth } from '../../core/nodes/nodeUtils';
 import { type NodeSchema, getCloneInfoSchema, getNodeSchema } from '../../core/nodes/schema';
 import { Command } from '../core/command';
 

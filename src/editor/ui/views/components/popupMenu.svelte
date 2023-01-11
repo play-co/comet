@@ -182,6 +182,9 @@
           <div class="iconMargin" />
         {/if}
         <span class="label">{item.label}</span>
+        {#if item.action}
+          <span class="shortcut">{item.action.printShortcut()}</span>
+        {/if}
         {#if item.menu && active === item}
           <svelte:self on:select {event} menu={item.menu} target={container} isSubMenu={true} />
         {/if}
@@ -218,6 +221,8 @@
     cursor: default;
     color: #b7b7b7;
     user-select: none;
+    align-items: center;
+    justify-content: space-between;
   }
 
   menu-item:hover,
@@ -262,5 +267,10 @@
     width: 16px;
     margin-right: 5px;
     pointer-events: none;
+  }
+
+  .shortcut {
+    font-size: 10px;
+    opacity: 0.75;
   }
 </style>

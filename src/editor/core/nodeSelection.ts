@@ -1,51 +1,5 @@
 import type { ClonableNode } from '../../core';
-
-export function isSiblingOf(targetNode: ClonableNode, nodes: ClonableNode[])
-{
-    return nodes.some((node) => node.isSiblingOf(targetNode));
-}
-
-export function groupSiblings(nodes: ClonableNode[])
-{
-    type Group = {
-        depth: number;
-        nodes: ClonableNode[];
-    };
-
-    const siblings: Group[] = [];
-
-    for (let i = 0; i < nodes.length; i++)
-    {
-        const sourceNode = nodes[i];
-        const group: Group = { depth: sourceNode.getDepth(), nodes: [sourceNode] };
-
-        siblings.push(group);
-
-        for (let j = 0; j < nodes.length; j++)
-        {
-            const targetNode = nodes[j];
-
-            if (sourceNode.isSiblingOf(targetNode) && sourceNode !== targetNode)
-            {
-                group.nodes.push(targetNode);
-            }
-        }
-    }
-
-    siblings.sort((a, b) =>
-    {
-        if (a.nodes.length !== b.nodes.length)
-        {
-            return b.nodes.length - a.nodes.length;
-        }
-
-        return a.depth - b.depth;
-    });
-
-    console.log(siblings[0], siblings);
-
-    return siblings[0].nodes;
-}
+import { groupSiblings, isSiblingOf } from '../../core/nodes/nodeUtils';
 
 export abstract class NodeSelection<T extends ClonableNode>
 {
