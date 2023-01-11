@@ -84,11 +84,6 @@ export class CloneInfo
         return this.cloner !== undefined;
     }
 
-    public get hasCloned()
-    {
-        return this.cloned.length > 0;
-    }
-
     public get isOriginal()
     {
         return this.cloneMode === CloneMode.Original;
@@ -199,6 +194,11 @@ export class CloneInfo
         }
 
         return this;
+    }
+
+    public hasCloned(cloned: Clonable)
+    {
+        return this.cloned.indexOf(cloned) > -1;
     }
 
     public forEachCloned<T>(fn: (clone: T) => void)

@@ -14,6 +14,8 @@ import { NodeTreeModel } from './components/nodeTreeModel';
 import type { TreeItem } from './components/treeModel';
 import { Icons } from './icons';
 
+export type AssetCreationType = `texture` | `prefab`;
+
 export class ProjectTree extends NodeTreeModel<ProjectSelection>
 {
     constructor()
@@ -170,15 +172,32 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
         }
     }
 
+    protected getAssetType(node: ClonableNode): AssetCreationType
+    {
+        const app = getApp();
+
+        if (node.is(TextureAssetNode))
+        {
+            return 'texture';
+        }
+        else if (app.project.getRootFolder('Prefabs').contains(node))
+        {
+            return 'prefab';
+        }
+
+        throw new Error(`Unknown asset type for node ${node.id}`);
+    }
+
     protected onItemDragEnd = ({ focusAreaId, item, event }: typeof Events.itemDrag.endDrag.type) =>
     {
         if (focusAreaId === 'viewport')
         {
             const app = getApp();
             const node = item as ClonableNode;
+            const assetType = this.getAssetType(node);
             const viewportLocalPos = app.viewport.getMouseLocalPoint(event);
-            let parentId: string | undefined;
             const precision = app.gridSettings.precision;
+            let parentId: string | undefined;
 
             let x = viewportLocalPos.x;
             let y = viewportLocalPos.y;
@@ -187,13 +206,18 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
 
             if (app.selection.hierarchy.hasSelection)
             {
-                const targetNode = app.selection.hierarchy.firstItem.cast<DisplayObjectNode>();
-                // const root = targetNode.getRootNode();
+                let targetNode = app.selection.hierarchy.firstItem.cast<DisplayObjectNode>();
 
-                // if (root.isReferencingNode(node))
-                // {
-                //     targetNode = root.parent as DisplayObjectNode;
-                // }
+                if (assetType === 'prefab')
+                {
+                    // ensure that the prefab is not created within itself
+                    const root = targetNode.getRootNode();
+
+                    if (node.cloneInfo.hasCloned(root) || root.cloneInfo.cloner === node)
+                    {
+                        targetNode = root.parent as DisplayObjectNode;
+                    }
+                }
 
                 const mousePos = app.viewport.getMousePos(event.clientX, event.clientY);
                 const localPoint = targetNode.globalToLocal(mousePos.x, mousePos.y);
@@ -207,7 +231,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
             x = round(x, precision);
             y = round(y, precision);
 
-            if (node.is(TextureAssetNode))
+            if (assetType === 'texture')
             {
                 Actions.newSprite.dispatch({
                     parentId,
@@ -218,7 +242,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
                         tint: 0xffffff,
                     } });
             }
-            else if (app.project.getRootFolder('Prefabs').contains(node))
+            else if (assetType === 'prefab')
             {
                 Actions.createPrefabInstance.dispatch({
                     clonerId: node.id,

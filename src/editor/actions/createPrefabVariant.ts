@@ -17,8 +17,12 @@ export class CreatePrefabVariantAction extends Action<CreatePrefabVariantOptions
     public shouldRun(): boolean
     {
         const app = getApp();
+        const selection = app.selection.project;
+        const prefabFolder = app.project.getRootFolder('Prefabs');
 
-        return super.shouldRun() && app.isAreaFocussed('project');
+        return super.shouldRun()
+         && selection.hasSelection
+          && prefabFolder.contains(selection.firstItem);
     }
 
     protected exec(options: CreatePrefabVariantOptions): ClonableNode

@@ -49,6 +49,7 @@
     width: 100%;
     height: 26px;
     margin-bottom: 5px;
+    align-items: center;
   }
 
   :global(properties-panel property-row.single) {
