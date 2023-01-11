@@ -108,6 +108,10 @@
     flex-direction: row;
     align-items: center;
     position: relative;
+    height: 24px;
+    transition: opacity 0.15s ease-out, height 0.15s ease-out;
+    opacity: 1;
+    overflow: hidden;
   }
 
   .tree-item.selected {
@@ -123,7 +127,8 @@
   }
 
   .tree-item.hidden {
-    display: none;
+    height: 0;
+    opacity: 0;
   }
 
   .tree-item span {

@@ -1,5 +1,52 @@
 import type { ClonableNode } from '../../core';
 
+export function isSiblingOf(targetNode: ClonableNode, nodes: ClonableNode[])
+{
+    return nodes.some((node) => node.isSiblingOf(targetNode));
+}
+
+export function groupSiblings(nodes: ClonableNode[])
+{
+    type Group = {
+        depth: number;
+        nodes: ClonableNode[];
+    };
+
+    const siblings: Group[] = [];
+
+    for (let i = 0; i < nodes.length; i++)
+    {
+        const sourceNode = nodes[i];
+        const group: Group = { depth: sourceNode.getDepth(), nodes: [sourceNode] };
+
+        siblings.push(group);
+
+        for (let j = 0; j < nodes.length; j++)
+        {
+            const targetNode = nodes[j];
+
+            if (sourceNode.isSiblingOf(targetNode) && sourceNode !== targetNode)
+            {
+                group.nodes.push(targetNode);
+            }
+        }
+    }
+
+    siblings.sort((a, b) =>
+    {
+        if (a.nodes.length !== b.nodes.length)
+        {
+            return b.nodes.length - a.nodes.length;
+        }
+
+        return a.depth - b.depth;
+    });
+
+    console.log(siblings[0], siblings);
+
+    return siblings[0].nodes;
+}
+
 export abstract class NodeSelection<T extends ClonableNode>
 {
     public readonly items: T[];
@@ -40,19 +87,23 @@ export abstract class NodeSelection<T extends ClonableNode>
             this.deselect();
         }
 
-        if (Array.isArray(item))
-        {
-            this.items.length = 0;
-            this.items.push(...item);
+        const items = Array.isArray(item) ? item : [item];
 
+        this.items.length = 0;
+
+        const siblings = groupSiblings(items);
+
+        this.items.push(...siblings as T[]);
+
+        if (items.length > 1)
+        {
+            // set multi
             this.onSetMulti(this.items);
         }
         else
         {
-            this.items.length = 0;
-            this.items.push(item);
-
-            this.onSetSingle(item);
+            // set single
+            this.onSetSingle(items[0]);
         }
 
         (window as any)[this.debugId] = this.firstItem;
@@ -60,10 +111,20 @@ export abstract class NodeSelection<T extends ClonableNode>
 
     public add(item: T)
     {
-        this.items.push(item);
-        (window as any)[this.debugId] = item;
+        const isSibling = isSiblingOf(item, this.items);
 
-        this.onAdd(item);
+        if (isSibling)
+        {
+            this.items.push(item);
+            this.onAdd(item);
+        }
+        else
+        {
+            this.set(item);
+        }
+
+        // todo: remove this, only for debugging
+        (window as any)[this.debugId] = item;
     }
 
     public remove(item: T)

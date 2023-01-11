@@ -26,7 +26,8 @@
 # WIP TODO:
 
 High Priority
-* Container new container creates 0.1 scale?
+* Gizmo rotation
+* Gizmo multi-selection only updates schema props with ownValue: true
 * Copy paste
     - Paste logic needs tightening:
         - need to support prefab instances (currently only duplicate)

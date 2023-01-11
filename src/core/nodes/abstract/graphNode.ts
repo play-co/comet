@@ -35,6 +35,20 @@ export abstract class GraphNode
         return this.parent ? this.parent.indexOf(this) : -1;
     }
 
+    public getDepth()
+    {
+        let parent = this.parent;
+        let depth = 0;
+
+        while (parent)
+        {
+            depth++;
+            parent = parent.parent;
+        }
+
+        return depth;
+    }
+
     public getChildren<T extends GraphNode = GraphNode>()
     {
         return this.children as unknown as T[];
@@ -81,7 +95,7 @@ export abstract class GraphNode
         return this.parent as unknown as T;
     }
 
-    public getParents<T extends GraphNode>(breakType = Function, includeBreak = false): T[]
+    public getParents<T extends GraphNode>(breakType = GraphNode, includeBreak = false): T[]
     {
         const nodes: T[] = [];
 
@@ -95,8 +109,10 @@ export abstract class GraphNode
                 {
                     nodes.push(node as unknown as T);
                 }
+
                 break;
             }
+
             nodes.push(node as unknown as T);
             node = node.parent;
         }
@@ -213,12 +229,7 @@ export abstract class GraphNode
 
     public isSiblingOf(node: GraphNode)
     {
-        if (this.parent)
-        {
-            return this.parent.children.indexOf(node) > -1;
-        }
-
-        return false;
+        return this.parent === node.parent;
     }
 
     public removeChild(node: GraphNode)
