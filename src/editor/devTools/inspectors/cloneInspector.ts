@@ -19,13 +19,12 @@ export interface CloneInfo
     cloneTarget: string;
     cloneDesc: string;
     cloneAnc: string;
-    cloneTreeAnc: string;
     dependants: string;
     dependencies: string;
     restoreDeps: string;
 }
 
-export interface CloneDetail extends Omit<CloneInfo, 'cloneTreeAnc' | 'dependants' | 'dependencies' | 'restoreDeps'>
+export interface CloneDetail extends Omit<CloneInfo, 'dependants' | 'dependencies' | 'restoreDeps'>
 {
     $: ClonableNode;
     _isCloaked: boolean;
@@ -71,7 +70,6 @@ export class CloneInspector extends DevInspector<CloneDetail>
             cloneTarget: node.getCloneTarget().id,
             cloneAnc: ids(node.getCloneAncestors()),
             cloneDesc: ids(node.getClonedDescendants()),
-            cloneTreeAnc: ids(node.getCloneTreeAncestors()),
             dependants: ids(node.getDependants()),
             dependencies: ids(node.getDependencies()),
             restoreDeps: ids(node.getRestoreDependencies()),
@@ -87,7 +85,6 @@ export class CloneInspector extends DevInspector<CloneDetail>
         {
             const cloneInfo = this.getCloneInfo(node) as any;
 
-            delete cloneInfo.cloneTreeAnc;
             delete cloneInfo.dependants;
             delete cloneInfo.dependencies;
             delete cloneInfo.restoreDeps;
@@ -174,15 +171,10 @@ export class CloneInspector extends DevInspector<CloneDetail>
         return 'id';
     }
 
-    protected onClickRow(row: Row)
+    protected onClickRow(row: Row, e: MouseEvent)
     {
         const app = getApp();
-        const value = this.getRowValue(row);
-
-        if (value)
-        {
-            console.log(this.getCloneInfo(value));
-        }
+        const value = super.onClickRow(row, e);
 
         if (value && app.viewport.rootNode.contains(value))
         {

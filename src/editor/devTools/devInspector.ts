@@ -237,7 +237,7 @@ export abstract class DevInspector<T extends Record<string, any> >
                     {
                         if (y >= renderY && y < renderY + this.table.rowHeight)
                         {
-                            this.onClickRow(row);
+                            this.onClickRow(row, e);
 
                             break;
                         }
@@ -263,11 +263,11 @@ export abstract class DevInspector<T extends Record<string, any> >
         return row.get('$')?.value;
     }
 
-    protected onClickRow(row: Row): any
+    protected onClickRow(row: Row, e: MouseEvent): any
     {
         const value = this.getRowValue(row);
 
-        if (value)
+        if (value && e.altKey)
         {
             console.log(value);
         }

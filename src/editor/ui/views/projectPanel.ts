@@ -193,8 +193,8 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
         if (focusAreaId === 'viewport')
         {
             const app = getApp();
-            const node = item as ClonableNode;
-            const assetType = this.getAssetType(node);
+            const assetNode = item as ClonableNode;
+            const assetType = this.getAssetType(assetNode);
             const viewportLocalPos = app.viewport.getMouseLocalPoint(event);
             const precision = app.gridSettings.precision;
             let parentId: string | undefined;
@@ -212,8 +212,10 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
                 {
                     // ensure that the prefab is not created within itself
                     const root = targetNode.getRootNode();
+                    const assetOriginal = assetNode.getOriginal();
+                    const cloneDescendants = assetOriginal.getClonedDescendants();
 
-                    if (node.cloneInfo.hasCloned(root) || root.cloneInfo.cloner === node)
+                    if (cloneDescendants.indexOf(root) > -1 || root.cloneInfo.cloner === assetNode)
                     {
                         targetNode = root.parent as DisplayObjectNode;
                     }
@@ -238,14 +240,14 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
                     model: {
                         x,
                         y,
-                        textureAssetId: node.id,
+                        textureAssetId: assetNode.id,
                         tint: 0xffffff,
                     } });
             }
             else if (assetType === 'prefab')
             {
                 Actions.createPrefabInstance.dispatch({
-                    clonerId: node.id,
+                    clonerId: assetNode.id,
                     parentId,
                     model: {
                         x,

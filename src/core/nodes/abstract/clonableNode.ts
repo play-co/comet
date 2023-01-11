@@ -536,25 +536,6 @@ export abstract class ClonableNode<
         return array;
     }
 
-    public getCloneTreeAncestors(): ClonableNode[]
-    {
-        const nodes = this.getCloneAncestors();
-        const array: ClonableNode[] = [];
-
-        nodes.splice(0, 0, this.cast());
-        nodes.forEach((node) =>
-        {
-            const parents = node.getParents<ClonableNode>();
-
-            parents.push(node);
-            parents.reverse();
-
-            array.push(...parents);
-        });
-
-        return array;
-    }
-
     /**
      * return the nodes which depend on this node, eg. clones or children
      * @returns array of nodes
