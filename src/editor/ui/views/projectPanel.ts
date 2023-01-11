@@ -212,10 +212,8 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
                 {
                     // ensure that the prefab is not created within itself
                     const root = targetNode.getRootNode();
-                    const assetOriginal = assetNode.getOriginal();
-                    const cloneDescendants = assetOriginal.getClonedDescendants();
 
-                    if (cloneDescendants.indexOf(root) > -1 || root.cloneInfo.cloner === assetNode)
+                    if (assetNode.hasCloned(root))
                     {
                         targetNode = root.parent as DisplayObjectNode;
                     }

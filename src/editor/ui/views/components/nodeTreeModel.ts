@@ -121,8 +121,6 @@ export abstract class NodeTreeModel<
 
         return targetNode !== sourceNode.parent
             && !sourceNode.contains(targetNode);
-
-        return false;
     }
 
     protected onEditAccept(value: string, item: TreeItem<ClonableNode>)

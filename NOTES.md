@@ -27,8 +27,8 @@
 
 High Priority
 * Prefab
-    - Ensure reparenting doesn't nest prefabs
     - Remove child rewrite
+* Container new container creates 0.1 scale?
 * Copy paste
     - Paste logic needs tightening:
         - need to support prefab instances (currently only duplicate)

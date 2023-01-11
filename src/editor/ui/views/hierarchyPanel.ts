@@ -88,6 +88,20 @@ export class HierarchyTree extends NodeTreeModel<HierarchySelection>
         return Application.instance.isAreaFocussed('hierarchy');
     }
 
+    protected canReParentTarget(target: TreeItem<ClonableNode>)
+    {
+        const sourceNode = this.selection.firstItem.getRootNode();
+        const targetNode = target.data;
+        const sourceRootNode = sourceNode.getRootNode();
+        const targetRootNode = targetNode.getRootNode();
+        const isRefRoot = sourceRootNode.cloneInfo.isReferenceRoot;
+        const hasSameRoot = sourceRootNode === targetRootNode;
+        const superCanParent = super.canReParentTarget(target);
+
+        return hasSameRoot ? superCanParent
+            : !isRefRoot && superCanParent;
+    }
+
     protected onHintReParentTarget(sourceObject: ClonableNode, targetObject: ClonableNode | undefined): void
     {
         const app = getApp();

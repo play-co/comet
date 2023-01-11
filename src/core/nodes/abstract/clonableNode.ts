@@ -536,6 +536,14 @@ export abstract class ClonableNode<
         return array;
     }
 
+    public hasCloned(targetNode: ClonableNode)
+    {
+        const original = this.getOriginal();
+        const cloneDescendants = original.getClonedDescendants();
+
+        return cloneDescendants.indexOf(targetNode) > -1 || targetNode.cloneInfo.cloner === this;
+    }
+
     /**
      * return the nodes which depend on this node, eg. clones or children
      * @returns array of nodes
