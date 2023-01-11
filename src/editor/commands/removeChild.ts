@@ -48,10 +48,8 @@ export class RemoveChildCommand
             });
         });
 
-        const clonerNodesNeedingUpdate = nodes.filter((node) =>
-            node.cloneInfo.cloner
-        && datastore.hasNode(node.id))
-            .map((node) => [node, node.cloneInfo.getCloner<ClonableNode>()]);
+        const clonerNodesNeedingUpdate = nodes.filter((node) => node.cloneInfo.cloner && datastore.hasNode(node.id))
+            .map((node) => [node, node.cloneInfo.getCloner() as ClonableNode]);
 
         if (clonerNodesNeedingUpdate.length > 0)
         {
@@ -60,6 +58,7 @@ export class RemoveChildCommand
                 clonerNodesNeedingUpdate.forEach((nodeWithCloner) =>
                 {
                     const [node, cloner] = nodeWithCloner;
+
                     const cloneInfoSchema = cloner.cloneInfo.clone().removeCloned(node).toSchema();
 
                     datastore.updateCloneInfo(cloner.id, cloneInfoSchema);

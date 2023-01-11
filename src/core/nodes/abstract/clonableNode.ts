@@ -7,7 +7,7 @@ import { ModelSchema } from '../../model/schema';
 import { VariantModel } from '../../model/variantModel';
 import { type Clonable, CloneInfo, CloneMode } from '../cloneInfo';
 import { getAllCloned, getDependants, getDependencies, getRestoreDependencies } from '../cloneUtils';
-import { sortNodesByCreationId, sortNodesByDepth } from '../const';
+import { sortNodesByDepth } from '../const';
 import type {
     CustomProperty,
     CustomPropertyType,
@@ -510,8 +510,7 @@ export abstract class ClonableNode<
             nodes.push(...getAllCloned(this as unknown as ClonableNode));
         }
 
-        // sortNodesByDepth(nodes);
-        sortNodesByCreationId(nodes);
+        sortNodesByDepth(nodes);
 
         return nodes;
     }

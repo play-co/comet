@@ -26,8 +26,6 @@
 # WIP TODO:
 
 High Priority
-* Prefab
-    - Remove child rewrite
 * Container new container creates 0.1 scale?
 * Copy paste
     - Paste logic needs tightening:
