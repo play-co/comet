@@ -12,6 +12,7 @@
   let isReady = false;
 
   onMount(() => {
+    // show the splash
     // Events.dialog.modal.open.emit("splash");
 
     Events.project.ready.bind(() => {

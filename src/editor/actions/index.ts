@@ -17,6 +17,7 @@ import { RedoAction } from './redo';
 import { ResetModelAction } from './resetModel';
 import { SelectAllAction } from './selectAll';
 import { UndoAction } from './undo';
+import { UnlinkAction } from './unlink';
 
 export const Actions = {
     importTexture: new ImportTextureAction(),
@@ -38,4 +39,5 @@ export const Actions = {
     copy: new CopyAction(),
     paste: new PasteAction(),
     resetModel: new ResetModelAction(),
+    unlink: new UnlinkAction(),
 };

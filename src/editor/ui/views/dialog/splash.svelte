@@ -31,7 +31,7 @@
 </script>
 
 <dialog-splash on:click={onClick} on:click={onClick} class:isReady>
-  <img src="/assets/logo.png" alt="Comet" transition:scale={{ duration: 800, easing: backOut }} />
+  <img src="/assets/logo.png" alt="Comet" transition:scale={{ duration: 500, easing: backOut }} />
   <div class="message">{message}</div>
   <div class="info">version: pre-alpha</div>
 </dialog-splash>

@@ -26,6 +26,11 @@
         label: "Reset Model",
         onClick: () => Actions.resetModel.dispatch(),
       },
+      {
+        id: "unlink",
+        label: "Unlink",
+        onClick: () => Actions.unlink.dispatch(),
+      },
     ],
     (item) => {
       const app = getApp();
