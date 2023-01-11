@@ -42,22 +42,27 @@ export const displayObjectSchema = new ModelSchema<DisplayObjectModel>({
     skewX: {
         defaultValue: 0,
         category: 'transform',
+        ownValue: true,
     },
     skewY: {
         defaultValue: 0,
         category: 'transform',
+        ownValue: true,
     },
     scaleX: {
         defaultValue: 1,
         category: 'transform',
+        ownValue: true,
     },
     scaleY: {
         defaultValue: 1,
         category: 'transform',
+        ownValue: true,
     },
     angle: {
         defaultValue: 0,
         category: 'transform',
+        ownValue: true,
     },
     alpha: {
         defaultValue: 1,

@@ -44,7 +44,7 @@
 
   .message {
     flex-grow: 1;
-    color: #90b7c1;
+    color: #7d7d7d;
     padding-left: 10px;
     margin-right: 10px;
   }
