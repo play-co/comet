@@ -203,6 +203,7 @@
     flex-direction: column;
     white-space: nowrap;
     box-shadow: 5px 5px 5px #00000045;
+    border: 1px outset #4545458a;
   }
 
   popup-menu.submenu {
@@ -215,7 +216,6 @@
     display: flex;
     align-items: center;
     position: relative;
-    border: 1px outset #4545458a;
     padding: 0 10px;
     font-size: 12px;
     cursor: default;

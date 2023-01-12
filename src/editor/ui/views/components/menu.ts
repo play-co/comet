@@ -16,6 +16,11 @@ export interface MenuItem
 
 export type RefreshCallback = (item: MenuItem, index: number, array: MenuItem[]) => false | void;
 
+export const separator: MenuItem = {
+    label: '-',
+    style: 'separator',
+};
+
 export class Menu
 {
     protected items: MenuItem[];

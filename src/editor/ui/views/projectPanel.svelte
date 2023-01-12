@@ -10,17 +10,16 @@
   import { FolderNode } from "../../../core/nodes/concrete/meta/folderNode.js";
   import { onMount } from "svelte";
   import { DropZone } from "../components/dropzone";
-  import { Menu } from "./components/menu.js";
   import { SceneNode } from "../../../core/nodes/concrete/meta/sceneNode.js";
   import FocusArea from "./components/focusArea.svelte";
   import { Icons } from "./icons";
   import type { MetaNode } from "../../../core/nodes/abstract/metaNode.js";
+  import { projectMenu } from "../menus/projectMenu.js";
 
   const app = Application.instance;
   const dropZone = new DropZone("project");
   const tree = new ProjectTree();
   const selection = app.selection.project;
-  const project = app.project;
   let orientation: "horizontal" | "vertical" = "vertical";
 
   let container: HTMLDivElement;
@@ -75,77 +74,6 @@
     });
   };
 
-  const onNewAssetFolder = () => {
-    Actions.newFolder.dispatch();
-  };
-
-  const onDeleteAssetNode = () => {
-    const node = selection.firstItem;
-    if (app.project.getRootFolder("Textures").contains(node)) {
-      Actions.deleteTexture.dispatch({ nodeId: node.id });
-    } else if (app.project.getRootFolder("Prefabs").contains(node)) {
-      Actions.deletePrefab.dispatch({ nodeId: node.id });
-    }
-  };
-
-  const onCreateVariant = () => {
-    Actions.createPrefabVariant.dispatch({ nodeId: selection.firstItem.id });
-  };
-
-  const treeMenu = new Menu(
-    [
-      {
-        id: "newFolder",
-        label: "New Folder",
-        onClick: onNewAssetFolder,
-      },
-      {
-        id: "delete",
-        label: "Delete",
-        onClick: onDeleteAssetNode,
-      },
-      {
-        id: "createVariant",
-        label: "Create Variant",
-        onClick: onCreateVariant,
-      },
-    ],
-    (item) => {
-      const { id } = item;
-
-      if (!app.project.isReady) {
-        return;
-      }
-
-      if (id === "newFolder") {
-        item.isHidden = !(selection.isSingle && selection.isSelected(FolderNode));
-      } else if (id === "delete") {
-        item.isHidden = false;
-        if (!selection.hasSelection) {
-          // no items selected, item is disabled
-          item.isHidden = true;
-        } else {
-          // check whether item is root folder or last scene
-          const node = selection.firstItem;
-          if (
-            (node.is(FolderNode) && node.cast<FolderNode>().isRootFolder()) ||
-            (node.is(SceneNode) &&
-              project.getRootFolder("Scenes").getAllChildrenByType(SceneNode).length === 1)
-          ) {
-            // hide if root folder or last scene
-            item.isHidden = true;
-          }
-        }
-      } else if (item.id === "createVariant") {
-        const node = selection.firstItem;
-        item.isHidden = true;
-        if (app.project.getRootFolder("Prefabs").contains(node) && !node.is(FolderNode)) {
-          item.isHidden = false;
-        }
-      }
-    }
-  );
-
   const onKeyDown = (e: CustomEvent) => {
     const {
       detail: { key },
@@ -162,7 +90,7 @@
       <div class="container" class:horizontal={orientation === "horizontal"} bind:this={container}>
         <div class="tree">
           <ButtonBar size="small" items={buttons} update={onButtonUpdater} />
-          <TreeView bind:this={treeView} {tree} menu={treeMenu} cssClass="project" />
+          <TreeView bind:this={treeView} {tree} menu={projectMenu} cssClass="project" />
         </div>
         <div class="preview">
           <ProjectPreview />

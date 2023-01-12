@@ -26,8 +26,6 @@
 # WIP TODO:
 
 High Priority
-* Gizmo rotation?
-* Gizmo multi-selection broken?
 * Copy paste
     - Paste logic needs tightening:
         - need to support prefab instances (currently only duplicate)

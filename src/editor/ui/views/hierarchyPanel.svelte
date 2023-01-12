@@ -3,7 +3,7 @@
   import Panel from "./components/panel.svelte";
   import TreeView from "./components/treeView.svelte";
   import FocusArea from "./components/focusArea.svelte";
-  import { spriteMenu } from "./viewport.svelte";
+  import { spriteMenu } from "../menus/spriteMenu.js";
 
   const tree = new HierarchyTree();
 
