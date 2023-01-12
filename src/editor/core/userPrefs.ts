@@ -26,6 +26,7 @@ export interface UserEditPrefs
 {
     viewportRoot: string;
     colorPickerMode: 'hex' | 'rgb' | 'hsv';
+    showGrid: boolean;
 }
 
 export interface DevInspectorPrefs
@@ -192,6 +193,7 @@ export function getUserEditPrefs()
     return {
         viewportRoot: app.view.rootNode.id,
         colorPickerMode: app.colorPickerMode,
+        showGrid: app.gridSettings.visible,
     } as UserEditPrefs;
 }
 

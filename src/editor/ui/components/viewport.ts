@@ -33,6 +33,8 @@ export class EditableViewport
     {
         this.rootNode = blankNode;
 
+        const app = getApp();
+
         const pixi = this.pixi = new PixiApplication({
             backgroundColor: 0x111111,
         });
@@ -43,6 +45,8 @@ export class EditableViewport
         canvas.classList.add('hide-viewport');
 
         const grid = this.grid = new Grid(canvas);
+
+        grid.visible = app.gridSettings.visible;
 
         pixi.stage.addChild(grid);
 
@@ -68,8 +72,6 @@ export class EditableViewport
         const boxSelection = this.boxSelection = new BoxSelection();
 
         editLayer.addChild(boxSelection);
-
-        const app = getApp();
 
         app.statusBar.addItem('x.label', { text: 'x:' });
         app.statusBar.addItem('x.value', { style: 'value', text: ' ', width: 60 });

@@ -52,9 +52,11 @@ export type TextureAssetSchema = StoredAssetSchema<{
     wrapMode: WRAP_MODES;
 }>;
 
-export interface ProjectFileSchema
+export interface ProjectSchema
 {
     id: string;
+    name: string;
+    created: number;
     version: string;
     nodes: Record<string, NodeSchema<any>>;
     root: id;
@@ -100,7 +102,7 @@ export function createNodeSchema<M extends ModelBase>(type: string, nodeOptions:
     return schema;
 }
 
-export function createProjectSchema(name: string): ProjectFileSchema
+export function createProjectSchema(name: string): ProjectSchema
 {
     const project = createNodeSchema('Project', { model: { name } });
 
@@ -115,6 +117,8 @@ export function createProjectSchema(name: string): ProjectFileSchema
 
     return {
         id: name,
+        name,
+        created: Date.now(),
         version,
         nodes: {
             [project.id]: project,

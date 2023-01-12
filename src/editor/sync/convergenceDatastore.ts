@@ -15,7 +15,7 @@ import { consolidateId, getInstance } from '../../core/nodes/instances';
 import type {
     CloneInfoSchema,
     NodeSchema,
-    ProjectFileSchema,
+    ProjectSchema,
 } from '../../core/nodes/schema';
 import { createProjectSchema } from '../../core/nodes/schema';
 import { Application } from '../core/application';
@@ -257,10 +257,10 @@ export class ConvergenceDatastore extends DatastoreBase<RealTimeObject, IConverg
 
     public toProjectSchema()
     {
-        return this.model.root().toJSON() as ProjectFileSchema;
+        return this.model.root().toJSON() as ProjectSchema;
     }
 
-    public fromProjectSchema(schema: ProjectFileSchema)
+    public fromProjectSchema(schema: ProjectSchema)
     {
         this.model.root().value(schema);
     }

@@ -1,12 +1,22 @@
 <script lang="ts">
-  import type { PropertiesPanel } from "../../propertiesPanel";
   import PropertyPanel from "./panelGroup.svelte";
+  import CheckboxControl from "../propertyControls/checkboxControl.svelte";
+  import { saveUserEditPrefs } from "../../../../core/userPrefs";
+  import { getApp } from "../../../../core/application";
 
-  export let panel: PropertiesPanel;
+  const app = getApp();
+
+  const onVisibleChange = (e: CustomEvent) => {
+    getApp().showGrid(e.detail);
+    saveUserEditPrefs();
+  };
 </script>
 
 <PropertyPanel title="Grid">
-  <p>todo...{String(panel) ? "" : ""}</p>
+  <property-row>
+    <property-label>visible</property-label>
+    <CheckboxControl checked={app.gridSettings.visible} on:change={onVisibleChange} />
+  </property-row>
 </PropertyPanel>
 
 <style>

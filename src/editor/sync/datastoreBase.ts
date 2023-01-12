@@ -1,6 +1,6 @@
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
 import type { CustomPropertyType, CustomPropertyValueType } from '../../core/nodes/customProperties';
-import type { CloneInfoSchema, NodeSchema, ProjectFileSchema } from '../../core/nodes/schema';
+import type { CloneInfoSchema, NodeSchema, ProjectSchema } from '../../core/nodes/schema';
 
 export interface Datastore
 {
@@ -19,8 +19,8 @@ export interface Datastore
     deleteProject: (name: string) => Promise<void>;
     hydrate: () => ClonableNode;
     reset: () => void;
-    toProjectSchema: () => ProjectFileSchema;
-    fromProjectSchema: (schema: ProjectFileSchema) => void;
+    toProjectSchema: () => ProjectSchema;
+    fromProjectSchema: (schema: ProjectSchema) => void;
     getProjectId: () => string;
 }
 
@@ -84,8 +84,8 @@ implements Datastore, DatastoreCommandProvider, DatastoreChangeEventHandler<Remo
     public abstract deleteProject(name: string): Promise<void>;
     public abstract hydrate(): ClonableNode;
     public abstract reset(): void;
-    public abstract toProjectSchema(): ProjectFileSchema;
-    public abstract fromProjectSchema(schema: ProjectFileSchema): void;
+    public abstract toProjectSchema(): ProjectSchema;
+    public abstract fromProjectSchema(schema: ProjectSchema): void;
     public abstract getProjectId(): string;
 
     // command API

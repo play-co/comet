@@ -1,17 +1,18 @@
 <script lang="ts">
-  import type { PropertiesPanel } from "../../propertiesPanel";
   import PropertyPanel from "./panelGroup.svelte";
-
-  export let panel: PropertiesPanel;
 </script>
 
 <PropertyPanel title="Project">
-  <p>todo...{String(panel) ? "" : ""}</p>
+  <property-row>
+    <property-label>name</property-label>
+    <input type="text" class="name" />
+  </property-row>
 </PropertyPanel>
 
 <style>
-  p {
-    color: #666;
-    font-style: italic;
+  .name {
+    grid-column-end: 5;
+    grid-column-start: 2;
+    display: grid;
   }
 </style>

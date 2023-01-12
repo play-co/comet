@@ -49,6 +49,7 @@ export type AppOptions = {};
 
 export interface GridSettings
 {
+    visible: boolean;
     precision: number;
     bigUnit: number;
     mediumUnit: number;
@@ -56,6 +57,7 @@ export interface GridSettings
 }
 
 export const defaultGridSettings: GridSettings = {
+    visible: true,
     precision: 2,
     bigUnit: 100,
     mediumUnit: 50,
@@ -118,6 +120,8 @@ export class Application
         this.gridSettings = {
             ...defaultGridSettings,
         };
+
+        this.initUserEditPrefs();
 
         this.clipboard = [];
         this.focusArea = null;
@@ -262,7 +266,10 @@ export class Application
         this.view.setRoot(root, false);
 
         // allow main layout fade time to start
-        delay(100).then(() => this.initPersistentSelection());
+        delay(100).then(() =>
+        {
+            this.initSelectionPrefs();
+        });
     }
 
     public clear()
@@ -297,14 +304,14 @@ export class Application
         });
     }
 
-    protected initPersistentSelection()
+    protected initSelectionPrefs()
     {
-        const prefs = loadPrefs<UserSelectionPrefs>('selection');
+        const selectionPrefs = loadPrefs<UserSelectionPrefs>('selection');
 
         // load selection prefs if found
-        if (prefs)
+        if (selectionPrefs)
         {
-            const { hierarchy, project } = prefs;
+            const { hierarchy, project } = selectionPrefs;
 
             hierarchy.forEach((id) =>
             {
@@ -337,6 +344,19 @@ export class Application
 
         // listen to selection events
         Events.$('selection.', () => saveUserSelectionPrefs());
+    }
+
+    protected initUserEditPrefs()
+    {
+        const editPrefs = loadPrefs<UserEditPrefs>('edit');
+
+        // load selection prefs if found
+        if (editPrefs)
+        {
+            const { showGrid } = editPrefs;
+
+            this.gridSettings.visible = showGrid;
+        }
     }
 
     protected initDevInspectors()
@@ -524,6 +544,12 @@ export class Application
 
         tool.select();
         Events.tool.select.emit(tool);
+    }
+
+    public showGrid(visible: boolean)
+    {
+        this.gridSettings.visible = visible;
+        this.view.grid.visible = visible;
     }
 }
 
