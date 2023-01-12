@@ -76,7 +76,7 @@ export class CreatePrefabAssetCommand
 
         for (const [key, propDesc] of Object.entries(schema.properties))
         {
-            if (!(propDesc as PropertyDescriptor<unknown>).ownValue && values[key] !== undefined)
+            if (!(propDesc as PropertyDescriptor<unknown>).isRootValue && values[key] !== undefined)
             {
                 delete values[key];
             }

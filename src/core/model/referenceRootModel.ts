@@ -12,7 +12,7 @@ export class ReferenceRootModel<M> extends Model<M>
     {
         const propDesc = this.schema.properties[key];
 
-        if (propDesc.ownValue === true)
+        if (propDesc.isRootValue === true)
         {
             super.setValue(key, newValue);
         }
@@ -28,7 +28,7 @@ export class ReferenceRootModel<M> extends Model<M>
     {
         const propDesc = this.schema.properties[key];
 
-        if (propDesc.ownValue === true)
+        if (propDesc.isRootValue === true)
         {
             return this.owner.cast<ClonableNode>();
         }

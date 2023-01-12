@@ -26,7 +26,7 @@ export const clonableNodeSchema = new ModelSchema<ClonableNodeModel>({
     name: {
         defaultValue: '',
         category: 'node',
-        ownValue: true,
+        isRootValue: true,
     },
 });
 

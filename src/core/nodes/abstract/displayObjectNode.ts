@@ -24,12 +24,12 @@ export const displayObjectSchema = new ModelSchema<DisplayObjectModel>({
     x: {
         defaultValue: 0,
         category: 'transform',
-        ownValue: true,
+        isRootValue: true,
     },
     y: {
         defaultValue: 0,
         category: 'transform',
-        ownValue: true,
+        isRootValue: true,
     },
     pivotX: {
         defaultValue: 0,
@@ -42,27 +42,27 @@ export const displayObjectSchema = new ModelSchema<DisplayObjectModel>({
     skewX: {
         defaultValue: 0,
         category: 'transform',
-        ownValue: true,
+        isRootValue: true,
     },
     skewY: {
         defaultValue: 0,
         category: 'transform',
-        ownValue: true,
+        isRootValue: true,
     },
     scaleX: {
         defaultValue: 1,
         category: 'transform',
-        ownValue: true,
+        isRootValue: true,
     },
     scaleY: {
         defaultValue: 1,
         category: 'transform',
-        ownValue: true,
+        isRootValue: true,
     },
     angle: {
         defaultValue: 0,
         category: 'transform',
-        ownValue: true,
+        isRootValue: true,
     },
     alpha: {
         defaultValue: 1,

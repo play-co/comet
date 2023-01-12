@@ -13,7 +13,7 @@ export interface PropertyDescriptor<M>
     defaultValue: M[keyof M];
     category: PropertyCategory;
     constraints?: ModelConstraint<any>[];
-    ownValue?: boolean;
+    isRootValue?: boolean;
 }
 
 export type PropertyDescriptors<M> = Record<keyof M, PropertyDescriptor<M>>;
@@ -51,7 +51,7 @@ export class ModelSchema<M>
         {
             const k = key as keyof M;
 
-            if (properties[k].ownValue === true)
+            if (properties[k].isRootValue === true)
             {
                 ownValues[k] = properties[k];
             }
