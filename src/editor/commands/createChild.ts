@@ -17,6 +17,7 @@ export interface CreateChildCommandParams<M extends ModelBase>
 export interface CreateChildCommandReturn
 {
     nodes: ClonableNode[];
+    initialNode: ClonableNode;
 }
 
 export interface CreateChildCommandCache
@@ -35,8 +36,8 @@ export class CreateChildCommand<
         const { datastore, cache, params: { nodeSchema, parentId } } = this;
 
         const nodes: ClonableNode[] = [];
-        const sourceNode = this.getInstance(parentId);
-        const cloneTarget = sourceNode.getAddChildCloneTarget();
+        const sourceParentNode = this.getInstance(parentId);
+        const cloneTarget = sourceParentNode.getAddChildCloneTarget();
         const clonedParentDescendants = cloneTarget.getClonedDescendants();
         const newChildByParent = new Map<ClonableNode, ClonableNode>();
 
@@ -150,7 +151,7 @@ export class CreateChildCommand<
         // prepare cache
         cache.commands = nodes.map((node) => new RemoveChildCommand({ nodeId: node.id }));
 
-        return { nodes };
+        return { nodes, initialNode };
     }
 
     public undo(): void

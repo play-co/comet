@@ -1,10 +1,12 @@
 import type { ClonableNode } from '../../core/nodes/abstract/clonableNode';
+import { CloneMode } from '../../core/nodes/cloneInfo';
 import { newId } from '../../core/nodes/instances';
 import { getNodeSchema } from '../../core/nodes/schema';
 import { getApp } from '../core/application';
 import { Command } from '../core/command';
-import type { AddChildCommand } from './addChild';
-import type { CreatePrefabInstanceCommand } from './createPrefabInstance';
+import { CloneCommand } from './clone';
+import { CreateChildCommand } from './createChild';
+import { CreatePrefabInstanceCommand } from './createPrefabInstance';
 
 export interface PasteCommandParams
 {
@@ -16,14 +18,9 @@ export interface PasteCommandReturn
     nodes: ClonableNode[];
 }
 
-type CommandSet = {
-    createPrefab?: CreatePrefabInstanceCommand;
-    addChild?: AddChildCommand;
-};
-
 export interface PasteCommandCache
 {
-    commands: CommandSet[];
+    commands: Command[];
 }
 
 export class PasteCommand
@@ -41,72 +38,84 @@ export class PasteCommand
 
         cache.commands = [];
 
-        // for each node passed from clipboard:
-        // .. handle type:
-        // ... reference root: create prefab instance parented to source node parent
-        // ... reference: addChild with source node schema parented to cloneTarget of source nodes parent
-        // ... original: addChild with source node schema parented to source nodes parent
-        // need to make sure that addChild is used when adding to parents, if the parents are reference-like
-
         sourceNodes.forEach((sourceNode) =>
         {
-            const { isReferenceRoot } = sourceNode.cloneInfo;
-            const cloneTarget = sourceNode.getCloneTarget();
+            const { isReferenceRoot, isReference, isOriginal } = sourceNode.cloneInfo;
 
-            // if (isReferenceRoot)
-            // {
-            //     const rootNode = sourceNode.getRootNode();
-            //     let newParentId = rootNode.id;
+            if (isOriginal)
+            {
+                const command = new CloneCommand({
+                    cloneMode: CloneMode.Duplicate,
+                    nodeId: sourceNode.id,
+                    newParentId: sourceNode.getParent().id,
+                });
 
-            //     if (selection.length === 1)
-            //     {
-            //         newParentId = sourceNode.getParent().id;
-            //     }
+                command.run();
 
-            //     const createPrefabCommand = new CreatePrefabInstanceCommand({
-            //         clonerId: cloneTarget.id,
-            //         parentId: newParentId,
-            //         model: {
-            //             ...sourceNode.model.ownValues,
-            //         },
-            //     });
+                cache.commands.push(command);
+            }
+            else if (isReferenceRoot)
+            {
+                const rootNode = sourceNode.getRootNode();
+                const cloneTarget = sourceNode.getAddChildCloneTarget();
+                let newParentId = rootNode.id;
 
-            //     const { node } = createPrefabCommand.run();
+                if (selection.length === 1)
+                {
+                    newParentId = sourceNode.getParent().id;
+                }
 
-            //     cache.commands.push({ createPrefab: createPrefabCommand });
+                const command = new CreatePrefabInstanceCommand({
+                    clonerId: cloneTarget.id,
+                    parentId: newParentId,
+                    model: {
+                        ...sourceNode.model.ownValues,
+                    },
+                });
 
-            //     nodes.push(node);
-            // }
-            // else
-            // {
-            //     const rootNode = cloneTarget.getRootNode();
-            //     let newParentId = rootNode.id;
+                const { node } = command.run();
 
-            //     if (selection.length === 1)
-            //     {
-            //         newParentId = cloneTarget.getParent().id;
-            //     }
+                cache.commands.push(command);
 
-            //     const nodeSchema = getNodeSchema(cloneTarget);
+                nodes.push(node);
+            }
+            else if (isReference)
+            {
+                let parentId: string | null = null;
 
-            //     nodeSchema.cloneInfo.cloned = [];
-            //     nodeSchema.id = newId(sourceNode.nodeType());
-            //     nodeSchema.created = Date.now();
+                sourceNode.walk<ClonableNode>((node) =>
+                {
+                    const cloneTarget = sourceNode.getAddChildCloneTarget();
+                    const nodeSchema = getNodeSchema(node);
 
-            //     const addChildCommand = new AddChildCommand({
-            //         nodeSchema,
-            //         parentId: newParentId,
-            //     });
+                    if (parentId === null)
+                    {
+                        parentId = node.getParent().id;
+                    }
 
-            //     const { nodes: newNodes } = addChildCommand.run();
+                    nodeSchema.id = newId(node.nodeType());
+                    nodeSchema.cloneInfo = {
+                        cloner: undefined,
+                        cloneMode: cloneTarget.getAddChildCloneMode(),
+                        cloned: [],
+                    };
+                    nodeSchema.children = [];
 
-            //     cache.commands.push({ addChild: addChildCommand });
+                    const command = new CreateChildCommand({
+                        nodeSchema,
+                        parentId,
+                    });
 
-            //     nodes.push(...newNodes);
-            // }
+                    const { initialNode } = command.run();
+
+                    cache.commands.push(command);
+
+                    parentId = initialNode.id;
+                });
+            }
         });
 
-        app.selection.hierarchy.set(nodes.filter((node) => app.viewport.rootNode.contains(node)));
+        // app.selection.hierarchy.set(nodes.filter((node) => app.viewport.rootNode.contains(node)));
 
         return { nodes };
     }
@@ -117,19 +126,10 @@ export class PasteCommand
 
         for (let i = commands.length - 1; i >= 0; i--)
         {
-            const { addChild, createPrefab } = commands[i];
+            const command = commands[i];
 
-            if (createPrefab)
-            {
-                createPrefab.undo();
-                createPrefab.restoreSelection('undo');
-            }
-
-            if (addChild)
-            {
-                addChild.undo();
-                addChild.restoreSelection('undo');
-            }
+            command.undo();
+            command.restoreSelection('undo');
         }
     }
 
@@ -139,19 +139,10 @@ export class PasteCommand
 
         for (let i = 0; i < commands.length; i++)
         {
-            const { addChild, createPrefab } = commands[i];
+            const command = commands[i];
 
-            if (createPrefab)
-            {
-                createPrefab.redo();
-                createPrefab.restoreSelection('redo');
-            }
-
-            if (addChild)
-            {
-                addChild.redo();
-                addChild.restoreSelection('redo');
-            }
+            command.undo();
+            command.restoreSelection('undo');
         }
     }
 
