@@ -1,5 +1,5 @@
 import { ModelSchema } from '../../../../model/schema';
-import type { ClonableNodeModel, NewNodeOptions } from '../../../abstract/clonableNode';
+import { type ClonableNodeModel, type NewNodeOptions, clonableNodeSchema } from '../../../abstract/clonableNode';
 import { MetaNode } from '../../../abstract/metaNode';
 
 export interface StoredAssetNodeModel extends ClonableNodeModel
@@ -10,6 +10,7 @@ export interface StoredAssetNodeModel extends ClonableNodeModel
 }
 
 export const storedAssetNodeModelSchema = new ModelSchema<StoredAssetNodeModel>({
+    ...clonableNodeSchema.properties,
     storageKey: {
         defaultValue: '',
         category: 'asset',

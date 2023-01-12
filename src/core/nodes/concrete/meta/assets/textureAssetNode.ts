@@ -3,7 +3,7 @@ import { MIPMAP_MODES, MSAA_QUALITY, SCALE_MODES, WRAP_MODES } from 'pixi.js';
 import { Application } from '../../../../../editor/core/application';
 import { ModelSchema } from '../../../../model/schema';
 import { blobToBas64, loadImage } from '../../../../util/file';
-import { type StoredAssetNodeModel, StoredAssetNode } from './storedAssetNode';
+import { type StoredAssetNodeModel, StoredAssetNode, storedAssetNodeModelSchema } from './storedAssetNode';
 
 export interface TextureAssetNodeModel extends StoredAssetNodeModel
 {
@@ -17,6 +17,7 @@ export interface TextureAssetNodeModel extends StoredAssetNodeModel
 }
 
 export const textureAssetNodeModelSchema = new ModelSchema<TextureAssetNodeModel>({
+    ...storedAssetNodeModelSchema.properties,
     width: {
         defaultValue: 0,
         category: 'asset',

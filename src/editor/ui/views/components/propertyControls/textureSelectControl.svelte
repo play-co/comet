@@ -158,6 +158,7 @@
     font-size: 12px;
     border-radius: 5px;
     position: relative;
+    height: 25px;
   }
 
   input {
