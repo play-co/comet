@@ -8,34 +8,34 @@ import { CloneCommand } from './clone';
 import { CreateNodeCommand } from './createNode';
 import { RemoveChildCommand } from './removeChild';
 
-export interface AddChildCommandParams<M extends ModelBase>
+export interface CreateChildCommandParams<M extends ModelBase>
 {
     parentId: string;
     nodeSchema: NodeSchema<M>;
 }
 
-export interface AddChildCommandReturn
+export interface CreateChildCommandReturn
 {
     nodes: ClonableNode[];
 }
 
-export interface AddChildCommandCache
+export interface CreateChildCommandCache
 {
     commands: RemoveChildCommand[];
 }
 
-export class AddChildCommand<
+export class CreateChildCommand<
     M extends ModelBase = ModelBase,
-> extends Command<AddChildCommandParams<M>, AddChildCommandReturn, AddChildCommandCache>
+> extends Command<CreateChildCommandParams<M>, CreateChildCommandReturn, CreateChildCommandCache>
 {
-    public static commandName = 'AddChild';
+    public static commandName = 'CreateChild';
 
-    public apply(): AddChildCommandReturn
+    public apply(): CreateChildCommandReturn
     {
-        const { datastore, cache, params, params: { nodeSchema } } = this;
+        const { datastore, cache, params: { nodeSchema, parentId } } = this;
 
         const nodes: ClonableNode[] = [];
-        const sourceNode = this.getInstance(params.parentId);
+        const sourceNode = this.getInstance(parentId);
         const cloneTarget = sourceNode.getAddChildCloneTarget();
         const clonedParentDescendants = cloneTarget.getClonedDescendants();
         const newChildByParent = new Map<ClonableNode, ClonableNode>();

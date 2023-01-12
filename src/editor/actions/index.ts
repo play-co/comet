@@ -15,6 +15,7 @@ import { NudgeAction } from './nudge';
 import { PasteAction } from './paste';
 import { RedoAction } from './redo';
 import { ResetModelAction } from './resetModel';
+import { RestoreAction } from './restore';
 import { SelectAllAction } from './selectAll';
 import { UndoAction } from './undo';
 import { UnlinkAction } from './unlink';
@@ -40,4 +41,5 @@ export const Actions = {
     paste: new PasteAction(),
     resetModel: new ResetModelAction(),
     unlink: new UnlinkAction(),
+    restore: new RestoreAction(),
 };

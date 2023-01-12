@@ -2,7 +2,7 @@ import type { SpriteNode } from '../../core/nodes/concrete/display/spriteNode';
 import type { TextureAssetNode } from '../../core/nodes/concrete/meta/assets/textureAssetNode';
 import { createNodeSchema } from '../../core/nodes/schema';
 import { Command } from '../core/command';
-import { AddChildCommand } from './addChild';
+import { CreateChildCommand } from './createChild';
 import { CreateNodeCommand } from './createNode';
 import { ModifyModelCommand } from './modifyModel';
 import { RemoveChildCommand } from './removeChild';
@@ -22,7 +22,7 @@ export interface CreateTextureAssetCommandReturn
 export interface CreateTextureAssetCommandCache
 {
     node: TextureAssetNode;
-    createCommand?: AddChildCommand;
+    createCommand?: CreateChildCommand;
     createdSprites?: SpriteNode[];
 }
 
@@ -69,7 +69,7 @@ export class CreateTextureAssetCommand
         if (createSpriteAtPoint)
         {
             const parentId = app.viewport.rootNode.id;
-            const command = new AddChildCommand({
+            const command = new CreateChildCommand({
                 parentId,
                 nodeSchema: createNodeSchema('Sprite', {
                     parent: parentId,

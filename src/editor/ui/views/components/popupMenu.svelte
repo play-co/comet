@@ -272,5 +272,6 @@
   .shortcut {
     font-size: 10px;
     opacity: 0.75;
+    margin-left: 10px;
   }
 </style>

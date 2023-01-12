@@ -2,7 +2,7 @@ import Color from 'color';
 
 import { type SpriteModel, type SpriteNode, defaultSpriteHeight, defaultSpriteWidth } from '../../core/nodes/concrete/display/spriteNode';
 import { createNodeSchema } from '../../core/nodes/schema';
-import { type AddChildCommandReturn, AddChildCommand } from '../commands/addChild';
+import { type CreateChildCommandReturn, CreateChildCommand } from '../commands/createChild';
 import { Action } from '../core/action';
 import { Application, getApp } from '../core/application';
 
@@ -66,7 +66,7 @@ export class NewSpriteAction extends Action<NewSpriteOptions, SpriteNode>
             model,
         });
 
-        const { nodes } = app.undoStack.exec<AddChildCommandReturn>(new AddChildCommand({ parentId, nodeSchema }));
+        const { nodes } = app.undoStack.exec<CreateChildCommandReturn>(new CreateChildCommand({ parentId, nodeSchema }));
 
         const node = nodes.find((node) => node.parent?.id === parentId);
 

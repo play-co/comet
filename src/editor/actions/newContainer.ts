@@ -1,6 +1,6 @@
 import type { ContainerModel, ContainerNode } from '../../core/nodes/concrete/display/containerNode';
 import { createNodeSchema } from '../../core/nodes/schema';
-import { type AddChildCommandReturn, AddChildCommand } from '../commands/addChild';
+import { type CreateChildCommandReturn, CreateChildCommand } from '../commands/createChild';
 import { Action } from '../core/action';
 import { Application, getApp } from '../core/application';
 
@@ -51,7 +51,7 @@ export class NewContainerAction extends Action<NewContainerOptions, ContainerNod
             },
         });
 
-        const { nodes } = app.undoStack.exec<AddChildCommandReturn>(new AddChildCommand({ parentId, nodeSchema }));
+        const { nodes } = app.undoStack.exec<CreateChildCommandReturn>(new CreateChildCommand({ parentId, nodeSchema }));
 
         const node = nodes[0] as unknown as ContainerNode;
 

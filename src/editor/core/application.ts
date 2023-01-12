@@ -27,7 +27,6 @@ import { RemoteObjectSync } from '../sync/remoteObjectSync';
 import { Tools } from '../tools/tools';
 import { DropZone } from '../ui/components/dropzone';
 import { EditableViewport } from '../ui/components/viewport';
-import { restore } from '../ui/menus/devMenu';
 import type { FocusAreaId } from '../ui/views/components/focusArea';
 import { ItemDrag } from '../ui/views/components/itemDrag';
 import { StatusBar } from '../ui/views/statusBar';
@@ -153,15 +152,6 @@ export class Application
     public async init()
     {
         this.initDevInspectors();
-
-        if (window.location.hash === '#restore')
-        {
-            // special case for dev tools
-            await this.createProject('Test');
-            restore();
-
-            return;
-        }
 
         const lastProjectId = localStorage.getItem('comet:lastProjectId');
 

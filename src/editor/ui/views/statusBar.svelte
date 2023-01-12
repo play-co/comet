@@ -45,8 +45,14 @@
   .message {
     flex-grow: 1;
     color: #7d7d7d;
-    padding-left: 10px;
+    padding-left: 7px;
     margin-right: 10px;
+    position: relative;
+    background: #262626;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    border-radius: 3px;
   }
 
   .error {

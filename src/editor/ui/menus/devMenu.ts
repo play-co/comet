@@ -1,40 +1,14 @@
 import { clearInstances } from '../../../core/nodes/instances';
 import { createProjectSchema } from '../../../core/nodes/schema';
+import { Actions } from '../../actions';
 import { getApp } from '../../core/application';
 import {
     getUserEditPrefs,
     getUserLayoutPrefs,
     getUserSelectionPrefs,
     getUserViewportPrefs,
-    saveUserEditPrefs,
-    saveUserLayoutPrefs,
-    saveUserSelectionPrefs,
-    saveUserViewportPrefs,
 } from '../../core/userPrefs';
 import { Menu } from '../views/components/menu';
-
-export function restore()
-{
-    const app = getApp();
-    const data = JSON.parse(localStorage.getItem('comet:project') as string);
-    const { projectData, viewportPrefs, editPrefs, selectionPrefs, layoutPrefs } = data;
-
-    if (projectData)
-    {
-        app.datastore.fromProjectSchema(projectData);
-        app.statusBar.setMessage('Project restored from local storage, reloading...');
-
-        saveUserViewportPrefs(viewportPrefs);
-        saveUserEditPrefs(editPrefs);
-        saveUserSelectionPrefs(selectionPrefs);
-        saveUserLayoutPrefs(layoutPrefs);
-
-        setTimeout(() =>
-        {
-            window.location.href = window.location.href.replace(window.location.hash, '');
-        }, 1000);
-    }
-}
 
 export const devMenu = new Menu([
     {
@@ -82,6 +56,6 @@ export const devMenu = new Menu([
     },
     {
         label: 'Restore',
-        onClick: restore,
+        action: Actions.restore,
     },
 ]);

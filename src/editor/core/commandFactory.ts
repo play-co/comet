@@ -1,5 +1,5 @@
 import type { ModelBase } from '../../core/model/model';
-import { type AddChildCommandParams, AddChildCommand } from '../commands/addChild';
+import { type CreateChildCommandParams, CreateChildCommand } from '../commands/createChild';
 import { type AddSelectionCommandParams, AddSelectionCommand } from '../commands/addSelection';
 import { type AssignCustomPropCommandParams, AssignCustomPropCommand } from '../commands/assignCustomProp';
 import { type CloneCommandParams, CloneCommand } from '../commands/clone';
@@ -51,7 +51,7 @@ export type CommandName =
 
 export const Commands
 = {
-    AddChild: AddChildCommand,
+    AddChild: CreateChildCommand,
     AddSelection: AddSelectionCommand,
     AssignCustomProp: AssignCustomPropCommand,
     Clone: CloneCommand,
@@ -78,7 +78,7 @@ export const Commands
 
 export interface CommandParams
 {
-    AddChild: AddChildCommandParams<ModelBase>;
+    AddChild: CreateChildCommandParams<ModelBase>;
     AddSelection: AddSelectionCommandParams;
     AssignCustomProp: AssignCustomPropCommandParams;
     Clone: CloneCommandParams;
