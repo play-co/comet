@@ -1,6 +1,7 @@
 import { devMenu } from '../menus/devMenu';
 import { editMenu } from '../menus/editMenu';
 import { helpMenu } from '../menus/helpMenu';
+import { viewMenu } from '../menus/viewMenu';
 import { Menu } from './components/menu';
 
 export const menu = new Menu([
@@ -11,6 +12,10 @@ export const menu = new Menu([
     {
         label: 'Edit',
         menu: editMenu,
+    },
+    {
+        label: 'View',
+        menu: viewMenu,
     },
     {
         label: 'Help',

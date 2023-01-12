@@ -68,7 +68,7 @@ export class CreateTextureAssetCommand
 
         if (createSpriteAtPoint)
         {
-            const parentId = app.viewport.rootNode.id;
+            const parentId = app.view.rootNode.id;
             const command = new CreateChildCommand({
                 parentId,
                 nodeSchema: createNodeSchema('Sprite', {

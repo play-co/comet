@@ -421,4 +421,29 @@ export class EditableViewport
     {
         return this.viewport.getVisibleBounds();
     }
+
+    public zoomIn()
+    {
+        this.viewport.zoomPercent(1);
+        this.grid.renderGrid();
+    }
+
+    public zoomOut()
+    {
+        this.viewport.zoomPercent(-0.5);
+        this.grid.renderGrid();
+    }
+
+    public resetView()
+    {
+        const { viewport, grid, canvas } = this;
+
+        viewport.animate({
+            scale: 1,
+            position: { x: canvas.width / 2, y: canvas.height / 2 },
+            time: 200,
+        });
+
+        grid.renderGrid();
+    }
 }

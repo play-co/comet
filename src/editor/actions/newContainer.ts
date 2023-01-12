@@ -40,7 +40,7 @@ export class NewContainerAction extends Action<NewContainerOptions, ContainerNod
         const app = Application.instance;
         const { selection: { hierarchy: selection } } = app;
 
-        const parentId = actionOptions.parentId ?? (selection.hasSelection ? selection.lastItem.id : app.viewport.rootNode.id);
+        const parentId = actionOptions.parentId ?? (selection.hasSelection ? selection.lastItem.id : app.view.rootNode.id);
 
         const nodeSchema = createNodeSchema('Container', {
             parent: parentId,

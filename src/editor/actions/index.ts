@@ -15,10 +15,13 @@ import { NudgeAction } from './nudge';
 import { PasteAction } from './paste';
 import { RedoAction } from './redo';
 import { ResetModelAction } from './resetModel';
+import { ResetViewAction } from './resetView';
 import { RestoreAction } from './restore';
 import { SelectAllAction } from './selectAll';
 import { UndoAction } from './undo';
 import { UnlinkAction } from './unlink';
+import { ZoomInAction } from './zoomIn';
+import { ZoomOutAction } from './zoomOut';
 
 export const Actions = {
     importTexture: new ImportTextureAction(),
@@ -42,4 +45,7 @@ export const Actions = {
     resetModel: new ResetModelAction(),
     unlink: new UnlinkAction(),
     restore: new RestoreAction(),
+    zoomIn: new ZoomInAction(),
+    zoomOut: new ZoomOutAction(),
+    resetView: new ResetViewAction(),
 };

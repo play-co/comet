@@ -14,12 +14,10 @@ export class PasteAction extends Action
     public shouldRun(): boolean
     {
         const app = getApp();
-        const selection = app.selection.hierarchy;
 
         return super.shouldRun()
             && app.hasClipboard()
-            && app.isAreaFocussed('viewport', 'hierarchy')
-            && (selection.isSingle || selection.isEmpty);
+            && app.isAreaFocussed('viewport', 'hierarchy');
     }
 
     protected exec()

@@ -36,23 +36,23 @@ export class Menu
     {
         const { refreshFn } = this;
 
-        if (refreshFn)
+        this.items.forEach((item, i, array) =>
         {
-            this.items.forEach((item, i, array) =>
+            if (item.action)
             {
-                if (item.action)
-                {
-                    item.isEnabled = item.action.shouldRun();
-                }
+                item.isEnabled = item.action.shouldRun();
+            }
 
+            if (refreshFn)
+            {
                 refreshFn(item, i, array);
+            }
 
-                if (item.menu)
-                {
-                    item.menu.refresh();
-                }
-            });
-        }
+            if (item.menu)
+            {
+                item.menu.refresh();
+            }
+        });
     }
 
     public getItems(): MenuItem[]

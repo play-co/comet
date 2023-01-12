@@ -17,7 +17,7 @@ export class NewContainerTool extends Tool
     {
         const app = getApp();
         const selection = app.selection.hierarchy;
-        const parentId = selection.hasSelection ? selection.lastItem.id : app.viewport.rootNode.id;
+        const parentId = selection.hasSelection ? selection.lastItem.id : app.view.rootNode.id;
         const parent = getInstance<DisplayObjectNode>(parentId);
         const localPos = parent.globalToLocal(event.globalX, event.globalY);
 

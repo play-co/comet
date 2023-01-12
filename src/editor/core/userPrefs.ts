@@ -172,9 +172,9 @@ export function getUserViewportPrefs()
     const app = getApp();
 
     return {
-        x: app.viewport.x,
-        y: app.viewport.y,
-        scale: app.viewport.scale,
+        x: app.view.x,
+        y: app.view.y,
+        scale: app.view.scale,
     } as UserViewportPrefs;
 }
 
@@ -190,7 +190,7 @@ export function getUserEditPrefs()
     const app = getApp();
 
     return {
-        viewportRoot: app.viewport.rootNode.id,
+        viewportRoot: app.view.rootNode.id,
         colorPickerMode: app.colorPickerMode,
     } as UserEditPrefs;
 }

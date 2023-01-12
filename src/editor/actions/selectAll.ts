@@ -22,7 +22,7 @@ export class SelectAllAction extends Action
     {
         const app = Application.instance;
 
-        const nodes = app.viewport.rootNode.walk<ClonableNode, {nodes: Set<ClonableNode>}>((node, options) =>
+        const nodes = app.view.rootNode.walk<ClonableNode, {nodes: Set<ClonableNode>}>((node, options) =>
         {
             if (node.isCloaked)
             {

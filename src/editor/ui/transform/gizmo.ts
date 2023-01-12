@@ -659,7 +659,7 @@ export class TransformGizmo extends Container
     {
         if (node instanceof DisplayObjectNode)
         {
-            const rootNode = getApp().viewport.rootNode;
+            const rootNode = getApp().view.rootNode;
             const viewportContainsNode = rootNode === node || rootNode.contains(node);
 
             if (viewportContainsNode)

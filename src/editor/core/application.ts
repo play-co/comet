@@ -67,7 +67,7 @@ export class Application
     public datastore: ConvergenceDatastore;
     public nodeUpdater: RemoteObjectSync;
     public undoStack: UndoStack;
-    public viewport: EditableViewport;
+    public view: EditableViewport;
     public storageProvider: LocalStorageProvider;
     public project: ProjectNode;
     public statusBar: StatusBar;
@@ -130,7 +130,7 @@ export class Application
             project: new ProjectSelection('$3'),
         };
         this.nodeUpdater = new RemoteObjectSync(datastore);
-        this.viewport = new EditableViewport();
+        this.view = new EditableViewport();
         this.undoStack = new UndoStack();
         this.tool = Tools.select;
 
@@ -259,7 +259,7 @@ export class Application
             }
         }
 
-        this.viewport.setRoot(root, false);
+        this.view.setRoot(root, false);
 
         // allow main layout fade time to start
         delay(100).then(() => this.initPersistentSelection());
@@ -421,7 +421,7 @@ export class Application
     public edit(node: DisplayObjectNode)
     {
         this.selection.hierarchy.deselect();
-        this.viewport.setRoot(node);
+        this.view.setRoot(node);
         this.focusPanel('hierarchy');
 
         saveUserEditPrefs();

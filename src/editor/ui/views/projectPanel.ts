@@ -151,7 +151,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
 
             app.itemDrag.startDrag('project', event, draggable[0]);
             app.statusBar.setMessage(`Create instance of <${assetName}>`);
-            app.viewport.gizmo.isInteractive = false;
+            app.view.gizmo.isInteractive = false;
         }
     }
 
@@ -195,14 +195,14 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
             const app = getApp();
             const assetNode = item as ClonableNode;
             const assetType = this.getAssetType(assetNode);
-            const viewportLocalPos = app.viewport.getMouseLocalPoint(event);
+            const viewportLocalPos = app.view.getMouseLocalPoint(event);
             const precision = app.gridSettings.precision;
             let parentId: string | undefined;
 
             let x = viewportLocalPos.x;
             let y = viewportLocalPos.y;
 
-            app.viewport.gizmo.isInteractive = true;
+            app.view.gizmo.isInteractive = true;
 
             if (app.selection.hierarchy.hasSelection)
             {
@@ -219,7 +219,7 @@ export class ProjectTree extends NodeTreeModel<ProjectSelection>
                     }
                 }
 
-                const mousePos = app.viewport.getMousePos(event.clientX, event.clientY);
+                const mousePos = app.view.getMousePos(event.clientX, event.clientY);
                 const localPoint = targetNode.globalToLocal(mousePos.x, mousePos.y);
 
                 x = localPoint.x;

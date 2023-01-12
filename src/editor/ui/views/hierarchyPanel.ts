@@ -17,7 +17,7 @@ export class HierarchyTree extends NodeTreeModel<HierarchySelection>
     {
         super(Application.instance.selection.hierarchy);
 
-        const { viewport } = Application.instance;
+        const { view: viewport } = Application.instance;
 
         this.root = viewport.rootNode.cast();
 

@@ -8,7 +8,7 @@
   import { spriteMenu } from "../menus/spriteMenu";
 
   const app = getApp();
-  const viewport = app.viewport;
+  const view = app.view;
   const dropZone = new DropZone("viewport");
 
   let container: HTMLDivElement;
@@ -16,11 +16,11 @@
   $: isDragOver = dropZone.isDragOver.store;
 
   onMount(() => {
-    viewport.mount(container);
+    view.mount(container);
     dropZone
       .bind(container)
       .on("drop", (files: FileList, e: DragEvent) => {
-        const viewportLocalPos = viewport.getMouseLocalPoint(e);
+        const viewportLocalPos = view.getMouseLocalPoint(e);
 
         Actions.importTexture.dispatch({ files, createSpriteAtPoint: viewportLocalPos });
       })
@@ -30,7 +30,7 @@
   });
 
   onDestroy(() => {
-    viewport.unmount(container);
+    view.unmount(container);
   });
 </script>
 

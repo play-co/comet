@@ -25,6 +25,8 @@ export const defaultGridConfig: GridConfig = {
     y: 0,
 };
 
+type GridSize = 'small' | 'medium' | 'large';
+
 const light = 0.1;
 const inBetween = 0.4;
 const dark = 0.7;
@@ -110,6 +112,7 @@ export class Grid extends Graphics
     {
         const { x, y, scale } = this.config;
 
+        this.container.updateTransform();
         this.container.x = x;
         this.container.y = y;
         this.container.scale.set(scale);
@@ -124,9 +127,10 @@ export class Grid extends Graphics
     protected renderHorizontalLines()
     {
         const { globalOrigin, localScreenRect, gridSettings: { smallUnit }, screenWidth, config: { style: { color } } } = this;
-        // const smallUnitScreenSize = this.getGlobalUnitSize(smallUnit);
-        // const isTiny = smallUnitScreenSize < smallUnit * 0.75;
-        // const unit = isTiny ? mediumUnit : smallUnit;
+        const smallUnitScreenSize = this.getGlobalUnitSize(smallUnit);
+        const isTiny = smallUnitScreenSize < smallUnit * 0.75;
+        const isReallyTiny = smallUnitScreenSize < smallUnit * 0.25;
+        const isNotWorthRendering = smallUnitScreenSize < smallUnit * 0.1;
         const unit = smallUnit;
 
         if (globalOrigin.x > 0)
@@ -136,8 +140,14 @@ export class Grid extends Graphics
             {
                 const p1 = this.localToGlobal({ x: i, y: localScreenRect.top });
                 const p2 = this.localToGlobal({ x: i, y: localScreenRect.bottom });
+                const size = this.lineSize(i);
 
-                this.lineStyle(1, this.lineColor(color, i), 1);
+                if ((size === 'small' && isTiny) || (size === 'medium' && isReallyTiny) || isNotWorthRendering)
+                {
+                    continue;
+                }
+
+                this.lineStyle(1, this.lineColor(color, size), 1);
                 this.moveTo(p1.x, p1.y);
                 this.lineTo(p2.x, p2.y);
             }
@@ -150,8 +160,14 @@ export class Grid extends Graphics
             {
                 const p1 = this.localToGlobal({ x: i, y: localScreenRect.top });
                 const p2 = this.localToGlobal({ x: i, y: localScreenRect.bottom });
+                const size = this.lineSize(i);
 
-                this.lineStyle(1, this.lineColor(color, i), 1);
+                if ((size === 'small' && isTiny) || (size === 'medium' && isReallyTiny) || isNotWorthRendering)
+                {
+                    continue;
+                }
+
+                this.lineStyle(1, this.lineColor(color, size), 1);
                 this.moveTo(p1.x, p1.y);
                 this.lineTo(p2.x, p2.y);
             }
@@ -161,6 +177,10 @@ export class Grid extends Graphics
     protected renderVerticalLines()
     {
         const { globalOrigin, localScreenRect, gridSettings: { smallUnit }, screenHeight, config: { style: { color } } } = this;
+        const smallUnitScreenSize = this.getGlobalUnitSize(smallUnit);
+        const isTiny = smallUnitScreenSize < smallUnit * 0.75;
+        const isReallyTiny = smallUnitScreenSize < smallUnit * 0.25;
+        const isNotWorthRendering = smallUnitScreenSize < smallUnit * 0.1;
         const unit = smallUnit;
 
         if (globalOrigin.y > 0)
@@ -170,8 +190,14 @@ export class Grid extends Graphics
             {
                 const p1 = this.localToGlobal({ x: localScreenRect.left, y: i });
                 const p2 = this.localToGlobal({ x: localScreenRect.right, y: i });
+                const size = this.lineSize(i);
 
-                this.lineStyle(1, this.lineColor(color, i), 1);
+                if ((size === 'small' && isTiny) || (size === 'medium' && isReallyTiny) || isNotWorthRendering)
+                {
+                    continue;
+                }
+
+                this.lineStyle(1, this.lineColor(color, size), 1);
                 this.moveTo(p1.x, p1.y);
                 this.lineTo(p2.x, p2.y);
             }
@@ -184,8 +210,14 @@ export class Grid extends Graphics
             {
                 const p1 = this.localToGlobal({ x: localScreenRect.left, y: i });
                 const p2 = this.localToGlobal({ x: localScreenRect.right, y: i });
+                const size = this.lineSize(i);
 
-                this.lineStyle(1, this.lineColor(color, i), 1);
+                if ((size === 'small' && isTiny) || (size === 'medium' && isReallyTiny) || isNotWorthRendering)
+                {
+                    continue;
+                }
+
+                this.lineStyle(1, this.lineColor(color, size), 1);
                 this.moveTo(p1.x, p1.y);
                 this.lineTo(p2.x, p2.y);
             }
@@ -205,11 +237,18 @@ export class Grid extends Graphics
         this.lineTo(p2.x, globalOrigin.y - 1);
     }
 
-    private lineColor(color: Color, num: number)
+    private lineSize(num: number): GridSize
     {
         const { mediumUnit, bigUnit } = this.gridSettings;
+
         // eslint-disable-next-line no-nested-ternary
-        const alpha = num % bigUnit === 0 ? light : num % mediumUnit === 0 ? inBetween : dark;
+        return num % bigUnit === 0 ? 'large' : num % mediumUnit === 0 ? 'medium' : 'small';
+    }
+
+    private lineColor(color: Color, size: GridSize)
+    {
+        // eslint-disable-next-line no-nested-ternary
+        const alpha = size === 'large' ? light : size === 'medium' ? inBetween : dark;
 
         return color.darken(alpha).rgbNumber();
     }

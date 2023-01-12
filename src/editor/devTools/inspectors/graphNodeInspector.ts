@@ -140,7 +140,7 @@ export class GraphNodeInspector extends DevInspector<GraphNodeDetail>
         const app = getApp();
         const value = super.onClickRow(row);
 
-        if (value && app.viewport.rootNode.contains(value))
+        if (value && app.view.rootNode.contains(value))
         {
             app.selection.hierarchy.set(value);
         }

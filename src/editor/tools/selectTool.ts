@@ -14,7 +14,7 @@ export class SelectTool extends Tool
     public select(): void
     {
         const app = getApp();
-        const gizmo = app.viewport.gizmo;
+        const gizmo = app.view.gizmo;
 
         gizmo.setConfig({
             ...defaultFullTransformGizmoConfig,
@@ -25,7 +25,7 @@ export class SelectTool extends Tool
     public mouseDown(event: ToolEvent): void
     {
         const app = getApp();
-        const viewport = app.viewport;
+        const viewport = app.view;
         const { originalEvent, globalX, globalY, shift, meta } = event;
 
         const { hierarchy: selection } = app.selection;
@@ -74,7 +74,7 @@ export class SelectTool extends Tool
     public mouseMove(event: ToolEvent)
     {
         const app = getApp();
-        const viewport = app.viewport;
+        const viewport = app.view;
 
         viewport.boxSelection.onMouseMove(event.originalEvent);
     }

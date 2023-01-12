@@ -22,7 +22,7 @@ export class NewSpriteTool extends Tool
     public select()
     {
         const app = getApp();
-        const gizmo = app.viewport.gizmo;
+        const gizmo = app.view.gizmo;
 
         gizmo.setConfig({
             ...defaultSelectTransformGizmoConfig,
@@ -39,7 +39,7 @@ export class NewSpriteTool extends Tool
     {
         const app = getApp();
         const selection = app.selection.hierarchy;
-        const parentId = selection.hasSelection ? selection.lastItem.id : app.viewport.rootNode.id;
+        const parentId = selection.hasSelection ? selection.lastItem.id : app.view.rootNode.id;
         const parent = getInstance<DisplayObjectNode>(parentId);
         const localPos = parent.globalToLocal(event.globalX, event.globalY);
 
@@ -55,7 +55,7 @@ export class NewSpriteTool extends Tool
 
         if (sprite)
         {
-            const viewport = app.viewport;
+            const viewport = app.view;
 
             const gizmo = viewport.gizmo;
 

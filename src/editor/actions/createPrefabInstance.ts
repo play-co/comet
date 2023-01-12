@@ -28,7 +28,7 @@ export class CreatePrefabInstanceAction extends Action<CreatePrefabOptions, Clon
     {
         const app = Application.instance;
 
-        const parentId = options.parentId ?? app.viewport.rootNode.id;
+        const parentId = options.parentId ?? app.view.rootNode.id;
 
         const { node } = app.undoStack.exec<CreatePrefabInstanceCommandReturn>(new CreatePrefabInstanceCommand({
             parentId,

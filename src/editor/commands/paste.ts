@@ -120,9 +120,7 @@ export class PasteCommand
             }
         });
 
-        console.log(nodes.map((n) => n.id));
-
-        const selectedNodes = nodes.filter((node) => app.viewport.rootNode.contains(node));
+        const selectedNodes = nodes.filter((node) => app.view.rootNode.contains(node));
 
         if (selectedNodes.length > 0)
         {

@@ -51,7 +51,7 @@ export class BoxSelection extends Graphics
 
             const app = getApp();
             const { hierarchy: selection } = app.selection;
-            const nodes = this.selectWithinRootNode(app.viewport.rootNode);
+            const nodes = this.selectWithinRootNode(app.view.rootNode);
 
             selection.deselect();
 
