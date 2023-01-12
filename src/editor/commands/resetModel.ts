@@ -49,7 +49,7 @@ export class ResetModelCommand
 
             targetNode.updateRecursiveWithClones();
 
-            Events.datastore.node.local.modified.emit({ nodeId, values: targetNode.model.ownValues });
+            Events.datastore.node.local.modelReset.emit({ nodeId });
         });
     }
 

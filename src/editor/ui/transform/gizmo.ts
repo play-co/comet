@@ -94,11 +94,13 @@ export class TransformGizmo extends Container
 
         Events.$('command.(undo|redo)', this.updateSelection);
         Events.$('datastore.node.remote.(created|removed)', this.updateSelection);
-        Events.$('datastore.node.local.(reParented|modified)', this.updateSelection);
         Events.$('selection.hierarchy.(setSingle|setMulti|add|remove)', this.updateSelection);
         Events.editor.propertyModified.bind(this.updateSelection);
         Events.transform.nudge.bind(this.updateSelection);
         Events.selection.hierarchy.deselect.bind(this.onSelectionDeselect);
+        Events.datastore.node.local.reParented.bind(this.updateSelection);
+        Events.datastore.node.local.modified.bind(this.onLocalNodeModified);
+        Events.datastore.node.local.modelReset.bind(this.updateSelection);
         Events.datastore.node.local.textureRemoved.bind(this.onTextureRemoved);
     }
 
@@ -122,6 +124,16 @@ export class TransformGizmo extends Container
         else if (isEmpty)
         {
             this.onSelectionDeselect();
+        }
+    };
+
+    protected onLocalNodeModified = () =>
+    {
+        const { hierarchy: { isSingle } } = Application.instance.selection;
+
+        if (isSingle)
+        {
+            this.updateSingleSelectionNode();
         }
     };
 
@@ -161,7 +173,7 @@ export class TransformGizmo extends Container
         this.selectNode(items[0]);
     }
 
-    protected getCachedMatrix(node: ClonableNode): CachedNode
+    protected getCachedNodeInfo(node: ClonableNode): CachedNode
     {
         return this.nodeCache.get(node) as CachedNode;
     }
@@ -707,7 +719,6 @@ export class TransformGizmo extends Container
             {
                 const view = node.view;
 
-                view.interactive = true;
                 view.updateTransform();
 
                 this.nodeCache.set(node.cast(), {
@@ -750,7 +761,7 @@ export class TransformGizmo extends Container
         if (selection.length === 1)
         {
             const node = selection.firstItem;
-            const cachedMatrix = this.getCachedMatrix(node);
+            const cachedMatrix = this.getCachedNodeInfo(node);
 
             if ((node instanceof DisplayObjectNode && node.isSceneNode) || node.is(SceneNode))
             {
@@ -770,7 +781,7 @@ export class TransformGizmo extends Container
         {
             selection.forEach((node) =>
             {
-                const cachedMatrix = this.getCachedMatrix(node);
+                const cachedMatrix = this.getCachedNodeInfo(node);
 
                 if ((node instanceof DisplayObjectNode && node.isSceneNode) || node.is(SceneNode))
                 {
@@ -801,7 +812,7 @@ export class TransformGizmo extends Container
                 const displayNode = node.cast<DisplayObjectNode>();
 
                 const values = getLocalTransform(displayNode.view, this.pivot, selection.isSingle);
-                const prevValues = this.getCachedMatrix(node.cast()).values;
+                const prevValues = this.getCachedNodeInfo(node.cast()).values;
 
                 if (selection.isMulti)
                 {

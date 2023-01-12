@@ -112,13 +112,15 @@
   }
 
   // handlers
-  // const onFocus = (e: Event) => {
-  //   const element = e.target as HTMLInputElement;
-  //   prevValue = element.value;
+  const onFocus = () => {
+    // const element = e.target as HTMLInputElement;
+    // prevValue = element.value;
 
-  //   // select all text
-  //   element.setSelectionRange(0, element.value.length);
-  // };
+    // select all text
+    // element.setSelectionRange(0, element.value.length);
+
+    mixedValue = false;
+  };
 
   const onChange = (e: Event) => {
     const element = e.target as HTMLInputElement;
@@ -144,8 +146,6 @@
       isAcceptKey(key) ||
       isArrowKey(key) ||
       key === "Tab";
-
-    mixedValue = element.value.length > 0;
 
     if (isAcceptKey(key)) {
       if (!isNaN(value)) {
@@ -173,6 +173,8 @@
     } else if (key == "Escape") {
       element.blur();
       return true;
+    } else if (key === "r" && e.metaKey) {
+      window.location.reload();
     } else if (isValidKey && !isMinusKeyAtNonZeroIndex) {
       return true;
     }
@@ -190,6 +192,7 @@
     class:mixed
     placeholder={mixed ? "mixed" : undefined}
     {value}
+    on:focus={onFocus}
     on:keydown={onKeyDown}
     on:change={onChange}
   />

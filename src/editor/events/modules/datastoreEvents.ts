@@ -25,6 +25,7 @@ export default {
             cloaked: Emit<ClonableNode>(),
             uncloaked: Emit<ClonableNode>(),
             textureRemoved: Emit<EventData>(),
+            modelReset: Emit<EventData>(),
         },
         remote: {
             created: Emit<EventData>(),
