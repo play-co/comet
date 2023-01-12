@@ -148,8 +148,6 @@ export abstract class ClonableNode<
     {
         const { cloneInfo } = this;
 
-        console.log('setClonerAsReference', this.id, targetNode.id);
-
         cloneInfo.cloner = targetNode;
         targetNode.cloneInfo.addCloned(this);
 

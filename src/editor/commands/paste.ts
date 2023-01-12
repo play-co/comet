@@ -44,18 +44,22 @@ export class PasteCommand
 
             if (isOriginal)
             {
+                // original nodes are cloned
+
                 const command = new CloneCommand({
                     cloneMode: CloneMode.Duplicate,
                     nodeId: sourceNode.id,
                     newParentId: sourceNode.getParent().id,
                 });
 
-                command.run();
+                const { clonedNode } = command.run();
 
                 cache.commands.push(command);
+                nodes.push(clonedNode);
             }
             else if (isReferenceRoot)
             {
+                // reference roots create another prefab instance
                 const rootNode = sourceNode.getRootNode();
                 const cloneTarget = sourceNode.getAddChildCloneTarget();
                 let newParentId = rootNode.id;
@@ -76,11 +80,11 @@ export class PasteCommand
                 const { node } = command.run();
 
                 cache.commands.push(command);
-
                 nodes.push(node);
             }
             else if (isReference)
             {
+                // else references are recursively cloned and propagated
                 let parentId: string | null = null;
 
                 sourceNode.walk<ClonableNode>((node) =>
@@ -106,16 +110,24 @@ export class PasteCommand
                         parentId,
                     });
 
-                    const { initialNode } = command.run();
-
-                    cache.commands.push(command);
+                    const { initialNode, nodes: createdNodes } = command.run();
 
                     parentId = initialNode.id;
+
+                    cache.commands.push(command);
+                    nodes.push(...createdNodes);
                 });
             }
         });
 
-        // app.selection.hierarchy.set(nodes.filter((node) => app.viewport.rootNode.contains(node)));
+        console.log(nodes.map((n) => n.id));
+
+        const selectedNodes = nodes.filter((node) => app.viewport.rootNode.contains(node));
+
+        if (selectedNodes.length > 0)
+        {
+            app.selection.hierarchy.set(selectedNodes);
+        }
 
         return { nodes };
     }
@@ -141,8 +153,8 @@ export class PasteCommand
         {
             const command = commands[i];
 
-            command.undo();
-            command.restoreSelection('undo');
+            command.redo();
+            command.restoreSelection('redo');
         }
     }
 

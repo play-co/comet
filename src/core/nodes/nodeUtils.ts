@@ -70,6 +70,11 @@ export function isSiblingOf(targetNode: ClonableNode, nodes: ClonableNode[])
 
 export function groupSiblings(nodes: ClonableNode[])
 {
+    if (nodes.length === 0)
+    {
+        return nodes;
+    }
+
     type Group = {
         depth: number;
         nodes: ClonableNode[];

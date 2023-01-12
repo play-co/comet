@@ -99,7 +99,7 @@ export class TransformGizmo extends Container
         Events.transform.nudge.bind(this.updateSelection);
         Events.selection.hierarchy.deselect.bind(this.onSelectionDeselect);
         Events.datastore.node.local.reParented.bind(this.updateSelection);
-        Events.datastore.node.local.modified.bind(this.onLocalNodeModified);
+        Events.datastore.node.local.modified.bind(this.updateSelection);
         Events.datastore.node.local.modelReset.bind(this.updateSelection);
         Events.datastore.node.local.textureRemoved.bind(this.onTextureRemoved);
     }
@@ -111,6 +111,13 @@ export class TransformGizmo extends Container
 
     protected updateSelection = () =>
     {
+        if (this.operation)
+        {
+            // ignore updates from self during operations
+
+            return;
+        }
+
         const { hierarchy: { isSingle, isMulti, isEmpty, items } } = Application.instance.selection;
 
         if (isSingle)
@@ -124,16 +131,6 @@ export class TransformGizmo extends Container
         else if (isEmpty)
         {
             this.onSelectionDeselect();
-        }
-    };
-
-    protected onLocalNodeModified = () =>
-    {
-        const { hierarchy: { isSingle } } = Application.instance.selection;
-
-        if (isSingle)
-        {
-            this.updateSingleSelectionNode();
         }
     };
 
